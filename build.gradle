@@ -3,7 +3,6 @@ plugins {
 }
 
 group='com.github.bootpay'
-//version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()

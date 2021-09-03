@@ -2,9 +2,12 @@
 import com.google.gson.Gson;
 import kr.co.bootpay.Bootpay;
 import kr.co.bootpay.model.request.*;
-import kr.co.bootpay.model.response.ResToken;
+import kr.co.bootpay.model.response.ResDefault;
+import kr.co.bootpay.model.response.data.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+
+import java.util.HashMap;
 
 
 public class Test {
@@ -14,14 +17,14 @@ public class Test {
 
         System.out.println("2134");
         goGetToken();
-        getBillingKey();
+//        getBillingKey();
 //        requestSubscribe();
 //        reserveSubscribe();
 //        destroyBillingKey();
 //        reserveCancelSubscribe();
 //        receiptCancel();
 //        getUserToken();
-//        requestLink();
+        requestLink();
 //        submit();
 //        goVerfity();
 //        certificate();
@@ -29,11 +32,11 @@ public class Test {
 
     public static void goGetToken() {
         try {
-            HttpResponse res = bootpay.getAccessToken();
+            ResDefault<TokenData> res = bootpay.getAccessToken();
 
-            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
-            ResToken resToken = new Gson().fromJson(str, ResToken.class);
-            System.out.println(resToken);
+//            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
+//            ResToken resToken = new Gson().fromJson(str, ResToken.class);
+            System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,12 +51,11 @@ public class Test {
         subscribeBilling.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribeBilling.expireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribeBilling.expireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-        subscribeBilling.identifyNumber = ""; //주민등록번호
+        subscribeBilling.identifyNumber = ""; //주민등록번호 또는 사업자 등록번호 (- 없이 입력)
 
         try {
-            HttpResponse res = bootpay.getBillingKey(subscribeBilling);
-            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
-            System.out.println(str);
+            ResDefault<BillingKeyData> res = bootpay.getBillingKey(subscribeBilling);
+            System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -61,9 +63,8 @@ public class Test {
 
     public static void destroyBillingKey() {
         try {
-            HttpResponse res = bootpay.destroyBillingKey("6100e7ea0d681b001fd4de69");
-            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
-            System.out.println(str);
+            ResDefault res = bootpay.destroyBillingKey("6100e7ea0d681b001fd4de69");
+            System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -76,11 +77,9 @@ public class Test {
         payload.price = 1000;
         payload.orderId = "" + (System.currentTimeMillis() / 1000);
 
-
         try {
-            HttpResponse res = bootpay.requestSubscribe(payload);
-            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
-            System.out.println(str);
+            ResDefault<SubscribeBillingData> res = bootpay.requestSubscribe(payload);
+            System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -96,9 +95,8 @@ public class Test {
         payload.executeAt = (System.currentTimeMillis() / 1000) + 10000;
 
         try {
-            HttpResponse res = bootpay.reserveSubscribe(payload);
-            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
-            System.out.println(str);
+            ResDefault<SubscribeBillingReserveData> res = bootpay.reserveSubscribe(payload);
+            System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -106,9 +104,8 @@ public class Test {
 
     public static void reserveCancelSubscribe() {
         try {
-            HttpResponse res = bootpay.reserveCancelSubscribe("6100e892019943002150fef3");
-            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
-            System.out.println(str);
+            ResDefault res = bootpay.reserveCancelSubscribe("6100e892019943002150fef3");
+            System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -122,9 +119,9 @@ public class Test {
 
 //        String receipt_id = "";
         try {
-            HttpResponse res = bootpay.receiptCancel(cancel);
-            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
-            System.out.println(str);
+            ResDefault<Cancel> res = bootpay.receiptCancel(cancel);
+//            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
+            System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -133,9 +130,8 @@ public class Test {
     public static void getUserToken() {
         UserToken userToken = new UserToken();
         try {
-            HttpResponse res = bootpay.getUserToken(userToken);
-            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
-            System.out.println(str);
+            ResDefault<EasyUserTokenData> res = bootpay.getUserToken(userToken);
+            System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -143,10 +139,25 @@ public class Test {
 
     public static void requestLink() {
         Payload payload = new Payload();
+        payload.orderId = "1234";
+        payload.price = 1000;
+        payload.name = "테스트 결제";
+        payload.pg = "nicepay";
+
+
+//        subscribeBilling.itemName = "정기결제 테스트 아이템";
+//        subscribeBilling.orderId = "" + (System.currentTimeMillis() / 1000);
+//        subscribeBilling.pg = "nicepay";
+//        subscribeBilling.cardNo = "5570**********1074"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+//        subscribeBilling.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+//        subscribeBilling.expireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+//        subscribeBilling.expireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+//        subscribeBilling.identifyNumber = ""; //주민등록번호 또는 사업자 등록번호 (- 없이 입력)
+
         try {
-            HttpResponse res = bootpay.requestLink(payload);
-            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
-            System.out.println(str);
+            ResDefault res = bootpay.requestLink(payload);
+//            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
+            System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -154,9 +165,9 @@ public class Test {
 
     public static void submit() {
         try {
-            HttpResponse res = bootpay.submit("");
-            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
-            System.out.println(str);
+            ResDefault<HashMap<String, Object>> res = bootpay.submit("6100e8e7019943003850f9b0");
+//            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
+            System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -164,9 +175,9 @@ public class Test {
 
     public static void goVerfity() {
         try {
-            HttpResponse res = bootpay.verify("6100e8e7019943003850f9b0");
-            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
-            System.out.println(str);
+            ResDefault<VerificationData> res = bootpay.verify("6100e8e7019943003850f9b0");
+//            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
+            System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -174,9 +185,9 @@ public class Test {
 
     public static void certificate() {
         try {
-            HttpResponse res = bootpay.certificate("593f8febe13f332431a8ddae");
-            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
-            System.out.println(str);
+            ResDefault<CertificateData> res = bootpay.certificate("593f8febe13f332431a8ddae");
+//            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
+            System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
         }
