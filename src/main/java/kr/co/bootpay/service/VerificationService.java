@@ -39,7 +39,7 @@ public class VerificationService {
         HttpResponse response = client.execute(get);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        Type resType = new TypeToken<ResDefault<VerificationData>>(){}.getType();
+        Type resType = new TypeToken<ResDefault<CertificateData>>(){}.getType();
         ResDefault<CertificateData> res = new Gson().fromJson(str, resType);
         return res;
     }
