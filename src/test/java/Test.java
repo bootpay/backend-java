@@ -24,10 +24,10 @@ public class Test {
 //        reserveCancelSubscribe();
 //        receiptCancel();
 //        getUserToken();
-        requestLink();
+//        requestLink();
 //        submit();
 //        goVerfity();
-//        certificate();
+        certificate();
     }
 
     public static void goGetToken() {
