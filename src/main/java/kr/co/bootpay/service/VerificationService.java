@@ -34,7 +34,7 @@ public class VerificationService {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
-        HttpGet get = bootpay.httpGet("certificate/" + receiptId);
+        HttpGet get = bootpay.httpGet("certificate/" + receiptId + ".json");
         get.setHeader("Authorization", bootpay.token);
         HttpResponse response = client.execute(get);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
