@@ -1,6 +1,7 @@
 
 import com.google.gson.Gson;
 import kr.co.bootpay.Bootpay;
+import kr.co.bootpay.model.BankCode;
 import kr.co.bootpay.model.request.*;
 import kr.co.bootpay.model.response.ResDefault;
 import kr.co.bootpay.model.response.data.*;
@@ -10,32 +11,28 @@ import org.apache.http.HttpResponse;
 import java.util.HashMap;
 
 
-public class Test {
+public class BootpayExample {
     static Bootpay bootpay;
     public static void main(String[] args) {
         bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
-        System.out.println("2134");
         goGetToken();
-//        getBillingKey();
-//        requestSubscribe();
-//        reserveSubscribe();
-//        destroyBillingKey();
-//        reserveCancelSubscribe();
-//        receiptCancel();
-//        getUserToken();
-//        requestLink();
-//        submit();
-//        goVerfity();
+        goVerfity();
+        receiptCancel();
+        getBillingKey();
+        requestSubscribe();
+        reserveSubscribe();
+        reserveCancelSubscribe();
+        destroyBillingKey();
+        getUserToken();
+        requestLink();
+        submit();
         certificate();
     }
 
     public static void goGetToken() {
         try {
             ResDefault<TokenData> res = bootpay.getAccessToken();
-
-//            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
-//            ResToken resToken = new Gson().fromJson(str, ResToken.class);
             System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
@@ -43,18 +40,18 @@ public class Test {
     }
 
     public static void getBillingKey() {
-        Subscribe subscribeBilling = new Subscribe();
-        subscribeBilling.itemName = "정기결제 테스트 아이템";
-        subscribeBilling.orderId = "" + (System.currentTimeMillis() / 1000);
-        subscribeBilling.pg = "nicepay";
-        subscribeBilling.cardNo = "5570**********1074"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-        subscribeBilling.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-        subscribeBilling.expireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-        subscribeBilling.expireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-        subscribeBilling.identifyNumber = ""; //주민등록번호 또는 사업자 등록번호 (- 없이 입력)
+        Subscribe subscribe = new Subscribe();
+        subscribe.itemName = "정기결제 테스트 아이템";
+        subscribe.orderId = "" + (System.currentTimeMillis() / 1000);
+        subscribe.pg = "nicepay";
+        subscribe.cardNo = "5570**********1074"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+        subscribe.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+        subscribe.expireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+        subscribe.expireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+        subscribe.identifyNumber = ""; //주민등록번호 또는 사업자 등록번호 (- 없이 입력)
 
         try {
-            ResDefault<BillingKeyData> res = bootpay.getBillingKey(subscribeBilling);
+            ResDefault<BillingKeyData> res = bootpay.getBillingKey(subscribe);
             System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,8 +59,9 @@ public class Test {
     }
 
     public static void destroyBillingKey() {
+        String receiptId = "6100e7ea0d681b001fd4de69";
         try {
-            ResDefault res = bootpay.destroyBillingKey("6100e7ea0d681b001fd4de69");
+            ResDefault res = bootpay.destroyBillingKey(receiptId);
             System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,7 +90,7 @@ public class Test {
         payload.itemName = "아이템01";
         payload.price = 1000;
         payload.orderId = "" + (System.currentTimeMillis() / 1000);
-        payload.executeAt = (System.currentTimeMillis() / 1000) + 10000;
+        payload.executeAt = (System.currentTimeMillis() / 1000) + 10000; // 결제 승인 시점
 
         try {
             ResDefault<SubscribeBillingReserveData> res = bootpay.reserveSubscribe(payload);
@@ -103,8 +101,9 @@ public class Test {
     }
 
     public static void reserveCancelSubscribe() {
+        String receiptId = "6100e892019943002150fef3";
         try {
-            ResDefault res = bootpay.reserveCancelSubscribe("6100e892019943002150fef3");
+            ResDefault res = bootpay.reserveCancelSubscribe(receiptId);
             System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,11 +115,16 @@ public class Test {
         cancel.receiptId = "6100e77a019943003650f4d5";
         cancel.name = "관리자";
         cancel.reason = "테스트 결제";
+//        cancel.price = 1000.0; //부분취소 요청시
+//        cancel.cancelId = "12342134"; //부분취소 요청시, 중복 부분취소 요청하는 실수를 방지하고자 할때 지정
+//        RefundData refund = new RefundData(); // 가상계좌 환불 요청시, 단 CMS 특약이 되어있어야만 환불요청이 가능하다.
+//        refund.account = "675601012341234"; //환불계좌
+//        refund.accountholder = "홍길동"; //환불계좌주
+//        refund.bankcode = BankCode.getCode("국민은행");//은행코드
+//        cancel.refund = refund;
 
-//        String receipt_id = "";
         try {
             ResDefault<Cancel> res = bootpay.receiptCancel(cancel);
-//            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
             System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,6 +133,7 @@ public class Test {
 
     public static void getUserToken() {
         UserToken userToken = new UserToken();
+        userToken.userId = "1234"; // 개발사에서 관리하는 회원 고유 번호
         try {
             ResDefault<EasyUserTokenData> res = bootpay.getUserToken(userToken);
             System.out.println(res.toJson());
@@ -144,19 +149,8 @@ public class Test {
         payload.name = "테스트 결제";
         payload.pg = "nicepay";
 
-
-//        subscribeBilling.itemName = "정기결제 테스트 아이템";
-//        subscribeBilling.orderId = "" + (System.currentTimeMillis() / 1000);
-//        subscribeBilling.pg = "nicepay";
-//        subscribeBilling.cardNo = "5570**********1074"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-//        subscribeBilling.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-//        subscribeBilling.expireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-//        subscribeBilling.expireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-//        subscribeBilling.identifyNumber = ""; //주민등록번호 또는 사업자 등록번호 (- 없이 입력)
-
         try {
             ResDefault res = bootpay.requestLink(payload);
-//            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
             System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
@@ -164,9 +158,9 @@ public class Test {
     }
 
     public static void submit() {
+        String receiptId = "6100e8e7019943003850f9b0";
         try {
-            ResDefault<HashMap<String, Object>> res = bootpay.submit("6100e8e7019943003850f9b0");
-//            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
+            ResDefault<HashMap<String, Object>> res = bootpay.submit(receiptId);
             System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
@@ -174,9 +168,9 @@ public class Test {
     }
 
     public static void goVerfity() {
+        String receiptId = "6100e8e7019943003850f9b0";
         try {
-            ResDefault<VerificationData> res = bootpay.verify("6100e8e7019943003850f9b0");
-//            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
+            ResDefault<VerificationData> res = bootpay.verify(receiptId);
             System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
@@ -184,9 +178,9 @@ public class Test {
     }
 
     public static void certificate() {
+        String receiptId = "593f8febe13f332431a8ddae";
         try {
-            ResDefault<CertificateData> res = bootpay.certificate("593f8febe13f332431a8ddae");
-//            String str = IOUtils.toString(res.getEntity().getContent(), "UTF-8");
+            ResDefault<CertificateData> res = bootpay.certificate(receiptId);
             System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
