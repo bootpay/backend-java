@@ -75,7 +75,6 @@ public class BootpayExample {
 
 ## 1. 토큰 발급 
 
-# 사용하기
 부트페이와 서버간 통신을 하기 위해서는 부트페이 서버로부터 토큰을 발급받아야 합니다.  
 발급된 토큰은 30분간 유효하며, 최초 발급일로부터 30분이 지날 경우 토큰 발급 함수를 재호출 해주셔야 합니다.
 ```java 
@@ -113,13 +112,13 @@ Cancel cancel = new Cancel();
 cancel.receiptId = "6100e77a019943003650f4d5";
 cancel.name = "관리자";
 cancel.reason = "테스트 결제";
-//        cancel.price = 1000.0; //부분취소 요청시
-//        cancel.cancelId = "12342134"; //부분취소 요청시, 중복 부분취소 요청하는 실수를 방지하고자 할때 지정
-//        RefundData refund = new RefundData(); // 가상계좌 환불 요청시, 단 CMS 특약이 되어있어야만 환불요청이 가능하다.
-//        refund.account = "675601012341234"; //환불계좌
-//        refund.accountholder = "홍길동"; //환불계좌주
-//        refund.bankcode = BankCode.getCode("국민은행");//은행코드
-//        cancel.refund = refund;
+//cancel.price = 1000.0; //부분취소 요청시
+//cancel.cancelId = "12342134"; //부분취소 요청시, 중복 부분취소 요청하는 실수를 방지하고자 할때 지정
+//RefundData refund = new RefundData(); // 가상계좌 환불 요청시, 단 CMS 특약이 되어있어야만 환불요청이 가능하다.
+//refund.account = "675601012341234"; //환불계좌
+//refund.accountholder = "홍길동"; //환불계좌주
+//refund.bankcode = BankCode.getCode("국민은행");//은행코드
+//cancel.refund = refund;
 
 try {
     ResDefault<Cancel> res = bootpay.receiptCancel(cancel); 
