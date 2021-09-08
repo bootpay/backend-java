@@ -3,8 +3,7 @@ package kr.co.bootpay.model.request;
 import java.util.List;
 
 public class Extra {
-    public boolean escrow;
-    public int expireMonth = 0;
+    public boolean escrow; // 에스크로 연동 시 true, 기본값 false
     public List<Integer> quota;
     public boolean subscribeTestPayment;
     public boolean dispCashResult;
