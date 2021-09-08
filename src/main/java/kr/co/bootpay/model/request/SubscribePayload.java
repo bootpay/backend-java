@@ -3,17 +3,17 @@ package kr.co.bootpay.model.request;
 import java.util.List;
 
 public class SubscribePayload {
-    public String billingKey;
-    public String itemName;
-    public long price;
-    public int taxFree;
-    public String orderId;
-    public int quota;
-    public int interest;
-    public User userInfo;
-    public List<Item> items;
-    public String feedbackUrl;
-    public String feedbackContentType;
+    public String billingKey; // 발급받은 빌링키
+    public String itemName; //결제할 상품명, 결제창에 노출됨
+    public long price; // 결제할 상품금액
+    public int taxFree; // 면세 상품일 경우 해당만큼의 금액을 설정
+    public String orderId; // 개발사에서 지정하는 고유주문번호
+    public int quota; // 5만원 이상 결제건에 대한 할부개월 옵션이 노출됨. 00-일시불, 01-1개월, 02-2개월 ... 12까지 지정가능, 만약 09로 지정할 경우 최대 9개월 선택가능. 지정하지 않을 경우 해당 PG사의 기본값 적용
+    public int interest; // 웰컴페이먼츠 전용, 무이자여부를 보내는 파라미터가 있다
+    public User userInfo; // 구매자 정보, 특정 PG사의 경우 구매자 휴대폰 번호를 필수로 받는다
+    public List<Item> items; // 구매할 상품정보, 통계용
+    public String feedbackUrl; // webhook 통지시 받으실 url 주소 (localhost 사용 불가)
+    public String feedbackContentType; // webhook 통지시 받으실 데이터 타입 (json 또는 urlencoded, 기본값 urlencoded)
     public SubscribeExtra extra;
     public String schedulerType; //정기결제 예약시
     public long executeAt; //정기결제 예약시
