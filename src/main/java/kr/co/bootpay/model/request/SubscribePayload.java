@@ -4,7 +4,7 @@ import java.util.List;
 
 public class SubscribePayload {
     public String billingKey; // 발급받은 빌링키
-    public String itemName; //결제할 상품명, 결제창에 노출됨
+    public String itemName; // 결제할 상품명, 결제창에 노출됨
     public long price; // 결제할 상품금액
     public int taxFree; // 면세 상품일 경우 해당만큼의 금액을 설정
     public String orderId; // 개발사에서 지정하는 고유주문번호
@@ -15,6 +15,6 @@ public class SubscribePayload {
     public String feedbackUrl; // webhook 통지시 받으실 url 주소 (localhost 사용 불가)
     public String feedbackContentType; // webhook 통지시 받으실 데이터 타입 (json 또는 urlencoded, 기본값 urlencoded)
     public SubscribeExtra extra;
-    public String schedulerType; //정기결제 예약시
+    public String schedulerType; //정기결제 예약시 - oneshot 으로 지정해야함.
     public long executeAt; //정기결제 예약시
 }
