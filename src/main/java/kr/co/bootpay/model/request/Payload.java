@@ -3,7 +3,7 @@ package kr.co.bootpay.model.request;
 import java.util.List;
 
 public class Payload {
-    public String pg; // [PG 결제] 사용하고자 하는 PG사의 Alias를 입력해주세요. ex) danal, kcp, inicis등, 미 지정시 통합결제창이 오픈
+    public String pg; // [PG 결제] 사용하고자 하는 PG사의 Alias를 입력. ex) danal, kcp, inicis등, 미 지정시 통합결제창이 오픈
     public String method; //card:카드, phone: 휴대폰, bank: 실시간 계좌이체, vbank: 가상계좌, auth: 본인인증, card_rebill: 정기결제, easy: 카카오,페이코,네이버페이 등의 간편결제, 미지정시 통합결제창 오픈
     public List<String> methods; // 통합결제시 사용할 method 배열 형태
     public long price; // 결제금액
@@ -13,5 +13,5 @@ public class Payload {
     public String name; // 결제할 상품명
     public User userInfo; // 구매자 정보
     public List<Item> items; // 상품정보
-    public Extra extra; // 부가 옵션
+    public Extra extra; // 기타 옵션
 }
