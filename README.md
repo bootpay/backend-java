@@ -63,7 +63,7 @@ public class BootpayExample {
     
     public static void goGetToken() {
         try {
-            ResDefault<TokenData> res = bootpay.getAccessToken(); 
+            ResDefault<HashMap<String, Object>> res = bootpay.getAccessToken(); 
             System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,7 +80,7 @@ public class BootpayExample {
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 try {
-    ResDefault<TokenData> res = bootpay.getAccessToken(); 
+    ResDefault<HashMap<String, Object>> res = bootpay.getAccessToken(); 
     System.out.println(res.toJson());
 } catch (Exception e) {
     e.printStackTrace();
@@ -93,7 +93,7 @@ try {
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
 try {
-    ResDefault<VerificationData> res = bootpay.verify("6100e8e7019943003850f9b0");
+    ResDefault<HashMap<String, Object>> res = bootpay.verify("6100e8e7019943003850f9b0");
     System.out.println(res.toJson());
 } catch (Exception e) {
     e.printStackTrace();
@@ -126,7 +126,7 @@ cancel.reason = "테스트 결제";
 //cancel.refund = refund;
 
 try {
-    ResDefault<Cancel> res = bootpay.receiptCancel(cancel); 
+    ResDefault<HashMap<String, Object>> res = bootpay.receiptCancel(cancel); 
     System.out.println(res.toJson());
 } catch (Exception e) {
     e.printStackTrace();
@@ -150,7 +150,7 @@ subscribe.expireYear = "**"; //실제 테스트시에는 *** 마스크처리가 
 subscribe.expireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
 subscribe.identifyNumber = ""; //주민등록번호 또는 사업자 등록번호 (- 없이 입력)
 try {
-    ResDefault<BillingKeyData> res = bootpay.getBillingKey(subscribe);
+    ResDefault<HashMap<String, Object>> res = bootpay.getBillingKey(subscribe);
     System.out.println(res.toJson());
 } catch (Exception e) {
     e.printStackTrace();
@@ -170,7 +170,7 @@ payload.price = 1000;
 payload.orderId = "" + (System.currentTimeMillis() / 1000);
 
 try {
-    ResDefault<SubscribeBillingData> res = bootpay.requestSubscribe(payload);
+    ResDefault<HashMap<String, Object>> res = bootpay.requestSubscribe(payload);
     System.out.println(res.toJson());
 } catch (Exception e) {
     e.printStackTrace();
@@ -189,7 +189,7 @@ payload.orderId = "" + (System.currentTimeMillis() / 1000);
 payload.executeAt = (System.currentTimeMillis() / 1000) + 10000; // 결제 승인 시점 
 
 try {
-    ResDefault<SubscribeBillingReserveData> res = bootpay.reserveSubscribe(payload);
+    ResDefault<HashMap<String, Object>> res = bootpay.reserveSubscribe(payload);
     System.out.println(res.toJson());
 } catch (Exception e) {
     e.printStackTrace();
@@ -229,7 +229,7 @@ Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A
 UserToken userToken = new UserToken();
 userToken.userId = "1234"; // 개발사에서 관리하는 회원 고유 번호 
 try {
-    ResDefault<EasyUserTokenData> res = bootpay.getUserToken(userToken);
+    ResDefault<HashMap<String, Object>> res = bootpay.getUserToken(userToken);
     System.out.println(res.toJson());
 } catch (Exception e) {
     e.printStackTrace();
@@ -283,7 +283,7 @@ Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A
 
 String receiptId = "593f8febe13f332431a8ddae";
 try {
-    ResDefault<CertificateData> res = bootpay.certificate(receiptId);
+    ResDefault<HashMap<String, Object>> res = bootpay.certificate(receiptId);
     System.out.println(res.toJson());
 } catch (Exception e) {
     e.printStackTrace();
