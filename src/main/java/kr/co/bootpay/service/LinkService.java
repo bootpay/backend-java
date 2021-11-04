@@ -1,5 +1,6 @@
 package kr.co.bootpay.service;
 
+import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.BootpayObject;
 import kr.co.bootpay.model.request.Payload;
 import com.google.gson.FieldNamingPolicy;
@@ -13,10 +14,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 
 public class LinkService {
-    static public ResDefault<HashMap<String, Object>> requestLink(BootpayObject bootpay, Payload payload) throws Exception {
+    static public ResDefault<String> requestLink(BootpayObject bootpay, Payload payload) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
 //        if(userToken.userId == null || userToken.userId.isEmpty()) throw new Exception("userId 값을 입력해주세요.");
 
@@ -30,7 +32,9 @@ public class LinkService {
         HttpResponse response = client.execute(post);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        ResDefault res = new Gson().fromJson(str, ResDefault.class);
+        Type resType = new TypeToken<ResDefault<String>>(){}.getType();
+        ResDefault res = new Gson().fromJson(str, resType);
         return res;
+//        return new Gson().fromJson(str, ResDefault.class);
     }
 }

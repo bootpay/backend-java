@@ -1,3 +1,6 @@
+### 1.0.9
+- data response format이 대부분 hashmap으로 수정되었습니다.
+
 ### 1.0.8
 - subscribe payload model이 수정되었습니다 
 

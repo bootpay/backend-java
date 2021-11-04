@@ -1,5 +1,6 @@
 package kr.co.bootpay.service;
 
+import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.BootpayObject;
 import kr.co.bootpay.model.request.Submit;
 import com.google.gson.FieldNamingPolicy;
@@ -13,6 +14,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 
 public class SubmitService {
@@ -33,8 +35,8 @@ public class SubmitService {
         HttpResponse response = client.execute(post);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-//        Type resType = new TypeToken<ResDefault<BillingKeyData>>(){}.getType();
-        ResDefault<HashMap<String, Object>> res = new Gson().fromJson(str, ResDefault.class);
+        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
+        ResDefault res = new Gson().fromJson(str, resType);
         return res;
     }
 }

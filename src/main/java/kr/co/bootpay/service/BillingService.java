@@ -24,7 +24,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 
 public class BillingService {
-    static public ResDefault<BillingKeyData> getBillingKey(BootpayObject bootpay, Subscribe subscribe) throws Exception {
+    static public ResDefault<HashMap<String, Object>> getBillingKey(BootpayObject bootpay, Subscribe subscribe) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(subscribe.itemName == null || subscribe.itemName.isEmpty()) throw new Exception("item_name 값을 입력해주세요.");
         if(subscribe.orderId == null || subscribe.orderId.isEmpty()) throw new Exception("order_id 주문번호를 설정해주세요.");
@@ -40,12 +40,12 @@ public class BillingService {
         HttpResponse response = client.execute(post);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        Type resType = new TypeToken<ResDefault<BillingKeyData>>(){}.getType();
-        ResDefault<BillingKeyData> res = new Gson().fromJson(str, resType);
+        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
+        ResDefault res = new Gson().fromJson(str, resType);
         return res;
     }
 
-    static public ResDefault destroyBillingKey(BootpayObject bootpay, String billingKey) throws Exception {
+    static public ResDefault<HashMap<String, Object>>  destroyBillingKey(BootpayObject bootpay, String billingKey) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(billingKey == null || billingKey.isEmpty()) throw new Exception("billingKey 값이 비어있습니다.");
 
@@ -56,12 +56,12 @@ public class BillingService {
         HttpResponse response = client.execute(delete);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-//        Type resType = new TypeToken<ResDefault<BillingKeyData>>(){}.getType();
-        ResDefault res = new Gson().fromJson(str, ResDefault.class);
+        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
+        ResDefault res = new Gson().fromJson(str, resType);
         return res;
     }
 
-    static public ResDefault<SubscribeBillingData> requestSubscribe(BootpayObject bootpay, SubscribePayload payload) throws Exception {
+    static public ResDefault<HashMap<String, Object>> requestSubscribe(BootpayObject bootpay, SubscribePayload payload) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(payload.billingKey == null || payload.billingKey.isEmpty()) throw new Exception("billing_key 값을 입력해주세요.");
         if(payload.itemName == null || payload.itemName.isEmpty()) throw new Exception("item_name 값을 입력해주세요.");
@@ -78,12 +78,12 @@ public class BillingService {
         HttpResponse response = client.execute(post);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        Type resType = new TypeToken<ResDefault<SubscribeBillingData>>(){}.getType();
-        ResDefault<SubscribeBillingData> res = new Gson().fromJson(str, resType);
+        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
+        ResDefault res = new Gson().fromJson(str, resType);
         return res;
     }
 
-    static public ResDefault<SubscribeBillingReserveData> reserveSubscribe(BootpayObject bootpay, SubscribePayload reserve) throws Exception {
+    static public ResDefault<HashMap<String, Object>> reserveSubscribe(BootpayObject bootpay, SubscribePayload reserve) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(reserve.billingKey == null || reserve.billingKey.isEmpty()) throw new Exception("billing_key 값을 입력해주세요.");
         if(reserve.itemName == null || reserve.itemName.isEmpty()) throw new Exception("item_name 값을 입력해주세요.");
@@ -101,13 +101,14 @@ public class BillingService {
         HttpResponse response = client.execute(post);
 
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        Type resType = new TypeToken<ResDefault<SubscribeBillingReserveData>>(){}.getType();
-        ResDefault<SubscribeBillingReserveData> res = new Gson().fromJson(str, resType);
+
+        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
+        ResDefault res = new Gson().fromJson(str, resType);
         return res;
     }
 
 
-    static public ResDefault reserveCancelSubscribe(BootpayObject bootpay, String reserve_id) throws Exception {
+    static public ResDefault<HashMap<String, Object>>  reserveCancelSubscribe(BootpayObject bootpay, String reserve_id) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(reserve_id == null || reserve_id.isEmpty()) throw new Exception("reserve_id 값이 비어있습니다.");
 
@@ -118,7 +119,8 @@ public class BillingService {
         HttpResponse response = client.execute(delete);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        ResDefault res = new Gson().fromJson(str, ResDefault.class);
+        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
+        ResDefault res = new Gson().fromJson(str, resType);
         return res;
     }
 }

@@ -20,39 +20,39 @@ public class Bootpay extends BootpayObject {
     }
 
     //token
-    public ResDefault<TokenData> getAccessToken() throws Exception {
+    public ResDefault<HashMap<String, Object>> getAccessToken() throws Exception {
         return TokenService.getAccessToken(this);
     }
 
     //billing
-    public ResDefault<BillingKeyData> getBillingKey(Subscribe subscribeBilling) throws Exception {
+    public ResDefault<HashMap<String, Object>> getBillingKey(Subscribe subscribeBilling) throws Exception {
         return BillingService.getBillingKey(this, subscribeBilling);
     }
-    public ResDefault<SubscribeBillingData> requestSubscribe(SubscribePayload payload) throws Exception {
+    public ResDefault<HashMap<String, Object>> requestSubscribe(SubscribePayload payload) throws Exception {
         return BillingService.requestSubscribe(this, payload);
     }
-    public ResDefault<SubscribeBillingReserveData> reserveSubscribe(SubscribePayload payload) throws Exception {
+    public ResDefault<HashMap<String, Object>> reserveSubscribe(SubscribePayload payload) throws Exception {
         return BillingService.reserveSubscribe(this, payload);
     }
-    public ResDefault reserveCancelSubscribe(String reserve_id) throws Exception {
+    public ResDefault<HashMap<String, Object>> reserveCancelSubscribe(String reserve_id) throws Exception {
         return BillingService.reserveCancelSubscribe(this, reserve_id);
     }
-    public ResDefault destroyBillingKey(String billing_key) throws Exception {
+    public ResDefault<HashMap<String, Object>> destroyBillingKey(String billing_key) throws Exception {
         return BillingService.destroyBillingKey(this, billing_key);
     }
 
     //cancel
-    public ResDefault<Cancel> receiptCancel(Cancel cancel) throws Exception {
+    public ResDefault<HashMap<String, Object>> receiptCancel(Cancel cancel) throws Exception {
         return CancelService.receiptCancel(this, cancel);
     }
 
     //easy
-    public ResDefault<EasyUserTokenData> getUserToken(UserToken userToken) throws Exception {
+    public ResDefault<HashMap<String, Object>> getUserToken(UserToken userToken) throws Exception {
         return EasyService.getUserToken(this, userToken);
     }
 
     //link
-    public ResDefault<HashMap<String, Object>> requestLink(Payload payload) throws Exception {
+    public ResDefault<String> requestLink(Payload payload) throws Exception {
         return LinkService.requestLink(this, payload);
     }
 
@@ -62,10 +62,10 @@ public class Bootpay extends BootpayObject {
     }
 
     //veriy
-    public ResDefault<VerificationData> verify(String receiptId) throws Exception {
+    public ResDefault<HashMap<String, Object>> verify(String receiptId) throws Exception {
         return VerificationService.verify(this, receiptId);
     }
-    public ResDefault<CertificateData> certificate(String receiptId) throws Exception {
+    public ResDefault<HashMap<String, Object>> certificate(String receiptId) throws Exception {
         return VerificationService.certificate(this, receiptId);
     }
 }
