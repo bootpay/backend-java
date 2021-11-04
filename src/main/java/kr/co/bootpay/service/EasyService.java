@@ -17,10 +17,11 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 
 //간편결제창, 생체인증 기반 간편 결제 등
 public class EasyService {
-    static public ResDefault<EasyUserTokenData> getUserToken(BootpayObject bootpay, UserToken userToken) throws Exception {
+    static public ResDefault<HashMap<String, Object>> getUserToken(BootpayObject bootpay, UserToken userToken) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(userToken.userId == null || userToken.userId.isEmpty()) throw new Exception("userId 값을 입력해주세요.");
 
@@ -35,8 +36,8 @@ public class EasyService {
 
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        Type resType = new TypeToken<ResDefault<EasyUserTokenData>>(){}.getType();
-        ResDefault<EasyUserTokenData> res = new Gson().fromJson(str, resType);
+        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
+        ResDefault res = new Gson().fromJson(str, resType);
         return res;
     }
 }

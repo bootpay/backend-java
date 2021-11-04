@@ -16,9 +16,10 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 
 public class CancelService {
-    static public ResDefault<Cancel> receiptCancel(BootpayObject bootpay, Cancel cancel) throws Exception {
+    static public ResDefault<HashMap<String, Object>> receiptCancel(BootpayObject bootpay, Cancel cancel) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(cancel.receiptId == null || cancel.receiptId.isEmpty()) throw new Exception("receiptId 값을 입력해주세요.");
 
@@ -32,8 +33,8 @@ public class CancelService {
         HttpResponse response = client.execute(post);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        Type resType = new TypeToken<ResDefault<Cancel>>(){}.getType();
-        ResDefault<Cancel> res = new Gson().fromJson(str, resType);
+        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
+        ResDefault res = new Gson().fromJson(str, resType);
         return res;
     }
 }

@@ -16,5 +16,5 @@ public class SubscribePayload {
     public String feedbackContentType; // webhook 통지시 받으실 데이터 타입 (json 또는 urlencoded, 기본값 urlencoded)
     public SubscribeExtra extra;
     public String schedulerType; //정기결제 예약시 - oneshot 으로 지정해야함.
-    public long executeAt; //정기결제 예약시
+    public long executeAt; //정기결제 예약시 결제 수행(예약) 시간
 }

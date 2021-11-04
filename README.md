@@ -200,9 +200,9 @@ try {
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
-String receiptId = "6100e892019943002150fef3";
+String reserveId = "6100e892019943002150fef3";
 try {
-    ResDefault res = bootpay.reserveCancelSubscribe(receiptId);
+    ResDefault res = bootpay.reserveCancelSubscribe(reserveId);
     System.out.println(res.toJson());
 } catch (Exception e) {
     e.printStackTrace();
