@@ -22,7 +22,7 @@ public class VerificationData {
     public String pg_name;
     public String method_name;
 
-
+    public HashMap<String, Object> params;
     public HashMap<String, Object> payment_data;
 
 
