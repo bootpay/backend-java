@@ -10,5 +10,5 @@ public class Extra {
     public String offerPeriod; //통합결제창, PG 정기결제창에서 표시되는 '월 자동결제'에 해당하는 문구를 지정한 값으로 변경, 지원하는 PG사만 적용 가능
     public String theme; // 통합결제창 테마, [ red, purple(기본), custom ] 중 택 1
     public String customBackground;  // 통합결제창 배경색,  ex) "#00a086" theme가 custom 일 때 background 색상 지정 가능
-    public String customFontColor; // 통합결제창 글자색,  ex) "#ffffff" theme가 custom 일 때 font color 색상 지정 가능
+    public String customFontColor; // 통합결제창 글자색,  ex) "#ffffff" theme가 custom 일 때 font color 색상 지정 가능 
 }

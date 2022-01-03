@@ -17,17 +17,17 @@ public class BootpayExample {
         bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
         goGetToken();
-        goVerfity();
-        receiptCancel();
-        getBillingKey();
-        requestSubscribe();
+//        goVerfity();
+//        receiptCancel();
+//        getBillingKey();
+//        requestSubscribe();
         reserveSubscribe();
-        reserveCancelSubscribe();
-        destroyBillingKey();
-        getUserToken();
-        requestLink();
-        submit();
-        certificate();
+//        reserveCancelSubscribe();
+//        destroyBillingKey();
+//        getUserToken();
+//        requestLink();
+//        submit();
+//        certificate();
     }
 
     public static void goGetToken() {
@@ -43,12 +43,16 @@ public class BootpayExample {
         Subscribe subscribe = new Subscribe();
         subscribe.itemName = "정기결제 테스트 아이템";
         subscribe.orderId = "" + (System.currentTimeMillis() / 1000);
-        subscribe.pg = "nicepay";
+        subscribe.pg = "payapp";
         subscribe.cardNo = "5570**********1074"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.expireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.expireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.identifyNumber = ""; //주민등록번호 또는 사업자 등록번호 (- 없이 입력)
+
+        subscribe.userInfo = new User();
+        subscribe.userInfo.username = "홍길동";
+        subscribe.userInfo.phone = "01011112222";
 
         try {
             ResDefault<HashMap<String, Object>> res = bootpay.getBillingKey(subscribe);
@@ -70,7 +74,7 @@ public class BootpayExample {
 
     public static void requestSubscribe() {
         SubscribePayload payload = new SubscribePayload();
-        payload.billingKey = "6100e8c80d681b001dd4e0d7";
+        payload.billingKey = "618c661d019943003944d5ec";
         payload.itemName = "아이템01";
         payload.price = 1000;
         payload.orderId = "" + (System.currentTimeMillis() / 1000);
@@ -86,11 +90,11 @@ public class BootpayExample {
     public static void reserveSubscribe() {
         SubscribePayload payload = new SubscribePayload();
 
-        payload.billingKey = "6100e77a0d681b002ad4e5d9";
+        payload.billingKey = "619af3fd27018000269761d4";
         payload.itemName = "아이템01";
         payload.price = 1000;
         payload.orderId = "" + (System.currentTimeMillis() / 1000);
-        payload.executeAt = (System.currentTimeMillis() / 1000) + 10000; // 결제 승인 시점
+        payload.executeAt = (System.currentTimeMillis() / 1000) + 10; // 결제 승인 시점
 
         try {
             ResDefault<HashMap<String, Object>> res = bootpay.reserveSubscribe(payload);
@@ -101,9 +105,9 @@ public class BootpayExample {
     }
 
     public static void reserveCancelSubscribe() {
-        String receiptId = "6100e892019943002150fef3";
+        String receiptId = "618c66320d681b00445194b5";
         try {
-            ResDefault res = bootpay.reserveCancelSubscribe(receiptId);
+            ResDefault<HashMap<String, Object>> res = bootpay.reserveCancelSubscribe(receiptId);
             System.out.println(res.toJson());
         } catch (Exception e) {
             e.printStackTrace();
@@ -147,11 +151,19 @@ public class BootpayExample {
         payload.orderId = "1234";
         payload.price = 1000;
         payload.name = "테스트 결제";
-        payload.pg = "nicepay";
+        payload.pg = "payapp";
+//        payload.method = "vbank";
+
+        User user = new User();
+        user.username = "홍길동";
+        user.phone = "01012341234";
+        payload.userInfo = user;
 
         Extra extra = new Extra();
-        extra.rawData = 1;
+//        extra.rawData = 1;
         payload.extra = extra;
+
+
 
 
         try {
@@ -174,7 +186,7 @@ public class BootpayExample {
     }
 
     public static void goVerfity() {
-        String receiptId = "6100e8e7019943003850f9b0";
+        String receiptId = "6100e77a019943003650f4d5";
         try {
             ResDefault<HashMap<String, Object>> res = bootpay.verify(receiptId);
             System.out.println(res.data.get("receipt_id"));
@@ -185,7 +197,7 @@ public class BootpayExample {
     }
 
     public static void certificate() {
-        String receiptId = "593f8febe13f332431a8ddae";
+        String receiptId = "6184f5310d681b0020511c23";
         try {
             ResDefault<HashMap<String, Object>> res = bootpay.certificate(receiptId);
             System.out.println(res.toJson());
