@@ -33,7 +33,6 @@ public class VerificationService {
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet get = bootpay.httpGet("certificate/" + receiptId + ".json");
         get.setHeader("Authorization", bootpay.getTokenValue());
-        System.out.println("Authorization: " + bootpay.getTokenValue());
         HttpResponse response = client.execute(get);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 

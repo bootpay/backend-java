@@ -23,5 +23,5 @@ public class SubscribePayload {
      * 1. UTC 시간을 사용할 경우 - ex) 2022-04-01 12:00:00 UTC(한국시간 기준 2022-04-01 21:00:00에 결제 진행)
      * 2. TIMEZONE을 사용할 경우 - ex) 2022-04-01T21:00:00 +0900(한국시간 기준 2022-04-01 21:00:00에 결제 진행)
      */
-    public long reserveExecuteAt; //정기결제 예약시 결제 수행(예약) 시간
+    public String reserveExecuteAt; //정기결제 예약시 결제 수행(예약) 시간
 }
