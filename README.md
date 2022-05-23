@@ -18,10 +18,9 @@
     4-2-1. 발급된 빌링키로 결제 승인 예약 - 취소 요청
    
     4-3. 빌링키 삭제
-5. (부트페이 단독) 사용자 토큰 발급   
-6. (부트페이 단독) 결제 링크 생성   
-7. 서버 승인 요청   
-8. 본인 인증 결과 조회
+5. (부트페이 단독) 사용자 토큰 발급    
+6. 서버 승인 요청   
+7. 본인 인증 결과 조회
 
 
 
@@ -29,13 +28,8 @@
 
 build.gradle (project)
 ```
-repositories {
-    maven { url 'https://jitpack.io' }
-    mavenCentral()
-}
-
 dependencies {
-    implementation 'com.github.bootpay:backend-java:+'
+    implementation 'io.github.bootpay:backend-java:+'
 }
 ```
 
