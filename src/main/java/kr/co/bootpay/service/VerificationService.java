@@ -3,10 +3,6 @@ package kr.co.bootpay.service;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.BootpayObject;
-import kr.co.bootpay.model.response.ResDefault;
-import kr.co.bootpay.model.response.data.CertificateData;
-import kr.co.bootpay.model.response.data.TokenData;
-import kr.co.bootpay.model.response.data.VerificationData;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -17,31 +13,31 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 
 public class VerificationService {
-    static public ResDefault<HashMap<String, Object>> verify(BootpayObject bootpay, String receiptId) throws Exception {
+    static public HashMap<String, Object> receipt(BootpayObject bootpay, String receiptId) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet get = bootpay.httpGet("receipt/" + receiptId);
-        get.setHeader("Authorization", bootpay.token);
+        get.setHeader("Authorization", bootpay.getTokenValue());
         HttpResponse response = client.execute(get);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
-        ResDefault res = new Gson().fromJson(str, resType);
-        return res;
+
+        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+        return new Gson().fromJson(str, resType);
     }
 
-    static public ResDefault<HashMap<String, Object>> certificate(BootpayObject bootpay, String receiptId) throws Exception {
+    static public HashMap<String, Object> certificate(BootpayObject bootpay, String receiptId) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet get = bootpay.httpGet("certificate/" + receiptId + ".json");
-        get.setHeader("Authorization", bootpay.token);
+        get.setHeader("Authorization", bootpay.getTokenValue());
+        System.out.println("Authorization: " + bootpay.getTokenValue());
         HttpResponse response = client.execute(get);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
-        ResDefault res = new Gson().fromJson(str, resType);
-        return res;
+        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+        return new Gson().fromJson(str, resType);
     }
 }

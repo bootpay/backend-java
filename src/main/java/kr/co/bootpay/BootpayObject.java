@@ -1,18 +1,12 @@
 package kr.co.bootpay;
 
-import kr.co.bootpay.model.request.Token;
-import com.google.gson.Gson;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -28,7 +22,7 @@ public class BootpayObject {
     public BootpayObject(String rest_application_id, String private_key) {
         this.application_id = rest_application_id;
         this.private_key = private_key;
-        this.baseUrl = DevMode.PRODUCTION;
+        this.baseUrl = BootpayConfig.PRODUCTION;
     }
 
     public BootpayObject(String rest_application_id, String private_key, String devMode) {
@@ -39,6 +33,10 @@ public class BootpayObject {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getTokenValue() {
+        return "Bearer " + token;
     }
 
     public HttpGet httpGet(String url) throws Exception {

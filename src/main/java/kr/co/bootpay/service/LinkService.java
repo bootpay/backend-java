@@ -1,11 +1,11 @@
 package kr.co.bootpay.service;
 
-import com.google.gson.reflect.TypeToken;
-import kr.co.bootpay.BootpayObject;
-import kr.co.bootpay.model.request.Payload;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import kr.co.bootpay.BootpayObject;
+import kr.co.bootpay.model.request.Payload;
 import kr.co.bootpay.model.response.ResDefault;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -15,7 +15,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 
 public class LinkService {
     static public ResDefault<String> requestLink(BootpayObject bootpay, Payload payload) throws Exception {
@@ -28,7 +27,7 @@ public class LinkService {
                 .create();
         HttpPost post = bootpay.httpPost("request/payment", new StringEntity(gson.toJson(payload), "UTF-8"));
 
-        post.setHeader("Authorization", bootpay.token);
+        post.setHeader("Authorization", bootpay.getTokenValue());
         HttpResponse response = client.execute(post);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
