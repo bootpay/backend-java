@@ -12,7 +12,7 @@ public class Subscribe {
 
     public String cardNo; // 카드 일련번호
     public String cardPw; // 카드 비밀번호 앞 2자리
-    public String cardIdentifyNumber; // 주민등록번호 또는 사업자번호
+    public String cardIdentityNo; // 주민등록번호 또는 사업자번호
     public String cardExpireYear; // 카드 유효기간 년
     public String cardExpireMonth; // 카드 유효기간 월
 

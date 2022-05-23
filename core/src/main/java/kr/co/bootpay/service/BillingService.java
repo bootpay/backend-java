@@ -81,7 +81,7 @@ public class BillingService {
         if(reserve.orderName == null || reserve.orderName.isEmpty()) throw new Exception("item_name 값을 입력해주세요.");
         if(reserve.price <= 0) throw new Exception("price 금액을 설정을 해주세요.");
         if(reserve.orderId == null || reserve.orderId.isEmpty()) throw new Exception("order_id 주문번호를 설정해주세요.");
-        if(reserve.reserveExecuteAt == 0) throw new Exception("execute_at 실행 시간을 설정해주세요.");
+        if(reserve.reserveExecuteAt == null || reserve.reserveExecuteAt.isEmpty()) throw new Exception("execute_at 실행 시간을 설정해주세요.");
 //        if(reserve.schedulerType == null || reserve.schedulerType.isEmpty()) reserve.schedulerType = "oneshot";
 
         HttpClient client = HttpClientBuilder.create().build();

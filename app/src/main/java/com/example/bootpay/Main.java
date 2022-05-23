@@ -4,17 +4,17 @@ import kr.co.bootpay.Bootpay;
 import kr.co.bootpay.model.request.*;
 import kr.co.bootpay.model.response.ResDefault;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 public class Main {
-//    public static void main(String[] args) {
-//        System.out.println("Hello world!");
-//    }
 
     static Bootpay bootpay;
     public static void main(String[] args) {
         bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
-//        bootpay = new Bootpay("59b731f084382614ebf72215", "WwDv0UjfwFa04wYG0LJZZv1xwraQnlhnHE375n52X0U=");
 
         goGetToken();
         getReceipt();
@@ -52,7 +52,8 @@ public class Main {
         subscribe.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardExpireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardExpireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-        subscribe.cardIdentifyNumber = ""; //주민등록번호 또는 사업자 등록번호 (- 없이 입력)
+        subscribe.cardIdentityNo = ""; //주민등록번호 또는 사업자 등록번호 (- 없이 입력)
+
 
         subscribe.user = new User();
         subscribe.user.username = "홍길동";
@@ -71,7 +72,7 @@ public class Main {
     }
 
     public static void destroyBillingKey() {
-        String receiptId = "6100e7ea0d681b001fd4de69";
+        String receiptId = "628b2644d01c7e00209b6092";
         try {
             HashMap<String, Object> res = bootpay.destroyBillingKey(receiptId);
             if(res.get("error_code") == null) { //success
@@ -86,9 +87,11 @@ public class Main {
 
     public static void requestSubscribe() {
         SubscribePayload payload = new SubscribePayload();
-        payload.billingKey = "618c661d019943003944d5ec";
+        payload.billingKey = "628b2644d01c7e00209b6092";
         payload.orderName = "아이템01";
         payload.price = 1000;
+        payload.user = new User();
+        payload.user.phone = "01012345678";
         payload.orderId = "" + (System.currentTimeMillis() / 1000);
 
         try {
@@ -106,11 +109,17 @@ public class Main {
     public static void reserveSubscribe() {
         SubscribePayload payload = new SubscribePayload();
 
-        payload.billingKey = "619af3fd27018000269761d4";
+        payload.billingKey = "628b2644d01c7e00209b6092";
         payload.orderName = "아이템01";
         payload.price = 1000;
         payload.orderId = "" + (System.currentTimeMillis() / 1000);
-        payload.reserveExecuteAt = (System.currentTimeMillis() / 1000) + 10; // 결제 승인 시점
+
+        Date now = new Date();
+        now.setTime(now.getTime() + 10 * 1000); //10초 뒤 결제
+//
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss XXX");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        payload.reserveExecuteAt = sdf.format(now); // 결제 승인 시점
 
         try {
             HashMap<String, Object> res = bootpay.reserveSubscribe(payload);
@@ -125,7 +134,7 @@ public class Main {
     }
 
     public static void reserveCancelSubscribe() {
-        String receiptId = "618c66320d681b00445194b5";
+        String receiptId = "628b316cd01c7e00219b6081";
         try {
             HashMap<String, Object> res = bootpay.reserveCancelSubscribe(receiptId);
             if(res.get("error_code") == null) { //success
@@ -140,7 +149,7 @@ public class Main {
 
     public static void receiptCancel() {
         Cancel cancel = new Cancel();
-        cancel.receiptId = "6100e77a019943003650f4d5";
+        cancel.receiptId = "628b2206d01c7e00209b6087";
         cancel.name = "관리자";
         cancel.reason = "테스트 결제";
 //        cancel.price = 1000.0; //부분취소 요청시
@@ -205,7 +214,7 @@ public class Main {
     }
 
     public static void confirm() {
-        String receiptId = "6100e8e7019943003850f9b0";
+        String receiptId = "62876963d01c7e00209b6028";
         try {
             HashMap<String, Object> res = bootpay.confirm(receiptId);
             if(res.get("error_code") == null) { //success
@@ -219,7 +228,7 @@ public class Main {
     }
 
     public static void getReceipt() {
-        String receiptId = "62875039d01c7e00219b5ffe";
+        String receiptId = "62876963d01c7e00209b6028";
         try {
             HashMap<String, Object> res = bootpay.getReceipt(receiptId);
             if(res.get("error_code") == null) { //success
@@ -227,7 +236,6 @@ public class Main {
             } else {
                 System.out.println("getReceipt false: " + res);
             }
-//            System.out.println(res.get("receipt_id"));
         } catch (Exception e) {
             e.printStackTrace();
         }
