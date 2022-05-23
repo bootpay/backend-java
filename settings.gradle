@@ -1,2 +1,4 @@
 rootProject.name = 'backend-java'
+include 'core'
+include 'app'
 
