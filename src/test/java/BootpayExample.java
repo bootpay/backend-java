@@ -1,12 +1,6 @@
-
-import com.google.gson.Gson;
 import kr.co.bootpay.Bootpay;
-import kr.co.bootpay.model.BankCode;
 import kr.co.bootpay.model.request.*;
 import kr.co.bootpay.model.response.ResDefault;
-import kr.co.bootpay.model.response.data.*;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
 
 import java.util.HashMap;
 
@@ -15,25 +9,26 @@ public class BootpayExample {
     static Bootpay bootpay;
     public static void main(String[] args) {
         bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+//        bootpay = new Bootpay("59b731f084382614ebf72215", "WwDv0UjfwFa04wYG0LJZZv1xwraQnlhnHE375n52X0U=");
 
         goGetToken();
-//        goVerfity();
-//        receiptCancel();
-//        getBillingKey();
-//        requestSubscribe();
+        getReceipt();
+        receiptCancel();
+        getBillingKey();
+        requestSubscribe();
         reserveSubscribe();
-//        reserveCancelSubscribe();
-//        destroyBillingKey();
-//        getUserToken();
-//        requestLink();
-//        submit();
-//        certificate();
+        reserveCancelSubscribe();
+        destroyBillingKey();
+        getUserToken();
+        requestLink();
+        confirm();
+        certificate();
     }
 
     public static void goGetToken() {
         try {
-            ResDefault<HashMap<String, Object>> res = bootpay.getAccessToken();
-            System.out.println(res.toJson());
+            HashMap<String, Object> res = bootpay.getAccessToken();
+            System.out.println("goGetToken:" + res.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -55,8 +50,8 @@ public class BootpayExample {
         subscribe.userInfo.phone = "01011112222";
 
         try {
-            ResDefault<HashMap<String, Object>> res = bootpay.getBillingKey(subscribe);
-            System.out.println(res.toJson());
+            HashMap<String, Object> res = bootpay.getBillingKey(subscribe);
+            System.out.println("getBillingKey:" + res.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,8 +60,8 @@ public class BootpayExample {
     public static void destroyBillingKey() {
         String receiptId = "6100e7ea0d681b001fd4de69";
         try {
-            ResDefault res = bootpay.destroyBillingKey(receiptId);
-            System.out.println(res.toJson());
+            HashMap<String, Object> res = bootpay.destroyBillingKey(receiptId);
+            System.out.println("destroyBillingKey:" + res.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,8 +75,8 @@ public class BootpayExample {
         payload.orderId = "" + (System.currentTimeMillis() / 1000);
 
         try {
-            ResDefault<HashMap<String, Object>> res = bootpay.requestSubscribe(payload);
-            System.out.println(res.toJson());
+            HashMap<String, Object> res = bootpay.requestSubscribe(payload);
+            System.out.println("requestSubscribe:" + res.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,8 +92,8 @@ public class BootpayExample {
         payload.executeAt = (System.currentTimeMillis() / 1000) + 10; // 결제 승인 시점
 
         try {
-            ResDefault<HashMap<String, Object>> res = bootpay.reserveSubscribe(payload);
-            System.out.println(res.toJson());
+            HashMap<String, Object> res = bootpay.reserveSubscribe(payload);
+            System.out.println("reserveSubscribe:" + res.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -107,8 +102,8 @@ public class BootpayExample {
     public static void reserveCancelSubscribe() {
         String receiptId = "618c66320d681b00445194b5";
         try {
-            ResDefault<HashMap<String, Object>> res = bootpay.reserveCancelSubscribe(receiptId);
-            System.out.println(res.toJson());
+            HashMap<String, Object> res = bootpay.reserveCancelSubscribe(receiptId);
+            System.out.println("reserveCancelSubscribe:" + res.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -128,8 +123,8 @@ public class BootpayExample {
 //        cancel.refund = refund;
 
         try {
-            ResDefault<HashMap<String, Object>> res = bootpay.receiptCancel(cancel);
-            System.out.println(res.toJson());
+            HashMap<String, Object> res = bootpay.receiptCancel(cancel);
+            System.out.println("receiptCancel:" + res.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -139,13 +134,14 @@ public class BootpayExample {
         UserToken userToken = new UserToken();
         userToken.userId = "1234"; // 개발사에서 관리하는 회원 고유 번호
         try {
-            ResDefault<HashMap<String, Object>> res = bootpay.getUserToken(userToken);
-            System.out.println(res.toJson());
+            HashMap<String, Object> res = bootpay.getUserToken(userToken);
+            System.out.println("getUserToken:" + res.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    @Deprecated
     public static void requestLink() {
         Payload payload = new Payload();
         payload.orderId = "1234";
@@ -168,39 +164,45 @@ public class BootpayExample {
 
         try {
             ResDefault res = bootpay.requestLink(payload);
-            System.out.println(res.data);
-            System.out.println(res.toJson());
+            System.out.println("requestLink:" + res.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void submit() {
+    public static void confirm() {
         String receiptId = "6100e8e7019943003850f9b0";
         try {
-            ResDefault<HashMap<String, Object>> res = bootpay.submit(receiptId);
-            System.out.println(res.toJson());
+            HashMap<String, Object> res = bootpay.confirm(receiptId);
+            if(res.get("error_code") == null) { //success
+                System.out.println("confirm success: " + res.toString());
+            }
+            System.out.println("confirm false: " + res.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void goVerfity() {
-        String receiptId = "6100e77a019943003650f4d5";
+    public static void getReceipt() {
+        String receiptId = "62875039d01c7e00219b5ffe";
         try {
-            ResDefault<HashMap<String, Object>> res = bootpay.verify(receiptId);
-            System.out.println(res.data.get("receipt_id"));
-            System.out.println(res.toJson());
+            HashMap<String, Object> res = bootpay.getReceipt(receiptId);
+
+            if(res.get("error_code") == null) { //success
+                System.out.println("getReceipt success: " + res.toString());
+            }
+            System.out.println("getReceipt false: " + res.toString());
+//            System.out.println(res.get("receipt_id"));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public static void certificate() {
-        String receiptId = "6184f5310d681b0020511c23";
+        String receiptId = "628ae7ffd01c7e001e9b6066";
         try {
-            ResDefault<HashMap<String, Object>> res = bootpay.certificate(receiptId);
-            System.out.println(res.toJson());
+            HashMap<String, Object> res = bootpay.certificate(receiptId);
+            System.out.println("certificate:" + res.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

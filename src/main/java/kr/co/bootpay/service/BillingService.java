@@ -1,17 +1,12 @@
 package kr.co.bootpay.service;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.BootpayObject;
 import kr.co.bootpay.model.request.Subscribe;
 import kr.co.bootpay.model.request.SubscribePayload;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import kr.co.bootpay.model.response.ResDefault;
-import kr.co.bootpay.model.response.data.BillingKeyData;
-import kr.co.bootpay.model.response.data.SubscribeBillingData;
-import kr.co.bootpay.model.response.data.SubscribeBillingReserveData;
-import kr.co.bootpay.model.response.data.TokenData;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -24,7 +19,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 
 public class BillingService {
-    static public ResDefault<HashMap<String, Object>> getBillingKey(BootpayObject bootpay, Subscribe subscribe) throws Exception {
+    static public HashMap<String, Object> getBillingKey(BootpayObject bootpay, Subscribe subscribe) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(subscribe.itemName == null || subscribe.itemName.isEmpty()) throw new Exception("item_name 값을 입력해주세요.");
         if(subscribe.orderId == null || subscribe.orderId.isEmpty()) throw new Exception("order_id 주문번호를 설정해주세요.");
@@ -34,34 +29,32 @@ public class BillingService {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
-        HttpPost post = bootpay.httpPost("request/card_rebill", new StringEntity(gson.toJson(subscribe), "UTF-8"));
+        HttpPost post = bootpay.httpPost("request/subscribe", new StringEntity(gson.toJson(subscribe), "UTF-8"));
 
-        post.setHeader("Authorization", bootpay.token);
+        post.setHeader("Authorization", bootpay.getTokenValue());
         HttpResponse response = client.execute(post);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
-        ResDefault res = new Gson().fromJson(str, resType);
-        return res;
+        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+        return new Gson().fromJson(str, resType);
     }
 
-    static public ResDefault<HashMap<String, Object>>  destroyBillingKey(BootpayObject bootpay, String billingKey) throws Exception {
+    static public HashMap<String, Object>  destroyBillingKey(BootpayObject bootpay, String billingKey) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(billingKey == null || billingKey.isEmpty()) throw new Exception("billingKey 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
-        HttpDelete delete = bootpay.httpDelete("subscribe/billing/" + billingKey);
-        delete.setHeader("Authorization", bootpay.token);
+        HttpDelete delete = bootpay.httpDelete("subscribe/billing_key/" + billingKey);
+        delete.setHeader("Authorization", bootpay.getTokenValue());
 
         HttpResponse response = client.execute(delete);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
-        ResDefault res = new Gson().fromJson(str, resType);
-        return res;
+        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+        return new Gson().fromJson(str, resType);
     }
 
-    static public ResDefault<HashMap<String, Object>> requestSubscribe(BootpayObject bootpay, SubscribePayload payload) throws Exception {
+    static public HashMap<String, Object> requestSubscribe(BootpayObject bootpay, SubscribePayload payload) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(payload.billingKey == null || payload.billingKey.isEmpty()) throw new Exception("billing_key 값을 입력해주세요.");
         if(payload.itemName == null || payload.itemName.isEmpty()) throw new Exception("item_name 값을 입력해주세요.");
@@ -72,18 +65,17 @@ public class BillingService {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
-        HttpPost post = bootpay.httpPost("subscribe/billing", new StringEntity(gson.toJson(payload), "UTF-8"));
-        post.setHeader("Authorization", bootpay.token);
+        HttpPost post = bootpay.httpPost("subscribe/payment", new StringEntity(gson.toJson(payload), "UTF-8"));
+        post.setHeader("Authorization", bootpay.getTokenValue());
 
         HttpResponse response = client.execute(post);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
-        ResDefault res = new Gson().fromJson(str, resType);
-        return res;
+        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+        return new Gson().fromJson(str, resType);
     }
 
-    static public ResDefault<HashMap<String, Object>> reserveSubscribe(BootpayObject bootpay, SubscribePayload reserve) throws Exception {
+    static public HashMap<String, Object> reserveSubscribe(BootpayObject bootpay, SubscribePayload reserve) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(reserve.billingKey == null || reserve.billingKey.isEmpty()) throw new Exception("billing_key 값을 입력해주세요.");
         if(reserve.itemName == null || reserve.itemName.isEmpty()) throw new Exception("item_name 값을 입력해주세요.");
@@ -96,31 +88,29 @@ public class BillingService {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
-        HttpPost post = bootpay.httpPost("subscribe/billing/reserve", new StringEntity(gson.toJson(reserve), "UTF-8"));
-        post.setHeader("Authorization", bootpay.token);
+        HttpPost post = bootpay.httpPost("subscribe/payment/reserve", new StringEntity(gson.toJson(reserve), "UTF-8"));
+        post.setHeader("Authorization", bootpay.getTokenValue());
         HttpResponse response = client.execute(post);
 
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
-        ResDefault res = new Gson().fromJson(str, resType);
-        return res;
+        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+        return new Gson().fromJson(str, resType);
     }
 
 
-    static public ResDefault<HashMap<String, Object>>  reserveCancelSubscribe(BootpayObject bootpay, String reserve_id) throws Exception {
+    static public HashMap<String, Object>  reserveCancelSubscribe(BootpayObject bootpay, String reserve_id) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(reserve_id == null || reserve_id.isEmpty()) throw new Exception("reserve_id 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
-        HttpDelete delete = bootpay.httpDelete("subscribe/billing/reserve/" + reserve_id);
-        delete.setHeader("Authorization", bootpay.token);
+        HttpDelete delete = bootpay.httpDelete("subscribe/payment/reserve/" + reserve_id);
+        delete.setHeader("Authorization", bootpay.getTokenValue());
 
         HttpResponse response = client.execute(delete);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
-        ResDefault res = new Gson().fromJson(str, resType);
-        return res;
+        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+        return new Gson().fromJson(str, resType);
     }
 }

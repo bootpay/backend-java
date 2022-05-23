@@ -1,14 +1,11 @@
 package kr.co.bootpay.service;
 
-import com.google.gson.reflect.TypeToken;
-import kr.co.bootpay.BootpayObject;
-import kr.co.bootpay.model.request.UserToken;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import kr.co.bootpay.model.response.ResDefault;
-import kr.co.bootpay.model.response.data.EasyUserTokenData;
-import kr.co.bootpay.model.response.data.TokenData;
+import com.google.gson.reflect.TypeToken;
+import kr.co.bootpay.BootpayObject;
+import kr.co.bootpay.model.request.UserToken;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -21,7 +18,7 @@ import java.util.HashMap;
 
 //간편결제창, 생체인증 기반 간편 결제 등
 public class EasyService {
-    static public ResDefault<HashMap<String, Object>> getUserToken(BootpayObject bootpay, UserToken userToken) throws Exception {
+    static public HashMap<String, Object> getUserToken(BootpayObject bootpay, UserToken userToken) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(userToken.userId == null || userToken.userId.isEmpty()) throw new Exception("userId 값을 입력해주세요.");
 
@@ -31,13 +28,12 @@ public class EasyService {
                 .create();
         HttpPost post = bootpay.httpPost("request/user/token", new StringEntity(gson.toJson(userToken), "UTF-8"));
 
-        post.setHeader("Authorization", bootpay.token);
+        post.setHeader("Authorization", bootpay.getTokenValue());
         HttpResponse response = client.execute(post);
 
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        Type resType = new TypeToken<ResDefault<HashMap<String, Object>>>(){}.getType();
-        ResDefault res = new Gson().fromJson(str, resType);
-        return res;
+        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+        return new Gson().fromJson(str, resType);
     }
 }
