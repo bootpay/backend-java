@@ -29,7 +29,7 @@
 build.gradle (project)
 ```
 dependencies {
-    implementation 'io.github.bootpay:backend-java:+'
+    implementation 'io.github.bootpay:backend:+'
 }
 ```
 
@@ -55,10 +55,14 @@ public class BootpayExample {
         goGetToken();
     }
     
-    public static void goGetToken() {
+     public static void goGetToken() {
         try {
-            ResDefault<HashMap<String, Object>> res = bootpay.getAccessToken(); 
-            System.out.println(res.toJson());
+            HashMap<String, Object> res = bootpay.getAccessToken();
+            if(res.get("error_code") == null) { //success
+                System.out.println("goGetToken success: " + res);
+            } else {
+                System.out.println("goGetToken false: " + res);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,10 +78,14 @@ public class BootpayExample {
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 try {
-    ResDefault<HashMap<String, Object>> res = bootpay.getAccessToken(); 
-    System.out.println(res.toJson());
+   HashMap<String, Object> res = bootpay.getAccessToken();
+   if(res.get("error_code") == null) { //success
+       System.out.println("goGetToken success: " + res);
+   } else {
+       System.out.println("goGetToken false: " + res);
+   }
 } catch (Exception e) {
-    e.printStackTrace();
+   e.printStackTrace();
 }
 ```
 
@@ -87,10 +95,14 @@ try {
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
 try {
-    ResDefault<HashMap<String, Object>> res = bootpay.verify("6100e8e7019943003850f9b0");
-    System.out.println(res.toJson());
+   HashMap<String, Object> res = bootpay.getReceipt(receiptId);
+   if(res.get("error_code") == null) { //success
+       System.out.println("getReceipt success: " + res);
+   } else {
+       System.out.println("getReceipt false: " + res);
+   }
 } catch (Exception e) {
-    e.printStackTrace();
+   e.printStackTrace();
 }
 ```
 
@@ -108,22 +120,26 @@ price를 지정하지 않으면 전액취소 됩니다.
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
 Cancel cancel = new Cancel();
-cancel.receiptId = "6100e77a019943003650f4d5";
+cancel.receiptId = "628b2206d01c7e00209b6087";
 cancel.name = "관리자";
 cancel.reason = "테스트 결제";
-//cancel.price = 1000.0; //부분취소 요청시
-//cancel.cancelId = "12342134"; //부분취소 요청시, 중복 부분취소 요청하는 실수를 방지하고자 할때 지정
-//RefundData refund = new RefundData(); // 가상계좌 환불 요청시, 단 CMS 특약이 되어있어야만 환불요청이 가능하다.
-//refund.account = "675601012341234"; //환불계좌
-//refund.accountholder = "홍길동"; //환불계좌주
-//refund.bankcode = BankCode.getCode("국민은행");//은행코드
-//cancel.refund = refund;
+//        cancel.price = 1000.0; //부분취소 요청시
+//        cancel.cancelId = "12342134"; //부분취소 요청시, 중복 부분취소 요청하는 실수를 방지하고자 할때 지정
+//        RefundData refund = new RefundData(); // 가상계좌 환불 요청시, 단 CMS 특약이 되어있어야만 환불요청이 가능하다.
+//        refund.account = "675601012341234"; //환불계좌
+//        refund.accountholder = "홍길동"; //환불계좌주
+//        refund.bankcode = BankCode.getCode("국민은행");//은행코드
+//        cancel.refund = refund;
 
 try {
-    ResDefault<HashMap<String, Object>> res = bootpay.receiptCancel(cancel); 
-    System.out.println(res.toJson());
+   HashMap<String, Object> res = bootpay.receiptCancel(cancel);
+   if(res.get("error_code") == null) { //success
+       System.out.println("receiptCancel success: " + res);
+   } else {
+       System.out.println("receiptCancel false: " + res);
+   }
 } catch (Exception e) {
-    e.printStackTrace();
+   e.printStackTrace();
 }
 ```
 
@@ -135,19 +151,29 @@ REST API 방식으로 고객으로부터 카드 정보를 전달하여, PG사에
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
 Subscribe subscribe = new Subscribe();
-subscribe.itemName = "정기결제 테스트 아이템";
-subscribe.orderId = "" + (System.currentTimeMillis() / 1000);
-subscribe.pg = "nicepay";
+subscribe.orderName = "정기결제 테스트 아이템";
+subscribe.subscriptionId = "" + (System.currentTimeMillis() / 1000);
+subscribe.pg = "payapp";
 subscribe.cardNo = "5570**********1074"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
 subscribe.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-subscribe.expireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-subscribe.expireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-subscribe.identifyNumber = ""; //주민등록번호 또는 사업자 등록번호 (- 없이 입력)
+subscribe.cardExpireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+subscribe.cardExpireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+subscribe.cardIdentityNo = ""; //주민등록번호 또는 사업자 등록번호 (- 없이 입력)
+
+
+subscribe.user = new User();
+subscribe.user.username = "홍길동";
+subscribe.user.phone = "01011112222";
+
 try {
-    ResDefault<HashMap<String, Object>> res = bootpay.getBillingKey(subscribe);
-    System.out.println(res.toJson());
+   HashMap<String, Object> res = bootpay.getBillingKey(subscribe);
+   if(res.get("error_code") == null) { //success
+       System.out.println("getBillingKey success: " + res);
+   } else {
+       System.out.println("getBillingKey false: " + res);
+   }
 } catch (Exception e) {
-    e.printStackTrace();
+   e.printStackTrace();
 }
 ```
 
@@ -158,16 +184,22 @@ try {
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
 SubscribePayload payload = new SubscribePayload();
-payload.billingKey = "6100e8c80d681b001dd4e0d7";
-payload.itemName = "아이템01";
+payload.billingKey = "628b2644d01c7e00209b6092";
+payload.orderName = "아이템01";
 payload.price = 1000;
+payload.user = new User();
+payload.user.phone = "01012345678";
 payload.orderId = "" + (System.currentTimeMillis() / 1000);
 
 try {
-    ResDefault<HashMap<String, Object>> res = bootpay.requestSubscribe(payload);
-    System.out.println(res.toJson());
+   HashMap<String, Object> res = bootpay.requestSubscribe(payload);
+   if(res.get("error_code") == null) { //success
+       System.out.println("requestSubscribe success: " + res);
+   } else {
+       System.out.println("requestSubscribe false: " + res);
+   }
 } catch (Exception e) {
-    e.printStackTrace();
+   e.printStackTrace();
 }
 ```
 ## 4-2. 발급된 빌링키로 결제 예약 요청
@@ -175,18 +207,28 @@ try {
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
-SubscribePayload payload = new SubscribePayload();
-payload.billingKey = "6100e77a0d681b002ad4e5d9";
-payload.itemName = "아이템01";
+SubscribePayload payload = new SubscribePayload(); 
+payload.billingKey = "628b2644d01c7e00209b6092";
+payload.orderName = "아이템01";
 payload.price = 1000;
 payload.orderId = "" + (System.currentTimeMillis() / 1000);
-payload.executeAt = (System.currentTimeMillis() / 1000) + 10000; // 결제 승인 시점 
+
+Date now = new Date();
+now.setTime(now.getTime() + 10 * 1000); //10초 뒤 결제
+//
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss XXX");
+sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+payload.reserveExecuteAt = sdf.format(now); // 결제 승인 시점
 
 try {
-    ResDefault<HashMap<String, Object>> res = bootpay.reserveSubscribe(payload);
-    System.out.println(res.toJson());
+   HashMap<String, Object> res = bootpay.reserveSubscribe(payload);
+   if(res.get("error_code") == null) { //success
+       System.out.println("reserveSubscribe success: " + res);
+   } else {
+       System.out.println("reserveSubscribe false: " + res);
+   }
 } catch (Exception e) {
-    e.printStackTrace();
+   e.printStackTrace();
 }
 ```
 ## 4-2-1. 발급된 빌링키로 결제 예약 - 취소 요청 
@@ -194,24 +236,32 @@ try {
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
-String reserveId = "6100e892019943002150fef3";
+String receiptId = "628b316cd01c7e00219b6081";
 try {
-    ResDefault res = bootpay.reserveCancelSubscribe(reserveId);
-    System.out.println(res.toJson());
+   HashMap<String, Object> res = bootpay.reserveCancelSubscribe(receiptId);
+   if(res.get("error_code") == null) { //success
+       System.out.println("reserveCancelSubscribe success: " + res);
+   } else {
+       System.out.println("reserveCancelSubscribe false: " + res);
+   }
 } catch (Exception e) {
-    e.printStackTrace();
+   e.printStackTrace();
 }
 ```
 ## 4-3. 빌링키 삭제 
 발급된 빌링키로 더 이상 사용되지 않도록, 삭제 요청합니다.
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
-
+String receiptId = "628b2644d01c7e00209b6092";
 try {
-    ResDefault res = bootpay.destroyBillingKey("6100e7ea0d681b001fd4de69");
-    System.out.println(res.toJson());
+   HashMap<String, Object> res = bootpay.destroyBillingKey(receiptId);
+   if(res.get("error_code") == null) { //success
+       System.out.println("destroyBillingKey success: " + res);
+   } else {
+       System.out.println("destroyBillingKey false: " + res);
+   }
 } catch (Exception e) {
-    e.printStackTrace();
+   e.printStackTrace();
 }
 ```
 ## 5. 사용자 토큰 발급 
@@ -221,16 +271,20 @@ try {
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
 UserToken userToken = new UserToken();
-userToken.userId = "1234"; // 개발사에서 관리하는 회원 고유 번호 
+userToken.userId = "1234"; // 개발사에서 관리하는 회원 고유 번호
 try {
-    ResDefault<HashMap<String, Object>> res = bootpay.getUserToken(userToken);
-    System.out.println(res.toJson());
+   HashMap<String, Object> res = bootpay.getUserToken(userToken);
+   if(res.get("error_code") == null) { //success
+       System.out.println("getUserToken success: " + res);
+   } else {
+       System.out.println("getUserToken false: " + res);
+   }
 } catch (Exception e) {
-    e.printStackTrace();
+   e.printStackTrace();
 }
 ```
 ## 6. 결제 링크 생성 
-(부트페이 단독) 요청 하시면 결제링크가 리턴되며, 해당 url을 고객에게 안내, 결제 유도하여 결제를 진행할 수 있습니다. 
+(현재 지원되지 않음) 요청 하시면 결제링크가 리턴되며, 해당 url을 고객에게 안내, 결제 유도하여 결제를 진행할 수 있습니다. 
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
@@ -260,12 +314,16 @@ try {
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
-String receiptId = "6100e8e7019943003850f9b0";
+String receiptId = "62876963d01c7e00209b6028";
 try {
-    ResDefault<HashMap<String, Object>> res = bootpay.submit(receiptId);
-    System.out.println(res.toJson());
+   HashMap<String, Object> res = bootpay.confirm(receiptId);
+   if(res.get("error_code") == null) { //success
+       System.out.println("confirm success: " + res);
+   } else {
+       System.out.println("confirm false: " + res);
+   }
 } catch (Exception e) {
-    e.printStackTrace();
+   e.printStackTrace();
 }
 ```
 
@@ -275,12 +333,15 @@ try {
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
-String receiptId = "593f8febe13f332431a8ddae";
 try {
-    ResDefault<HashMap<String, Object>> res = bootpay.certificate(receiptId);
-    System.out.println(res.toJson());
+   HashMap<String, Object> res = bootpay.certificate(receiptId);
+   if(res.get("error_code") == null) { //success
+       System.out.println("certificate success: " + res);
+   } else {
+       System.out.println("certificate false: " + res);
+   }
 } catch (Exception e) {
-    e.printStackTrace();
+   e.printStackTrace();
 }
 ```
 
