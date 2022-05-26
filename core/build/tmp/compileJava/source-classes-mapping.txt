@@ -2,15 +2,16 @@ kr/co/bootpay/model/response/data/EasyUserTokenData.java
  kr.co.bootpay.model.response.data.EasyUserTokenData
 kr/co/bootpay/model/response/data/CertificateData.java
  kr.co.bootpay.model.response.data.CertificateData
-kr/co/bootpay/model/response/data/TokenData.java
- kr.co.bootpay.model.response.data.TokenData
+kr/co/bootpay/Bootpay.java
+ kr.co.bootpay.Bootpay
 kr/co/bootpay/model/request/Item.java
  kr.co.bootpay.model.request.Item
 kr/co/bootpay/model/request/SMS.java
  kr.co.bootpay.model.request.SMS
-kr/co/bootpay/service/TokenService.java
- kr.co.bootpay.service.TokenService
- kr.co.bootpay.service.TokenService$1
+kr/co/bootpay/service/VerificationService.java
+ kr.co.bootpay.service.VerificationService
+ kr.co.bootpay.service.VerificationService$1
+ kr.co.bootpay.service.VerificationService$2
 kr/co/bootpay/model/request/Cancel.java
  kr.co.bootpay.model.request.Cancel
 kr/co/bootpay/model/response/data/SubscribeBillingData.java
@@ -76,9 +77,8 @@ kr/co/bootpay/service/CancelService.java
  kr.co.bootpay.service.CancelService$1
 kr/co/bootpay/model/request/SubscribeExtra.java
  kr.co.bootpay.model.request.SubscribeExtra
-kr/co/bootpay/Bootpay.java
- kr.co.bootpay.Bootpay
-kr/co/bootpay/service/VerificationService.java
- kr.co.bootpay.service.VerificationService
- kr.co.bootpay.service.VerificationService$1
- kr.co.bootpay.service.VerificationService$2
+kr/co/bootpay/service/TokenService.java
+ kr.co.bootpay.service.TokenService
+ kr.co.bootpay.service.TokenService$1
+kr/co/bootpay/model/response/data/TokenData.java
+ kr.co.bootpay.model.response.data.TokenData

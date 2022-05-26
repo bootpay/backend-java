@@ -16,6 +16,7 @@ public class Main {
     public static void main(String[] args) {
         bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
+
         goGetToken();
         getReceipt();
         receiptCancel();
@@ -47,7 +48,7 @@ public class Main {
         Subscribe subscribe = new Subscribe();
         subscribe.orderName = "정기결제 테스트 아이템";
         subscribe.subscriptionId = "" + (System.currentTimeMillis() / 1000);
-        subscribe.pg = "payapp";
+        subscribe.pg = "welcome";
         subscribe.cardNo = "5570**********1074"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardExpireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
@@ -58,6 +59,8 @@ public class Main {
         subscribe.user = new User();
         subscribe.user.username = "홍길동";
         subscribe.user.phone = "01011112222";
+//        subscribe.extra = new SubscribeExtra();
+//        subscribe.extra.rawData = 1;
 
         try {
             HashMap<String, Object> res = bootpay.getBillingKey(subscribe);
