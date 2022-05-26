@@ -1,3 +1,9 @@
+### 2.0.1
+- jdk 11 -> 8로 다운그레이드 후 배포 
+
+### 2.0.0
+- bootpay api v2 배포 
+
 ### 1.0.9
 - data response format이 대부분 hashmap으로 수정되었습니다.
 
