@@ -1,6 +1,7 @@
 package com.example.bootpay;
 
 import kr.co.bootpay.Bootpay;
+import kr.co.bootpay.model.BankCode;
 import kr.co.bootpay.model.request.*;
 import kr.co.bootpay.model.response.ResDefault;
 
@@ -15,7 +16,6 @@ public class Main {
     static Bootpay bootpay;
     public static void main(String[] args) {
         bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
-
 
         goGetToken();
         getReceipt();
