@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -38,6 +39,27 @@ public class BillingService {
         Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
         return new Gson().fromJson(str, resType);
     }
+
+//    빌링키 조회
+    static public HashMap<String, Object> lookupBillingKey(BootpayObject bootpay, String receiptId) throws Exception {
+        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(receiptId == null || receiptId.isEmpty()) throw new Exception("receiptId 값이 비어있습니다.");
+
+        HttpClient client = HttpClientBuilder.create().build();
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+        HttpGet get = bootpay.httpGet("subscribe/billing_key/" + receiptId);
+
+        get.setHeader("Authorization", bootpay.getTokenValue());
+        HttpResponse response = client.execute(get);
+        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+
+        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+        return new Gson().fromJson(str, resType);
+    }
+
+
 
     static public HashMap<String, Object>  destroyBillingKey(BootpayObject bootpay, String billingKey) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");

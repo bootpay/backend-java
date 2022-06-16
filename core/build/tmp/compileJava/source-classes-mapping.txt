@@ -33,8 +33,12 @@ kr/co/bootpay/service/BillingService.java
  kr.co.bootpay.service.BillingService$5
 kr/co/bootpay/model/response/data/PaymentData.java
  kr.co.bootpay.model.response.data.PaymentData
+kr/co/bootpay/model/ShippingCompanyCode.java
+ kr.co.bootpay.model.ShippingCompanyCode
 kr/co/bootpay/model/request/LMS.java
  kr.co.bootpay.model.request.LMS
+kr/co/bootpay/model/request/Shipping.java
+ kr.co.bootpay.model.request.Shipping
 kr/co/bootpay/model/request/Subscribe.java
  kr.co.bootpay.model.request.Subscribe
 kr/co/bootpay/model/request/RefundData.java
@@ -48,8 +52,13 @@ kr/co/bootpay/model/response/data/SubscribeBillingReserveData.java
  kr.co.bootpay.model.response.data.SubscribeBillingReserveData
 kr/co/bootpay/model/request/Confirm.java
  kr.co.bootpay.model.request.Confirm
+kr/co/bootpay/model/request/ShippingUser.java
+ kr.co.bootpay.model.request.ShippingUser
 kr/co/bootpay/BootpayConfig.java
  kr.co.bootpay.BootpayConfig
+kr/co/bootpay/service/EscrowService.java
+ kr.co.bootpay.service.EscrowService
+ kr.co.bootpay.service.EscrowService$1
 kr/co/bootpay/model/response/ResDefault.java
  kr.co.bootpay.model.response.ResDefault
 kr/co/bootpay/model/request/User.java
@@ -82,3 +91,5 @@ kr/co/bootpay/service/TokenService.java
  kr.co.bootpay.service.TokenService$1
 kr/co/bootpay/model/response/data/TokenData.java
  kr.co.bootpay.model.response.data.TokenData
+kr/co/bootpay/model/request/ShippingCompany.java
+ kr.co.bootpay.model.request.ShippingCompany

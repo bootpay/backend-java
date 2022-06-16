@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.BootpayObject;
+import kr.co.bootpay.model.BankCode;
 import kr.co.bootpay.model.request.Cancel;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -21,6 +22,7 @@ public class CancelService {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(cancel.receiptId == null || cancel.receiptId.isEmpty()) throw new Exception("receiptId 값을 입력해주세요.");
 
+//        String temp = BankCode.강원.name();
 
         HttpClient client = HttpClientBuilder.create().build();
         Gson gson = new GsonBuilder()
