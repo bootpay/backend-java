@@ -153,8 +153,8 @@ public class Main {
     public static void receiptCancel() {
         Cancel cancel = new Cancel();
         cancel.receiptId = "628b2206d01c7e00209b6087";
-        cancel.name = "관리자";
-        cancel.reason = "테스트 결제";
+        cancel.cancelUsername = "관리자";
+        cancel.cancelMessage = "테스트 결제";
 //        cancel.price = 1000.0; //부분취소 요청시
 //        cancel.cancelId = "12342134"; //부분취소 요청시, 중복 부분취소 요청하는 실수를 방지하고자 할때 지정
 //        RefundData refund = new RefundData(); // 가상계좌 환불 요청시, 단 CMS 특약이 되어있어야만 환불요청이 가능하다.
@@ -194,7 +194,7 @@ public class Main {
     public static void requestLink() {
         Payload payload = new Payload();
         payload.orderId = "1234";
-        payload.price = 1000;
+        payload.price = 1000d;
         payload.name = "테스트 결제";
         payload.pg = "payapp";
 //        payload.method = "vbank";
@@ -202,7 +202,7 @@ public class Main {
         User user = new User();
         user.username = "홍길동";
         user.phone = "01012341234";
-        payload.userInfo = user;
+        payload.user = user;
 
         Extra extra = new Extra();
         payload.extra = extra;

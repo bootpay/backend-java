@@ -1,14 +1,37 @@
 package kr.co.bootpay.model.request;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Extra {
-    public boolean escrow; // 에스크로 연동 시 true, 기본값 false
-    public List<Integer> quota; // 결제금액이 5만원 이상시 할부개월 허용범위를 설정할 수 있음, ex) "0,2,3" 지정시 - [0(일시불), 2개월, 3개월] 허용, 미설정시 PG사별 기본값 적용, 1 지정시 에러가 발생할 수 있음
-    public boolean dispCashResult; // 현금영수증 노출할지 말지 (가상계좌 이용시)
-    public int rawData; // pg사의 오류를 받아오기 원하면 1, 아니면 0
-    public String offerPeriod; //통합결제창, PG 정기결제창에서 표시되는 '월 자동결제'에 해당하는 문구를 지정한 값으로 변경, 지원하는 PG사만 적용 가능
-    public String theme; // 통합결제창 테마, [ red, purple(기본), custom ] 중 택 1
-    public String customBackground;  // 통합결제창 배경색,  ex) "#00a086" theme가 custom 일 때 background 색상 지정 가능
-    public String customFontColor; // 통합결제창 글자색,  ex) "#ffffff" theme가 custom 일 때 font color 색상 지정 가능 
+    public String cardQuota; //카드 결제시 할부 기간 설정 (5만원 이상 구매시)
+    public String sellerName; //노출되는 판매자명 설정
+    public int deliveryDay = 1; //배송일자
+    public String locale = "ko"; //결제창 언어지원
+    public String offerPeriod; //결제창 제공기간에 해당하는 string 값, 지원하는 PG만 적용됨
+    public boolean displayCashReceipt = true; // 현금영수증 보일지 말지.. 가상계좌 KCP 옵션
+    public String depositExpiration; //가상계좌 입금 만료일자 설정, yyyy-MM-dd
+
+    public String appScheme; //모바일 앱에서 결제 완료 후 돌아오는 옵션 ( 아이폰만 적용 )
+    public boolean useCardPoint = true; //카드 포인트 사용 여부 (토스만 가능)
+    public String directCard = ""; //해당 카드로 바로 결제창 (토스만 가능)
+
+    public boolean useOrderId = false; //가맹점 order_id로 PG로 전송
+    public boolean internationalCardOnly = false; //해외 결제카드 선택 여부 (토스만 가능)
+    public String phoneCarrier;  //본인인증 시 고정할 통신사명, SKT,KT,LGT 중 1개만 가능
+    public boolean directAppCard = false; //카드사앱으로 direct 호출
+    public boolean directSamsungpay = false; //삼성페이 바로 띄우기
+    public boolean testDeposit = false;  //가상계좌 모의 입금
+    public boolean enableErrorWebhook = false;  //결제 오류시 Feedback URL로 webhook
+    public boolean separatelyConfirmed = true; // confirm 이벤트를 호출할지 말지, false일 경우 자동승인
+    public boolean confirmOnlyRestApi = false; // REST API로만 승인 처리
+    public String openType = "redirect"; //페이지 오픈 type [iframe, popup, redirect] 중 택 1
+    public boolean useBootpayInappSdk = true; //native app에서는 redirect를 완성도있게 지원하기 위한 옵션
+    public String redirectUrl = "https://api.bootpay.co.kr/v2"; //open_type이 redirect일 경우 페이지 이동할 URL ( 오류 및 결제 완료 모두 수신 가능 )
+    public boolean displaySuccessResult = false; // 결제 완료되면 부트페이가 제공하는 완료창으로 보여주기 ( open_type이 iframe, popup 일때만 가능 )
+    public boolean displayErrorResult = true; // 결제가 실패하면 부트페이가 제공하는 실패창으로 보여주기 ( open_type이 iframe, popup 일때만 가능 )
+    public int disposableCupDeposit = 0; //배달대행 플랫폼을 위한 컵 보증급 가격
+    public BootExtraCardEasyOption cardEasyOption = new BootExtraCardEasyOption();
+    public List<BrowserOpenType> browserOpenType = new ArrayList<>();
+    public boolean useWelcomepayment = false; //웰컴 재판모듈 진행시 true
 }
