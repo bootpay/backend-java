@@ -1,6 +1,8 @@
 package kr.co.bootpay.model.request;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Payload {
     public String pg; // [PG 결제] 사용하고자 하는 PG사의 Alias를 입력. ex) danal, kcp, inicis등, 미 지정시 통합결제창이 오픈
@@ -8,9 +10,9 @@ public class Payload {
     public List<String> methods; // 통합결제시 사용할 method 배열 형태
     public Double price; // 결제금액
     public String orderId; // 개발사에서 관리하는 고유결제번호
-    public String params; // string 형태로 전달 할 값, 결제 후 똑같이 리턴해드림
+    public Map<String, Object> metadata = new HashMap<>(); // 결제 후 똑같이 리턴해드림
     public Double taxFree; // 비과세 금액
-    public String name; // 결제할 상품명
+    public String orderName; // 결제할 상품명
     public User user; // 구매자 정보
     public List<Item> items; // 상품정보
     public Extra extra; // 기타 옵션

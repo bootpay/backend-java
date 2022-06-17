@@ -195,7 +195,7 @@ public class Main {
         Payload payload = new Payload();
         payload.orderId = "1234";
         payload.price = 1000d;
-        payload.name = "테스트 결제";
+        payload.orderName = "테스트 결제";
         payload.pg = "payapp";
 //        payload.method = "vbank";
 
