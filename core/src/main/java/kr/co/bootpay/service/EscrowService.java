@@ -28,7 +28,7 @@ public class EscrowService {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
-        HttpPut put = bootpay.httpPut("", new StringEntity(gson.toJson(shipping), "UTF-8"));
+        HttpPut put = bootpay.httpPut("escrow/shipping/start/" + shipping.receiptId, new StringEntity(gson.toJson(shipping), "UTF-8"));
 
 
         put.setHeader("Authorization", bootpay.getTokenValue());
