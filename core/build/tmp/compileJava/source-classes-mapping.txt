@@ -70,22 +70,19 @@ kr/co/bootpay/model/request/User.java
  kr.co.bootpay.model.request.User
 kr/co/bootpay/model/request/Cancel.java
  kr.co.bootpay.model.request.Cancel
-kr/co/bootpay/service/LinkService.java
- kr.co.bootpay.service.LinkService
- kr.co.bootpay.service.LinkService$1
+kr/co/bootpay/model/request/Item.java
+ kr.co.bootpay.model.request.Item
 kr/co/bootpay/model/request/Subscribe.java
  kr.co.bootpay.model.request.Subscribe
 kr/co/bootpay/model/request/BrowserOpenType.java
  kr.co.bootpay.model.request.BrowserOpenType
 kr/co/bootpay/model/request/UserToken.java
  kr.co.bootpay.model.request.UserToken
-kr/co/bootpay/model/request/Payload.java
- kr.co.bootpay.model.request.Payload
-kr/co/bootpay/model/request/Extra.java
- kr.co.bootpay.model.request.Extra
 kr/co/bootpay/service/EasyService.java
  kr.co.bootpay.service.EasyService
  kr.co.bootpay.service.EasyService$1
+kr/co/bootpay/model/request/Extra.java
+ kr.co.bootpay.model.request.Extra
 kr/co/bootpay/service/BillingService.java
  kr.co.bootpay.service.BillingService
  kr.co.bootpay.service.BillingService$1
@@ -96,7 +93,10 @@ kr/co/bootpay/service/BillingService.java
  kr.co.bootpay.service.BillingService$6
 kr/co/bootpay/Bootpay.java
  kr.co.bootpay.Bootpay
-kr/co/bootpay/model/request/Item.java
- kr.co.bootpay.model.request.Item
+kr/co/bootpay/service/LinkService.java
+ kr.co.bootpay.service.LinkService
+ kr.co.bootpay.service.LinkService$1
 kr/co/bootpay/model/request/SubscribePayload.java
  kr.co.bootpay.model.request.SubscribePayload
+kr/co/bootpay/model/request/Payload.java
+ kr.co.bootpay.model.request.Payload
