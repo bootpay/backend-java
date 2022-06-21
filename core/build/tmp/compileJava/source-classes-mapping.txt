@@ -5,8 +5,8 @@ kr/co/bootpay/model/response/data/CertificateData.java
 kr/co/bootpay/service/TokenService.java
  kr.co.bootpay.service.TokenService
  kr.co.bootpay.service.TokenService$1
-kr/co/bootpay/model/request/Shipping.java
- kr.co.bootpay.model.request.Shipping
+kr/co/bootpay/model/request/SubscribePayload.java
+ kr.co.bootpay.model.request.SubscribePayload
 kr/co/bootpay/model/request/SMS.java
  kr.co.bootpay.model.request.SMS
 kr/co/bootpay/service/VerificationService.java
@@ -56,9 +56,8 @@ kr/co/bootpay/model/request/SubscribeExtra.java
  kr.co.bootpay.model.request.SubscribeExtra
 kr/co/bootpay/model/response/ResDefault.java
  kr.co.bootpay.model.response.ResDefault
-kr/co/bootpay/service/EscrowService.java
- kr.co.bootpay.service.EscrowService
- kr.co.bootpay.service.EscrowService$1
+kr/co/bootpay/model/request/Payload.java
+ kr.co.bootpay.model.request.Payload
 kr/co/bootpay/model/request/RefundData.java
  kr.co.bootpay.model.request.RefundData
 kr/co/bootpay/service/CancelService.java
@@ -96,7 +95,8 @@ kr/co/bootpay/Bootpay.java
 kr/co/bootpay/service/LinkService.java
  kr.co.bootpay.service.LinkService
  kr.co.bootpay.service.LinkService$1
-kr/co/bootpay/model/request/SubscribePayload.java
- kr.co.bootpay.model.request.SubscribePayload
-kr/co/bootpay/model/request/Payload.java
- kr.co.bootpay.model.request.Payload
+kr/co/bootpay/service/EscrowService.java
+ kr.co.bootpay.service.EscrowService
+ kr.co.bootpay.service.EscrowService$1
+kr/co/bootpay/model/request/Shipping.java
+ kr.co.bootpay.model.request.Shipping

@@ -19,16 +19,16 @@ public class Main {
 
         goGetToken();
         getReceipt();
-        receiptCancel();
-        getBillingKey();
-        requestSubscribe();
-        reserveSubscribe();
-        reserveCancelSubscribe();
-        destroyBillingKey();
-        getUserToken();
-        requestLink();
-        confirm();
-        certificate();
+//        receiptCancel();
+//        getBillingKey();
+//        requestSubscribe();
+//        reserveSubscribe();
+//        reserveCancelSubscribe();
+//        destroyBillingKey();
+//        getUserToken();
+//        requestLink();
+//        confirm();
+//        certificate();
     }
 
     public static void goGetToken() {
@@ -231,7 +231,7 @@ public class Main {
     }
 
     public static void getReceipt() {
-        String receiptId = "62876963d01c7e00209b6028";
+        String receiptId = "62b12f4b6262500007629fec";
         try {
             HashMap<String, Object> res = bootpay.getReceipt(receiptId);
             if(res.get("error_code") == null) { //success
