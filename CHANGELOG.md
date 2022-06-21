@@ -1,3 +1,6 @@
+### 2.0.7
+- shipping model field added
+
 ### 2.0.6
 - escrow api 업데이트
 
