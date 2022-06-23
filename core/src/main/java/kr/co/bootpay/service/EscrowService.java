@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 //간편결제창, 생체인증 기반 간편 결제 등
 public class EscrowService {
-    static public HashMap<String, Object> putShippingStart(BootpayObject bootpay, Shipping shipping) throws Exception {
+    static public HashMap<String, Object> shippingStart(BootpayObject bootpay, Shipping shipping) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
 //        if(userToken.userId == null || userToken.userId.isEmpty()) throw new Exception("userId 값을 입력해주세요.");
 

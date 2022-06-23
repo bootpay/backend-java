@@ -19,16 +19,17 @@ public class Main {
 
         goGetToken();
         getReceipt();
-//        receiptCancel();
-//        getBillingKey();
-//        requestSubscribe();
-//        reserveSubscribe();
-//        reserveCancelSubscribe();
-//        destroyBillingKey();
-//        getUserToken();
-//        requestLink();
-//        confirm();
-//        certificate();
+        receiptCancel();
+        getBillingKey();
+        requestSubscribe();
+        reserveSubscribe();
+        reserveCancelSubscribe();
+        destroyBillingKey();
+        getUserToken();
+        requestLink();
+        confirm();
+        certificate();
+        shippingStart();
     }
 
     public static void goGetToken() {
@@ -90,7 +91,7 @@ public class Main {
 
     public static void requestSubscribe() {
         SubscribePayload payload = new SubscribePayload();
-        payload.billingKey = "628b2644d01c7e00209b6092";
+        payload.billingKey = "62b3cbc0cf9f6d001bd20ceb";
         payload.orderName = "아이템01";
         payload.price = 1000;
         payload.user = new User();
@@ -248,6 +249,29 @@ public class Main {
         String receiptId = "628ae7ffd01c7e001e9b6066";
         try {
             HashMap<String, Object> res = bootpay.certificate(receiptId);
+            if(res.get("error_code") == null) { //success
+                System.out.println("certificate success: " + res);
+            } else {
+                System.out.println("certificate false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void shippingStart() {
+        Shipping shipping = new Shipping();
+        shipping.receiptId = "628ae7ffd01c7e001e9b6066";
+        shipping.trackingNumber = "123456";
+        shipping.deliveryCorp = "CJ대한통운";
+        ShippingUser user = new ShippingUser();
+        user.username = "홍길동";
+        user.phone = "01000000000";
+        user.address = "서울특별시 종로구";
+        user.zipcode = "08490";
+        shipping.user = user;
+        try {
+            HashMap<String, Object> res = bootpay.shippingStart(shipping);
             if(res.get("error_code") == null) { //success
                 System.out.println("certificate success: " + res);
             } else {

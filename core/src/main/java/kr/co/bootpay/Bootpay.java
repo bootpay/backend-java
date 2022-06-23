@@ -66,4 +66,8 @@ public class Bootpay extends BootpayObject {
     public HashMap<String, Object> certificate(String receiptId) throws Exception {
         return VerificationService.certificate(this, receiptId);
     }
+
+    public HashMap<String, Object> shippingStart(Shipping shipping) throws Exception {
+        return EscrowService.shippingStart(this, shipping);
+    }
 }

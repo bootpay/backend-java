@@ -1,3 +1,6 @@
+### 2.0.8
+- escrow api support, readme update
+
 ### 2.0.7
 - shipping model field added
 
