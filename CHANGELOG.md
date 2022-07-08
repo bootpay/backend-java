@@ -1,3 +1,6 @@
+### 2.0.9
+- lookupBillingKey API 추가
+
 ### 2.0.8
 - escrow api support, readme update
 
