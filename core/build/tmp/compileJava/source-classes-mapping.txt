@@ -95,8 +95,8 @@ kr/co/bootpay/service/LinkService.java
 kr/co/bootpay/service/EasyService.java
  kr.co.bootpay.service.EasyService
  kr.co.bootpay.service.EasyService$1
-kr/co/bootpay/Bootpay.java
- kr.co.bootpay.Bootpay
 kr/co/bootpay/service/EscrowService.java
  kr.co.bootpay.service.EscrowService
  kr.co.bootpay.service.EscrowService$1
+kr/co/bootpay/Bootpay.java
+ kr.co.bootpay.Bootpay

@@ -11,6 +11,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
 
+import org.json.simple.JSONObject;
+
+
 public class Main {
 
     static Bootpay bootpay;
@@ -19,17 +22,18 @@ public class Main {
 
         goGetToken();
         getReceipt();
-        receiptCancel();
-        getBillingKey();
-        requestSubscribe();
-        reserveSubscribe();
-        reserveCancelSubscribe();
-        destroyBillingKey();
-        getUserToken();
-        requestLink();
-        confirm();
-        certificate();
-        shippingStart();
+//        receiptCancel();
+        lookupBillingKey();
+//        getBillingKey();
+//        requestSubscribe();
+//        reserveSubscribe();
+//        reserveCancelSubscribe();
+//        destroyBillingKey();
+//        getUserToken();
+//        requestLink();
+//        confirm();
+//        certificate();
+//        shippingStart();
     }
 
     public static void goGetToken() {
@@ -153,9 +157,10 @@ public class Main {
 
     public static void receiptCancel() {
         Cancel cancel = new Cancel();
-        cancel.receiptId = "628b2206d01c7e00209b6087";
+        cancel.receiptId = "62c4d9b3d3d0570024eaed15";
         cancel.cancelUsername = "관리자";
         cancel.cancelMessage = "테스트 결제";
+        cancel.cancelPrice = 3000d;
 //        cancel.price = 1000.0; //부분취소 요청시
 //        cancel.cancelId = "12342134"; //부분취소 요청시, 중복 부분취소 요청하는 실수를 방지하고자 할때 지정
 //        RefundData refund = new RefundData(); // 가상계좌 환불 요청시, 단 CMS 특약이 되어있어야만 환불요청이 가능하다.
@@ -232,9 +237,28 @@ public class Main {
     }
 
     public static void getReceipt() {
-        String receiptId = "62b12f4b6262500007629fec";
+        String receiptId = "62c7ccebcf9f6d001b3adcd4";
         try {
             HashMap<String, Object> res = bootpay.getReceipt(receiptId);
+            JSONObject json =  new JSONObject(res);
+            System.out.printf( "JSON: %s", json);
+            if(res.get("error_code") == null) { //success
+                System.out.println("getReceipt success: " + res);
+            } else {
+                System.out.println("getReceipt false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void lookupBillingKey() {
+        String receiptId = "62c7ccebcf9f6d001b3adcd4";
+        try {
+            HashMap<String, Object> res = bootpay.lookupBillingKey(receiptId);
+            JSONObject json =  new JSONObject(res);
+            System.out.printf( "JSON: %s", json);
             if(res.get("error_code") == null) { //success
                 System.out.println("getReceipt success: " + res);
             } else {

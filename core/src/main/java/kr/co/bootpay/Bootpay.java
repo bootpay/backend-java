@@ -21,6 +21,9 @@ public class Bootpay extends BootpayObject {
     public HashMap<String, Object> getAccessToken() throws Exception {
         return TokenService.getAccessToken(this);
     }
+    public HashMap<String, Object> lookupBillingKey(String receiptId) throws Exception {
+        return BillingService.lookupBillingKey(this, receiptId);
+    }
 
     //billing
     public HashMap<String, Object> getBillingKey(Subscribe subscribeBilling) throws Exception {
@@ -58,6 +61,7 @@ public class Bootpay extends BootpayObject {
     public HashMap<String, Object> confirm(String receiptId) throws Exception {
         return ConfirmService.confirm(this, receiptId);
     }
+
 
     //veriy
     public HashMap<String, Object> getReceipt(String receiptId) throws Exception {
