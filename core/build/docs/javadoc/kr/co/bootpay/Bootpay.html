@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -203,25 +203,29 @@ extends <a href="../../../kr/co/bootpay/BootpayObject.html" title="class in kr.c
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.HashMap&lt;java.lang.String,java.lang.Object&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../kr/co/bootpay/Bootpay.html#receiptCancel-kr.co.bootpay.model.request.Cancel-">receiptCancel</a></span>(<a href="../../../kr/co/bootpay/model/request/Cancel.html" title="class in kr.co.bootpay.model.request">Cancel</a>&nbsp;cancel)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../kr/co/bootpay/Bootpay.html#lookupBillingKey-java.lang.String-">lookupBillingKey</a></span>(java.lang.String&nbsp;receiptId)</code>&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
+<td class="colFirst"><code>java.util.HashMap&lt;java.lang.String,java.lang.Object&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../kr/co/bootpay/Bootpay.html#receiptCancel-kr.co.bootpay.model.request.Cancel-">receiptCancel</a></span>(<a href="../../../kr/co/bootpay/model/request/Cancel.html" title="class in kr.co.bootpay.model.request">Cancel</a>&nbsp;cancel)</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="../../../kr/co/bootpay/model/response/ResDefault.html" title="class in kr.co.bootpay.model.response">ResDefault</a>&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../kr/co/bootpay/Bootpay.html#requestLink-kr.co.bootpay.model.request.Payload-">requestLink</a></span>(<a href="../../../kr/co/bootpay/model/request/Payload.html" title="class in kr.co.bootpay.model.request">Payload</a>&nbsp;payload)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.util.HashMap&lt;java.lang.String,java.lang.Object&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../kr/co/bootpay/Bootpay.html#requestSubscribe-kr.co.bootpay.model.request.SubscribePayload-">requestSubscribe</a></span>(<a href="../../../kr/co/bootpay/model/request/SubscribePayload.html" title="class in kr.co.bootpay.model.request">SubscribePayload</a>&nbsp;payload)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.util.HashMap&lt;java.lang.String,java.lang.Object&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../kr/co/bootpay/Bootpay.html#reserveCancelSubscribe-java.lang.String-">reserveCancelSubscribe</a></span>(java.lang.String&nbsp;reserve_id)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.util.HashMap&lt;java.lang.String,java.lang.Object&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../kr/co/bootpay/Bootpay.html#reserveSubscribe-kr.co.bootpay.model.request.SubscribePayload-">reserveSubscribe</a></span>(<a href="../../../kr/co/bootpay/model/request/SubscribePayload.html" title="class in kr.co.bootpay.model.request">SubscribePayload</a>&nbsp;payload)</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.util.HashMap&lt;java.lang.String,java.lang.Object&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../kr/co/bootpay/Bootpay.html#shippingStart-kr.co.bootpay.model.request.Shipping-">shippingStart</a></span>(<a href="../../../kr/co/bootpay/model/request/Shipping.html" title="class in kr.co.bootpay.model.request">Shipping</a>&nbsp;shipping)</code>&nbsp;</td>
 </tr>
@@ -300,6 +304,20 @@ extends <a href="../../../kr/co/bootpay/BootpayObject.html" title="class in kr.c
 <h4>getAccessToken</h4>
 <pre>public&nbsp;java.util.HashMap&lt;java.lang.String,java.lang.Object&gt;&nbsp;getAccessToken()
                                                                     throws java.lang.Exception</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd>
+</dl>
+</li>
+</ul>
+<a name="lookupBillingKey-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>lookupBillingKey</h4>
+<pre>public&nbsp;java.util.HashMap&lt;java.lang.String,java.lang.Object&gt;&nbsp;lookupBillingKey(java.lang.String&nbsp;receiptId)
+                                                                      throws java.lang.Exception</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>

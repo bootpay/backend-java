@@ -21,10 +21,10 @@ public class Main {
         bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
         goGetToken();
-        getReceipt();
+//        getReceipt();
 //        receiptCancel();
         lookupBillingKey();
-//        getBillingKey();
+        getBillingKey();
 //        requestSubscribe();
 //        reserveSubscribe();
 //        reserveCancelSubscribe();
@@ -53,12 +53,13 @@ public class Main {
         Subscribe subscribe = new Subscribe();
         subscribe.orderName = "정기결제 테스트 아이템";
         subscribe.subscriptionId = "" + (System.currentTimeMillis() / 1000);
-        subscribe.pg = "welcome";
+        subscribe.pg = "나이스페이";
         subscribe.cardNo = "5570**********1074"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardExpireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardExpireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardIdentityNo = ""; //생년월일 또는 사업자 등록번호 (- 없이 입력)
+
 
 
         subscribe.user = new User();
@@ -69,6 +70,9 @@ public class Main {
 
         try {
             HashMap<String, Object> res = bootpay.getBillingKey(subscribe);
+            JSONObject json =  new JSONObject(res);
+            System.out.printf( "JSON: %s", json);
+
             if(res.get("error_code") == null) { //success
                 System.out.println("getBillingKey success: " + res);
             } else {
@@ -237,7 +241,7 @@ public class Main {
     }
 
     public static void getReceipt() {
-        String receiptId = "62c7ccebcf9f6d001b3adcd4";
+        String receiptId = "62cbd26ccf9f6d001f66e78c";
         try {
             HashMap<String, Object> res = bootpay.getReceipt(receiptId);
             JSONObject json =  new JSONObject(res);
@@ -254,7 +258,7 @@ public class Main {
 
 
     public static void lookupBillingKey() {
-        String receiptId = "62c7ccebcf9f6d001b3adcd4";
+        String receiptId = "62ccce28cf9f6d002066fb54";
         try {
             HashMap<String, Object> res = bootpay.lookupBillingKey(receiptId);
             JSONObject json =  new JSONObject(res);

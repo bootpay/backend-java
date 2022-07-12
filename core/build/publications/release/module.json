@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.8",
-      "buildId": "twmmkdhvjbbohdb4ptoyj2n5pq"
+      "buildId": "sutazjwbmvgh3gbospqfqqt72y"
     }
   },
   "variants": [
@@ -28,11 +28,11 @@
         {
           "name": "backend-2.0.8.jar",
           "url": "backend-2.0.8.jar",
-          "size": 46924,
-          "sha512": "6e6db7760092767adc845126d941d7fa28399986460b9a476df68e9e0910f47d3b6ed2343aec0ee3d17daffb20154bd1428e9ca71f3befd545a2a484102422cd",
-          "sha256": "2797518a96002c073f5efb306ed38d976e18ed9b664a4981159662ba633f29b6",
-          "sha1": "e5fb357e321ad2e6ff1eb962f937f31a92610721",
-          "md5": "b29b9eb35cd15d78edb973690ee87311"
+          "size": 46946,
+          "sha512": "03cb0cc47dc4cf11ab855e99721a4f00980abd0fd24f194cba0e8890c1643301ab98f6877c4dd617985cf406c9f132406b9906e60f387bc8eeb2e37596cb3179",
+          "sha256": "204ff21eecc47894052167e52b33502188764c68f95d6451d8d295274c601188",
+          "sha1": "b69c4906b4f04aafa82a9f5ab207889429a7a475",
+          "md5": "3cce52ce55c3798d3569184d6dc9bfe6"
         }
       ]
     },
@@ -72,11 +72,11 @@
         {
           "name": "backend-2.0.8.jar",
           "url": "backend-2.0.8.jar",
-          "size": 46924,
-          "sha512": "6e6db7760092767adc845126d941d7fa28399986460b9a476df68e9e0910f47d3b6ed2343aec0ee3d17daffb20154bd1428e9ca71f3befd545a2a484102422cd",
-          "sha256": "2797518a96002c073f5efb306ed38d976e18ed9b664a4981159662ba633f29b6",
-          "sha1": "e5fb357e321ad2e6ff1eb962f937f31a92610721",
-          "md5": "b29b9eb35cd15d78edb973690ee87311"
+          "size": 46946,
+          "sha512": "03cb0cc47dc4cf11ab855e99721a4f00980abd0fd24f194cba0e8890c1643301ab98f6877c4dd617985cf406c9f132406b9906e60f387bc8eeb2e37596cb3179",
+          "sha256": "204ff21eecc47894052167e52b33502188764c68f95d6451d8d295274c601188",
+          "sha1": "b69c4906b4f04aafa82a9f5ab207889429a7a475",
+          "md5": "3cce52ce55c3798d3569184d6dc9bfe6"
         }
       ]
     },
@@ -92,11 +92,11 @@
         {
           "name": "backend-2.0.8-sources.jar",
           "url": "backend-2.0.8-sources.jar",
-          "size": 26177,
-          "sha512": "415b5bc856a65312ddecc1d6c0edb9242fe1c66abdf67ebf5d75010417653a4577a4787486cc22d3515f533c416f4eba57b88e55fc687836b2c7b1365a246639",
-          "sha256": "f73ae489f09e2d1e6d9e2278fdf1eb2afea653fcf0f4dd013b808aa6c8349ad8",
-          "sha1": "6e83a0f187a13c827b75498a94f526fdc7253be9",
-          "md5": "6b3558d1863e620dc10de653bcb9a4e7"
+          "size": 26191,
+          "sha512": "be2e535792e4ac77feedec034b84ddce01fa5b8d4ce9c5adf6e7ac4edbca1bce32e5a7fc247faf093f0d83722c9138f761bc9b033fd6b611a005e3a830287f41",
+          "sha256": "aa8ec34df24850a2c820ed6f0f7f9ef801d2056f47e800b7274d260d1e9eddb5",
+          "sha1": "c4c58d92ebee37f179cc5d5e75dadd2855878e8b",
+          "md5": "744251e1d84875f9ba817bf956c9d532"
         }
       ]
     },
@@ -112,11 +112,11 @@
         {
           "name": "backend-2.0.8-javadoc.jar",
           "url": "backend-2.0.8-javadoc.jar",
-          "size": 148487,
-          "sha512": "b58655f33353e74b70b5f3fad395adb9d52c1be591523e3e3dcc608735ebffd22f1a270f03c53c55f639bdc8efd72e8b4c99624c2b016a42618ea8407fd7d506",
-          "sha256": "48d31610ee7f1f3cbb4dc4c714dba9c98122a5a47d401b20eb112466a0c83178",
-          "sha1": "1fd929da00b236732d556c828e09fd38bc9e7a8b",
-          "md5": "eb79567cf2f20fd6ef36338d95dd91b4"
+          "size": 148528,
+          "sha512": "ac614a3c4bd9d23338f8e9271999544bcef7e4bf4e67c410019a96e44208881fd33c07c7ee3c4aaeec4cbedf6d439840f328b1083f9bde27ba018aafd8e796c7",
+          "sha256": "0cd2577642a43ba09407fbf0a2644595a56c3ebbfb3cf471cc69c6901c24cd00",
+          "sha1": "05fca3bc5bcd5f3c35b24c74ee58aeec737e3cbf",
+          "md5": "675c7824536a5d7bd9197b7f55744a4f"
         }
       ]
     }
