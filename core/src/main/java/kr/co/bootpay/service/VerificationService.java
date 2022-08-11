@@ -20,11 +20,7 @@ public class VerificationService {
         HttpGet get = bootpay.httpGet("receipt/" + receiptId);
         get.setHeader("Authorization", bootpay.getTokenValue());
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-
-
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        return new Gson().fromJson(str, resType);
+        return bootpay.responseToJson(response);
     }
 
     static public HashMap<String, Object> certificate(BootpayObject bootpay, String receiptId) throws Exception {
@@ -34,9 +30,6 @@ public class VerificationService {
         HttpGet get = bootpay.httpGet("certificate/" + receiptId + ".json");
         get.setHeader("Authorization", bootpay.getTokenValue());
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        return new Gson().fromJson(str, resType);
+        return bootpay.responseToJson(response);
     }
 }

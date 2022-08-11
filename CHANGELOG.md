@@ -1,3 +1,7 @@
+### 2.1.0
+- return 타입에 http_status 추가 
+- 현금영수증 API 추가 
+
 ### 2.0.9
 - lookupBillingKey API 추가
 

@@ -33,10 +33,6 @@ public class EscrowService {
 
         put.setHeader("Authorization", bootpay.getTokenValue());
         HttpResponse response = client.execute(put);
-
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        return new Gson().fromJson(str, resType);
+        return bootpay.responseToJson(response);
     }
 }
