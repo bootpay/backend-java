@@ -31,9 +31,6 @@ public class CancelService {
         HttpPost post = bootpay.httpPost("cancel", new StringEntity(gson.toJson(cancel), "UTF-8"));
         post.setHeader("Authorization", bootpay.getTokenValue());
         HttpResponse response = client.execute(post);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        return new Gson().fromJson(str, resType);
+        return bootpay.responseToJson(response);
     }
 }

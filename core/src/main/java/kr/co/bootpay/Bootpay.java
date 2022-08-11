@@ -74,4 +74,23 @@ public class Bootpay extends BootpayObject {
     public HashMap<String, Object> shippingStart(Shipping shipping) throws Exception {
         return EscrowService.shippingStart(this, shipping);
     }
+
+
+    //cash cancel
+    public HashMap<String, Object> requestCashReceipt(CashReceipt cashReceipt) throws Exception {
+        return CashService.requestCashReceipt(this, cashReceipt);
+    }
+
+    public HashMap<String, Object> requestCashReceiptCancel(Cancel cancel) throws Exception {
+        return CashService.requestCashReceiptCancel(this, cancel);
+    }
+
+
+    public HashMap<String, Object> requestCashReceiptByBootpay(CashReceipt cashReceipt) throws Exception {
+        return CashService.requestCashReceiptByBootpay(this, cashReceipt);
+    }
+
+    public HashMap<String, Object> requestCashReceiptCancelByBootpay(Cancel cancel) throws Exception {
+        return CashService.requestCashReceiptCancelByBootpay(this, cancel);
+    }
 }

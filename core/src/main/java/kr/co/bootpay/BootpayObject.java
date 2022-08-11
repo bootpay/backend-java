@@ -1,5 +1,10 @@
 package kr.co.bootpay;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import kr.co.bootpay.http.HttpDeleteWithBody;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -8,7 +13,9 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 
+import java.lang.reflect.Type;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -73,6 +80,15 @@ public class BootpayObject {
         return delete;
     }
 
+    public HttpDeleteWithBody httpDeleteWithBody(String url, StringEntity entity) {
+        HttpDeleteWithBody delete = new HttpDeleteWithBody(this.baseUrl + url);
+        delete.setHeader("Accept", "application/json");
+        delete.setHeader("Content-Type", "application/json");
+        delete.setHeader("Accept-Charset", "utf-8");
+        delete.setEntity(entity);
+        return delete;
+    }
+
     public HttpPut httpPut(String url, StringEntity entity) {
         HttpPut put = new HttpPut(this.baseUrl + url);
         put.setHeader("Accept", "application/json");
@@ -80,6 +96,18 @@ public class BootpayObject {
         put.setHeader("Accept-Charset", "utf-8");
         put.setEntity(entity);
         return put;
+    }
+
+    public HashMap<String, Object> responseToJson(HttpResponse response)  throws Exception {
+        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+        HashMap<String, Object> result = new Gson().fromJson(str, resType);
+        if(result == null) {
+            result = new HashMap<>();
+        }
+
+        result.put("http_status", response.getStatusLine().getStatusCode());
+        return result;
     }
 
 //    public HttpResponse getAccessToken() throws Exception {

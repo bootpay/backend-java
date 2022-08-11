@@ -20,20 +20,26 @@ public class Main {
     public static void main(String[] args) {
         bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 
+
         goGetToken();
-//        getReceipt();
-//        receiptCancel();
+        getReceipt();
+        receiptCancel();
         lookupBillingKey();
         getBillingKey();
-//        requestSubscribe();
-//        reserveSubscribe();
-//        reserveCancelSubscribe();
-//        destroyBillingKey();
-//        getUserToken();
-//        requestLink();
-//        confirm();
-//        certificate();
-//        shippingStart();
+        requestSubscribe();
+        reserveSubscribe();
+        reserveCancelSubscribe();
+        destroyBillingKey();
+        getUserToken();
+        requestLink();
+        confirm();
+        certificate();
+        shippingStart();
+
+        cashReceipt();
+        cashReceiptCancel();
+        cashReceiptBootpay();
+        cashReceiptBootpayCancel();
     }
 
     public static void goGetToken() {
@@ -60,13 +66,9 @@ public class Main {
         subscribe.cardExpireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardIdentityNo = ""; //생년월일 또는 사업자 등록번호 (- 없이 입력)
 
-
-
         subscribe.user = new User();
         subscribe.user.username = "홍길동";
         subscribe.user.phone = "01011112222";
-//        subscribe.extra = new SubscribeExtra();
-//        subscribe.extra.rawData = 1;
 
         try {
             HashMap<String, Object> res = bootpay.getBillingKey(subscribe);
@@ -99,7 +101,7 @@ public class Main {
 
     public static void requestSubscribe() {
         SubscribePayload payload = new SubscribePayload();
-        payload.billingKey = "62b3cbc0cf9f6d001bd20ceb";
+        payload.billingKey = "628b2644d01c7e00209b6092";
         payload.orderName = "아이템01";
         payload.price = 1000;
         payload.user = new User();
@@ -161,10 +163,10 @@ public class Main {
 
     public static void receiptCancel() {
         Cancel cancel = new Cancel();
-        cancel.receiptId = "62c4d9b3d3d0570024eaed15";
+        cancel.receiptId = "62d8e199cf9f6d001aa6cb06";
         cancel.cancelUsername = "관리자";
         cancel.cancelMessage = "테스트 결제";
-        cancel.cancelPrice = 3000d;
+        cancel.cancelPrice = 1000d;
 //        cancel.price = 1000.0; //부분취소 요청시
 //        cancel.cancelId = "12342134"; //부분취소 요청시, 중복 부분취소 요청하는 실수를 방지하고자 할때 지정
 //        RefundData refund = new RefundData(); // 가상계좌 환불 요청시, 단 CMS 특약이 되어있어야만 환불요청이 가능하다.
@@ -258,7 +260,7 @@ public class Main {
 
 
     public static void lookupBillingKey() {
-        String receiptId = "62ccce28cf9f6d002066fb54";
+        String receiptId = "62e1e2f2cf9f6d002705a7fa";
         try {
             HashMap<String, Object> res = bootpay.lookupBillingKey(receiptId);
             JSONObject json =  new JSONObject(res);
@@ -274,7 +276,7 @@ public class Main {
     }
 
     public static void certificate() {
-        String receiptId = "628ae7ffd01c7e001e9b6066";
+        String receiptId = "62e762d7cf9f6d001b05c1c3";
         try {
             HashMap<String, Object> res = bootpay.certificate(receiptId);
             if(res.get("error_code") == null) { //success
@@ -304,6 +306,98 @@ public class Main {
                 System.out.println("certificate success: " + res);
             } else {
                 System.out.println("certificate false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void cashReceipt() {
+        CashReceipt cashReceipt = new CashReceipt();
+        cashReceipt.pg = "토스";
+        cashReceipt.price = 1000;
+        cashReceipt.orderName = "테스트";
+        cashReceipt.cashReceiptType = "소득공제";
+        cashReceipt.identityNo = "01000000000";
+
+        Date now = new Date();
+        now.setTime(now.getTime()); //10초 뒤 결제
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss XXX");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        cashReceipt.purchasedAt = sdf.format(now); // 결제 승인 시점
+        cashReceipt.orderId = String.valueOf(now.getTime());
+
+
+        try {
+            HashMap<String, Object> res = bootpay.requestCashReceipt(cashReceipt);
+            if(res.get("error_code") == null) { //success
+                System.out.println("cashReceipt success: " + res);
+            } else {
+                System.out.println("cashReceipt false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void cashReceiptCancel() {
+        Cancel cancel = new Cancel();
+        cancel.receiptId = "62f48ae41fc192036f9f4b54";
+        cancel.cancelMessage = "테스트 결제";
+        cancel.cancelUsername = "테스트 관리자";
+
+
+        try {
+            HashMap<String, Object> res = bootpay.requestCashReceiptCancel(cancel);
+            if(res.get("error_code") == null) { //success
+                System.out.println("cashReceiptCancel success: " + res);
+            } else {
+                System.out.println("cashReceiptCancel false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void cashReceiptBootpay() {
+        CashReceipt cashReceipt = new CashReceipt();
+        cashReceipt.receiptId = "62e0f11f1fc192036b1b3c92";
+
+        cashReceipt.username = "테스트";
+        cashReceipt.email = "test@bootpay.co.kr";
+        cashReceipt.phone = "01000000000";
+
+        cashReceipt.identityNo = "01000000000";
+        cashReceipt.cashReceiptType = "소득공제";
+
+
+        try {
+            HashMap<String, Object> res = bootpay.requestCashReceiptByBootpay(cashReceipt);
+            if(res.get("error_code") == null) { //success
+                System.out.println("cashReceiptBootpay success: " + res);
+            } else {
+                System.out.println("cashReceiptBootpay false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void cashReceiptBootpayCancel() {
+        Cancel cancel = new Cancel();
+
+        cancel.receiptId = "62e0f11f1fc192036b1b3c92";
+        cancel.cancelMessage = "테스트 결제";
+        cancel.cancelUsername = "테스트 관리자";
+
+
+        try {
+            HashMap<String, Object> res = bootpay.requestCashReceiptCancelByBootpay(cancel);
+            if(res.get("error_code") == null) { //success
+                System.out.println("cashReceiptBootpayCancel success: " + res);
+            } else {
+                System.out.println("cashReceiptBootpayCancel false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();

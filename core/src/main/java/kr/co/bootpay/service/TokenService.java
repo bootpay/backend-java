@@ -34,7 +34,15 @@ public class TokenService {
         TokenData resToken = new Gson().fromJson(str, TokenData.class);
         bootpay.token = resToken.access_token;
 
+//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+//        return new Gson().fromJson(str, resType);
         Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        return new Gson().fromJson(str, resType);
+        HashMap<String, Object> result = new Gson().fromJson(str, resType);
+        if(result == null) {
+            result = new HashMap<>();
+        }
+
+        result.put("http_status", response.getStatusLine().getStatusCode());
+        return result;
     }
 }

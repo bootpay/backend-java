@@ -179,6 +179,9 @@ subscribe.user.phone = "01011112222";
 
 try {
    HashMap<String, Object> res = bootpay.getBillingKey(subscribe);
+   JSONObject json =  new JSONObject(res);
+   System.out.printf( "JSON: %s", json);
+   
    if(res.get("error_code") == null) { //success
        System.out.println("getBillingKey success: " + res);
    } else {
@@ -205,6 +208,9 @@ payload.orderId = "" + (System.currentTimeMillis() / 1000);
 
 try {
    HashMap<String, Object> res = bootpay.requestSubscribe(payload);
+   JSONObject json =  new JSONObject(res);
+   System.out.printf( "JSON: %s", json);
+   
    if(res.get("error_code") == null) { //success
        System.out.println("requestSubscribe success: " + res);
    } else {
@@ -253,6 +259,8 @@ bootpay.getAccessToken();
 String receiptId = "628b316cd01c7e00219b6081";
 try {
    HashMap<String, Object> res = bootpay.reserveCancelSubscribe(receiptId);
+   JSONObject json =  new JSONObject(res);
+   System.out.printf( "JSON: %s", json);
    if(res.get("error_code") == null) { //success
        System.out.println("reserveCancelSubscribe success: " + res);
    } else {
@@ -271,6 +279,8 @@ bootpay.getAccessToken();
 String receiptId = "628b2644d01c7e00209b6092";
 try {
    HashMap<String, Object> res = bootpay.destroyBillingKey(receiptId);
+   JSONObject json =  new JSONObject(res);
+   System.out.printf( "JSON: %s", json);
    if(res.get("error_code") == null) { //success
        System.out.println("destroyBillingKey success: " + res);
    } else {
