@@ -15,6 +15,7 @@ import org.apache.http.entity.StringEntity;
 
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -100,13 +101,15 @@ public class BootpayObject {
 
     public HashMap<String, Object> responseToJson(HttpResponse response)  throws Exception {
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-        if(result == null) {
-            result = new HashMap<>();
+        HashMap<String, Object>  result = new HashMap<>();
+        Type resType = new TypeToken<List<HashMap<String, Object>>>(){}.getType();
+        List<HashMap<String, Object>> data = new Gson().fromJson(str, resType);
+        if(data == null) {
+            data = new ArrayList<>();
         }
 
         result.put("http_status", response.getStatusLine().getStatusCode());
+        result.put("data", data);
         return result;
     }
 
