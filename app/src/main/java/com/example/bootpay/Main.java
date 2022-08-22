@@ -1,7 +1,6 @@
 package com.example.bootpay;
 
 import kr.co.bootpay.Bootpay;
-import kr.co.bootpay.model.BankCode;
 import kr.co.bootpay.model.request.*;
 import kr.co.bootpay.model.response.ResDefault;
 
@@ -19,12 +18,14 @@ public class Main {
     static Bootpay bootpay;
     public static void main(String[] args) {
         bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+//        bootpay = new Bootpay("5b9f51264457636ab9a07cde", "sfilSOSVakw+PZA+PRux4Iuwm7a//9CXXudCq9TMDHk=", "https://dev-api.bootpay.co.kr/v2/");
 
 
         goGetToken();
         getReceipt();
         receiptCancel();
         lookupBillingKey();
+        lookupPaymentMethods();
         getBillingKey();
         requestSubscribe();
         reserveSubscribe();
@@ -229,7 +230,7 @@ public class Main {
     }
 
     public static void confirm() {
-        String receiptId = "62876963d01c7e00209b6028";
+        String receiptId = "62fc9a4a1fc192036f0df39b";
         try {
             HashMap<String, Object> res = bootpay.confirm(receiptId);
             if(res.get("error_code") == null) { //success
@@ -263,6 +264,22 @@ public class Main {
         String receiptId = "62e1e2f2cf9f6d002705a7fa";
         try {
             HashMap<String, Object> res = bootpay.lookupBillingKey(receiptId);
+            JSONObject json =  new JSONObject(res);
+            System.out.printf( "JSON: %s", json);
+            if(res.get("error_code") == null) { //success
+                System.out.println("getReceipt success: " + res);
+            } else {
+                System.out.println("getReceipt false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void lookupPaymentMethods() {
+//        String receiptId = "62e1e2f2cf9f6d002705a7fa";
+        try {
+            HashMap<String, Object> res = bootpay.lookupPaymentMethods();
             JSONObject json =  new JSONObject(res);
             System.out.printf( "JSON: %s", json);
             if(res.get("error_code") == null) { //success

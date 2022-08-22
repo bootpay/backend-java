@@ -43,9 +43,9 @@ public class BillingService {
         if(receiptId == null || receiptId.isEmpty()) throw new Exception("receiptId 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
-        Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .create();
+//        Gson gson = new GsonBuilder()
+//                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+//                .create();
         HttpGet get = bootpay.httpGet("subscribe/billing_key/" + receiptId);
 
         get.setHeader("Authorization", bootpay.getTokenValue());
