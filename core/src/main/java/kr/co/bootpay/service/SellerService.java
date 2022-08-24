@@ -26,6 +26,6 @@ public class SellerService {
 
         get.setHeader("Authorization", bootpay.getTokenValue());
         HttpResponse response = client.execute(get);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonArray(response);
     }
 }

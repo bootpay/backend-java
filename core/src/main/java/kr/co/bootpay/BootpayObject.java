@@ -99,7 +99,7 @@ public class BootpayObject {
         return put;
     }
 
-    public HashMap<String, Object> responseToJson(HttpResponse response)  throws Exception {
+    public HashMap<String, Object> responseToJsonArray(HttpResponse response)  throws Exception {
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
         HashMap<String, Object>  result = new HashMap<>();
         Type resType = new TypeToken<List<HashMap<String, Object>>>(){}.getType();
@@ -110,6 +110,16 @@ public class BootpayObject {
 
         result.put("http_status", response.getStatusLine().getStatusCode());
         result.put("data", data);
+        return result;
+    }
+
+    public HashMap<String, Object> responseToJson(HttpResponse response)  throws Exception {
+        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+
+        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+        HashMap<String, Object> result = new Gson().fromJson(str, resType);
+
+        result.put("http_status", response.getStatusLine().getStatusCode());
         return result;
     }
 
