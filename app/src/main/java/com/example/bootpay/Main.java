@@ -32,11 +32,11 @@ public class Main {
         reserveCancelSubscribe();
         destroyBillingKey();
         getUserToken();
-        requestLink();
+//        requestLink();
         confirm();
         certificate();
         shippingStart();
-
+//
         cashReceipt();
         cashReceiptCancel();
         cashReceiptBootpay();
@@ -230,7 +230,7 @@ public class Main {
     }
 
     public static void confirm() {
-        String receiptId = "62fc9a4a1fc192036f0df39b";
+        String receiptId = "630576b21fc192036f00c4b3";
         try {
             HashMap<String, Object> res = bootpay.confirm(receiptId);
             if(res.get("error_code") == null) { //success
@@ -244,7 +244,7 @@ public class Main {
     }
 
     public static void getReceipt() {
-        String receiptId = "62cbd26ccf9f6d001f66e78c";
+        String receiptId = "630576b21fc192036f00c4b3";
         try {
             HashMap<String, Object> res = bootpay.getReceipt(receiptId);
             JSONObject json =  new JSONObject(res);
