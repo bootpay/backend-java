@@ -3,7 +3,7 @@
   "component": {
     "group": "io.github.bootpay",
     "module": "backend",
-    "version": "2.1.1",
+    "version": "2.1.2",
     "attributes": {
       "org.gradle.status": "release"
     }
@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.8",
-      "buildId": "b2zblu6y25gf5os3caid7fibzy"
+      "buildId": "brzd6eadvrewfhqcso4plmk2km"
     }
   },
   "variants": [
@@ -26,13 +26,13 @@
       },
       "files": [
         {
-          "name": "backend-2.1.1.jar",
-          "url": "backend-2.1.1.jar",
-          "size": 45081,
-          "sha512": "94bb14538ec9c89cbf574ef0fb0cea0c32d18ec00ed2a47e03efc6416ae946bf97e6e9d0260c0447d6803051bd8b19bac357f38db1ab1e5e847fbf67d1816e2a",
-          "sha256": "2f4a13a81c3fed5d037ff1dfa1e1fc2cd607f3d95bfe22e604bd87e41b8bca98",
-          "sha1": "255a1ffeb53f9c71e5eb1e1ab9bb76ca9ccca59e",
-          "md5": "73c5f975580704e4ae23873f92d65c3a"
+          "name": "backend-2.1.2.jar",
+          "url": "backend-2.1.2.jar",
+          "size": 45763,
+          "sha512": "126addcf49c2b9fee462a31092e684b7e71e1fcb2951d4dbbdc2c2c141ad5ffe24d39795e39ce9084e8175f41f3e9c84f3c1d74b20f1d9082cd91958f63cd0b9",
+          "sha256": "b9e4363a6f2a06ea67f2f9cf6798fac7d653197d4aec93b19d568ae2607a48d0",
+          "sha1": "2c940915185dde4e0b8234d9892358cf4762a732",
+          "md5": "5192bb350760004429a6a5451d2a108f"
         }
       ]
     },
@@ -70,13 +70,13 @@
       ],
       "files": [
         {
-          "name": "backend-2.1.1.jar",
-          "url": "backend-2.1.1.jar",
-          "size": 45081,
-          "sha512": "94bb14538ec9c89cbf574ef0fb0cea0c32d18ec00ed2a47e03efc6416ae946bf97e6e9d0260c0447d6803051bd8b19bac357f38db1ab1e5e847fbf67d1816e2a",
-          "sha256": "2f4a13a81c3fed5d037ff1dfa1e1fc2cd607f3d95bfe22e604bd87e41b8bca98",
-          "sha1": "255a1ffeb53f9c71e5eb1e1ab9bb76ca9ccca59e",
-          "md5": "73c5f975580704e4ae23873f92d65c3a"
+          "name": "backend-2.1.2.jar",
+          "url": "backend-2.1.2.jar",
+          "size": 45763,
+          "sha512": "126addcf49c2b9fee462a31092e684b7e71e1fcb2951d4dbbdc2c2c141ad5ffe24d39795e39ce9084e8175f41f3e9c84f3c1d74b20f1d9082cd91958f63cd0b9",
+          "sha256": "b9e4363a6f2a06ea67f2f9cf6798fac7d653197d4aec93b19d568ae2607a48d0",
+          "sha1": "2c940915185dde4e0b8234d9892358cf4762a732",
+          "md5": "5192bb350760004429a6a5451d2a108f"
         }
       ]
     },
@@ -90,13 +90,13 @@
       },
       "files": [
         {
-          "name": "backend-2.1.1-sources.jar",
-          "url": "backend-2.1.1-sources.jar",
-          "size": 29608,
-          "sha512": "55284dc164aca04dcbf97ea4fca44cdc77f4d2671655bb91bf9d05cf1dba8a6843300a6d7d4ad47b40a161b99fb823f128d140f8e7789eb946d809f77dc2e633",
-          "sha256": "afebd6186769998f4699eb8f4caee6d011436506187cb44bc4b13b4ec1ead879",
-          "sha1": "b3d7e0fe8e4ca2bd8ac1a94a0989b7e0d98d20c6",
-          "md5": "8014544cb86265837b153b027c44d7ec"
+          "name": "backend-2.1.2-sources.jar",
+          "url": "backend-2.1.2-sources.jar",
+          "size": 29642,
+          "sha512": "892ce93337586c93941d2b906b9d3e7b2d405898d9bcb6882e7f28b3844eb59e0cf7a69dd2844390e99c98799f9d9f7ba78406fb358aea8cb5b195e4d36f9397",
+          "sha256": "6c470316dd7cb75d532051a60f6a6b6a48a4164e6b93ebccd813786f3d7860ea",
+          "sha1": "8f790b40b2af49e8237075b667d67f9ef9ca66e1",
+          "md5": "d57938dc4b27596b68496d3b81d7a870"
         }
       ]
     },
@@ -110,13 +110,13 @@
       },
       "files": [
         {
-          "name": "backend-2.1.1-javadoc.jar",
-          "url": "backend-2.1.1-javadoc.jar",
-          "size": 163937,
-          "sha512": "678c68e97cecdd1975ffb76131f8c12be37d0265f96aa7495b6421708a2f35d1b4f417b43bf55ae727ef94401032fbddec3ae7061dea782709e184c80e19c1f7",
-          "sha256": "e88566dcc311d683a68ad9bb3fdd1935e2d85a6bd685d8b7d797676f8b792c57",
-          "sha1": "89ac6e4139cf9ff443bdd93b7cdf7735b8762768",
-          "md5": "0c9dd94df4127d727fd89d465f6a7bb1"
+          "name": "backend-2.1.2-javadoc.jar",
+          "url": "backend-2.1.2-javadoc.jar",
+          "size": 164020,
+          "sha512": "8fad55eb80f70ad1bb10d075513df9d494408996cdcdaf83e6c7a6115a4f22d0306e22ae4197c05aefc90a14f5d6fbdc3b4ba8bf7e7d8394ba19fe71a2510948",
+          "sha256": "edf1f1bbf7817d48bb031bf426d8f6fd4db0955b184cea47cc40ff094df4b1c0",
+          "sha1": "19bd7af363170754577fdcf4e00e848c0b766a50",
+          "md5": "8037b3dfed6c58461de520dcef6e1c0c"
         }
       ]
     }

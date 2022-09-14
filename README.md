@@ -30,7 +30,15 @@ java언어로 작성된 어플리케이션, 프레임워크 등에서 사용가�
 6. 서버 승인 요청
 7. 본인 인증 결과 조회
 8. (에스크로 이용시) PG사로 배송정보 보내기
+9. 현금영수증 발행
 
+   9-1. 현금영수증 발행
+
+   9-2. 현금영수증 발행 취소
+
+   9-3. (별건) 현금영수증 발행
+
+   9-4. (별건) 현금영수증 발행 취소
 
 
 ## Gradle로 설치하기   
@@ -406,6 +414,106 @@ try {
    e.printStackTrace();
 }
 ```
+
+## 9-1. 현금영수증 발행하기
+bootpay api를 통해 결제된 건에 대하여 현금영수증을 발행합니다.
+```java 
+CashReceipt cashReceipt = new CashReceipt();
+cashReceipt.receiptId = "62e0f11f1fc192036b1b3c92";
+
+cashReceipt.username = "테스트";
+cashReceipt.email = "test@bootpay.co.kr";
+cashReceipt.phone = "01000000000";
+
+cashReceipt.identityNo = "01000000000";
+cashReceipt.cashReceiptType = "소득공제";
+
+
+try {
+   HashMap<String, Object> res = bootpay.requestCashReceiptByBootpay(cashReceipt);
+   if(res.get("error_code") == null) { //success
+       System.out.println("cashReceiptBootpay success: " + res);
+   } else {
+       System.out.println("cashReceiptBootpay false: " + res);
+   }
+} catch (Exception e) {
+   e.printStackTrace();
+}
+```
+
+## 9-2. 현금영수증 발행 취소
+9-1을 통해 발행한 현금영수증을 취소합니다.
+```java 
+Cancel cancel = new Cancel(); 
+
+cancel.receiptId = "62e0f11f1fc192036b1b3c92";
+cancel.cancelMessage = "테스트 결제";
+cancel.cancelUsername = "테스트 관리 
+
+try {
+   HashMap<String, Object> res = bootpay.requestCashReceiptCancelByBootpay(cancel);
+   if(res.get("error_code") == null) { //success
+       System.out.println("cashReceiptBootpayCancel success: " + res);
+   } else {
+       System.out.println("cashReceiptBootpayCancel false: " + res);
+   }
+} catch (Exception e) {
+   e.printStackTrace();
+}
+```
+
+## 9-3. (별건) 현금영수증 발행
+부트페이 결제와 상관없이 금액, 상품명, 현금영수증 발행정보 등을 보내 현금영수증을 발행하는 API 입니다
+```java 
+CashReceipt cashReceipt = new CashReceipt();
+cashReceipt.pg = "토스";
+cashReceipt.price = 1000;
+cashReceipt.orderName = "테스트";
+cashReceipt.cashReceiptType = "소득공제";
+cashReceipt.identityNo = "01000000000";
+
+Date now = new Date();
+now.setTime(now.getTime()); //10초 뒤 결제
+
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss XXX");
+sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+cashReceipt.purchasedAt = sdf.format(now); // 결제 승인 시점
+cashReceipt.orderId = String.valueOf(now.getTime());
+
+
+try {
+   HashMap<String, Object> res = bootpay.requestCashReceipt(cashReceipt);
+   if(res.get("error_code") == null) { //success
+       System.out.println("cashReceipt success: " + res);
+   } else {
+       System.out.println("cashReceipt false: " + res);
+   }
+} catch (Exception e) {
+   e.printStackTrace();
+}
+```
+
+## 9-4. (별건) 현금영수증 발행 취소
+9-3을 통해 발행한 현금영수증을 취소합니다.
+```java 
+Cancel cancel = new Cancel();
+cancel.receiptId = "62f48ae41fc192036f9f4b54";
+cancel.cancelMessage = "테스트 결제";
+cancel.cancelUsername = "테스트 관리자";
+
+
+try {
+   HashMap<String, Object> res = bootpay.requestCashReceiptCancel(cancel);
+   if(res.get("error_code") == null) { //success
+       System.out.println("cashReceiptCancel success: " + res);
+   } else {
+       System.out.println("cashReceiptCancel false: " + res);
+   }
+} catch (Exception e) {
+   e.printStackTrace();
+}
+```
+
 ## Example 프로젝트
 
 [적용한 샘플 프로젝트](https://github.com/bootpay/backend-java-example)을 참조해주세요
