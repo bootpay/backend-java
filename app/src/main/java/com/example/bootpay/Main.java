@@ -36,11 +36,11 @@ public class Main {
         confirm();
         certificate();
         shippingStart();
-//
-        cashReceipt();
-        cashReceiptCancel();
-        cashReceiptBootpay();
-        cashReceiptBootpayCancel();
+////
+//        cashReceipt();
+//        cashReceiptCancel();
+//        cashReceiptBootpay();
+//        cashReceiptBootpayCancel();
     }
 
     public static void goGetToken() {
@@ -67,9 +67,12 @@ public class Main {
         subscribe.cardExpireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardIdentityNo = ""; //생년월일 또는 사업자 등록번호 (- 없이 입력)
 
+
         subscribe.user = new User();
         subscribe.user.username = "홍길동";
         subscribe.user.phone = "01011112222";
+        subscribe.extra = new SubscribeExtra();
+        subscribe.extra.subscribeTestPayment = 1;
 
         try {
             HashMap<String, Object> res = bootpay.getBillingKey(subscribe);
@@ -87,9 +90,9 @@ public class Main {
     }
 
     public static void destroyBillingKey() {
-        String receiptId = "628b2644d01c7e00209b6092";
+        String billingKey = "628b2644d01c7e00209b6092";
         try {
-            HashMap<String, Object> res = bootpay.destroyBillingKey(receiptId);
+            HashMap<String, Object> res = bootpay.destroyBillingKey(billingKey);
             if(res.get("error_code") == null) { //success
                 System.out.println("destroyBillingKey success: " + res);
             } else {
@@ -102,7 +105,7 @@ public class Main {
 
     public static void requestSubscribe() {
         SubscribePayload payload = new SubscribePayload();
-        payload.billingKey = "628b2644d01c7e00209b6092";
+        payload.billingKey = "63114b39d01c7e0025fb75e5";
         payload.orderName = "아이템01";
         payload.price = 1000;
         payload.user = new User();
@@ -230,9 +233,11 @@ public class Main {
     }
 
     public static void confirm() {
-        String receiptId = "630576b21fc192036f00c4b3";
+        String receiptId = "6319773ad01c7e0032171270";
         try {
             HashMap<String, Object> res = bootpay.confirm(receiptId);
+            JSONObject json =  new JSONObject(res);
+            System.out.printf( "JSON: %s", json);
             if(res.get("error_code") == null) { //success
                 System.out.println("confirm success: " + res);
             } else {
@@ -244,7 +249,7 @@ public class Main {
     }
 
     public static void getReceipt() {
-        String receiptId = "630576b21fc192036f00c4b3";
+        String receiptId = "6317e646d01c7e0024170b47";
         try {
             HashMap<String, Object> res = bootpay.getReceipt(receiptId);
             JSONObject json =  new JSONObject(res);
@@ -261,7 +266,7 @@ public class Main {
 
 
     public static void lookupBillingKey() {
-        String receiptId = "62e1e2f2cf9f6d002705a7fa";
+        String receiptId = "6317e646d01c7e0024170b47";
         try {
             HashMap<String, Object> res = bootpay.lookupBillingKey(receiptId);
             JSONObject json =  new JSONObject(res);
@@ -293,7 +298,7 @@ public class Main {
     }
 
     public static void certificate() {
-        String receiptId = "62e762d7cf9f6d001b05c1c3";
+        String receiptId = "630d5997d01c7e003f5aa109";
         try {
             HashMap<String, Object> res = bootpay.certificate(receiptId);
             if(res.get("error_code") == null) { //success
