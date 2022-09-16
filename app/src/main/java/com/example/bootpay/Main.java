@@ -127,7 +127,7 @@ public class Main {
     public static void reserveSubscribe() {
         SubscribePayload payload = new SubscribePayload();
 
-        payload.billingKey = "628b2644d01c7e00209b6092";
+        payload.billingKey = "632402f6d01c7e003c91f49b";
         payload.orderName = "아이템01";
         payload.price = 1000;
         payload.orderId = "" + (System.currentTimeMillis() / 1000);
@@ -152,9 +152,9 @@ public class Main {
     }
 
     public static void reserveCancelSubscribe() {
-        String receiptId = "628b316cd01c7e00219b6081";
+        String reserveId = "628b316cd01c7e00219b6081";
         try {
-            HashMap<String, Object> res = bootpay.reserveCancelSubscribe(receiptId);
+            HashMap<String, Object> res = bootpay.reserveCancelSubscribe(reserveId);
             if(res.get("error_code") == null) { //success
                 System.out.println("reserveCancelSubscribe success: " + res);
             } else {
@@ -249,7 +249,7 @@ public class Main {
     }
 
     public static void getReceipt() {
-        String receiptId = "6317e646d01c7e0024170b47";
+        String receiptId = "6323e0dcd01c7e001e91f151";
         try {
             HashMap<String, Object> res = bootpay.getReceipt(receiptId);
             JSONObject json =  new JSONObject(res);
