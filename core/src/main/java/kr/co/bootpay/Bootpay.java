@@ -97,4 +97,17 @@ public class Bootpay extends BootpayObject {
     public HashMap<String, Object> requestCashReceiptCancelByBootpay(Cancel cancel) throws Exception {
         return CashService.requestCashReceiptCancelByBootpay(this, cancel);
     }
+
+    public HashMap<String, Object> requestAuthentication(Authentication authentication) throws Exception {
+        return AuthService.requestAuthentication(this, authentication);
+    }
+
+    public HashMap<String, Object> confirmAuthentication(String receiptId, String otp) throws Exception {
+        return AuthService.confirmAuthentication(this, receiptId, otp);
+    }
+
+    public HashMap<String, Object> realarmAuthentication(String receiptId) throws Exception {
+        return AuthService.realarmAuthentication(this, receiptId);
+    }
+
 }

@@ -70,31 +70,37 @@ kr/co/bootpay/model/response/data/VerificationData.java
  kr.co.bootpay.model.response.data.VerificationData
 kr/co/bootpay/model/response/data/BillingKeyData.java
  kr.co.bootpay.model.response.data.BillingKeyData
-kr/co/bootpay/BootpayObject.java
- kr.co.bootpay.BootpayObject
- kr.co.bootpay.BootpayObject$1
- kr.co.bootpay.BootpayObject$2
-kr/co/bootpay/service/BillingService.java
- kr.co.bootpay.service.BillingService
-kr/co/bootpay/Bootpay.java
- kr.co.bootpay.Bootpay
+kr/co/bootpay/service/TokenService.java
+ kr.co.bootpay.service.TokenService
+ kr.co.bootpay.service.TokenService$1
 kr/co/bootpay/service/CashService.java
  kr.co.bootpay.service.CashService
 kr/co/bootpay/service/VerificationService.java
  kr.co.bootpay.service.VerificationService
 kr/co/bootpay/service/EscrowService.java
  kr.co.bootpay.service.EscrowService
+kr/co/bootpay/service/EasyService.java
+ kr.co.bootpay.service.EasyService
+kr/co/bootpay/model/request/Authentication.java
+ kr.co.bootpay.model.request.Authentication
+kr/co/bootpay/service/LinkService.java
+ kr.co.bootpay.service.LinkService
+ kr.co.bootpay.service.LinkService$1
+kr/co/bootpay/service/ConfirmService.java
+ kr.co.bootpay.service.ConfirmService
+kr/co/bootpay/model/request/AuthenticationParams.java
+ kr.co.bootpay.model.request.AuthenticationParams
+kr/co/bootpay/BootpayObject.java
+ kr.co.bootpay.BootpayObject
+ kr.co.bootpay.BootpayObject$1
+ kr.co.bootpay.BootpayObject$2
+kr/co/bootpay/service/BillingService.java
+ kr.co.bootpay.service.BillingService
 kr/co/bootpay/service/SellerService.java
  kr.co.bootpay.service.SellerService
 kr/co/bootpay/service/CancelService.java
  kr.co.bootpay.service.CancelService
-kr/co/bootpay/service/LinkService.java
- kr.co.bootpay.service.LinkService
- kr.co.bootpay.service.LinkService$1
-kr/co/bootpay/service/EasyService.java
- kr.co.bootpay.service.EasyService
-kr/co/bootpay/service/ConfirmService.java
- kr.co.bootpay.service.ConfirmService
-kr/co/bootpay/service/TokenService.java
- kr.co.bootpay.service.TokenService
- kr.co.bootpay.service.TokenService$1
+kr/co/bootpay/Bootpay.java
+ kr.co.bootpay.Bootpay
+kr/co/bootpay/service/AuthService.java
+ kr.co.bootpay.service.AuthService

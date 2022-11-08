@@ -123,6 +123,7 @@ public class BootpayObject {
         return result;
     }
 
+
 //    public HttpResponse getAccessToken() throws Exception {
 //        if(this.application_id == null || this.application_id.isEmpty()) throw new Exception("application_id 값이 비어있습니다.");
 //        if(this.private_key == null || this.private_key.isEmpty()) throw new Exception("private_key 값이 비어있습니다.");
