@@ -18,7 +18,6 @@ public class Main {
     static Bootpay bootpay;
     public static void main(String[] args) {
         bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
-//        bootpay = new Bootpay("5b9f51264457636ab9a07cde", "sfilSOSVakw+PZA+PRux4Iuwm7a//9CXXudCq9TMDHk=", "https://dev-api.bootpay.co.kr/v2/");
 
 
         goGetToken();
@@ -36,11 +35,15 @@ public class Main {
         confirm();
         certificate();
         shippingStart();
-////
-//        cashReceipt();
-//        cashReceiptCancel();
-//        cashReceiptBootpay();
-//        cashReceiptBootpayCancel();
+//
+        cashReceipt();
+        cashReceiptCancel();
+        cashReceiptBootpay();
+        cashReceiptBootpayCancel();
+
+        authRequest();
+        authConfirm();
+        authRealarm();
     }
 
     public static void goGetToken() {
@@ -105,7 +108,7 @@ public class Main {
 
     public static void requestSubscribe() {
         SubscribePayload payload = new SubscribePayload();
-        payload.billingKey = "63114b39d01c7e0025fb75e5";
+        payload.billingKey = "6332446ccf9f6d002f4e6038";
         payload.orderName = "아이템01";
         payload.price = 1000;
         payload.user = new User();
@@ -248,8 +251,8 @@ public class Main {
         }
     }
 
-    public static void getReceipt() {
-        String receiptId = "6323e0dcd01c7e001e91f151";
+        public static void getReceipt() {
+        String receiptId = "633faee6d01c7e00314c797a";
         try {
             HashMap<String, Object> res = bootpay.getReceipt(receiptId);
             JSONObject json =  new JSONObject(res);
@@ -264,6 +267,7 @@ public class Main {
         }
     }
 
+//
 
     public static void lookupBillingKey() {
         String receiptId = "6317e646d01c7e0024170b47";
@@ -298,7 +302,7 @@ public class Main {
     }
 
     public static void certificate() {
-        String receiptId = "630d5997d01c7e003f5aa109";
+        String receiptId = "635b5c7dd01c7e00314dabfe";
         try {
             HashMap<String, Object> res = bootpay.certificate(receiptId);
             if(res.get("error_code") == null) { //success
@@ -420,6 +424,59 @@ public class Main {
                 System.out.println("cashReceiptBootpayCancel success: " + res);
             } else {
                 System.out.println("cashReceiptBootpayCancel false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void authRequest() {
+        Authentication authentication = new Authentication();
+        authentication.pg = "다날";
+        authentication.method = "본인인증";
+        authentication.username = "사용자명";
+        authentication.identityNo = "0000000"; //생년월일 + 주민번호 뒷 1자리
+        authentication.carrier = "SKT"; //통신사
+        authentication.phone = "01010002000"; //사용자 전화번호
+        authentication.stieUrl = "https://www.bootpay.co.kr"; //본인인증 하는 url 또는 App 명
+        authentication.orderName = "회원 본인인증";
+        authentication.authenticationId = "" + (System.currentTimeMillis() / 1000);
+
+
+
+        try {
+            HashMap<String, Object> res = bootpay.requestAuthentication(authentication);
+            if(res.get("error_code") == null) { //success
+                System.out.println("authRequest success: " + res);
+            } else {
+                System.out.println("authRequest false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void authConfirm() {
+//        6369dc33d01c7e00271cccad
+        try {
+            HashMap<String, Object> res = bootpay.confirmAuthentication("6369dc33d01c7e00271cccad", "413941");
+            if(res.get("error_code") == null) { //success
+                System.out.println("authConfirm success: " + res);
+            } else {
+                System.out.println("authConfirm false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void authRealarm() {
+        try {
+            HashMap<String, Object> res = bootpay.realarmAuthentication("6369dc33d01c7e00271cccad");
+            if(res.get("error_code") == null) { //success
+                System.out.println("authRealarm success: " + res);
+            } else {
+                System.out.println("authRealarm false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();
