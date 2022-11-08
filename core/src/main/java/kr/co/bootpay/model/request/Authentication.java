@@ -7,7 +7,7 @@ public class Authentication {
     public String identityNo; //생년월일 + 주민등록번호 뒷 1자리
     public String carrier; //통신사
     public String phone;
-    public String stieUrl; //본인인증 하는 url 또는 App 명
+    public String siteUrl; //본인인증 하는 url 또는 App 명
     public String orderName;
     public String authenticationId;
 }
