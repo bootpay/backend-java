@@ -438,7 +438,7 @@ public class Main {
         authentication.identityNo = "0000000"; //생년월일 + 주민번호 뒷 1자리
         authentication.carrier = "SKT"; //통신사
         authentication.phone = "01010002000"; //사용자 전화번호
-        authentication.stieUrl = "https://www.bootpay.co.kr"; //본인인증 하는 url 또는 App 명
+        authentication.siteUrl = "https://www.bootpay.co.kr"; //본인인증 하는 url 또는 App 명
         authentication.orderName = "회원 본인인증";
         authentication.authenticationId = "" + (System.currentTimeMillis() / 1000);
 
