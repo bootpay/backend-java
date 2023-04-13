@@ -3,7 +3,7 @@
   "component": {
     "group": "io.github.bootpay",
     "module": "backend",
-    "version": "2.1.3",
+    "version": "2.1.4",
     "attributes": {
       "org.gradle.status": "release"
     }
@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.8",
-      "buildId": "27vti2wcmfdphndhiuiwoid7de"
+      "buildId": "lxg4l7qu3bcbzdpnrsjl7wz2xi"
     }
   },
   "variants": [
@@ -26,13 +26,13 @@
       },
       "files": [
         {
-          "name": "backend-2.1.3.jar",
-          "url": "backend-2.1.3.jar",
+          "name": "backend-2.1.4.jar",
+          "url": "backend-2.1.4.jar",
           "size": 48815,
-          "sha512": "4c04f559f2ed6b62fef046040cf423a70dda52ce744c4928a0d7d8b102b0c50dfa0b679f14906093604a8a73f0df0cca75dbbace5380f784d20b38284b188097",
-          "sha256": "d01b0d77fba3042cc3762efafc4045faec9f76cc605fb649b9de495c0af14377",
-          "sha1": "b7f7c5455e62e5252add2756297623745fcfb8f7",
-          "md5": "eb6ebb494f512d6028d7592bb7854216"
+          "sha512": "abd01715daf2a56f7541acca9fdfa8be5fdffcf17598d531d45e51bac380c2b039d9ead2145b10ea666f1cc53be06971dbd87f8a247ba3a2570746687c04588c",
+          "sha256": "e8dddf65ea73586adba0e2ac80ec894d97c9aa0d019a825a685bff96120c0f4e",
+          "sha1": "60ae75cb072649063978cdc46060e48df745de54",
+          "md5": "7cbc6d5724e8b8f93b881d7ba0fa0f90"
         }
       ]
     },
@@ -70,13 +70,13 @@
       ],
       "files": [
         {
-          "name": "backend-2.1.3.jar",
-          "url": "backend-2.1.3.jar",
+          "name": "backend-2.1.4.jar",
+          "url": "backend-2.1.4.jar",
           "size": 48815,
-          "sha512": "4c04f559f2ed6b62fef046040cf423a70dda52ce744c4928a0d7d8b102b0c50dfa0b679f14906093604a8a73f0df0cca75dbbace5380f784d20b38284b188097",
-          "sha256": "d01b0d77fba3042cc3762efafc4045faec9f76cc605fb649b9de495c0af14377",
-          "sha1": "b7f7c5455e62e5252add2756297623745fcfb8f7",
-          "md5": "eb6ebb494f512d6028d7592bb7854216"
+          "sha512": "abd01715daf2a56f7541acca9fdfa8be5fdffcf17598d531d45e51bac380c2b039d9ead2145b10ea666f1cc53be06971dbd87f8a247ba3a2570746687c04588c",
+          "sha256": "e8dddf65ea73586adba0e2ac80ec894d97c9aa0d019a825a685bff96120c0f4e",
+          "sha1": "60ae75cb072649063978cdc46060e48df745de54",
+          "md5": "7cbc6d5724e8b8f93b881d7ba0fa0f90"
         }
       ]
     },
@@ -90,13 +90,13 @@
       },
       "files": [
         {
-          "name": "backend-2.1.3-sources.jar",
-          "url": "backend-2.1.3-sources.jar",
+          "name": "backend-2.1.4-sources.jar",
+          "url": "backend-2.1.4-sources.jar",
           "size": 31526,
-          "sha512": "4e28caff5d012908f3aab1babbe1e871bfbef726741f6ccdbcf1fb75742cd0a9ad907acbdde0930984c51dcede265a3783cd1892f354e36e747da9b788772108",
-          "sha256": "1f0b7b1f39b5ef9971994636ebaf67271b8888b0c1ac574c6bd9a54e154bf624",
-          "sha1": "167a90c0e91a00c1e7e92b035d0d2afcfb2d0d03",
-          "md5": "f8c0365853d9f3fa9c31a4b56cc4ea9f"
+          "sha512": "1cc0a8c34b2d12663fdc113146a4e90ed7805d6efd884cc93da6d70772128d7f0671bba813da42e69a15055de8e2479094851458e9c2e8a579bc891aedd340e0",
+          "sha256": "ed3ac740713d43c82b9ebec7362e6b90b696969e7e5b70c3ca24f9e3ee5a4387",
+          "sha1": "e1090c725a1cd8ef5826b91297a538b3f8c9fcbb",
+          "md5": "99b7496a4275ab37714829fcb280909a"
         }
       ]
     },
@@ -110,13 +110,13 @@
       },
       "files": [
         {
-          "name": "backend-2.1.3-javadoc.jar",
-          "url": "backend-2.1.3-javadoc.jar",
-          "size": 171486,
-          "sha512": "9fcd53954d9b46976c2b031fbff803f6c7fd47fa96f7dc28f22a8df21fbfe04c60d054233bc8aa3a60f73e9d9717b3adc39cb2df42266bce815994c3bfe3e025",
-          "sha256": "f3975374db0c2238977ed702751c3d579b55815af790c6f9ed3d673d3f68b543",
-          "sha1": "55b33f2300cae064b2270d4f7849a8fb9aceaae8",
-          "md5": "554a1b1efc5c27e9b25ec565f0c3c428"
+          "name": "backend-2.1.4-javadoc.jar",
+          "url": "backend-2.1.4-javadoc.jar",
+          "size": 171484,
+          "sha512": "6a2676bf3687b3cdd04418d6396d3e3e0f81e7893ac2043b90b7eee2ba760ee3b687c9753065aa9b28a4afc045f3221bd7278be8d41ca011ecbb6638baab82c3",
+          "sha256": "3259f89f76dc4817f6a06f921f122d521466e391e8f090f19e6ec230305e16eb",
+          "sha1": "2232e8271ba98eace23c6444651af61b666d9a51",
+          "md5": "811d528ad698b6baaca60b5cd6a847cc"
         }
       ]
     }
