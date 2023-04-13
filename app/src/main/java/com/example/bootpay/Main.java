@@ -21,29 +21,29 @@ public class Main {
 
 
         goGetToken();
-        getReceipt();
-        receiptCancel();
-        lookupBillingKey();
-        lookupPaymentMethods();
-        getBillingKey();
-        requestSubscribe();
-        reserveSubscribe();
-        reserveCancelSubscribe();
-        destroyBillingKey();
-        getUserToken();
-//        requestLink();
-        confirm();
-        certificate();
-        shippingStart();
+//        getReceipt();
+//        receiptCancel();
+//        lookupBillingKey();
+//        lookupPaymentMethods();
+//        getBillingKey();
+//        requestSubscribe();
+//        reserveSubscribe();
+//        reserveCancelSubscribe();
+//        destroyBillingKey();
+//        getUserToken();
+////        requestLink();
+//        confirm();
+//        certificate();
+//        shippingStart();
+////
+//        cashReceipt();
+//        cashReceiptCancel();
+//        cashReceiptBootpay();
+//        cashReceiptBootpayCancel();
 //
-        cashReceipt();
-        cashReceiptCancel();
-        cashReceiptBootpay();
-        cashReceiptBootpayCancel();
-
         authRequest();
-        authConfirm();
-        authRealarm();
+//        authConfirm();
+//        authRealarm();
     }
 
     public static void goGetToken() {
@@ -64,11 +64,13 @@ public class Main {
         subscribe.orderName = "정기결제 테스트 아이템";
         subscribe.subscriptionId = "" + (System.currentTimeMillis() / 1000);
         subscribe.pg = "나이스페이";
+
         subscribe.cardNo = "5570**********1074"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardExpireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardExpireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardIdentityNo = ""; //생년월일 또는 사업자 등록번호 (- 없이 입력)
+
 
 
         subscribe.user = new User();
@@ -93,7 +95,7 @@ public class Main {
     }
 
     public static void destroyBillingKey() {
-        String billingKey = "628b2644d01c7e00209b6092";
+        String billingKey = "64376421755e27001feb65bb";
         try {
             HashMap<String, Object> res = bootpay.destroyBillingKey(billingKey);
             if(res.get("error_code") == null) { //success
@@ -108,12 +110,13 @@ public class Main {
 
     public static void requestSubscribe() {
         SubscribePayload payload = new SubscribePayload();
-        payload.billingKey = "6332446ccf9f6d002f4e6038";
+        payload.billingKey = "64376421755e27001feb65bb";
         payload.orderName = "아이템01";
         payload.price = 1000;
         payload.user = new User();
         payload.user.phone = "01012345678";
         payload.orderId = "" + (System.currentTimeMillis() / 1000);
+        payload.metadata.put("0", "1234");
 
         try {
             HashMap<String, Object> res = bootpay.requestSubscribe(payload);
@@ -130,17 +133,21 @@ public class Main {
     public static void reserveSubscribe() {
         SubscribePayload payload = new SubscribePayload();
 
-        payload.billingKey = "632402f6d01c7e003c91f49b";
+        payload.billingKey = "64376421755e27001feb65bb";
         payload.orderName = "아이템01";
         payload.price = 1000;
         payload.orderId = "" + (System.currentTimeMillis() / 1000);
+        payload.metadata.put("0", "1234");
+        payload.metadata.put("1", "5678");
 
         Date now = new Date();
-        now.setTime(now.getTime() + 10 * 1000); //10초 뒤 결제
+        now.setTime(now.getTime() + 5 * 1000); //5초 뒤 결제
 //
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss XXX");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         payload.reserveExecuteAt = sdf.format(now); // 결제 승인 시점
+
+
 
         try {
             HashMap<String, Object> res = bootpay.reserveSubscribe(payload);
@@ -170,7 +177,7 @@ public class Main {
 
     public static void receiptCancel() {
         Cancel cancel = new Cancel();
-        cancel.receiptId = "62d8e199cf9f6d001aa6cb06";
+        cancel.receiptId = "64376072755e27001feb657f";
         cancel.cancelUsername = "관리자";
         cancel.cancelMessage = "테스트 결제";
         cancel.cancelPrice = 1000d;
@@ -236,9 +243,10 @@ public class Main {
     }
 
     public static void confirm() {
-        String receiptId = "6319773ad01c7e0032171270";
+        String receiptId = "64376072755e27001feb657f";
         try {
             HashMap<String, Object> res = bootpay.confirm(receiptId);
+            System.out.println(res.get("status").toString());
             JSONObject json =  new JSONObject(res);
             System.out.printf( "JSON: %s", json);
             if(res.get("error_code") == null) { //success
@@ -252,15 +260,15 @@ public class Main {
     }
 
         public static void getReceipt() {
-        String receiptId = "633faee6d01c7e00314c797a";
+        String receiptId = "64376072755e27001feb657f";
         try {
             HashMap<String, Object> res = bootpay.getReceipt(receiptId);
             JSONObject json =  new JSONObject(res);
             System.out.printf( "JSON: %s", json);
             if(res.get("error_code") == null) { //success
-                System.out.println("getReceipt success: " + res);
+//                System.out.println("getReceipt success: " + res);
             } else {
-                System.out.println("getReceipt false: " + res);
+//                System.out.println("getReceipt false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -302,7 +310,7 @@ public class Main {
     }
 
     public static void certificate() {
-        String receiptId = "635b5c7dd01c7e00314dabfe";
+        String receiptId = "640e65283049c8001e5618fc";
         try {
             HashMap<String, Object> res = bootpay.certificate(receiptId);
             if(res.get("error_code") == null) { //success
@@ -459,7 +467,7 @@ public class Main {
     public static void authConfirm() {
 //        6369dc33d01c7e00271cccad
         try {
-            HashMap<String, Object> res = bootpay.confirmAuthentication("6369dc33d01c7e00271cccad", "413941");
+            HashMap<String, Object> res = bootpay.confirmAuthentication("636a0bc4d01c7e00331cd25e", "556659");
             if(res.get("error_code") == null) { //success
                 System.out.println("authConfirm success: " + res);
             } else {

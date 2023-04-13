@@ -1,3 +1,6 @@
+### 2.2.0
+- json parser 교체, int가 double로 리턴되던 현상 수정 
+
 ### 2.1.4
 - REST API 본인인증 추가 - 오탈자 수정 
 

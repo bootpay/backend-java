@@ -1,6 +1,9 @@
 package kr.co.bootpay;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.http.HttpDeleteWithBody;
 import org.apache.commons.io.IOUtils;
@@ -18,6 +21,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class BootpayObject {
@@ -101,9 +105,13 @@ public class BootpayObject {
 
     public HashMap<String, Object> responseToJsonArray(HttpResponse response)  throws Exception {
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        System.out.println(str);
+
         HashMap<String, Object>  result = new HashMap<>();
-        Type resType = new TypeToken<List<HashMap<String, Object>>>(){}.getType();
-        List<HashMap<String, Object>> data = new Gson().fromJson(str, resType);
+//        Type resType = new TypeToken<List<HashMap<String, Object>>>(){}.getType();
+        TypeReference<List<HashMap<String, Object>>> typeRef = new TypeReference<List<HashMap<String, Object>>>() {};
+        ObjectMapper mapper = new ObjectMapper();
+        List<HashMap<String, Object>> data = mapper.readValue(str, typeRef);
         if(data == null) {
             data = new ArrayList<>();
         }
@@ -116,8 +124,9 @@ public class BootpayObject {
     public HashMap<String, Object> responseToJson(HttpResponse response)  throws Exception {
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        HashMap<String, Object> result = new Gson().fromJson(str, resType);
+        ObjectMapper mapper = new ObjectMapper();
+        TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {};
+        HashMap<String, Object> result = mapper.readValue(str, typeRef);
 
         result.put("http_status", response.getStatusLine().getStatusCode());
         return result;
