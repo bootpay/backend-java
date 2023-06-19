@@ -9,12 +9,12 @@ import java.util.HashMap;
 public class Bootpay extends BootpayObject {
     public Bootpay() { }
 
-    public Bootpay(String rest_application_id, String private_key) {
-        super(rest_application_id, private_key);
+    public Bootpay(String restApplicationId, String privateKey) {
+        super(restApplicationId, privateKey);
     }
 
-    public Bootpay(String rest_application_id, String private_key, String devMode) {
-        super(rest_application_id, private_key, devMode);
+    public Bootpay(String restApplicationId, String privateKey, String devMode) {
+        super(restApplicationId, privateKey, devMode);
     }
 
     //token
@@ -39,11 +39,16 @@ public class Bootpay extends BootpayObject {
     public HashMap<String, Object> reserveSubscribe(SubscribePayload payload) throws Exception {
         return BillingService.reserveSubscribe(this, payload);
     }
-    public HashMap<String, Object> reserveCancelSubscribe(String reserve_id) throws Exception {
-        return BillingService.reserveCancelSubscribe(this, reserve_id);
+
+    public HashMap<String, Object> reserveSubscribeLookup(String reserveId) throws Exception {
+        return BillingService.reserveSubscribeLookup(this, reserveId);
     }
-    public HashMap<String, Object> destroyBillingKey(String billing_key) throws Exception {
-        return BillingService.destroyBillingKey(this, billing_key);
+
+    public HashMap<String, Object> reserveCancelSubscribe(String reserveId) throws Exception {
+        return BillingService.reserveCancelSubscribe(this, reserveId);
+    }
+    public HashMap<String, Object> destroyBillingKey(String billingKey) throws Exception {
+        return BillingService.destroyBillingKey(this, billingKey);
     }
 
     //cancel

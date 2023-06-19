@@ -22,9 +22,11 @@ java언어로 작성된 어플리케이션, 프레임워크 등에서 사용가�
 
    4-4. 발급된 빌링키로 결제 예약 - 취소 요청
 
-   4-5. 빌링키 삭제
+   4-5. 빌링키로 예약된 결제 조회 
 
-   4-6. 빌링키 조회
+   4-6. 빌링키 삭제
+
+   4-7. 빌링키 조회
 
 5. (생체인증, 비밀번호 결제를 위한) 구매자 토큰 발급
 6. 서버 승인 요청
@@ -278,7 +280,26 @@ try {
    e.printStackTrace();
 }
 ```
-## 4-5. 빌링키 삭제
+
+## 4-5. 빌링키로 예약된 결제 조회
+예약된 결제건을 조회합니다 
+```java 
+String reserveId = "6490149ca575b40024f0b70d";
+try {
+   HashMap<String, Object> res = bootpay.reserveSubscribeLookup(reserveId);
+   JSONObject json =  new JSONObject(res);
+   System.out.printf( "JSON: %s", json);
+   if(res.get("error_code") == null) { //success
+       System.out.println("getReceipt success: " + res);
+   } else {
+       System.out.println("getReceipt false: " + res);
+   }
+} catch (Exception e) {
+   e.printStackTrace();
+}
+```
+
+## 4-6. 빌링키 삭제
 발급된 빌링키로 더 이상 사용되지 않도록, 삭제 요청합니다.
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
@@ -298,7 +319,7 @@ try {
    e.printStackTrace();
 }
 ```
-## 4-6. 빌링키 조회
+## 4-7. 빌링키 조회
 클라이언트에서 빌링키 발급시, 보안상 클라이언트 이벤트에 빌링키를 전달해주지 않습니다. 그러므로 이 API를 통해 조회해야 합니다. 
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
@@ -319,7 +340,7 @@ try {
 }
 ```
 
-## 5. 사용자 토큰 발급 
+## 5. 구매자 토큰 발급 
 (부트페이 단독) 부트페이에서 제공하는 간편결제창, 생체인증 기반의 결제 사용을 위해서는 개발사에서 회원 고유번호를 관리해야하며, 해당 회원에 대한 사용자 토큰을 발급합니다.
 이 토큰값을 기반으로 클라이언트에서 결제요청 하시면 되겠습니다.
 ```java 
@@ -520,7 +541,7 @@ try {
 
 ## Documentation
 
-[부트페이 개발매뉴얼](https://docs.bootpay.co.kr/next/)을 참조해주세요
+[부트페이 개발매뉴얼](https://docs.bootpay.co.kr)을 참조해주세요
 
 ## 기술문의
 
