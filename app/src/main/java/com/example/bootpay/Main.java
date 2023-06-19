@@ -28,6 +28,7 @@ public class Main {
 //        getBillingKey();
 //        requestSubscribe();
 //        reserveSubscribe();
+        reserveSubscribeLookup();
 //        reserveCancelSubscribe();
 //        destroyBillingKey();
 //        getUserToken();
@@ -41,7 +42,7 @@ public class Main {
 //        cashReceiptBootpay();
 //        cashReceiptBootpayCancel();
 //
-        authRequest();
+//        authRequest();
 //        authConfirm();
 //        authRealarm();
     }
@@ -70,8 +71,6 @@ public class Main {
         subscribe.cardExpireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardExpireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardIdentityNo = ""; //생년월일 또는 사업자 등록번호 (- 없이 입력)
-
-
 
         subscribe.user = new User();
         subscribe.user.username = "홍길동";
@@ -133,7 +132,7 @@ public class Main {
     public static void reserveSubscribe() {
         SubscribePayload payload = new SubscribePayload();
 
-        payload.billingKey = "64376421755e27001feb65bb";
+        payload.billingKey = "649013eb00be040023cf7838";
         payload.orderName = "아이템01";
         payload.price = 1000;
         payload.orderId = "" + (System.currentTimeMillis() / 1000);
@@ -155,6 +154,22 @@ public class Main {
                 System.out.println("reserveSubscribe success: " + res);
             } else {
                 System.out.println("reserveSubscribe false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void reserveSubscribeLookup() {
+        String reserveId = "6490149ca575b40024f0b70d";
+        try {
+            HashMap<String, Object> res = bootpay.reserveSubscribeLookup(reserveId);
+            JSONObject json =  new JSONObject(res);
+            System.out.printf( "JSON: %s", json);
+            if(res.get("error_code") == null) { //success
+                System.out.println("getReceipt success: " + res);
+            } else {
+                System.out.println("getReceipt false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -243,7 +258,7 @@ public class Main {
     }
 
     public static void confirm() {
-        String receiptId = "64376072755e27001feb657f";
+        String receiptId = "643cb6bb9f326b001fccaddc";
         try {
             HashMap<String, Object> res = bootpay.confirm(receiptId);
             System.out.println(res.get("status").toString());
@@ -260,7 +275,7 @@ public class Main {
     }
 
         public static void getReceipt() {
-        String receiptId = "64376072755e27001feb657f";
+        String receiptId = "643cb3cd9f326b0023ccad3a";
         try {
             HashMap<String, Object> res = bootpay.getReceipt(receiptId);
             JSONObject json =  new JSONObject(res);

@@ -104,6 +104,19 @@ public class BillingService {
         return bootpay.responseToJson(response);
     }
 
+    static public HashMap<String, Object> reserveSubscribeLookup(BootpayObject bootpay, String reserveId) throws Exception {
+        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(reserveId == null || reserveId.isEmpty()) throw new Exception("reserveId 값이 비어있습니다.");
+
+        HttpClient client = HttpClientBuilder.create().build();
+
+        HttpGet get = bootpay.httpGet("subscribe/payment/reserve/" + reserveId);
+
+        get.setHeader("Authorization", bootpay.getTokenValue());
+        HttpResponse response = client.execute(get);
+        return bootpay.responseToJson(response);
+    }
+
 
     static public HashMap<String, Object>  reserveCancelSubscribe(BootpayObject bootpay, String reserve_id) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
