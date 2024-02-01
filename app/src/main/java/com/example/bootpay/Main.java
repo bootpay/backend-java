@@ -18,6 +18,7 @@ public class Main {
     static Bootpay bootpay;
     public static void main(String[] args) {
         bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+//        bootpay = new Bootpay("6560203cca8deb00600959cc", "NVznyFF+WKVbT54ImpulaeYzROKFhg28RWw7h8yt0/A=", "https://dev-api.bootpay.co.kr/v2/");
 
 
         goGetToken();
@@ -28,7 +29,7 @@ public class Main {
 //        getBillingKey();
 //        requestSubscribe();
 //        reserveSubscribe();
-        reserveSubscribeLookup();
+//        reserveSubscribeLookup();
 //        reserveCancelSubscribe();
 //        destroyBillingKey();
 //        getUserToken();
@@ -45,6 +46,7 @@ public class Main {
 //        authRequest();
 //        authConfirm();
 //        authRealarm();
+        lookupOrderId();
     }
 
     public static void goGetToken() {
@@ -496,6 +498,19 @@ public class Main {
     public static void authRealarm() {
         try {
             HashMap<String, Object> res = bootpay.realarmAuthentication("6369dc33d01c7e00271cccad");
+            if(res.get("error_code") == null) { //success
+                System.out.println("authRealarm success: " + res);
+            } else {
+                System.out.println("authRealarm false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void lookupOrderId() {
+        try {
+            HashMap<String, Object> res = bootpay.lookupOrderId("1706621409416");
             if(res.get("error_code") == null) { //success
                 System.out.println("authRealarm success: " + res);
             } else {
