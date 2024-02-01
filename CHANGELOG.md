@@ -1,3 +1,7 @@
+### 2.2.2
+- orderId 로 주문조회 추가 
+- 본인인증 authenticate_type 필드 추가 
+
 ### 2.2.1
 - 예약결제 조회 API 추가 
 
