@@ -3,7 +3,7 @@
   "component": {
     "group": "io.github.bootpay",
     "module": "backend",
-    "version": "2.2.0",
+    "version": "2.2.2",
     "attributes": {
       "org.gradle.status": "release"
     }
@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.8",
-      "buildId": "lgzvmpee4rgepnzbkerppmt3qe"
+      "buildId": "4jzamgzrrzabxdpkrhw7j6qcea"
     }
   },
   "variants": [
@@ -26,13 +26,13 @@
       },
       "files": [
         {
-          "name": "backend-2.2.0.jar",
-          "url": "backend-2.2.0.jar",
-          "size": 48947,
-          "sha512": "db04e95c6bf88213965517585a7865d0a7ac7b5fb33242531a1a4fd8475da21d671cb5b7c65c6cb173b76a79a080f1ea24307c78d2da4c360b1d9c218b8ca8d3",
-          "sha256": "a519a746dcb71d2f6e3fc09939ea8341a5b63758adeb77cec5cb34a5fd650034",
-          "sha1": "79951a13b05bd6c79cf56f54a3d072353d914294",
-          "md5": "61fc53684c50da0df3edae9baa7f1875"
+          "name": "backend-2.2.2.jar",
+          "url": "backend-2.2.2.jar",
+          "size": 50326,
+          "sha512": "7cc46fec946b7ed013b22c1bc42bbd9093402e90be3273aacd5ea11375067947298cfe4d83e75db0f522a0a7f5df8e05d176afcdf8852cfce4b8a694504ea65d",
+          "sha256": "62d05e932230472bcac0709bdd88debbb3ca62dc97a9f596ddb51973050cdac0",
+          "sha1": "2806597e9143f870b297cc4e45e9e18ef357dba9",
+          "md5": "16b53a265709921119bbd986bf6e1352"
         }
       ]
     },
@@ -84,13 +84,13 @@
       ],
       "files": [
         {
-          "name": "backend-2.2.0.jar",
-          "url": "backend-2.2.0.jar",
-          "size": 48947,
-          "sha512": "db04e95c6bf88213965517585a7865d0a7ac7b5fb33242531a1a4fd8475da21d671cb5b7c65c6cb173b76a79a080f1ea24307c78d2da4c360b1d9c218b8ca8d3",
-          "sha256": "a519a746dcb71d2f6e3fc09939ea8341a5b63758adeb77cec5cb34a5fd650034",
-          "sha1": "79951a13b05bd6c79cf56f54a3d072353d914294",
-          "md5": "61fc53684c50da0df3edae9baa7f1875"
+          "name": "backend-2.2.2.jar",
+          "url": "backend-2.2.2.jar",
+          "size": 50326,
+          "sha512": "7cc46fec946b7ed013b22c1bc42bbd9093402e90be3273aacd5ea11375067947298cfe4d83e75db0f522a0a7f5df8e05d176afcdf8852cfce4b8a694504ea65d",
+          "sha256": "62d05e932230472bcac0709bdd88debbb3ca62dc97a9f596ddb51973050cdac0",
+          "sha1": "2806597e9143f870b297cc4e45e9e18ef357dba9",
+          "md5": "16b53a265709921119bbd986bf6e1352"
         }
       ]
     },
@@ -104,13 +104,13 @@
       },
       "files": [
         {
-          "name": "backend-2.2.0-sources.jar",
-          "url": "backend-2.2.0-sources.jar",
-          "size": 31639,
-          "sha512": "3b3cf50f55c608cdaa8512acc0dea0605faaa44eca5f4d134baa8a4a12292fa2897cc976adecc76c8d5e34028d8bb64f245de55b408185a93a270b10a5c25cea",
-          "sha256": "84bd0e06e9bd024c5443e5bea71b442b1bee08f7a639d6f9372131fd8210cfb1",
-          "sha1": "852ca89d7802fbc0bfb6f8d27c0707ead21b006b",
-          "md5": "d36469edfcea30454919253e72e6db47"
+          "name": "backend-2.2.2-sources.jar",
+          "url": "backend-2.2.2-sources.jar",
+          "size": 32477,
+          "sha512": "96373fdd0eb29fde9e89c9cbe59c35136ed7ea3462aa23571d17fb114fceb9be3193e58a6c211759776d8228635a1983c1bb7fb3b7e81df654022fdedd87bcf0",
+          "sha256": "27db75244ce0e6575aca1f1b9f36d534169e3a74e5ef8352c5319c584bfe745b",
+          "sha1": "a9b17ced4cee6ff942e7a68c1a329db7979007f8",
+          "md5": "d03034f9dcd4cec7fe443026595d1ad4"
         }
       ]
     },
@@ -124,13 +124,13 @@
       },
       "files": [
         {
-          "name": "backend-2.2.0-javadoc.jar",
-          "url": "backend-2.2.0-javadoc.jar",
-          "size": 171480,
-          "sha512": "bc17616442a24e25b62cd1bcb6c68b6188e38c4b05ef0e75f307d103d5c4aeef706d5c2992594231e051b9d614b7528d831ae755abf1e44ac8896248aaca5982",
-          "sha256": "6ee6e8023d5fc1234be40c3a839b0701f8ac39bfde18cc999b9d744a4fcdf422",
-          "sha1": "bc1a8510534f1b8f57eaa7b8cf509f45120b3981",
-          "md5": "13b9092969bf594841a930a060fe41bb"
+          "name": "backend-2.2.2-javadoc.jar",
+          "url": "backend-2.2.2-javadoc.jar",
+          "size": 174088,
+          "sha512": "636d0f6ae518d9ada752698ac82e220a263d555477e8246f33439c61750e3b432aab38d998f404b4e04bc966ebf6beeefbfe4150978c2919fecabf1bd1c841a8",
+          "sha256": "b98f1846620dc79f0e64eea2d78b2940c26ecb205235201e2a48dbb3f57d8d05",
+          "sha1": "d0fc4e950aa5229ad81f5a14c7bbefe9f806b9b1",
+          "md5": "29847250f79efbaa4608609be4d90fbf"
         }
       ]
     }
