@@ -23,7 +23,7 @@ public class Main {
 
         goGetToken();
 //        getReceipt();
-//        receiptCancel();
+        receiptCancel();
 //        lookupBillingKey();
 //        lookupPaymentMethods();
 //        getBillingKey();
@@ -194,9 +194,9 @@ public class Main {
 
     public static void receiptCancel() {
         Cancel cancel = new Cancel();
-        cancel.receiptId = "64376072755e27001feb657f";
-        cancel.cancelUsername = "관리자";
-        cancel.cancelMessage = "테스트 결제";
+        cancel.receiptId = "664ab4724b704372318b6fb7";
+        cancel.cancelUsername = "관리자2";
+        cancel.cancelMessage = "테스트 결제2";
         cancel.cancelPrice = 1000d;
 //        cancel.price = 1000.0; //부분취소 요청시
 //        cancel.cancelId = "12342134"; //부분취소 요청시, 중복 부분취소 요청하는 실수를 방지하고자 할때 지정
