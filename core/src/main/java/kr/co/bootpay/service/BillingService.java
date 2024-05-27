@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.BootpayObject;
+import kr.co.bootpay.model.request.Payload;
 import kr.co.bootpay.model.request.Subscribe;
 import kr.co.bootpay.model.request.SubscribePayload;
 import org.apache.commons.io.IOUtils;
@@ -47,6 +48,23 @@ public class BillingService {
 //                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
 //                .create();
         HttpGet get = bootpay.httpGet("subscribe/billing_key/" + receiptId);
+
+        get.setHeader("Authorization", bootpay.getTokenValue());
+        HttpResponse response = client.execute(get);
+        return bootpay.responseToJson(response);
+    }
+
+
+    //    빌링키 조회
+    static public HashMap<String, Object> lookupBillingKeyByKey(BootpayObject bootpay, String billingKey) throws Exception {
+        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(billingKey == null || billingKey.isEmpty()) throw new Exception("billingKey 값이 비어있습니다.");
+
+        HttpClient client = HttpClientBuilder.create().build();
+//        Gson gson = new GsonBuilder()
+//                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+//                .create();
+        HttpGet get = bootpay.httpGet("billing_key/" + billingKey);
 
         get.setHeader("Authorization", bootpay.getTokenValue());
         HttpResponse response = client.execute(get);
@@ -127,6 +145,49 @@ public class BillingService {
         delete.setHeader("Authorization", bootpay.getTokenValue());
 
         HttpResponse response = client.execute(delete);
+        return bootpay.responseToJson(response);
+    }
+
+    //계좌 빌링키 발급 요청하기
+    static public HashMap<String, Object>  getBillingKeyTransfer(BootpayObject bootpay, Subscribe subscribe) throws Exception {
+        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(subscribe.orderName == null || subscribe.orderName.isEmpty()) throw new Exception("order_name 값을 입력해주세요.");
+        if(subscribe.subscriptionId == null || subscribe.subscriptionId.isEmpty()) throw new Exception("order_id 주문번호를 설정해주세요.");
+        if(subscribe.pg == null || subscribe.pg.isEmpty()) throw new Exception("결제하고자 하는 pg alias를 입력해주세요.");
+
+        if(subscribe.bankName == null || subscribe.bankName.isEmpty()) throw new Exception("결제하고자 하는 pg alias를 입력해주세요.");
+        if(subscribe.bankAccount == null || subscribe.bankAccount.isEmpty()) throw new Exception("결제하고자 하는 pg alias를 입력해주세요.");
+
+        if(subscribe.username == null || subscribe.username.isEmpty()) throw new Exception("결제하고자 하는 pg alias를 입력해주세요.");
+        if(subscribe.identityNo == null || subscribe.identityNo.isEmpty()) throw new Exception("결제하고자 하는 pg alias를 입력해주세요.");
+
+        HttpClient client = HttpClientBuilder.create().build();
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+        HttpPost post = bootpay.httpPost("request/subscribe/automatic-transfer", new StringEntity(gson.toJson(subscribe), "UTF-8"));
+
+        post.setHeader("Authorization", bootpay.getTokenValue());
+        HttpResponse response = client.execute(post);
+        return bootpay.responseToJson(response);
+    }
+
+    //계좌 출금 동의 확인
+    static public HashMap<String, Object>  publishBillingKeyTransfer(BootpayObject bootpay, String receiptId) throws Exception {
+        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(receiptId == null || receiptId.isEmpty()) throw new Exception("receiptId 값을 입력해주세요.");
+
+        SubscribePayload payload = new SubscribePayload();
+        payload.receiptId = receiptId;
+
+        HttpClient client = HttpClientBuilder.create().build();
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+        HttpPost post = bootpay.httpPost("request/subscribe/automatic-transfer/publish", new StringEntity(gson.toJson(payload), "UTF-8"));
+
+        post.setHeader("Authorization", bootpay.getTokenValue());
+        HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
     }
 }
