@@ -30,6 +30,10 @@ public class BootpayObject {
     public String private_key;
     public String baseUrl;
 
+    private String apiVersion = "5.0.0"; //부트페이 api 버전
+    private String sdkVersion = "2.2.4"; //부트페이 api 버전
+    private String sdkType = "304";
+
     public BootpayObject() {}
     public BootpayObject(String rest_application_id, String private_key) {
         this.application_id = rest_application_id;
@@ -63,6 +67,9 @@ public class BootpayObject {
         get.setHeader("Accept", "application/json");
         get.setHeader("Content-Type", "application/json");
         get.setHeader("Accept-Charset", "utf-8");
+        get.setHeader("bootpay_api_version", apiVersion);
+        get.setHeader("bootpay_sdk_version", sdkVersion);
+        get.setHeader("bootpay_sdk_type", sdkType);
         URI uri = new URIBuilder(get.getURI()).addParameters(nameValuePairList).build();
         get.setURI(uri);
         return get;

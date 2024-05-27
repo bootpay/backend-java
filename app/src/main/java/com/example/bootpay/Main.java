@@ -12,6 +12,8 @@ import java.util.TimeZone;
 
 import org.json.simple.JSONObject;
 
+import static kr.co.bootpay.service.BillingService.getBillingKeyTransfer;
+
 
 public class Main {
 
@@ -23,11 +25,11 @@ public class Main {
 
         goGetToken();
 //        getReceipt();
-        receiptCancel();
+//        receiptCancel();
 //        lookupBillingKey();
 //        lookupPaymentMethods();
 //        getBillingKey();
-//        requestSubscribe();
+        requestSubscribe();
 //        reserveSubscribe();
 //        reserveSubscribeLookup();
 //        reserveCancelSubscribe();
@@ -46,7 +48,10 @@ public class Main {
 //        authRequest();
 //        authConfirm();
 //        authRealarm();
-        lookupOrderId();
+//        lookupOrderId();
+
+//        getBillingKeyTransfer();
+//        publishBillingKeyTransfer();
     }
 
     public static void goGetToken() {
@@ -111,9 +116,9 @@ public class Main {
 
     public static void requestSubscribe() {
         SubscribePayload payload = new SubscribePayload();
-        payload.billingKey = "64376421755e27001feb65bb";
+        payload.billingKey = "66541c40419d33cdcb43e268";
         payload.orderName = "아이템01";
-        payload.price = 1000;
+        payload.price = 100;
         payload.user = new User();
         payload.user.phone = "01012345678";
         payload.orderId = "" + (System.currentTimeMillis() / 1000);
@@ -515,6 +520,46 @@ public class Main {
                 System.out.println("authRealarm success: " + res);
             } else {
                 System.out.println("authRealarm false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getBillingKeyTransfer() {
+        try {
+            Subscribe subscribe = new Subscribe();
+            subscribe.orderName = "테스트 결제";
+            subscribe.pg = "나이스페이";
+            subscribe.bankName = "국민";
+            subscribe.bankAccount = "67560101092472";
+            subscribe.username = "윤태섭";
+            subscribe.identityNo = "861014";
+            subscribe.phone = "01040334678";
+            subscribe.subscriptionId = "" + (System.currentTimeMillis() / 1000);
+//            subscribe.tax
+
+            HashMap<String, Object> res = bootpay.getBillingKeyTransfer(subscribe);
+            if(res.get("error_code") == null) { //success
+                System.out.println("success: " + res);
+//                {cancelled_price=0, metadata={}, cancelled_tax_free=0, method=계좌자동이체, gateway_url=https://gw.bootpay.co.kr, sandbox=true, receipt_id=66541bc4ca4517e69343e24c, method_origin=계좌자동이체, order_name=테스트 결제, method_origin_symbol=automatic_transfer_rest, method_symbol=automatic_transfer_rest, tax_free=0, price=0, company_name=윤태섭, pg=나이스페이먼츠, status_locale=자동결제빌링키발급이전, currency=KRW, http_status=200, order_id=1716788164, requested_at=2024-05-27T14:36:04+09:00, status=41}
+            } else {
+                System.out.println("false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void publishBillingKeyTransfer() {
+        try {
+            HashMap<String, Object> res = bootpay.publishBillingKeyTransfer("66541bc4ca4517e69343e24c");
+            if(res.get("error_code") == null) { //success
+                System.out.println("success: " + res);
+//                {metadata={}, method=계좌자동이체, gateway_url=https://gw.bootpay.co.kr, receipt_id=66541bc4ca4517e69343e24c, method_origin=계좌자동이체, subscription_id=1716788164, billing_data={bank_name=국민, bank_code=004, bank_account=0000000000000000, username=윤태*}, method_origin_symbol=automatic_transfer_rest, billing_expire_at=2099-12-31T23:59:59+09:00, method_symbol=automatic_transfer_rest, pg=나이스페이먼츠, status_locale=빌링키발급완료, http_status=200, published_at=2024-05-27T14:38:08+09:00, billing_key=66541c40419d33cdcb43e268, requested_at=2024-05-27T14:36:04+09:00, status=11}
+
+            } else {
+                System.out.println("false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();

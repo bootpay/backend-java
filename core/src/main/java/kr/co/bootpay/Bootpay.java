@@ -119,4 +119,11 @@ public class Bootpay extends BootpayObject {
         return AuthService.realarmAuthentication(this, receiptId);
     }
 
+    public HashMap<String, Object> getBillingKeyTransfer(Subscribe subscribe) throws Exception {
+        return BillingService.getBillingKeyTransfer(this, subscribe);
+    }
+
+    public HashMap<String, Object> publishBillingKeyTransfer(String receiptId) throws Exception {
+        return BillingService.publishBillingKeyTransfer(this, receiptId);
+    }
 }
