@@ -530,12 +530,13 @@ public class Main {
         try {
             Subscribe subscribe = new Subscribe();
             subscribe.orderName = "테스트 결제";
+
             subscribe.pg = "나이스페이";
             subscribe.bankName = "국민";
-            subscribe.bankAccount = "67560101092472";
-            subscribe.username = "윤태섭";
-            subscribe.identityNo = "861014";
-            subscribe.phone = "01040334678";
+            subscribe.bankAccount = "67512341234472";
+            subscribe.username = "홍길동";
+            subscribe.identityNo = "901014";
+            subscribe.phone = "01012341234";
             subscribe.subscriptionId = "" + (System.currentTimeMillis() / 1000);
 //            subscribe.tax
 
