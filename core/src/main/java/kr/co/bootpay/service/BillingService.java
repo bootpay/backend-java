@@ -155,11 +155,11 @@ public class BillingService {
         if(subscribe.subscriptionId == null || subscribe.subscriptionId.isEmpty()) throw new Exception("order_id 주문번호를 설정해주세요.");
         if(subscribe.pg == null || subscribe.pg.isEmpty()) throw new Exception("결제하고자 하는 pg alias를 입력해주세요.");
 
-        if(subscribe.bankName == null || subscribe.bankName.isEmpty()) throw new Exception("결제하고자 하는 pg alias를 입력해주세요.");
-        if(subscribe.bankAccount == null || subscribe.bankAccount.isEmpty()) throw new Exception("결제하고자 하는 pg alias를 입력해주세요.");
+        if(subscribe.bankName == null || subscribe.bankName.isEmpty()) throw new Exception("계좌 은행명을 입력해주세요.");
+        if(subscribe.bankAccount == null || subscribe.bankAccount.isEmpty()) throw new Exception("계좌 번호를 입력해주세요.");
 
-        if(subscribe.username == null || subscribe.username.isEmpty()) throw new Exception("결제하고자 하는 pg alias를 입력해주세요.");
-        if(subscribe.identityNo == null || subscribe.identityNo.isEmpty()) throw new Exception("결제하고자 하는 pg alias를 입력해주세요.");
+        if(subscribe.username == null || subscribe.username.isEmpty()) throw new Exception("계좌주 이름을 입력해주세요.");
+        if(subscribe.identityNo == null || subscribe.identityNo.isEmpty()) throw new Exception("계좌주의 생년월일 6자리 또는 사업자번호 10자리를 입력해주세요.");
 
         HttpClient client = HttpClientBuilder.create().build();
         Gson gson = new GsonBuilder()
