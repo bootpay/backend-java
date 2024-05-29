@@ -25,6 +25,12 @@ public class Bootpay extends BootpayObject {
         return BillingService.lookupBillingKey(this, receiptId);
     }
 
+    public HashMap<String, Object> lookupBillingKeyByKey(String billingKey) throws Exception {
+        return BillingService.lookupBillingKeyByKey(this, billingKey);
+    }
+
+
+
     public HashMap<String, Object> lookupPaymentMethods() throws Exception {
         return SellerService.lookupPaymentMethods(this);
     }
