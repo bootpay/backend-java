@@ -31,7 +31,7 @@ public class BootpayObject {
     public String baseUrl;
 
     private String apiVersion = "5.0.0"; //부트페이 api 버전
-    private String sdkVersion = "2.2.5"; //부트페이 api 버전
+    private String sdkVersion = "2.3.0"; //부트페이 api 버전
     private String sdkType = "304";
 
     public BootpayObject() {}

@@ -27,9 +27,10 @@ public class Main {
 //        getReceipt();
 //        receiptCancel();
 //        lookupBillingKey();
+        lookupBillingKeyByKey();
 //        lookupPaymentMethods();
 //        getBillingKey();
-        requestSubscribe();
+//        requestSubscribe();
 //        reserveSubscribe();
 //        reserveSubscribeLookup();
 //        reserveCancelSubscribe();
@@ -303,6 +304,22 @@ public class Main {
         String receiptId = "6317e646d01c7e0024170b47";
         try {
             HashMap<String, Object> res = bootpay.lookupBillingKey(receiptId);
+            JSONObject json =  new JSONObject(res);
+            System.out.printf( "JSON: %s", json);
+            if(res.get("error_code") == null) { //success
+                System.out.println("getReceipt success: " + res);
+            } else {
+                System.out.println("getReceipt false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void lookupBillingKeyByKey() {
+        String billingKey = "66542dfb4d18d5fc7b43e1b6";
+        try {
+            HashMap<String, Object> res = bootpay.lookupBillingKeyByKey(billingKey);
             JSONObject json =  new JSONObject(res);
             System.out.printf( "JSON: %s", json);
             if(res.get("error_code") == null) { //success
