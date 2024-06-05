@@ -27,11 +27,13 @@ public class Main {
 //        getReceipt();
 //        receiptCancel();
 //        lookupBillingKey();
-        lookupBillingKeyByKey();
+//        lookupBillingKeyByKey();
 //        lookupPaymentMethods();
 //        getBillingKey();
 //        requestSubscribe();
 //        reserveSubscribe();
+        startShipping();
+
 //        reserveSubscribeLookup();
 //        reserveCancelSubscribe();
 //        destroyBillingKey();
@@ -106,9 +108,9 @@ public class Main {
         try {
             HashMap<String, Object> res = bootpay.destroyBillingKey(billingKey);
             if(res.get("error_code") == null) { //success
-                System.out.println("destroyBillingKey success: " + res);
+                System.out.println("success: " + res);
             } else {
-                System.out.println("destroyBillingKey false: " + res);
+                System.out.println("false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -117,7 +119,9 @@ public class Main {
 
     public static void requestSubscribe() {
         SubscribePayload payload = new SubscribePayload();
+//        payload.billingKey = "66541c40419d33cdcb43e268";
         payload.billingKey = "66541c40419d33cdcb43e268";
+
         payload.orderName = "아이템01";
         payload.price = 100;
         payload.user = new User();
@@ -149,12 +153,10 @@ public class Main {
 
         Date now = new Date();
         now.setTime(now.getTime() + 5 * 1000); //5초 뒤 결제
-//
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss XXX");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         payload.reserveExecuteAt = sdf.format(now); // 결제 승인 시점
-
-
 
         try {
             HashMap<String, Object> res = bootpay.reserveSubscribe(payload);
@@ -162,6 +164,34 @@ public class Main {
                 System.out.println("reserveSubscribe success: " + res);
             } else {
                 System.out.println("reserveSubscribe false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void startShipping() {
+        Shipping shipping = new Shipping();
+        shipping.receiptId = "664ab4724b704372318b6fb7";
+        shipping.deliveryCorp = "CJ대한통운";
+        shipping.trackingNumber = "1234";
+        shipping.redirectUrl = "https://www.naver.com";
+        shipping.user = new ShippingUser();
+        shipping.user.username = "홍길동";
+        shipping.user.phone = "01012341234";
+        shipping.user.zipcode = "08389";
+        shipping.user.address = "동해 번쩍 서해 번쩍";
+        shipping.company = new ShippingCompany();
+        shipping.company.name = "배송업체";
+
+        try {
+            HashMap<String, Object> res = bootpay.shippingStart(shipping);
+            JSONObject json =  new JSONObject(res);
+            System.out.printf( "JSON: %s", json);
+            if(res.get("error_code") == null) { //success
+                System.out.println("getReceipt success: " + res);
+            } else {
+                System.out.println("getReceipt false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -323,9 +353,9 @@ public class Main {
             JSONObject json =  new JSONObject(res);
             System.out.printf( "JSON: %s", json);
             if(res.get("error_code") == null) { //success
-                System.out.println("getReceipt success: " + res);
+                System.out.println("success: " + res);
             } else {
-                System.out.println("getReceipt false: " + res);
+                System.out.println("false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();
