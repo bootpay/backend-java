@@ -8,4 +8,6 @@ public class Shipping {
     public boolean shippingDay;
     public ShippingUser user;
     public ShippingCompany company;
+
+    public String redirectUrl; // 구매확정, 구매취소시 해당 주소로 {"receipt_id": 값} 이 전달됨, 이니시스만 가능
 }
