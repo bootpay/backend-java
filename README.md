@@ -10,7 +10,7 @@ java언어로 작성된 어플리케이션, 프레임워크 등에서 사용가�
 
 - [사용하기](#사용하기)
    - [1. 토큰 발급](#1-토큰-발급)
-   - [2. 결제 검증](#2-결제-검증)
+   - [2. 결제 단건 조회](#2-결제-단건-조회)
    - [3. 결제 취소 (전액 취소 / 부분 취소)](#3-결제-취소-전액-취소--부분-취소)
    - [4. 자동/빌링/정기 결제](#4-자동빌링정기-결제)
       - [4-1. 카드 빌링키 발급](#4-1-카드-빌링키-발급)
@@ -100,7 +100,7 @@ try {
 }
 ```
 
-## 2. 결제 검증 
+## 2. 결제 단건 조회
 결제창 및 정기결제에서 승인/취소된 결제건에 대하여 올바른 결제건인지 서버간 통신으로 결제검증을 합니다.
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
@@ -301,7 +301,7 @@ try {
 ```
 
 ## 4-5. 예약 조회하기 
-예약된 결제건을 조회합니다.
+예약시 응답받은 reserveId로 예약된 건을 조회합니다.
 ```java 
 String reserveId = "6490149ca575b40024f0b70d";
 try {
@@ -320,29 +320,27 @@ try {
 
 
 ## 4-6. 예약 취소하기
-빌링키로 예약된 결제건을 취소합니다.
+예약시 응답받은 reserveId로 예약된 건을 취소합니다.
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 bootpay.getAccessToken();
 
-String receiptId = "628b316cd01c7e00219b6081";
+String reserveId = "628b316cd01c7e00219b6081";
 try {
-   HashMap<String, Object> res = bootpay.reserveCancelSubscribe(receiptId);
-   JSONObject json =  new JSONObject(res);
-   System.out.printf( "JSON: %s", json);
-   if(res.get("error_code") == null) { //success
-       System.out.println("reserveCancelSubscribe success: " + res);
-   } else {
-       System.out.println("reserveCancelSubscribe false: " + res);
-   }
+        HashMap<String, Object> res = bootpay.reserveCancelSubscribe(reserveId);
+        if(res.get("error_code") == null) { //success
+            System.out.println("reserveCancelSubscribe success: " + res);
+        } else {
+            System.out.println("reserveCancelSubscribe false: " + res);
+        }
 } catch (Exception e) {
-   e.printStackTrace();
+    e.printStackTrace();
 }
 ```
 
 
 ## 4-7. 빌링키 삭제
-발급된 빌링키로 더 이상 사용되지 않도록, 삭제 요청합니다.
+발급된 빌링키를 삭제합니다. 
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 bootpay.getAccessToken();
