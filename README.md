@@ -9,37 +9,27 @@ java언어로 작성된 어플리케이션, 프레임워크 등에서 사용가�
 
 
 ## 기능   
-1. (부트페이 통신을 위한) 토큰 발급 요청   
-2. 결제 검증   
+1. (부트페이 통신을 위한) 토큰 발급
+2. 결제 단건 조회
 3. 결제 취소 (전액 취소 / 부분 취소)
-4. 신용카드 자동결제 (빌링결제)
+4. 카드/계좌 자동결제 (빌링결제)
+   4-1. 카드 빌링키 발급
+   4-2. 계좌 빌링키 발급
+   4-3. 결제 요청하기
+   4-4. 결제 예약하기
+   4-5. 예약 조회하기 
+   4-6. 예약 취소하기
+   4-7. 빌링키 삭제하기
+   4-8. 빌링키 조회하기
 
-   4-1. 빌링키 발급
-
-   4-2. 발급된 빌링키로 결제 승인 요청
-
-   4-3. 발급된 빌링키로 결제 예약 요청
-
-   4-4. 발급된 빌링키로 결제 예약 - 취소 요청
-
-   4-5. 빌링키로 예약된 결제 조회 
-
-   4-6. 빌링키 삭제
-
-   4-7. 빌링키 조회
-
-5. (생체인증, 비밀번호 결제를 위한) 구매자 토큰 발급
+5. (ㅇㅇ페이) 회원 토큰 발급요청
 6. 서버 승인 요청
 7. 본인 인증 결과 조회
 8. (에스크로 이용시) PG사로 배송정보 보내기
 9. 현금영수증 발행
-
    9-1. 현금영수증 발행
-
    9-2. 현금영수증 발행 취소
-
    9-3. (별건) 현금영수증 발행
-
    9-4. (별건) 현금영수증 발행 취소
 
 
@@ -48,7 +38,7 @@ java언어로 작성된 어플리케이션, 프레임워크 등에서 사용가�
 build.gradle (project)
 ```
 dependencies {
-    implementation 'io.github.bootpay:backend:+'
+    implementation 'io.github.bootpay:backend:+' // + 는 최신버전을 의미 
 }
 ```
 
@@ -164,7 +154,8 @@ try {
 }
 ```
 
-## 4-1. 빌링키 발급
+# 4. 카드/계좌 자동결제 (빌링결제)
+## 4-1. 카드 빌링키 발급
 REST API 방식으로 고객으로부터 카드 정보를 전달하여, PG사에게 빌링키를 발급받을 수 있습니다.
 발급받은 빌링키를 저장하고 있다가, 원하는 시점, 원하는 금액에 결제 승인 요청하여 좀 더 자유로운 결제시나리오에 적용이 가능합니다.
 * 비인증 정기결제(REST API) 방식을 지원하는 PG사만 사용 가능합니다.
@@ -201,8 +192,54 @@ try {
    e.printStackTrace();
 }
 ```
+## 4-2. 계좌 빌링키 발급
+REST API 방식으로 고객의 계좌 정보를 전달하여, PG사에게 빌링키 발급을 요청합니다. 요청 후 빌링키가 바로 발급되진 않고, 출금동의 확인 절차까지 진행해야 빌링키가 발급됩니다.
+먼저 빌링키를 요청합니다.
+```java
+public static void getBillingKeyTransfer() {
+     try {
+         Subscribe subscribe = new Subscribe();
+         subscribe.orderName = "테스트 결제";
 
-## 4-2. 발급된 빌링키로 결제 승인 요청
+         subscribe.pg = "나이스페이";
+         subscribe.bankName = "국민";
+         subscribe.bankAccount = "67512341234472";
+         subscribe.username = "홍길동";
+         subscribe.identityNo = "901014";
+         subscribe.phone = "01012341234";
+         subscribe.subscriptionId = "" + (System.currentTimeMillis() / 1000);
+//            subscribe.tax
+
+         HashMap<String, Object> res = bootpay.getBillingKeyTransfer(subscribe);
+         if(res.get("error_code") == null) { //success
+             System.out.println("success: " + res);
+         } else {
+             System.out.println("false: " + res);
+         }
+     } catch (Exception e) {
+         e.printStackTrace();
+     }
+ }
+```
+
+이후 빌링키 발급 요청시 응답받은 receipt_id로, 출금 동의 확인을 요청합니다.
+```java
+public static void publishBillingKeyTransfer() {
+     try {
+         HashMap<String, Object> res = bootpay.publishBillingKeyTransfer("66541bc4ca4517e69343e24c");
+         if(res.get("error_code") == null) { //success
+             System.out.println("success: " + res);
+
+         } else {
+             System.out.println("false: " + res);
+         }
+     } catch (Exception e) {
+         e.printStackTrace();
+     }
+ }
+```
+
+## 4-3. 결제 요청하기
 발급된 빌링키로 원하는 시점에 원하는 금액으로 결제 승인 요청을 할 수 있습니다. 잔액이 부족하거나 도난 카드 등의 특별한 건이 아니면 PG사에서 결제를 바로 승인합니다.
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
@@ -230,7 +267,7 @@ try {
    e.printStackTrace();
 }
 ```
-## 4-3. 발급된 빌링키로 결제 예약 요청
+## 4-4. 결제 예약하기
 원하는 시점에 4-1로 결제 승인 요청을 보내도 되지만, 빌링키 발급 이후에 바로 결제 예약 할 수 있습니다. (빌링키당 최대 10건)
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
@@ -260,7 +297,27 @@ try {
    e.printStackTrace();
 }
 ```
-## 4-4. 발급된 빌링키로 결제 예약 - 취소 요청
+
+## 4-5. 예약 조회하기 
+예약된 결제건을 조회합니다
+```java 
+String reserveId = "6490149ca575b40024f0b70d";
+try {
+   HashMap<String, Object> res = bootpay.reserveSubscribeLookup(reserveId);
+   JSONObject json =  new JSONObject(res);
+   System.out.printf( "JSON: %s", json);
+   if(res.get("error_code") == null) { //success
+       System.out.println("getReceipt success: " + res);
+   } else {
+       System.out.println("getReceipt false: " + res);
+   }
+} catch (Exception e) {
+   e.printStackTrace();
+}
+```
+
+
+## 4-6. 예약 취소하기
 빌링키로 예약된 결제건을 취소합니다.
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
@@ -281,25 +338,8 @@ try {
 }
 ```
 
-## 4-5. 빌링키로 예약된 결제 조회
-예약된 결제건을 조회합니다 
-```java 
-String reserveId = "6490149ca575b40024f0b70d";
-try {
-   HashMap<String, Object> res = bootpay.reserveSubscribeLookup(reserveId);
-   JSONObject json =  new JSONObject(res);
-   System.out.printf( "JSON: %s", json);
-   if(res.get("error_code") == null) { //success
-       System.out.println("getReceipt success: " + res);
-   } else {
-       System.out.println("getReceipt false: " + res);
-   }
-} catch (Exception e) {
-   e.printStackTrace();
-}
-```
 
-## 4-6. 빌링키 삭제
+## 4-7. 빌링키 삭제
 발급된 빌링키로 더 이상 사용되지 않도록, 삭제 요청합니다.
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
@@ -319,8 +359,11 @@ try {
    e.printStackTrace();
 }
 ```
-## 4-7. 빌링키 조회
-클라이언트에서 빌링키 발급시, 보안상 클라이언트 이벤트에 빌링키를 전달해주지 않습니다. 그러므로 이 API를 통해 조회해야 합니다. 
+
+
+## 4-8. 빌링키 조회
+클라이언트에서 빌링키 발급시, 보안상 클라이언트 이벤트에 빌링키를 전달해주지 않습니다. 그러므로 이 API를 통해 조회해야 합니다.
+다음은 빌링키 발급 요청했던 receiptId 로 빌링키를 조회합니다.
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 bootpay.getAccessToken();
@@ -334,6 +377,23 @@ try {
        System.out.println("getReceipt success: " + res);
    } else {
        System.out.println("getReceipt false: " + res);
+   }
+} catch (Exception e) {
+   e.printStackTrace();
+}
+```
+
+아래는 billingKey로 조회합니다.
+```java 
+String billingKey = "66542dfb4d18d5fc7b43e1b6";
+try {
+   HashMap<String, Object> res = bootpay.lookupBillingKeyByKey(billingKey);
+   JSONObject json =  new JSONObject(res);
+   System.out.printf( "JSON: %s", json);
+   if(res.get("error_code") == null) { //success
+       System.out.println("success: " + res);
+   } else {
+       System.out.println("false: " + res);
    }
 } catch (Exception e) {
    e.printStackTrace();
@@ -541,7 +601,7 @@ try {
 
 ## Documentation
 
-[부트페이 개발매뉴얼](https://docs.bootpay.co.kr)을 참조해주세요
+[부트페이 개발매뉴얼](https://developer.bootpay.co.kr/)을 참조해주세요
 
 ## 기술문의
 
