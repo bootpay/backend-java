@@ -32,7 +32,7 @@ public class Main {
 //        getBillingKey();
 //        requestSubscribe();
 //        reserveSubscribe();
-        startShipping();
+//        startShipping();
 
 //        reserveSubscribeLookup();
 //        reserveCancelSubscribe();
