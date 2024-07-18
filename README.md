@@ -340,7 +340,7 @@ try {
 
 
 ## 4-7. 빌링키 삭제
-발급된 빌링키를 삭제합니다. 
+발급된 빌링키를 삭제합니다. 삭제하더라도 예약된 결제건은 취소되지 않습니다. 예약된 결제건 취소를 원하시면 예약 취소하기를 요청하셔야 합니다.
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 bootpay.getAccessToken();
