@@ -1,6 +1,6 @@
 ext {
     PUBLISH_GROUP_ID = 'io.github.bootpay'
-    PUBLISH_VERSION = '2.3.1'
+    PUBLISH_VERSION = '2.3.2'
     PUBLISH_ARTIFACT_ID = 'backend'
     PUBLISH_DESCRIPTION = 'Bootpay Backend Library'
     PUBLISH_URL = 'https://github.com/bootpay/android'

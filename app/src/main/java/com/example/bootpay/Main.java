@@ -23,6 +23,7 @@ public class Main {
 //        bootpay = new Bootpay("6560203cca8deb00600959cc", "NVznyFF+WKVbT54ImpulaeYzROKFhg28RWw7h8yt0/A=", "https://dev-api.bootpay.co.kr/v2/");
 
 
+//        System.out.println("goGetToken false: ");
         goGetToken();
 //        getReceipt();
 //        receiptCancel();
@@ -230,10 +231,16 @@ public class Main {
 
     public static void receiptCancel() {
         Cancel cancel = new Cancel();
-        cancel.receiptId = "664ab4724b704372318b6fb7";
-        cancel.cancelUsername = "관리자2";
-        cancel.cancelMessage = "테스트 결제2";
-        cancel.cancelPrice = 1000d;
+        cancel.receiptId = "66a9d8404a2dee32b2c296222f4";
+        cancel.cancelUsername = "관리자";
+        cancel.cancelMessage = "결제 취소 요청에 따른 취소";
+
+        RefundData refundData = new RefundData();
+        refundData.bankAccount = "671234123";
+        refundData.bankUsername = "홍길동";
+        refundData.bankCode = "088";
+        cancel.refund = refundData;
+//        cancel.cancelPrice = 1000d;
 //        cancel.price = 1000.0; //부분취소 요청시
 //        cancel.cancelId = "12342134"; //부분취소 요청시, 중복 부분취소 요청하는 실수를 방지하고자 할때 지정
 //        RefundData refund = new RefundData(); // 가상계좌 환불 요청시, 단 CMS 특약이 되어있어야만 환불요청이 가능하다.
