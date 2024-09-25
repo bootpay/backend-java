@@ -83,6 +83,7 @@ public class Main {
         subscribe.cardExpireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
         subscribe.cardIdentityNo = ""; //생년월일 또는 사업자 등록번호 (- 없이 입력)
 
+
         subscribe.user = new User();
         subscribe.user.username = "홍길동";
         subscribe.user.phone = "01011112222";
