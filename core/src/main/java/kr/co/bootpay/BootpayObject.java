@@ -80,6 +80,9 @@ public class BootpayObject {
         post.setHeader("Accept", "application/json");
         post.setHeader("Content-Type", "application/json");
         post.setHeader("Accept-Charset", "utf-8");
+        post.setHeader("BOOTPAY-API-VERSION", apiVersion);
+        post.setHeader("BOOTPAY-SDK-VERSION", sdkVersion);
+        post.setHeader("BOOTPAY-SDK-TYPE", sdkType);
         post.setEntity(entity);
         return post;
     }
@@ -89,6 +92,9 @@ public class BootpayObject {
         delete.setHeader("Accept", "application/json");
         delete.setHeader("Content-Type", "application/json");
         delete.setHeader("Accept-Charset", "utf-8");
+        delete.setHeader("BOOTPAY-API-VERSION", apiVersion);
+        delete.setHeader("BOOTPAY-SDK-VERSION", sdkVersion);
+        delete.setHeader("BOOTPAY-SDK-TYPE", sdkType);
         return delete;
     }
 
@@ -97,6 +103,9 @@ public class BootpayObject {
         delete.setHeader("Accept", "application/json");
         delete.setHeader("Content-Type", "application/json");
         delete.setHeader("Accept-Charset", "utf-8");
+        delete.setHeader("BOOTPAY-API-VERSION", apiVersion);
+        delete.setHeader("BOOTPAY-SDK-VERSION", sdkVersion);
+        delete.setHeader("BOOTPAY-SDK-TYPE", sdkType);
         delete.setEntity(entity);
         return delete;
     }
