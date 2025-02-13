@@ -132,4 +132,8 @@ public class Bootpay extends BootpayObject {
     public HashMap<String, Object> publishBillingKeyTransfer(String receiptId) throws Exception {
         return BillingService.publishBillingKeyTransfer(this, receiptId);
     }
+
+    public HashMap<String, Object> requestWalletPayment(WalletPayload payload) throws Exception {
+        return WalletService.requestWalletPayment(this, payload);
+    }
 }
