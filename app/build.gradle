@@ -15,6 +15,7 @@ dependencies {
 
     implementation project(path: ':core')
 
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 }
 
