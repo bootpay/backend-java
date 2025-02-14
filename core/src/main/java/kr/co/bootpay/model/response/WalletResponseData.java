@@ -1,4 +1,6 @@
-package kr.co.bootpay.model.response.data;
+package kr.co.bootpay.model.response;
+
+import kr.co.bootpay.model.response.data.CardData;
 
 import java.util.HashMap;
 import java.util.Map;

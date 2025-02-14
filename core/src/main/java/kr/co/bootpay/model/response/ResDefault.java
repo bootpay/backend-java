@@ -7,8 +7,9 @@ import com.google.gson.Gson;
  */
 public class ResDefault<T> {
     public int status;
-    public int code;
+    public int error_code;
     public String message;
+    public int http_status;
     public T data;
 
     public String toJson() {

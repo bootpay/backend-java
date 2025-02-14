@@ -136,4 +136,8 @@ public class Bootpay extends BootpayObject {
     public HashMap<String, Object> requestWalletPayment(WalletPayload payload) throws Exception {
         return WalletService.requestWalletPayment(this, payload);
     }
+
+    public HashMap<String, Object> getUserWallets(String userId, boolean sandbox) throws Exception {
+        return WalletService.userWallets(this, userId, sandbox);
+    }
 }
