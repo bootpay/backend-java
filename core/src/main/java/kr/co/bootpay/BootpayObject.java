@@ -38,7 +38,7 @@ public class BootpayObject {
     public BootpayObject(String rest_application_id, String private_key) {
         this.application_id = rest_application_id;
         this.private_key = private_key;
-        this.baseUrl = BootpayConfig.STAGE;
+        this.baseUrl = BootpayConfig.PRODUCTION;
     }
 
     public BootpayObject(String rest_application_id, String private_key, String devMode) {
