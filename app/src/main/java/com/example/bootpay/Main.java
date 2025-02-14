@@ -61,7 +61,7 @@ public class Main {
 //        publishBillingKeyTransfer();
 
           requestWalletPayment();
-//          getUserWallets();
+          getUserWallets();
     }
 
     public static void goGetToken() {
