@@ -8,4 +8,6 @@ public class WalletBatchData {
     public String bank_code;
     public String bank_account;
     public String bank_username;
+
+
 }
