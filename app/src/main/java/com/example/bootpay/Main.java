@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
 
+import kr.co.bootpay.model.response.WalletPaymentResponseData;
 import kr.co.bootpay.model.response.WalletResponseData;
 import org.json.simple.JSONObject;
 
@@ -61,7 +62,7 @@ public class Main {
 //        publishBillingKeyTransfer();
 
           requestWalletPayment();
-          getUserWallets();
+//          getUserWallets();
     }
 
     public static void goGetToken() {
@@ -646,9 +647,10 @@ public class Main {
             HashMap<String, Object> res = bootpay.requestWalletPayment(payload);
 
             if (res.get("error_code") == null) { // success
+                System.out.println("success: " + res);
                 Gson gson = new Gson();
-                Type responseType = new TypeToken<WalletResponseData>(){}.getType();
-                WalletResponseData data = gson.fromJson(gson.toJson(res), responseType);
+                Type responseType = new TypeToken<WalletPaymentResponseData>(){}.getType();
+                WalletPaymentResponseData data = gson.fromJson(gson.toJson(res), responseType);
                 System.out.println("data: " + gson.toJson(data));
             } else {
                 System.out.println("false: " + res);
@@ -669,9 +671,14 @@ public class Main {
 //                {metadata={}, method=계좌자동이체, gateway_url=https://gw.bootpay.co.kr, receipt_id=66541bc4ca4517e69343e24c, method_origin=계좌자동이체, subscription_id=1716788164, billing_data={bank_name=국민, bank_code=004, bank_account=0000000000000000, username=윤태*}, method_origin_symbol=automatic_transfer_rest, billing_expire_at=2099-12-31T23:59:59+09:00, method_symbol=automatic_transfer_rest, pg=나이스페이먼츠, status_locale=빌링키발급완료, http_status=200, published_at=2024-05-27T14:38:08+09:00, billing_key=66541c40419d33cdcb43e268, requested_at=2024-05-27T14:36:04+09:00, status=11}
 
                 Gson gson = new Gson();
-                Type responseType = new TypeToken<ResDefault<WalletResponseData[]>>(){}.getType();
-                ResDefault<WalletResponseData[]> data = gson.fromJson(gson.toJson(res), responseType);
+                Type responseType = new TypeToken<WalletResponseData>(){}.getType();
+                WalletResponseData data = gson.fromJson(gson.toJson(res), responseType);
                 System.out.println("data: " + gson.toJson(data));
+
+//                Gson gson = new Gson();
+//                Type responseType = new TypeToken<ResDefault<WalletResponseData[]>>(){}.getType();
+//                ResDefault<WalletResponseData[]> data = gson.fromJson(gson.toJson(res), responseType);
+//                System.out.println("data: " + gson.toJson(data));
             } else {
                 System.out.println("false: " + res);
             }

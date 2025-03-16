@@ -7,6 +7,12 @@ public class WalletDataPart {
     public int order;
     public int payment_status;
 
+    public String card_code;
+
+
+    public String expired_at;
+
+    public String latest_purchased_at;
     public WalletBatchData batch_data;
 
     
