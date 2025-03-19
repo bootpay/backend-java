@@ -1,21 +1,23 @@
 package com.example.bootpay;
 
-import kr.co.bootpay.Bootpay;
-import kr.co.bootpay.model.request.*;
-import kr.co.bootpay.model.response.ResDefault;
+import kr.co.bootpay.pg.Bootpay;
+import kr.co.bootpay.pg.model.request.*;
+import kr.co.bootpay.pg.model.response.ResDefault;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
 
-import kr.co.bootpay.model.response.WalletPaymentResponseData;
-import kr.co.bootpay.model.response.WalletResponseData;
+import kr.co.bootpay.pg.model.response.WalletPaymentResponseData;
+import kr.co.bootpay.pg.model.response.WalletResponseData;
 import org.json.simple.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
+
+
 
 
 public class Main {
@@ -61,8 +63,8 @@ public class Main {
 //        getBillingKeyTransfer();
 //        publishBillingKeyTransfer();
 
-          requestWalletPayment();
-//          getUserWallets();
+//          requestWalletPayment();
+          getUserWallets();
     }
 
     public static void goGetToken() {

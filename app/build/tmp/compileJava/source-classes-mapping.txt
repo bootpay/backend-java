@@ -2,3 +2,5 @@ com/example/bootpay/Main.java
  com.example.bootpay.Main
  com.example.bootpay.Main$1
  com.example.bootpay.Main$2
+com/example/bootpay/SMain.java
+ com.example.bootpay.SMain

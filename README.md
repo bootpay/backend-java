@@ -46,13 +46,12 @@ dependencies {
 
 # 사용하기 
 BootpayExample.java
+
 ```java 
 import com.google.gson.Gson;
 import kr.co.bootpay.Bootpay;
 import kr.co.bootpay.model.BankCode;
-import kr.co.bootpay.model.request.*;
 import kr.co.bootpay.model.response.ResDefault;
-import kr.co.bootpay.model.response.data.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 
@@ -61,15 +60,16 @@ import java.util.HashMap;
 
 public class BootpayExample {
     static Bootpay bootpay;
+
     public static void main(String[] args) {
         bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
         goGetToken();
     }
-    
-     public static void goGetToken() {
+
+    public static void goGetToken() {
         try {
             HashMap<String, Object> res = bootpay.getAccessToken();
-            if(res.get("error_code") == null) { //success
+            if (res.get("error_code") == null) { //success
                 System.out.println("goGetToken success: " + res);
             } else {
                 System.out.println("goGetToken false: " + res);
