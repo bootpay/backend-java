@@ -62,5 +62,7 @@ public class SUser {
     public String marketingAcceptCreateAt;
     public String marketingAcceptUpdateAt;
     public List<String> termIds;
+
+    public SUserGroup group;
 }
 
