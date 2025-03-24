@@ -46,7 +46,6 @@ public class User {
         return SUserLoginService.login(bootpay, loginId, loginPw);
     }
 
-
     public HashMap<String, Object> list(Integer memberType, String keyword, Integer page, Integer limit) throws Exception {
         return SUserService.list(
                 bootpay,
@@ -55,5 +54,9 @@ public class User {
                 Optional.ofNullable(page),
                 Optional.ofNullable(limit)
         );
+    }
+
+    public HashMap<String, Object> detail(String userId) throws Exception {
+        return SUserLoginService.detail(bootpay, userId);
     }
 }
