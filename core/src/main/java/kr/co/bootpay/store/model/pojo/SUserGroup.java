@@ -2,6 +2,9 @@ package kr.co.bootpay.store.model.pojo;
 import java.util.Map;
 
 public class SUserGroup {
+    public static final int CORPORATE_TYPE_INDIVIDUAL = 1;
+    public static final int CORPORATE_TYPE_CORPORATE = 2;
+
     public String userGroupId;
     public String sellerId;
     public String projectId;
