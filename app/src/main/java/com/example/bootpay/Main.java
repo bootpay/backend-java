@@ -24,8 +24,9 @@ public class Main {
 
     static Bootpay bootpay;
     public static void main(String[] args) {
-//        bootpay = new Bootpay("59b731f084382614ebf72215", "WwDv0UjfwFa04wYG0LJZZv1xwraQnlhnHE375n52X0U=");
-        bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+        bootpay = new Bootpay("61ab7fd3e38c300022d2c469", "bfw+9EASkM+NcY41CGbmV6jDy8JEuAeh0UM1q0AAjb4=");
+//        bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+//        bootpay = new Bootpay("61ab7fd3e38c300022d2c469", "bfw+9EASkM+NcY41CGbmV6jDy8JEuAeh0UM1q0AAjb4=");
 //        bootpay = new Bootpay("6560203cca8deb00600959cc", "NVznyFF+WKVbT54ImpulaeYzROKFhg28RWw7h8yt0/A=", "https://dev-api.bootpay.co.kr/v2/");
 
 
@@ -36,7 +37,7 @@ public class Main {
 //        lookupBillingKey();
 //        lookupBillingKeyByKey();
 //        lookupPaymentMethods();
-//        getBillingKey();
+        getBillingKey();
 //        requestSubscribe();
 //        reserveSubscribe();
 //        startShipping();
@@ -64,7 +65,7 @@ public class Main {
 //        publishBillingKeyTransfer();
 
 //          requestWalletPayment();
-          getUserWallets();
+//          getUserWallets();
     }
 
     public static void goGetToken() {
@@ -84,13 +85,18 @@ public class Main {
         Subscribe subscribe = new Subscribe();
         subscribe.orderName = "정기결제 테스트 아이템";
         subscribe.subscriptionId = "" + (System.currentTimeMillis() / 1000);
-        subscribe.pg = "나이스페이";
+        subscribe.pg = "페이앱";
 
-        subscribe.cardNo = "5570**********1074"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-        subscribe.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-        subscribe.cardExpireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-        subscribe.cardExpireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-        subscribe.cardIdentityNo = ""; //생년월일 또는 사업자 등록번호 (- 없이 입력)
+        subscribe.cardNo = "5424167935795843"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+        subscribe.cardPw = "83"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+        subscribe.cardExpireMonth = "06"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+        subscribe.cardExpireYear = "28"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+        subscribe.cardIdentityNo = "861014"; //생년월일 또는 사업자 등록번호 (- 없이 입력)
+//        subscribe.cardNo = "5570**********1074"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+//        subscribe.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+//        subscribe.cardExpireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+//        subscribe.cardExpireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+//        subscribe.cardIdentityNo = ""; //생년월일 또는 사업자 등록번호 (- 없이 입력)
 
 
         subscribe.user = new User();

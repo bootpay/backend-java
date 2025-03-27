@@ -1,30 +1,25 @@
-package com.example.bootpay;
+package com.example.bootpay.store;
 
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.pojo.SUserGroup;
-import org.json.simple.JSONObject;
 
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.TimeZone;
 
 
-public class SMain {
+public class User {
 
     static BootpayStore bootpay;
     public static void main(String[] args) {
         bootpay = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
         getToken();
-//        joinIndividual();
+        joinIndividual();
 //        joinCorporate();
 //        authByUserStandbyId();
 //        login();
-        list();
+//        list();
 //        detail();
-        update();
+//        update();
 //        emailExist();
 //        idExist();
 //        phoneExist();
@@ -48,7 +43,7 @@ public class SMain {
     public static void joinIndividual() {
         try {
             SUser user = new SUser();
-            user.loginId = "ehowlsla5";
+            user.loginId = "ehowlsla15";
             user.loginPw = "km1178km";
             user.email = "ehowlsla@bootpay.co.kr";
             user.phone = "01000000000";
@@ -70,7 +65,7 @@ public class SMain {
     public static void joinCorporate() {
         try {
             SUser user = new SUser();
-            user.loginId = "ehowlsla2";
+            user.loginId = "ehowlsla6";
             user.loginPw = "km1178km";
             user.email = "ehowlsla@bootpay.co.kr";
             user.phone = "01000000000";
@@ -204,6 +199,8 @@ public class SMain {
         }
     }
 
+//    public static void
+
     public static void update() {
         SUser user = new SUser();
         user.userId = "67e105ef03d0cb4e4117b0a1";
@@ -219,6 +216,7 @@ public class SMain {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 }
 

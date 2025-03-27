@@ -76,5 +76,7 @@ public class SInvoice {
 
     public Integer productType;
     public Boolean isOpenLink;
+
+    public List<SInvoiceItem> invoiceItems;
 }
 
