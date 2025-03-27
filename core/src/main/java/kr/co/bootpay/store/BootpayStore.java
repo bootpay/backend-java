@@ -12,6 +12,7 @@ public class BootpayStore extends BootpayStoreObject {
     public Product product;
     public Invoice invoice;
     public Order order;
+    public OrderSubscription orderSubscription;
 
     public BootpayStore() {
         super();
@@ -34,6 +35,7 @@ public class BootpayStore extends BootpayStoreObject {
         this.product = new Product(this);
         this.invoice = new Invoice(this);
         this.order = new Order(this);
+        this.orderSubscription = new OrderSubscription(this);
     }
 
     //token

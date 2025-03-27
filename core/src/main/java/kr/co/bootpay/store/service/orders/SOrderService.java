@@ -1,16 +1,11 @@
 package kr.co.bootpay.store.service.orders;
 
-import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStoreObject;
-import kr.co.bootpay.store.model.pojo.SInvoice;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.util.HashMap;
@@ -19,7 +14,7 @@ import java.util.Optional;
 
 import static kr.co.bootpay.BootpayResponse.responseJson;
 
-public class SOrdersService {
+public class SOrderService {
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, Optional<String> keyword, Optional<Integer> page, Optional<Integer> limit) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
