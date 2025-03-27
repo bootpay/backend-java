@@ -59,4 +59,8 @@ public class User {
     public HashMap<String, Object> detail(String userId) throws Exception {
         return SUserLoginService.detail(bootpay, userId);
     }
+
+    public HashMap<String, Object> update(SUser user) throws Exception {
+        return SUserService.update(bootpay, user);
+    }
 }

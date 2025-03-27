@@ -13,11 +13,17 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 
+import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class BootpayStoreObject {
@@ -100,6 +106,66 @@ public class BootpayStoreObject {
         post.setEntity(entity);
         return post;
     }
+
+    public HttpPost httpPostMultipart(String url, List<File> files, HashMap<String, String> params) throws Exception {
+        HttpPost post = new HttpPost(this.baseUrl + url);
+        post.setHeader("Accept", "application/json");
+        post.setHeader("Accept-Charset", "utf-8");
+        post.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
+        post.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        post.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
+        post.setHeader("Authorization", getTokenValue());
+
+        // 멀티파트 엔티티 구성
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+        // 여러 파일 첨부
+        if (files != null) {
+            for (File file : files) {
+                builder.addBinaryBody("images", file, ContentType.APPLICATION_OCTET_STREAM, file.getName());
+            }
+        }
+
+        // 추가 파라미터 첨부
+        if (params != null) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                builder.addTextBody(entry.getKey(), entry.getValue(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+            }
+        }
+
+        // 엔티티 설정
+        post.setEntity(builder.build());
+        return post;
+    }
+
+//    public HttpPost httpPostMultipart(String url, File file, HashMap<String, String> params) throws Exception {
+//        HttpPost post = new HttpPost(this.baseUrl + url);
+//        post.setHeader("Accept", "application/json");
+//        post.setHeader("Accept-Charset", "utf-8");
+//        post.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
+//        post.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+//        post.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
+//        post.setHeader("Authorization", getTokenValue());
+//
+//        // 멀티파트 엔티티 구성
+//        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+//        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+//
+//        // 파일 첨부
+//        builder.addBinaryBody("file", file, ContentType.APPLICATION_OCTET_STREAM, file.getName());
+//
+//        // 추가 파라미터 첨부
+//        if (params != null) {
+//            for (Map.Entry<String, String> entry : params.entrySet()) {
+//                builder.addTextBody(entry.getKey(), entry.getValue(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+//            }
+//        }
+//
+//        // 엔티티 설정
+//        post.setEntity(builder.build());
+//        return post;
+//    }
 
     public HttpDelete httpDelete(String url) {
         HttpDelete delete = new HttpDelete(this.baseUrl + url);
