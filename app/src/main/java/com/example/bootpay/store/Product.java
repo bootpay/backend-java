@@ -16,9 +16,9 @@ public class Product {
         bootpay = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
         getToken();
 //        list();
-        create();
+//        create();
 //        detail();
-//        update();
+        update();
     }
 
     public static void getToken() {
@@ -61,6 +61,24 @@ public class Product {
     public static void list() {
         try {
             HashMap<String, Object> res = bootpay.product.list(null, null, null);
+            if(res.get("error_code") == null) { //success
+                System.out.println("product success: " + res);
+            } else {
+                System.out.println("product false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void update() {
+        SProduct product = new SProduct();
+        product.productId = "67e4b4425ec892162491d0ec";
+        product.name = "이끼상품5";
+        product.displayPrice = 2500;
+
+        try {
+            HashMap<String, Object> res = bootpay.product.update(product);
             if(res.get("error_code") == null) { //success
                 System.out.println("product success: " + res);
             } else {

@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static kr.co.bootpay.BootpayResponse.responseJson;
+
 public class SInvoiceService {
 
     static public HashMap<String, Object> create(BootpayStoreObject bootpay, SInvoice invoice) throws Exception {
@@ -30,18 +32,12 @@ public class SInvoiceService {
                 .create();
 
 
-        HttpPost post = bootpay.httpPost("invoice", new StringEntity(gson.toJson(invoice), "UTF-8"));
+        HttpPost post = bootpay.httpPost("invoices", new StringEntity(gson.toJson(invoice), "UTF-8"));
 
         HttpResponse response = client.execute(post);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-        if(result == null) {
-            result = new HashMap<>();
-        }
 
-        result.put("http_status", response.getStatusLine().getStatusCode());
-        return result;
+        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, Optional<String> keyword, Optional<Integer> page, Optional<Integer> limit) throws Exception {
@@ -71,14 +67,35 @@ public class SInvoiceService {
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+    }
 
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-        if(result == null) {
-            result = new HashMap<>();
-        }
+    static public HashMap<String, Object> notify(BootpayStoreObject bootpay, String invoiceId) throws Exception {
+        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        HttpClient client = HttpClientBuilder.create().build();
 
-        result.put("http_status", response.getStatusLine().getStatusCode());
-        return result;
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        SInvoice invoice = new SInvoice();
+        invoice.invoiceId = invoiceId;
+
+        HttpPost post = bootpay.httpPost("invoices/notify" , new StringEntity(gson.toJson(invoice), "UTF-8"));
+
+        HttpResponse response = client.execute(post);
+        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+    }
+
+    static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String invoiceId) throws Exception {
+        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        HttpClient client = HttpClientBuilder.create().build();
+
+        HttpGet get = bootpay.httpGet("invoices/" + invoiceId);
+
+        HttpResponse response = client.execute(get);
+        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 }

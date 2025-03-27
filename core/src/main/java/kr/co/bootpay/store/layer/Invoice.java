@@ -2,6 +2,7 @@ package kr.co.bootpay.store.layer;
 
 
 import kr.co.bootpay.store.BootpayStore;
+import kr.co.bootpay.store.model.pojo.SInvoice;
 import kr.co.bootpay.store.service.invoices.SInvoiceService;
 import kr.co.bootpay.store.service.products.SProductService;
 
@@ -24,5 +25,15 @@ public class Invoice {
         );
     }
 
+    public HashMap<String, Object> create(SInvoice invoice) throws Exception {
+        return SInvoiceService.create(bootpay, invoice);
+    }
 
+    public HashMap<String, Object> notify(String invoiceId) throws Exception {
+        return SInvoiceService.notify(bootpay, invoiceId);
+    }
+
+    public HashMap<String, Object> detail(String invoiceId) throws Exception {
+        return SInvoiceService.detail(bootpay, invoiceId);
+    }
 }

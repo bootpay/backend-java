@@ -1,8 +1,13 @@
 package com.example.bootpay.store;
 
 import kr.co.bootpay.store.BootpayStore;
+import kr.co.bootpay.store.model.pojo.SInvoice;
+import kr.co.bootpay.store.model.pojo.SProduct;
 
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class Invoice {
@@ -11,9 +16,11 @@ public class Invoice {
     public static void main(String[] args) {
         bootpay = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
         getToken();
-        list();
-//        detail();
+//        list();
+        detail();
 //        update();
+//        create();
+//        notifyInvoice();
     }
 
     public static void getToken() {
@@ -33,6 +40,51 @@ public class Invoice {
     public static void list() {
         try {
             HashMap<String, Object> res = bootpay.invoice.list(null, null, null);
+            if(res.get("error_code") == null) { //success
+                System.out.println("product success: " + res);
+            } else {
+                System.out.println("product false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void create() {
+        try {
+            SInvoice invoice = new SInvoice();
+            invoice.price = 1000.0;
+            invoice.name = "테스트 상품";
+            invoice.selectedUsers = new ArrayList<>();
+            invoice.selectedUsers.add("67e4e1bbd01640bb9859c64b");
+
+            HashMap<String, Object> res = bootpay.invoice.create(invoice);
+            if(res.get("error_code") == null) { //success
+                System.out.println("product success: " + res);
+            } else {
+                System.out.println("product false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void notifyInvoice() {
+        try {
+            HashMap<String, Object> res = bootpay.invoice.notify("67e4ead95ec892162491d0f3");
+            if(res.get("error_code") == null) { //success
+                System.out.println("product success: " + res);
+            } else {
+                System.out.println("product false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void detail() {
+        try {
+            HashMap<String, Object> res = bootpay.invoice.detail("67e4ead95ec892162491d0f3");
             if(res.get("error_code") == null) { //success
                 System.out.println("product success: " + res);
             } else {
