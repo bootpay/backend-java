@@ -2,9 +2,7 @@ package kr.co.bootpay.store.layer;
 
 
 import kr.co.bootpay.store.BootpayStore;
-import kr.co.bootpay.store.model.pojo.SInvoice;
-import kr.co.bootpay.store.service.invoices.SInvoiceService;
-import kr.co.bootpay.store.service.orders.SOrdersService;
+import kr.co.bootpay.store.service.orders.SOrderService;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -17,7 +15,7 @@ public class Order {
     }
 
     public HashMap<String, Object> list( String keyword, Integer page, Integer limit)  throws Exception {
-        return SOrdersService.list(
+        return SOrderService.list(
                 bootpay,
                 Optional.ofNullable(keyword),
                 Optional.ofNullable(page),
@@ -25,6 +23,6 @@ public class Order {
         );
     }
     public HashMap<String, Object> detail(String invoiceId) throws Exception {
-        return SOrdersService.detail(bootpay, invoiceId);
+        return SOrderService.detail(bootpay, invoiceId);
     }
 }
