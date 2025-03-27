@@ -36,5 +36,12 @@ public class Product {
         );
     }
 
+    public HashMap<String, Object> update(SProduct product)  throws Exception {
+        return SProductService.update(
+                bootpay,
+                product
+        );
+    }
+
 
 }

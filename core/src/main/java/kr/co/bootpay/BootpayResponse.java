@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 
 public class BootpayResponse {
+
     static public HashMap<String, Object> responseJson(Gson gson, String response, int httpStatus) {
         Type resType = new TypeToken<HashMap<String, Object>>() {}.getType();
         HashMap<String, Object> result = null;

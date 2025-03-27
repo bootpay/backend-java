@@ -78,5 +78,6 @@ public class SInvoice {
     public Boolean isOpenLink;
 
     public List<SInvoiceItem> invoiceItems;
+    public List<String> selectedUsers;
 }
 
