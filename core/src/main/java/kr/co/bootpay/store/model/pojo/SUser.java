@@ -32,12 +32,10 @@ public class SUser {
     public Map<String, Object> individualExtension;
 
     // 개발자 메뉴
-    public String foreignKey;
+//    public String foreignKey;
 
     // 쇼핑몰 회원
     public String loginId;
-    public String phoneHash;
-    public String emailHash;
     public String loginPw;
     public Integer loginType;
 
