@@ -17,8 +17,8 @@ public class Product {
         getToken();
 //        list();
 //        create();
-//        detail();
-        update();
+        detail();
+//        update();
     }
 
     public static void getToken() {
@@ -79,6 +79,19 @@ public class Product {
 
         try {
             HashMap<String, Object> res = bootpay.product.update(product);
+            if(res.get("error_code") == null) { //success
+                System.out.println("product success: " + res);
+            } else {
+                System.out.println("product false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void detail() {
+        try {
+            HashMap<String, Object> res = bootpay.product.detail("67e4b4425ec892162491d0ec");
             if(res.get("error_code") == null) { //success
                 System.out.println("product success: " + res);
             } else {
