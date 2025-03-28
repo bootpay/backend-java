@@ -43,5 +43,12 @@ public class Product {
         );
     }
 
+    public HashMap<String, Object> detail(String productId) throws Exception {
+        return SProductService.detail(
+                bootpay,
+                productId
+        );
+    }
+
 
 }

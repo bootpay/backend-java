@@ -22,7 +22,7 @@ public class Order {
                 Optional.ofNullable(limit)
         );
     }
-    public HashMap<String, Object> detail(String invoiceId) throws Exception {
-        return SOrderService.detail(bootpay, invoiceId);
+    public HashMap<String, Object> detail(String orderId) throws Exception {
+        return SOrderService.detail(bootpay, orderId);
     }
 }

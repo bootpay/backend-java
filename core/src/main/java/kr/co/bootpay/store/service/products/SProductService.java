@@ -115,4 +115,15 @@ public class SProductService extends BootpayResponse {
         result.put("http_status", response.getStatusLine().getStatusCode());
         return result;
     }
+
+    static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String productId) throws Exception {
+        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        HttpClient client = HttpClientBuilder.create().build();
+
+        HttpGet get = bootpay.httpGet("products/" + productId);
+
+        HttpResponse response = client.execute(get);
+        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+    }
 }
