@@ -13,8 +13,8 @@ public class UserGroup {
         bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
         getToken();
 //        list();
-        detail();
-//        update();
+//        detail();
+        update();
     }
 
     public static void getToken() {
@@ -62,7 +62,7 @@ public class UserGroup {
         try {
             SUserGroup userGroup = new SUserGroup();
             userGroup.userGroupId = "67e2052b03d0cb4e4117b0af";
-            userGroup.companyName = "섹시다이나마이트2";
+            userGroup.companyName = "섹시다이나마이트3";
             userGroup.businessNumber = "1088603663";
             userGroup.managerName = "홍길동";
             userGroup.zipcode = "12345";
