@@ -14,7 +14,5 @@ com/example/bootpay/store/OrderSubscription.java
  com.example.bootpay.store.OrderSubscription
 com/example/bootpay/store/User.java
  com.example.bootpay.store.User
-com/example/bootpay/SMain.java
- com.example.bootpay.SMain
 com/example/bootpay/store/OrderSubscriptionBill.java
  com.example.bootpay.store.OrderSubscriptionBill

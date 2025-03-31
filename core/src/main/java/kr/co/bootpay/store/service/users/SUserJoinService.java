@@ -53,23 +53,23 @@ public class SUserJoinService {
         return result;
     }
 
-    static public HashMap<String, Object> emailExist(BootpayStoreObject bootpay, String pk) throws Exception {
-        return checkExist(bootpay,  "email-exist", pk);
-    }
+//    static public HashMap<String, Object> emailExist(BootpayStoreObject bootpay, String pk) throws Exception {
+//        return checkExist(bootpay,  "email-exist", pk);
+//    }
+//
+//    static public HashMap<String, Object> idExist(BootpayStoreObject bootpay, String pk) throws Exception {
+//        return checkExist(bootpay,  "id-exist", pk);
+//    }
+//
+//    static public HashMap<String, Object> phoneExist(BootpayStoreObject bootpay, String pk) throws Exception {
+//        return checkExist(bootpay,  "phone-exist", pk);
+//    }
+//
+//    static public HashMap<String, Object> groupBusinessNumberExist(BootpayStoreObject bootpay, String pk) throws Exception {
+//        return checkExist(bootpay, "group-business-number-exist", pk);
+//    }
 
-    static public HashMap<String, Object> idExist(BootpayStoreObject bootpay, String pk) throws Exception {
-        return checkExist(bootpay,  "id-exist", pk);
-    }
-
-    static public HashMap<String, Object> phoneExist(BootpayStoreObject bootpay, String pk) throws Exception {
-        return checkExist(bootpay,  "phone-exist", pk);
-    }
-
-    static public HashMap<String, Object> groupBusinessNumberExist(BootpayStoreObject bootpay, String pk) throws Exception {
-        return checkExist(bootpay, "group-business-number-exist", pk);
-    }
-
-    static private HashMap<String, Object> checkExist(BootpayStoreObject bootpay, String path, String pk) throws Exception {
+    static public HashMap<String, Object> checkExist(BootpayStoreObject bootpay, String path, String pk) throws Exception {
         if (bootpay.token == null || bootpay.token.isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }

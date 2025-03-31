@@ -10,6 +10,7 @@ import kr.co.bootpay.store.model.response.STokenResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -60,6 +61,27 @@ public class SUserLoginService {
         HttpGet get = bootpay.httpGet("users/" + userId);
 
         HttpResponse response = client.execute(get);
+        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+
+        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+        HashMap<String, Object> result = new Gson().fromJson(str, resType);
+        if(result == null) {
+            result = new HashMap<>();
+        }
+
+        result.put("http_status", response.getStatusLine().getStatusCode());
+        return result;
+    }
+
+    static public HashMap<String, Object> withdraw(BootpayStoreObject bootpay, String userId) throws Exception {
+        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+
+        HttpClient client = HttpClientBuilder.create().build();
+
+
+        HttpDelete delete = bootpay.httpDelete("users/" + userId + "/withdraw");
+
+        HttpResponse response = client.execute(delete);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
         Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
