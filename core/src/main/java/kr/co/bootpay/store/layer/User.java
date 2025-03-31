@@ -22,21 +22,21 @@ public class User {
         return SUserJoinService.join(bootpay, user);
     }
 
-    public HashMap<String, Object> emailExist(String pk) throws Exception {
-        return SUserJoinService.emailExist(bootpay, pk);
+    public HashMap<String, Object> checkExist(String key, String value) throws Exception {
+        return SUserJoinService.checkExist(bootpay, key, value);
     }
 
-    public HashMap<String, Object> idExist(String pk) throws Exception {
-        return SUserJoinService.idExist(bootpay, pk);
-    }
-
-    public HashMap<String, Object> phoneExist(String pk) throws Exception {
-        return SUserJoinService.phoneExist(bootpay, pk);
-    }
-
-    public HashMap<String, Object> groupBusinessNumberExist(String pk) throws Exception {
-        return SUserJoinService.groupBusinessNumberExist(bootpay, pk);
-    }
+//    public HashMap<String, Object> idExist(String pk) throws Exception {
+//        return SUserJoinService.idExist(bootpay, pk);
+//    }
+//
+//    public HashMap<String, Object> phoneExist(String pk) throws Exception {
+//        return SUserJoinService.phoneExist(bootpay, pk);
+//    }
+//
+//    public HashMap<String, Object> groupBusinessNumberExist(String pk) throws Exception {
+//        return SUserJoinService.groupBusinessNumberExist(bootpay, pk);
+//    }
 
     public HashMap<String, Object> authenticationData(String standId) throws Exception {
         return SUserAuthenticateService.authenticationData(bootpay, standId);
@@ -62,5 +62,9 @@ public class User {
 
     public HashMap<String, Object> update(SUser user) throws Exception {
         return SUserService.update(bootpay, user);
+    }
+
+    public HashMap<String, Object> withdraw(String userId) throws Exception {
+        return SUserLoginService.withdraw(bootpay, userId);
     }
 }

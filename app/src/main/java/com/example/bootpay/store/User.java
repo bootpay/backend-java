@@ -13,14 +13,15 @@ public class User {
     public static void main(String[] args) {
         bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
         getToken();
-        joinIndividual();
+//        joinIndividual();
 //        joinCorporate();
 //        authByUserStandbyId();
 //        login();
 //        list();
 //        detail();
 //        update();
-//        emailExist();
+//        withdraw();
+        emailExist();
 //        idExist();
 //        phoneExist();
 //        groupBusinessNumberExist();
@@ -40,10 +41,11 @@ public class User {
     }
 
 //    {client_key=67c92fb8d01640bb9859c611, user_standby_id=67e0f47d03d0cb4e4117b082, http_status=200, status=2.0}
+//     {client_key=67c92fb8d01640bb9859c611, user_standby_id=67e64daa2739fbb9b5057cbe, http_status=200, status=2.0}
     public static void joinIndividual() {
         try {
             SUser user = new SUser();
-            user.loginId = "ehowlsla15";
+            user.loginId = "ehowlsla16";
             user.loginPw = "km1178km";
             user.email = "ehowlsla@bootpay.co.kr";
             user.phone = "01000000000";
@@ -121,7 +123,7 @@ public class User {
 
     public static void emailExist() {
         try {
-            HashMap<String, Object> res = bootpayStore.user.emailExist("ehowlsla@bootpay.co.kr");
+            HashMap<String, Object> res = bootpayStore.user.checkExist("email-exist", "ehowlsla@bootpay.co.kr");
             if(res.get("error_code") == null) { //success
                 System.out.println("emailExist success: " + res);
             } else {
@@ -134,7 +136,7 @@ public class User {
 
     public static void idExist() {
         try {
-            HashMap<String, Object> res = bootpayStore.user.idExist("ehowlsla2");
+            HashMap<String, Object> res = bootpayStore.user.checkExist("id-exist", "ehowlsla2");
             if(res.get("error_code") == null) { //success
                 System.out.println("idExist success: " + res);
             } else {
@@ -147,7 +149,7 @@ public class User {
 
     public static void phoneExist() {
         try {
-            HashMap<String, Object> res = bootpayStore.user.phoneExist("01000000000");
+            HashMap<String, Object> res = bootpayStore.user.checkExist("phone-exist", "01000000000");
             if(res.get("error_code") == null) { //success
                 System.out.println("phoneExist success: " + res);
             } else {
@@ -160,7 +162,7 @@ public class User {
 
     public static void groupBusinessNumberExist() {
         try {
-            HashMap<String, Object> res = bootpayStore.user.groupBusinessNumberExist("1088603663");
+            HashMap<String, Object> res = bootpayStore.user.checkExist("group-business-number-exist", "1088603663");
             if(res.get("error_code") == null) { //success
                 System.out.println("groupBusinessNumberExist success: " + res);
             } else {
@@ -174,8 +176,14 @@ public class User {
 
 //    {count=5.0, http_status=200, list=[{login_id=ehowlsla5, name=홍길동, phone=null, email=null, membership_type=1.0, gender=null, birth=null, comment=null, group_tags=[], metadata=null, auth_sms=false, auth_phone=false, auth_email=false, count=0.0, status=1.0, individual_extension=null, updated_at=2025-03-24T16:13:52+09:00, created_at=2025-03-24T16:12:47+09:00, user_id=67e105ef03d0cb4e4117b0a1}, {login_id=ehowlsla4, name=홍길동, phone=null, email=null, membership_type=1.0, gender=null, birth=null, comment=null, group_tags=[], metadata=null, auth_sms=false, auth_phone=false, auth_email=false, count=0.0, status=1.0, individual_extension=null, updated_at=2025-03-24T16:09:07+09:00, created_at=2025-03-24T16:09:07+09:00, user_id=67e1051303d0cb4e4117b09b}, {login_id=ehowlsla3, name=홍길동, phone=null, email=null, membership_type=1.0, gender=null, birth=null, comment=null, group_tags=[], metadata=null, auth_sms=false, auth_phone=false, auth_email=false, count=0.0, status=1.0, individual_extension=null, updated_at=2025-03-24T14:58:21+09:00, created_at=2025-03-24T14:58:21+09:00, user_id=67e0f47d03d0cb4e4117b083}, {login_id=ehowlsla2, name=홍길동, phone=null, email=null, membership_type=1.0, gender=null, birth=null, comment=null, group_tags=[], metadata=null, auth_sms=false, auth_phone=false, auth_email=false, count=0.0, status=1.0, individual_extension=null, updated_at=2025-03-24T14:35:26+09:00, created_at=2025-03-24T14:35:26+09:00, user_id=67e0ef1e03d0cb4e4117b07d}, {login_id=ehowlsla, name=윤태섭, phone=null, email=null, membership_type=1.0, gender=null, birth=null, comment=null, group_tags=[], metadata=null, auth_sms=false, auth_phone=false, auth_email=false, count=0.0, status=1.0, individual_extension=null, updated_at=2025-03-07T13:03:37+09:00, created_at=2025-03-06T15:37:03+09:00, user_id=67c9428f7b47af25bee631e7}]}
     public static void list() {
+
+        Integer memberType = null;
+        String keyword = null;
+        Integer page = null;
+        Integer limit = null;
+
         try {
-            HashMap<String, Object> res = bootpayStore.user.list(null, null, null, null);
+            HashMap<String, Object> res = bootpayStore.user.list(memberType, keyword, page, limit);
             if(res.get("error_code") == null) { //success
                 System.out.println("list success: " + res);
             } else {
@@ -204,7 +212,7 @@ public class User {
     public static void update() {
         SUser user = new SUser();
         user.userId = "67e105ef03d0cb4e4117b0a1";
-        user.name = "홍상순";
+        user.name = "홍상순2";
 
         try {
             HashMap<String, Object> res = bootpayStore.user.update(user);
@@ -216,7 +224,19 @@ public class User {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public static void withdraw() {
+        try {
+            HashMap<String, Object> res = bootpayStore.user.withdraw("67e64dab2739fbb9b5057cbf");
+            if(res.get("error_code") == null) { //success
+                System.out.println("withdraw success: " + res);
+            } else {
+                System.out.println("withdraw false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 
