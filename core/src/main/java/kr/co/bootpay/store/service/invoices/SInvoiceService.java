@@ -16,6 +16,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -70,7 +71,7 @@ public class SInvoiceService {
         return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
-    static public HashMap<String, Object> notify(BootpayStoreObject bootpay, String invoiceId) throws Exception {
+    static public HashMap<String, Object> notify(BootpayStoreObject bootpay, String invoiceId, List<Integer> sendTypes) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
@@ -79,9 +80,10 @@ public class SInvoiceService {
                 .create();
 
         SInvoice invoice = new SInvoice();
-        invoice.invoiceId = invoiceId;
+        invoice.sendTypes = sendTypes;
+//        invoice.invoiceId = invoiceId;
 
-        HttpPost post = bootpay.httpPost("invoices/notify" , new StringEntity(gson.toJson(invoice), "UTF-8"));
+        HttpPost post = bootpay.httpPost("invoices/" + invoiceId + "/notify" , new StringEntity(gson.toJson(invoice), "UTF-8"));
 
         HttpResponse response = client.execute(post);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");

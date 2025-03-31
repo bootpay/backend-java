@@ -4,6 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 public class SInvoice {
+
+    public static int SEND_TYPE_SMS = 1;
+    public static int SEND_TYPE_KAKAO = 2;
+    public static int SEND_TYPE_EMAIL = 3;
+    public static int SEND_TYPE_PUSH = 4;
+
+
     public String invoiceId;
     public String projectId;
     public String sellerId;
@@ -42,7 +49,7 @@ public class SInvoice {
     public String userId;
 
     public Integer sendStatus;
-    public List<String> sendTypes;
+    public List<Integer> sendTypes;
 
     public String messageTemplateId;
     public String messageId;
@@ -79,5 +86,6 @@ public class SInvoice {
 
     public List<SInvoiceItem> invoiceItems;
     public List<String> selectedUsers;
+
 }
 

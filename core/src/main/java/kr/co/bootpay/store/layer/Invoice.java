@@ -7,6 +7,7 @@ import kr.co.bootpay.store.service.invoices.SInvoiceService;
 import kr.co.bootpay.store.service.products.SProductService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 public class Invoice {
@@ -29,8 +30,8 @@ public class Invoice {
         return SInvoiceService.create(bootpay, invoice);
     }
 
-    public HashMap<String, Object> notify(String invoiceId) throws Exception {
-        return SInvoiceService.notify(bootpay, invoiceId);
+    public HashMap<String, Object> notify(String invoiceId, List<Integer> sendTypes) throws Exception {
+        return SInvoiceService.notify(bootpay, invoiceId, sendTypes);
     }
 
     public HashMap<String, Object> detail(String invoiceId) throws Exception {

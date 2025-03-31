@@ -5,6 +5,7 @@ import kr.co.bootpay.store.model.pojo.SInvoice;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class Invoice {
@@ -14,10 +15,10 @@ public class Invoice {
         bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
         getToken();
 //        list();
-        detail();
+//        detail();
 //        update();
 //        create();
-//        notifyInvoice();
+        notifyInvoice();
     }
 
     public static void getToken() {
@@ -68,7 +69,12 @@ public class Invoice {
 
     public static void notifyInvoice() {
         try {
-            HashMap<String, Object> res = bootpayStore.invoice.notify("67e4ead95ec892162491d0f3");
+            List<Integer> sendTypes = List.of(
+                    SInvoice.SEND_TYPE_KAKAO,
+                    SInvoice.SEND_TYPE_EMAIL
+            );
+
+            HashMap<String, Object> res = bootpayStore.invoice.notify("67e4ead95ec892162491d0f3", sendTypes);
             if(res.get("error_code") == null) { //success
                 System.out.println("product success: " + res);
             } else {
