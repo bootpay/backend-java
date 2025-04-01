@@ -33,9 +33,9 @@ public class Order {
         try {
             HashMap<String, Object> res = bootpayStore.order.list(null, null, null);
             if(res.get("error_code") == null) { //success
-                System.out.println("product success: " + res);
+                System.out.println("order success: " + res);
             } else {
-                System.out.println("product false: " + res);
+                System.out.println("order false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -46,9 +46,9 @@ public class Order {
         try {
             HashMap<String, Object> res = bootpayStore.order.detail("67caa1897b47af25bee6320b");
             if(res.get("error_code") == null) { //success
-                System.out.println("product success: " + res);
+                System.out.println("order success: " + res);
             } else {
-                System.out.println("product false: " + res);
+                System.out.println("order false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();

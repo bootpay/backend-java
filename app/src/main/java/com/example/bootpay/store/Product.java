@@ -38,7 +38,7 @@ public class Product {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             URL imagePath = classLoader.getResource("images/logo.png");
             assert imagePath != null;
-            List<URL> imagePaths = List.of(imagePath);
+            List<URL> imagePaths = List.of(imagePath); //상품 이미지 등록
 
             SProduct product = new SProduct();
             product.name = "이끼상품3";
