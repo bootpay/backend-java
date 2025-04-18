@@ -75,7 +75,7 @@ public class User {
             user.group = new SUserGroup();
             user.group.businessNumber = "1088603663";
             user.group.companyName = "섹시다이나마이트";
-            user.group.ceoName = "윤태섭";
+            user.group.ceoName = "홍길동";
             user.group.zipcode = "12345";
             user.group.address = "서울특별시 강남구 역삼동 123-45";
             user.group.addressDetail = "강남빌딩 1234호";

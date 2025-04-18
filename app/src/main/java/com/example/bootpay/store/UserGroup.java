@@ -68,7 +68,7 @@ public class UserGroup {
             userGroup.zipcode = "12345";
             userGroup.address = "서울특별시 강남구 역삼동 123-45";
             userGroup.addressDetail = "강남빌딩 1234호";
-            userGroup.ceoName = "윤태섭";
+            userGroup.ceoName = "홍길동";
             userGroup.corporateType = SUserGroup.CORPORATE_TYPE_CORPORATE;
 
             HashMap<String, Object> res = bootpayStore.userGroup.update(userGroup);

@@ -87,16 +87,11 @@ public class Main {
         subscribe.subscriptionId = "" + (System.currentTimeMillis() / 1000);
         subscribe.pg = "페이앱";
 
-        subscribe.cardNo = "5424167935795843"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-        subscribe.cardPw = "83"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-        subscribe.cardExpireMonth = "06"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-        subscribe.cardExpireYear = "28"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-        subscribe.cardIdentityNo = "861014"; //생년월일 또는 사업자 등록번호 (- 없이 입력)
-//        subscribe.cardNo = "5570**********1074"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-//        subscribe.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-//        subscribe.cardExpireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-//        subscribe.cardExpireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
-//        subscribe.cardIdentityNo = ""; //생년월일 또는 사업자 등록번호 (- 없이 입력)
+        subscribe.cardNo = "5570**********1074"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+        subscribe.cardPw = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+        subscribe.cardExpireYear = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+        subscribe.cardExpireMonth = "**"; //실제 테스트시에는 *** 마스크처리가 아닌 숫자여야 함
+        subscribe.cardIdentityNo = ""; //생년월일 또는 사업자 등록번호 (- 없이 입력)
 
 
         subscribe.user = new User();
