@@ -42,7 +42,9 @@ static public HashMap<String, Object> list(BootpayStoreObject bootpay, UserListP
         // 파라미터를 URL 쿼리 문자열로 변환
         StringBuilder query = new StringBuilder("users?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
-            query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+            String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
+            query.append(entry.getKey()).append("=").append(encodedValue).append("&");
+//            query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
 
         // 마지막 '&' 제거
