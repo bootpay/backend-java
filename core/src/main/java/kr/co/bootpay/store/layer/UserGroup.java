@@ -2,14 +2,9 @@ package kr.co.bootpay.store.layer;
 
 
 import kr.co.bootpay.store.BootpayStore;
-import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.pojo.SUserGroup;
-import kr.co.bootpay.store.model.request.ListParams;
+import kr.co.bootpay.store.model.request.UserGroupListParams;
 import kr.co.bootpay.store.service.user_groups.SUserGroupService;
-import kr.co.bootpay.store.service.users.SUserAuthenticateService;
-import kr.co.bootpay.store.service.users.SUserJoinService;
-import kr.co.bootpay.store.service.users.SUserLoginService;
-import kr.co.bootpay.store.service.users.SUserService;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -21,7 +16,7 @@ public class UserGroup {
         this.bootpay = bootpay;
     }
 
-    public HashMap<String, Object> list(ListParams params)  throws Exception {
+    public HashMap<String, Object> list(UserGroupListParams params)  throws Exception {
         return SUserGroupService.list(
                 bootpay,
                 params

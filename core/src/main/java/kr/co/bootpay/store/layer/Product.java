@@ -3,10 +3,8 @@ package kr.co.bootpay.store.layer;
 
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.pojo.SProduct;
-import kr.co.bootpay.store.model.pojo.SUserGroup;
-import kr.co.bootpay.store.model.request.ListParams;
+import kr.co.bootpay.store.model.request.ProductListParams;
 import kr.co.bootpay.store.service.products.SProductService;
-import kr.co.bootpay.store.service.user_groups.SUserGroupService;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -20,7 +18,7 @@ public class Product {
         this.bootpay = bootpay;
     }
 
-    public HashMap<String, Object> list(ListParams params)  throws Exception {
+    public HashMap<String, Object> list(ProductListParams params)  throws Exception {
         return SProductService.list(
                 bootpay,
                 params

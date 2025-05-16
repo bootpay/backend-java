@@ -10,6 +10,7 @@ import kr.co.bootpay.store.model.pojo.SInvoice;
 import kr.co.bootpay.store.model.pojo.SProduct;
 import kr.co.bootpay.store.model.pojo.SUserGroup;
 import kr.co.bootpay.store.model.request.ListParams;
+import kr.co.bootpay.store.model.request.ProductListParams;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -80,12 +81,17 @@ public class SProductService extends BootpayResponse {
     }
 
 
-    static public HashMap<String, Object> list(BootpayStoreObject bootpay, ListParams params) throws Exception {
+    static public HashMap<String, Object> list(BootpayStoreObject bootpay, ProductListParams params) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
         // 파라미터 맵 초기화
         Map<String, Object> payload = new HashMap<>();
+        if (params.type != null) payload.put("type", params.type);
+        if (params.periodType != null) payload.put("period_type", params.periodType);
+        if (params.sAt != null) payload.put("s_at", params.sAt);
+        if (params.eAt != null) payload.put("e_at", params.eAt);
+        if (params.categoryCode != null) payload.put("category_code", params.categoryCode);
         if (params.keyword != null) payload.put("keyword", params.keyword);
         if (params.page != null) payload.put("page", params.page);
         if (params.limit != null) payload.put("limit", params.limit);

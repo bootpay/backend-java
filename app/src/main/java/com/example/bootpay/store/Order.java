@@ -33,9 +33,8 @@ public class Order {
     public static void list() {
         try {
             OrderListParams params = new OrderListParams();
-//            params.userId = "67c9428f7b47af25bee631e7";
-            params.userGroupId = "67c9428f7b47af25bee631e8";
-//            params.
+//          params.userId = "67c9428f7b47af25bee631e7"; // 특정 고객으로 조회
+            params.userGroupId = "67c9428f7b47af25bee631e8"; // 그룹으로 조회, user_group_id가 법인 일 경우 해당 법인의 주문내역이 조호됨
 
             HashMap<String, Object> res = bootpayStore.order.list(params);
             if(res.get("error_code") == null) { //success

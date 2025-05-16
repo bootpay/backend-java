@@ -5,10 +5,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.store.BootpayStoreObject;
-import kr.co.bootpay.store.layer.UserGroup;
-import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.pojo.SUserGroup;
-import kr.co.bootpay.store.model.request.ListParams;
+import kr.co.bootpay.store.model.request.UserGroupListParams;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -21,17 +19,17 @@ import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class SUserGroupService {
 
 
-    static public HashMap<String, Object> list(BootpayStoreObject bootpay, ListParams params) throws Exception {
+    static public HashMap<String, Object> list(BootpayStoreObject bootpay, UserGroupListParams params) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
         // 파라미터 맵 초기화
         Map<String, Object> payload = new HashMap<>();
+        if (params.corporateType != null) payload.put("corporate_type", params.corporateType);
         if (params.keyword != null) payload.put("keyword", params.keyword);
         if (params.page != null) payload.put("page", params.page);
         if (params.limit != null) payload.put("limit", params.limit);
