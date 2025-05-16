@@ -2,6 +2,7 @@ package kr.co.bootpay.store.service.orders;
 
 import com.google.gson.Gson;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.model.request.OrderListParams;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -9,25 +10,46 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static kr.co.bootpay.BootpayResponse.responseJson;
 
 public class SOrderService {
-    static public HashMap<String, Object> list(BootpayStoreObject bootpay, Optional<String> keyword, Optional<Integer> page, Optional<Integer> limit) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+    static public HashMap<String, Object> list(BootpayStoreObject bootpay, OrderListParams params) throws Exception {
+
+        if (bootpay.token == null || bootpay.token.isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+
         HttpClient client = HttpClientBuilder.create().build();
 
         // 파라미터 맵 초기화
-        Map<String, Object> params = new HashMap<>();
-        keyword.ifPresent(value -> params.put("keyword", value));
-        page.ifPresent(value -> params.put("page", value));
-        limit.ifPresent(value -> params.put("limit", value));
+        Map<String, Object> payload = new HashMap<>();
+        if (params.keyword != null) payload.put("keyword", params.keyword);
+        if (params.csType != null) payload.put("cs_type", params.csType);
+        if (params.cssAt != null) payload.put("css_at", params.cssAt);
+        if (params.cseAt != null) payload.put("cse_at", params.cseAt);
+        if (params.page != null) payload.put("page", params.page);
+        if (params.limit != null) payload.put("limit", params.limit);
+        if (params.userId != null) payload.put("user_id", params.userId);
+        if (params.userGroupId != null) payload.put("user_group_id", params.userGroupId);
+
+        if (params.status != null && !params.status.isEmpty()) {
+            String joined = params.status.stream().map(String::valueOf).collect(Collectors.joining(","));
+            payload.put("status", joined);
+        }
+
+        if (params.paymentStatus != null && !params.paymentStatus.isEmpty()) {
+            String joined = params.paymentStatus.stream().map(String::valueOf).collect(Collectors.joining(","));
+            payload.put("payment_status", joined);
+        }
 
         // 파라미터를 URL 쿼리 문자열로 변환
         StringBuilder query = new StringBuilder("orders?");
-        for (Map.Entry<String, Object> entry : params.entrySet()) {
+        for (Map.Entry<String, Object> entry : payload.entrySet()) {
             query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
 
@@ -45,9 +67,11 @@ public class SOrderService {
         return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
-
     static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String orderId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.token == null || bootpay.token.isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+
         HttpClient client = HttpClientBuilder.create().build();
 
         HttpGet get = bootpay.httpGet("orders/" + orderId);

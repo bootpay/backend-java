@@ -4,6 +4,7 @@ package kr.co.bootpay.store.layer;
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.pojo.SProduct;
 import kr.co.bootpay.store.model.pojo.SUserGroup;
+import kr.co.bootpay.store.model.request.ListParams;
 import kr.co.bootpay.store.service.products.SProductService;
 import kr.co.bootpay.store.service.user_groups.SUserGroupService;
 
@@ -19,12 +20,10 @@ public class Product {
         this.bootpay = bootpay;
     }
 
-    public HashMap<String, Object> list( String keyword, Integer page, Integer limit)  throws Exception {
+    public HashMap<String, Object> list(ListParams params)  throws Exception {
         return SProductService.list(
                 bootpay,
-                Optional.ofNullable(keyword),
-                Optional.ofNullable(page),
-                Optional.ofNullable(limit)
+                params
         );
     }
 

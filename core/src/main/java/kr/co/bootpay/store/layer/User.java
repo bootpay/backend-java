@@ -3,6 +3,7 @@ package kr.co.bootpay.store.layer;
 
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.pojo.SUser;
+import kr.co.bootpay.store.model.request.UserListParams;
 import kr.co.bootpay.store.service.users.SUserAuthenticateService;
 import kr.co.bootpay.store.service.users.SUserJoinService;
 import kr.co.bootpay.store.service.users.SUserLoginService;
@@ -16,6 +17,10 @@ public class User {
 
     public User(BootpayStore bootpay) {
         this.bootpay = bootpay;
+    }
+
+    public HashMap<String, Object> token(String userId) throws Exception {
+        return SUserLoginService.token(bootpay, userId);
     }
 
     public HashMap<String, Object> join(SUser user) throws Exception {
@@ -46,13 +51,15 @@ public class User {
         return SUserLoginService.login(bootpay, loginId, loginPw);
     }
 
-    public HashMap<String, Object> list(Integer memberType, String keyword, Integer page, Integer limit) throws Exception {
+    public HashMap<String, Object> list(UserListParams params) throws Exception {
         return SUserService.list(
                 bootpay,
-                Optional.ofNullable(memberType),
-                Optional.ofNullable(keyword),
-                Optional.ofNullable(page),
-                Optional.ofNullable(limit)
+                params
+//                Optional.ofNullable(memberType),
+//                Optional.ofNullable(type),
+//                Optional.ofNullable(keyword),
+//                Optional.ofNullable(page),
+//                Optional.ofNullable(limit)
         );
     }
 

@@ -2,9 +2,8 @@ package kr.co.bootpay.store.layer;
 
 
 import kr.co.bootpay.store.BootpayStore;
-import kr.co.bootpay.store.model.pojo.SOrderSubscriptionBill;
 import kr.co.bootpay.store.model.pojo.SSubscriptionSetting;
-import kr.co.bootpay.store.service.order_subscription_bill.SOrderSubscriptionBillService;
+import kr.co.bootpay.store.model.request.ListParams;
 import kr.co.bootpay.store.service.subscription_setting.SSubscriptionSettingService;
 
 import java.util.HashMap;
@@ -17,12 +16,10 @@ public class SubscriptionSetting {
         this.bootpay = bootpay;
     }
 
-    public HashMap<String, Object> list( String keyword, Integer page, Integer limit)  throws Exception {
+    public HashMap<String, Object> list(ListParams params)  throws Exception {
         return SSubscriptionSettingService.list(
                 bootpay,
-                Optional.ofNullable(keyword),
-                Optional.ofNullable(page),
-                Optional.ofNullable(limit)
+                params
         );
     }
 

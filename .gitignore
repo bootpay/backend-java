@@ -2,3 +2,13 @@
 .idea
 *.iml
 core/build/
+
+# Eclipse 파일
+.classpath
+.project
+.settings/
+
+# 바이너리 파일
+*/bin/
+app/bin/
+core/bin/

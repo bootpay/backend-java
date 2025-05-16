@@ -2,6 +2,7 @@ package kr.co.bootpay.store.layer;
 
 
 import kr.co.bootpay.store.BootpayStore;
+import kr.co.bootpay.store.model.request.ListParams;
 import kr.co.bootpay.store.service.order_subscriptions.SOrderSubscriptionService;
 import kr.co.bootpay.store.service.orders.SOrderService;
 
@@ -15,12 +16,10 @@ public class OrderSubscription {
         this.bootpay = bootpay;
     }
 
-    public HashMap<String, Object> list( String keyword, Integer page, Integer limit)  throws Exception {
+    public HashMap<String, Object> list(ListParams params)  throws Exception {
         return SOrderSubscriptionService.list(
                 bootpay,
-                Optional.ofNullable(keyword),
-                Optional.ofNullable(page),
-                Optional.ofNullable(limit)
+                params
         );
     }
     public HashMap<String, Object> detail(String orderSubscriptionId) throws Exception {

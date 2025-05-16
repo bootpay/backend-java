@@ -23,6 +23,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SUserLoginService {
+
+    static public HashMap<String, Object> token(BootpayStoreObject bootpay, String userId) throws Exception {
+        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+
+        HttpClient client = HttpClientBuilder.create().build();
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("user_id", userId);
+
+        HttpPost post = bootpay.httpPost("users/login/token", new StringEntity(gson.toJson(params), "UTF-8"));
+
+        HttpResponse response = client.execute(post);
+        return bootpay.responseToJson(response);
+    }
+
+
     static public HashMap<String, Object> login(BootpayStoreObject bootpay, String loginId, String loginPw) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
@@ -39,17 +58,7 @@ public class SUserLoginService {
         HttpPost post = bootpay.httpPost("users/login", new StringEntity(gson.toJson(params), "UTF-8"));
 
         HttpResponse response = client.execute(post);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-
-
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-        if(result == null) {
-            result = new HashMap<>();
-        }
-
-        result.put("http_status", response.getStatusLine().getStatusCode());
-        return result;
+        return bootpay.responseToJson(response);
     }
 
     static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String userId) throws Exception {
@@ -61,16 +70,7 @@ public class SUserLoginService {
         HttpGet get = bootpay.httpGet("users/" + userId);
 
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-        if(result == null) {
-            result = new HashMap<>();
-        }
-
-        result.put("http_status", response.getStatusLine().getStatusCode());
-        return result;
+        return bootpay.responseToJson(response);
     }
 
     static public HashMap<String, Object> withdraw(BootpayStoreObject bootpay, String userId) throws Exception {
@@ -82,15 +82,6 @@ public class SUserLoginService {
         HttpDelete delete = bootpay.httpDelete("users/" + userId + "/withdraw");
 
         HttpResponse response = client.execute(delete);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-        if(result == null) {
-            result = new HashMap<>();
-        }
-
-        result.put("http_status", response.getStatusLine().getStatusCode());
-        return result;
+        return bootpay.responseToJson(response);
     }
 }

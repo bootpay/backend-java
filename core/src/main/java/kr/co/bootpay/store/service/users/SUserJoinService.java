@@ -75,7 +75,8 @@ public class SUserJoinService {
         }
 
         // URL 인코딩 처리
-        String encodedPk = URLEncoder.encode(pk, StandardCharsets.UTF_8);
+        // String encodedPk = URLEncoder.encode(pk, StandardCharsets.UTF_8);
+        String encodedPk = URLEncoder.encode(pk, "UTF-8");
 
         HttpClient client = HttpClientBuilder.create().build();
         // URL 구조: users/join/:path?pk=:pk

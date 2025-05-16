@@ -3,6 +3,7 @@ package com.example.bootpay.store;
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.pojo.SUserGroup;
+import kr.co.bootpay.store.model.request.UserListParams;
 
 import java.util.HashMap;
 
@@ -12,6 +13,8 @@ public class User {
     static BootpayStore bootpayStore;
     public static void main(String[] args) {
         bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
+
+        System.out.println("start");
         getToken();
 //        joinIndividual();
 //        joinCorporate();
@@ -21,7 +24,8 @@ public class User {
 //        detail();
 //        update();
 //        withdraw();
-        emailExist();
+        userToken();
+        // emailExist();
 //        idExist();
 //        phoneExist();
 //        groupBusinessNumberExist();
@@ -45,7 +49,7 @@ public class User {
     public static void joinIndividual() {
         try {
             SUser user = new SUser();
-            user.loginId = "ehowlsla16";
+            user.loginId = "ehowlsla18";
             user.loginPw = "km1178km";
             user.email = "ehowlsla@bootpay.co.kr";
             user.phone = "01000000000";
@@ -63,6 +67,23 @@ public class User {
             e.printStackTrace();
         }
     }
+
+    public static void userToken() {
+        try {
+            String userId = "67c9428f7b47af25bee631e7";
+            HashMap<String, Object> res = bootpayStore.user.token(userId);
+            if(res.get("error_code") == null) { //success
+                System.out.println("token success: " + res);
+            } else {
+                System.out.println("token false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+
+                
 
     public static void joinCorporate() {
         try {
@@ -177,13 +198,16 @@ public class User {
 //    {count=5.0, http_status=200, list=[{login_id=ehowlsla5, name=홍길동, phone=null, email=null, membership_type=1.0, gender=null, birth=null, comment=null, group_tags=[], metadata=null, auth_sms=false, auth_phone=false, auth_email=false, count=0.0, status=1.0, individual_extension=null, updated_at=2025-03-24T16:13:52+09:00, created_at=2025-03-24T16:12:47+09:00, user_id=67e105ef03d0cb4e4117b0a1}, {login_id=ehowlsla4, name=홍길동, phone=null, email=null, membership_type=1.0, gender=null, birth=null, comment=null, group_tags=[], metadata=null, auth_sms=false, auth_phone=false, auth_email=false, count=0.0, status=1.0, individual_extension=null, updated_at=2025-03-24T16:09:07+09:00, created_at=2025-03-24T16:09:07+09:00, user_id=67e1051303d0cb4e4117b09b}, {login_id=ehowlsla3, name=홍길동, phone=null, email=null, membership_type=1.0, gender=null, birth=null, comment=null, group_tags=[], metadata=null, auth_sms=false, auth_phone=false, auth_email=false, count=0.0, status=1.0, individual_extension=null, updated_at=2025-03-24T14:58:21+09:00, created_at=2025-03-24T14:58:21+09:00, user_id=67e0f47d03d0cb4e4117b083}, {login_id=ehowlsla2, name=홍길동, phone=null, email=null, membership_type=1.0, gender=null, birth=null, comment=null, group_tags=[], metadata=null, auth_sms=false, auth_phone=false, auth_email=false, count=0.0, status=1.0, individual_extension=null, updated_at=2025-03-24T14:35:26+09:00, created_at=2025-03-24T14:35:26+09:00, user_id=67e0ef1e03d0cb4e4117b07d}, {login_id=ehowlsla, name=윤태섭, phone=null, email=null, membership_type=1.0, gender=null, birth=null, comment=null, group_tags=[], metadata=null, auth_sms=false, auth_phone=false, auth_email=false, count=0.0, status=1.0, individual_extension=null, updated_at=2025-03-07T13:03:37+09:00, created_at=2025-03-06T15:37:03+09:00, user_id=67c9428f7b47af25bee631e7}]}
     public static void list() {
 
-        Integer memberType = null;
-        String keyword = null;
-        Integer page = null;
-        Integer limit = null;
+//        Integer memberType = null;
+//        String keyword = null;
+//        String type = null;
+//        Integer page = null;
+//        Integer limit = null;
+        UserListParams params = new UserListParams();
+
 
         try {
-            HashMap<String, Object> res = bootpayStore.user.list(memberType, keyword, page, limit);
+            HashMap<String, Object> res = bootpayStore.user.list(params);
             if(res.get("error_code") == null) { //success
                 System.out.println("list success: " + res);
             } else {

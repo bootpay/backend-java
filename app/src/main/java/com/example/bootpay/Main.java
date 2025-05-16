@@ -24,7 +24,8 @@ public class Main {
 
     static Bootpay bootpay;
     public static void main(String[] args) {
-        bootpay = new Bootpay("61ab7fd3e38c300022d2c469", "bfw+9EASkM+NcY41CGbmV6jDy8JEuAeh0UM1q0AAjb4=");
+//        bootpay = new Bootpay("61ab7fd3e38c300022d2c469", "bfw+9EASkM+NcY41CGbmV6jDy8JEuAeh0UM1q0AAjb4=");
+        bootpay = new Bootpay("675a4d411f7701c33975f4af", "O1ode/ND83Y4rkG3mTx5NSI49lwmQCVqcuEXjqFTvRY=");
 //        bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 //        bootpay = new Bootpay("61ab7fd3e38c300022d2c469", "bfw+9EASkM+NcY41CGbmV6jDy8JEuAeh0UM1q0AAjb4=");
 //        bootpay = new Bootpay("6560203cca8deb00600959cc", "NVznyFF+WKVbT54ImpulaeYzROKFhg28RWw7h8yt0/A=", "https://dev-api.bootpay.co.kr/v2/");
@@ -37,7 +38,7 @@ public class Main {
 //        lookupBillingKey();
 //        lookupBillingKeyByKey();
 //        lookupPaymentMethods();
-        getBillingKey();
+//        getBillingKey();
 //        requestSubscribe();
 //        reserveSubscribe();
 //        startShipping();
@@ -48,7 +49,7 @@ public class Main {
 //        getUserToken();
 ////        requestLink();
 //        confirm();
-//        certificate();
+        certificate();
 //        shippingStart();
 ////
 //        cashReceipt();
@@ -397,7 +398,7 @@ public class Main {
     }
 
     public static void certificate() {
-        String receiptId = "640e65283049c8001e5618fc";
+        String receiptId = "681b5d948c216ad16d1e12ec";
         try {
             HashMap<String, Object> res = bootpay.certificate(receiptId);
             if(res.get("error_code") == null) { //success
