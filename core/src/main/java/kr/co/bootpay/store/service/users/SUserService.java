@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.model.pojo.SUser;
+import kr.co.bootpay.store.model.request.UserListParams;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -25,20 +26,22 @@ import java.util.Optional;
 public class SUserService {
 
 
-    static public HashMap<String, Object> list(BootpayStoreObject bootpay, Optional<Integer> memberType, Optional<String> keyword, Optional<Integer> page, Optional<Integer> limit) throws Exception {
+//    static public HashMap<String, Object> list(BootpayStoreObject bootpay, Optional<Integer> memberType, Optional<String> type, Optional<String> keyword, Optional<Integer> page, Optional<Integer> limit) throws Exception {
+static public HashMap<String, Object> list(BootpayStoreObject bootpay, UserListParams params) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
         // 파라미터 맵 초기화
-        Map<String, Object> params = new HashMap<>();
-        memberType.ifPresent(value -> params.put("member_type", value));
-        keyword.ifPresent(value -> params.put("keyword", value));
-        page.ifPresent(value -> params.put("page", value));
-        limit.ifPresent(value -> params.put("limit", value));
+        Map<String, Object> payload = new HashMap<>();
+        if (params.memberType != null) payload.put("memberType", params.memberType);
+        if (params.keyword != null) payload.put("keyword", params.keyword);
+        if (params.type != null) payload.put("type", params.type);
+        if (params.page != null) payload.put("page", params.page);
+        if (params.limit != null) payload.put("limit", params.limit);
 
         // 파라미터를 URL 쿼리 문자열로 변환
         StringBuilder query = new StringBuilder("users?");
-        for (Map.Entry<String, Object> entry : params.entrySet()) {
+        for (Map.Entry<String, Object> entry : payload.entrySet()) {
             query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
 
@@ -52,16 +55,17 @@ public class SUserService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-        if(result == null) {
-            result = new HashMap<>();
-        }
-
-        result.put("http_status", response.getStatusLine().getStatusCode());
-        return result;
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//
+//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+//        HashMap<String, Object> result = new Gson().fromJson(str, resType);
+//        if(result == null) {
+//            result = new HashMap<>();
+//        }
+//
+//        result.put("http_status", response.getStatusLine().getStatusCode());
+//        return result;
     }
 
     static public HashMap<String, Object> update(BootpayStoreObject bootpay, SUser user) throws Exception {
@@ -76,15 +80,16 @@ public class SUserService {
         HttpPut put = bootpay.httpPut("users/" + user.userId, new StringEntity(gson.toJson(user), "UTF-8"));
 
         HttpResponse response = client.execute(put);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-        if(result == null) {
-            result = new HashMap<>();
-        }
-
-        result.put("http_status", response.getStatusLine().getStatusCode());
-        return result;
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+//        HashMap<String, Object> result = new Gson().fromJson(str, resType);
+//        if(result == null) {
+//            result = new HashMap<>();
+//        }
+//
+//        result.put("http_status", response.getStatusLine().getStatusCode());
+//        return result;
     }
 
 }

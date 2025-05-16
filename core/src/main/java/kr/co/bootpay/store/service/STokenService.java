@@ -36,6 +36,8 @@ public class STokenService {
         HttpResponse response = client.execute(post);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
+        System.out.println("goGetToken  " + str);
+
 
         STokenResponse res = new Gson().fromJson(str, STokenResponse.class);
         bootpay.token = res.access_token;

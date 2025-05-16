@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.model.pojo.SInvoice;
+import kr.co.bootpay.store.model.request.ListParams;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -41,19 +42,19 @@ public class SInvoiceService {
         return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
-    static public HashMap<String, Object> list(BootpayStoreObject bootpay, Optional<String> keyword, Optional<Integer> page, Optional<Integer> limit) throws Exception {
+    static public HashMap<String, Object> list(BootpayStoreObject bootpay, ListParams params) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
         // 파라미터 맵 초기화
-        Map<String, Object> params = new HashMap<>();
-        keyword.ifPresent(value -> params.put("keyword", value));
-        page.ifPresent(value -> params.put("page", value));
-        limit.ifPresent(value -> params.put("limit", value));
+        Map<String, Object> payload = new HashMap<>();
+        if (params.keyword != null) payload.put("keyword", params.keyword);
+        if (params.page != null) payload.put("page", params.page);
+        if (params.limit != null) payload.put("limit", params.limit);
 
         // 파라미터를 URL 쿼리 문자열로 변환
         StringBuilder query = new StringBuilder("invoices?");
-        for (Map.Entry<String, Object> entry : params.entrySet()) {
+        for (Map.Entry<String, Object> entry : payload.entrySet()) {
             query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
 
