@@ -18,6 +18,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -38,7 +39,9 @@ public class SUserGroupService {
         // 파라미터를 URL 쿼리 문자열로 변환
         StringBuilder query = new StringBuilder("user_groups?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
-            query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+            String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
+            query.append(entry.getKey()).append("=").append(encodedValue).append("&");
+//            query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
 
         // 마지막 '&' 제거

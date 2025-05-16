@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.*;
 
 public class SProductService extends BootpayResponse {
@@ -92,7 +93,9 @@ public class SProductService extends BootpayResponse {
         // 파라미터를 URL 쿼리 문자열로 변환
         StringBuilder query = new StringBuilder("products?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
-            query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+            String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
+            query.append(entry.getKey()).append("=").append(encodedValue).append("&");
+//            query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
 
         // 마지막 '&' 제거
