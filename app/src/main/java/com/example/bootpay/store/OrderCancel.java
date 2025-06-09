@@ -2,6 +2,7 @@ package com.example.bootpay.store;
 
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.request.order.OrderListParams;
+import kr.co.bootpay.store.model.request.order.cancel.OrderCancelActionParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelListParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelParams;
 
@@ -18,7 +19,9 @@ public class OrderCancel {
 //        request();
 //        detail();
 //        orderCancel();
-        withdraw();
+//        withdraw();
+        approve();
+//        reject();
     }
 
     public static void getToken() {
@@ -72,16 +75,46 @@ public class OrderCancel {
     }
 
     public static void withdraw() {
-//        OrderCancelParams params = new OrderCancelParams();
-//        params.orderNumber = "25060971162205013115";
-//        params.requestCancelParameters.cancelPrice = 300;
-
         try {
             HashMap<String, Object> res = bootpayStore.orderCancel.withdraw("684673c0008fa2aeebcce874");
             if(res.get("error_code") == null) { //success
                 System.out.println("order cancel request: " + res);
             } else {
                 System.out.println("order cancel false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void approve() {
+        try {
+            OrderCancelActionParams params = new OrderCancelActionParams();
+            params.orderCancelRequestHistoryId = "68468927008fa2aeebcce89c";
+            params.message = "관리자 승인";
+
+            HashMap<String, Object> res = bootpayStore.orderCancel.approve(params);
+            if(res.get("error_code") == null) { //success
+                System.out.println("order cancel approve: " + res);
+            } else {
+                System.out.println("order cancel approve: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void reject() {
+        try {
+            OrderCancelActionParams params = new OrderCancelActionParams();
+            params.orderCancelRequestHistoryId = "684687e6008fa2aeebcce893";
+            params.message = "관리자 승인 거절";
+
+            HashMap<String, Object> res = bootpayStore.orderCancel.reject(params);
+            if(res.get("error_code") == null) { //success
+                System.out.println("order cancel approve: " + res);
+            } else {
+                System.out.println("order cancel approve: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();
