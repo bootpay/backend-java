@@ -1,4 +1,6 @@
-package kr.co.bootpay.store.model.request;
+package kr.co.bootpay.store.model.request.order;
+
+import kr.co.bootpay.store.model.request.ListParams;
 
 import java.util.List;
 

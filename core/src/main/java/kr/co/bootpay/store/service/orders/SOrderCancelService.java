@@ -5,12 +5,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.model.request.order.OrderListParams;
+import kr.co.bootpay.store.model.request.order.cancel.OrderCancelListParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelParams;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
@@ -21,9 +23,8 @@ import java.util.stream.Collectors;
 
 import static kr.co.bootpay.BootpayResponse.responseJson;
 
-public class SOrderService {
-    static public HashMap<String, Object> list(BootpayStoreObject bootpay, OrderListParams params) throws Exception {
-
+public class SOrderCancelService {
+    static public HashMap<String, Object> list(BootpayStoreObject bootpay, OrderCancelListParams params) throws Exception {
         if (bootpay.token == null || bootpay.token.isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -32,27 +33,12 @@ public class SOrderService {
 
         // 파라미터 맵 초기화
         Map<String, Object> payload = new HashMap<>();
-        if (params.keyword != null) payload.put("keyword", params.keyword);
-        if (params.csType != null) payload.put("cs_type", params.csType);
-        if (params.cssAt != null) payload.put("css_at", params.cssAt);
-        if (params.cseAt != null) payload.put("cse_at", params.cseAt);
-        if (params.page != null) payload.put("page", params.page);
-        if (params.limit != null) payload.put("limit", params.limit);
-        if (params.userId != null) payload.put("user_id", params.userId);
-        if (params.userGroupId != null) payload.put("user_group_id", params.userGroupId);
+        if (params.orderId != null) payload.put("order_id", params.orderId);
+        if (params.orderNumber != null) payload.put("order_number", params.orderNumber);
 
-        if (params.status != null && !params.status.isEmpty()) {
-            String joined = params.status.stream().map(String::valueOf).collect(Collectors.joining(","));
-            payload.put("status", joined);
-        }
-
-        if (params.paymentStatus != null && !params.paymentStatus.isEmpty()) {
-            String joined = params.paymentStatus.stream().map(String::valueOf).collect(Collectors.joining(","));
-            payload.put("payment_status", joined);
-        }
 
         // 파라미터를 URL 쿼리 문자열로 변환
-        StringBuilder query = new StringBuilder("orders?");
+        StringBuilder query = new StringBuilder("order/cancel?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
             String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
             query.append(entry.getKey()).append("=").append(encodedValue).append("&");
@@ -73,22 +59,8 @@ public class SOrderService {
         return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
-    static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String orderId) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
 
-        HttpClient client = HttpClientBuilder.create().build();
-
-        HttpGet get = bootpay.httpGet("orders/" + orderId);
-
-        HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
-    }
-
-
-    static public HashMap<String, Object> cancel(BootpayStoreObject bootpay, OrderCancelParams orderCancelParams) throws Exception {
+    static public HashMap<String, Object> request(BootpayStoreObject bootpay, OrderCancelParams orderCancelParams) throws Exception {
         if (bootpay.token == null || bootpay.token.isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -103,5 +75,23 @@ public class SOrderService {
         HttpResponse response = client.execute(post);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
         return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+    }
+
+    static public HashMap<String, Object> withdraw(BootpayStoreObject bootpay, String orderCancelRequestHistoryId) throws Exception {
+        if (bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        HttpClient client = HttpClientBuilder.create().build();
+
+        // Gson을 사용하여 Product 객체를 JSON 문자열로 변환
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        // 파일 업로드 요청 (여러 파일)
+        HttpPut put = bootpay.httpPut("order/cancel/" + orderCancelRequestHistoryId + "/withdraw", new StringEntity(gson.toJson(""), "UTF-8"));
+        HttpResponse response = client.execute(put);
+
+        // 응답 처리
+        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 }
