@@ -40,17 +40,18 @@ public class SUserJoinService {
         HttpPost post = bootpay.httpPost("users/join", new StringEntity(gson.toJson(user), "UTF-8"));
 
         HttpResponse response = client.execute(post);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        return bootpay.responseToJson(response);
 
 
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-        if(result == null) {
-            result = new HashMap<>();
-        }
-
-        result.put("http_status", response.getStatusLine().getStatusCode());
-        return result;
+//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+//        HashMap<String, Object> result = new Gson().fromJson(str, resType);
+//        if(result == null) {
+//            result = new HashMap<>();
+//        }
+//
+//        result.put("http_status", response.getStatusLine().getStatusCode());
+//        return result;
     }
 
 //    static public HashMap<String, Object> emailExist(BootpayStoreObject bootpay, String pk) throws Exception {

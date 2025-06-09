@@ -15,12 +15,12 @@ public class OrderCancel {
     public static void main(String[] args) {
         bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
         getToken();
-//        list();
+        list();
 //        request();
 //        detail();
 //        orderCancel();
 //        withdraw();
-        approve();
+//        approve();
 //        reject();
     }
 

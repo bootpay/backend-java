@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static kr.co.bootpay.BootpayResponse.responseJson;
 
 public class SOrderService {
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, OrderListParams params) throws Exception {
@@ -69,8 +68,9 @@ public class SOrderService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String orderId) throws Exception {
@@ -83,8 +83,9 @@ public class SOrderService {
         HttpGet get = bootpay.httpGet("orders/" + orderId);
 
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
 
@@ -101,7 +102,8 @@ public class SOrderService {
         HttpPost post = bootpay.httpPost("role/supervisor/order/cancel", new StringEntity(gson.toJson(orderCancelParams), "UTF-8"));
 
         HttpResponse response = client.execute(post);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 }

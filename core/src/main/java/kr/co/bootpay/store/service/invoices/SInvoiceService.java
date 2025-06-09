@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static kr.co.bootpay.BootpayResponse.responseJson;
 
 public class SInvoiceService {
 
@@ -38,9 +37,10 @@ public class SInvoiceService {
         HttpPost post = bootpay.httpPost("invoices", new StringEntity(gson.toJson(invoice), "UTF-8"));
 
         HttpResponse response = client.execute(post);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-
-        return responseJson(gson, str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//
+//        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, ListParams params) throws Exception {
@@ -71,8 +71,9 @@ public class SInvoiceService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> notify(BootpayStoreObject bootpay, String invoiceId, List<Integer> sendTypes) throws Exception {
@@ -90,8 +91,9 @@ public class SInvoiceService {
         HttpPost post = bootpay.httpPost("invoices/" + invoiceId + "/notify" , new StringEntity(gson.toJson(invoice), "UTF-8"));
 
         HttpResponse response = client.execute(post);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String invoiceId) throws Exception {
@@ -101,7 +103,8 @@ public class SInvoiceService {
         HttpGet get = bootpay.httpGet("invoices/" + invoiceId);
 
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 }

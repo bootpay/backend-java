@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static kr.co.bootpay.BootpayResponse.responseJson;
 
 public class SOrderSubscriptionBillService {
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, ListParams params) throws Exception {
@@ -51,8 +50,9 @@ public class SOrderSubscriptionBillService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
 
@@ -63,8 +63,9 @@ public class SOrderSubscriptionBillService {
         HttpGet get = bootpay.httpGet("order_subscription_bills/" + orderSubscriptionBillId);
 
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> update(BootpayStoreObject bootpay, SOrderSubscriptionBill orderSubscriptionBill) throws Exception {
@@ -80,9 +81,10 @@ public class SOrderSubscriptionBillService {
 //        HttpPost post = bootpay.httpPostMultipart("products", fileList, params);
         HttpPut put = bootpay.httpPut("order_subscription_bills/" + orderSubscriptionBill.orderSubscriptionBillId, new StringEntity(gson.toJson(orderSubscriptionBill), "UTF-8"));
         HttpResponse response = client.execute(put);
+        return bootpay.responseToJson(response);
 
         // 응답 처리
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(gson, str, response.getStatusLine().getStatusCode());
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 }

@@ -20,6 +20,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class SUserGroupService {
 
 
@@ -52,16 +53,18 @@ public class SUserGroupService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
 
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-        if(result == null) {
-            result = new HashMap<>();
-        }
-
-        result.put("http_status", response.getStatusLine().getStatusCode());
-        return result;
+//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+//        HashMap<String, Object> result = new Gson().fromJson(str, resType);
+//        if(result == null) {
+//            result = new HashMap<>();
+//        }
+//
+//        result.put("http_status", response.getStatusLine().getStatusCode());
+//        return result;
     }
 
     static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String userGroupId) throws Exception {
@@ -73,16 +76,18 @@ public class SUserGroupService {
         HttpGet get = bootpay.httpGet("user_groups/" + userGroupId);
 
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
 
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-        if(result == null) {
-            result = new HashMap<>();
-        }
-
-        result.put("http_status", response.getStatusLine().getStatusCode());
-        return result;
+//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+//        HashMap<String, Object> result = new Gson().fromJson(str, resType);
+//        if(result == null) {
+//            result = new HashMap<>();
+//        }
+//
+//        result.put("http_status", response.getStatusLine().getStatusCode());
+//        return result;
     }
 
     static public HashMap<String, Object> update(BootpayStoreObject bootpay, SUserGroup userGroup) throws Exception {
@@ -97,16 +102,18 @@ public class SUserGroupService {
         HttpPut put = bootpay.httpPut("user_groups/" + userGroup.userGroupId, new StringEntity(gson.toJson(userGroup), "UTF-8"));
 
         HttpResponse response = client.execute(put);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
 
-        System.out.println(str);
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-        if(result == null) {
-            result = new HashMap<>();
-        }
-
-        result.put("http_status", response.getStatusLine().getStatusCode());
-        return result;
+//        System.out.println(str);
+//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
+//        HashMap<String, Object> result = new Gson().fromJson(str, resType);
+//        if(result == null) {
+//            result = new HashMap<>();
+//        }
+//
+//        result.put("http_status", response.getStatusLine().getStatusCode());
+//        return result;
     }
 }

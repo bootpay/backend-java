@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static kr.co.bootpay.BootpayResponse.responseJson;
 
 public class SOrderSubscriptionService {
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, ListParams params) throws Exception {
@@ -45,8 +44,9 @@ public class SOrderSubscriptionService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
 
@@ -57,7 +57,8 @@ public class SOrderSubscriptionService {
         HttpGet get = bootpay.httpGet("order_subscriptions/" + orderSubscriptionId);
 
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 }
