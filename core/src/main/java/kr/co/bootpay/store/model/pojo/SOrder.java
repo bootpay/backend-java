@@ -1,5 +1,6 @@
 package kr.co.bootpay.store.model.pojo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +27,8 @@ public class SOrder {
     public String webhookUrl; // 웹훅 URL
     public String createdAt;
     public String updatedAt;
+
+    public List<SOrderCancellationRequestHistory> cancelledRequestHistory = new ArrayList<>();
 
     public SOrder() {
         this.orderId = UUID.randomUUID().toString();

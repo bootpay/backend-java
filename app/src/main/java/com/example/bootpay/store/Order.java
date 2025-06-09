@@ -1,7 +1,8 @@
 package com.example.bootpay.store;
 
 import kr.co.bootpay.store.BootpayStore;
-import kr.co.bootpay.store.model.request.OrderListParams;
+import kr.co.bootpay.store.model.request.order.OrderListParams;
+import kr.co.bootpay.store.model.request.order.cancel.OrderCancelParams;
 
 import java.util.HashMap;
 
@@ -12,8 +13,9 @@ public class Order {
     public static void main(String[] args) {
         bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
         getToken();
-        list();
+//        list();
 //        detail();
+//        orderCancel();
     }
 
     public static void getToken() {
@@ -58,7 +60,6 @@ public class Order {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
 }

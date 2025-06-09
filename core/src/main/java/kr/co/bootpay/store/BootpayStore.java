@@ -12,6 +12,7 @@ public class BootpayStore extends BootpayStoreObject {
     public Product product;
     public Invoice invoice;
     public Order order;
+    public OrderCancel orderCancel;
     public OrderSubscription orderSubscription;
     public OrderSubscriptionBill orderSubscriptionBill;
 
@@ -36,6 +37,7 @@ public class BootpayStore extends BootpayStoreObject {
         this.product = new Product(this);
         this.invoice = new Invoice(this);
         this.order = new Order(this);
+        this.orderCancel = new OrderCancel(this);
         this.orderSubscription = new OrderSubscription(this);
         this.orderSubscriptionBill = new OrderSubscriptionBill(this);
     }
@@ -44,8 +46,5 @@ public class BootpayStore extends BootpayStoreObject {
     public HashMap<String, Object> getAccessToken() throws Exception {
         return STokenService.getAccessToken(this);
     }
-
-
-
 }
 
