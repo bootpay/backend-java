@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static kr.co.bootpay.BootpayResponse.responseJson;
 
 public class SOrderCancelService {
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, OrderCancelListParams params) throws Exception {
@@ -56,8 +55,9 @@ public class SOrderCancelService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
 
@@ -74,8 +74,9 @@ public class SOrderCancelService {
         HttpPost post = bootpay.httpPost("role/supervisor/order/cancel", new StringEntity(gson.toJson(orderCancelParams), "UTF-8"));
 
         HttpResponse response = client.execute(post);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> withdraw(BootpayStoreObject bootpay, String orderCancelRequestHistoryId) throws Exception {
@@ -90,10 +91,10 @@ public class SOrderCancelService {
         // 파일 업로드 요청 (여러 파일)
         HttpPut put = bootpay.httpPut("order/cancel/" + orderCancelRequestHistoryId + "/withdraw", new StringEntity(gson.toJson(""), "UTF-8"));
         HttpResponse response = client.execute(put);
-
+        return bootpay.responseToJson(response);
         // 응답 처리
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(gson, str, response.getStatusLine().getStatusCode());
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> approve(BootpayStoreObject bootpay, OrderCancelActionParams params) throws Exception {
@@ -108,10 +109,11 @@ public class SOrderCancelService {
         // 파일 업로드 요청 (여러 파일)
         HttpPut put = bootpay.httpPut("order/cancel/" + params.orderCancelRequestHistoryId + "/approve", new StringEntity(gson.toJson(params), "UTF-8"));
         HttpResponse response = client.execute(put);
+        return bootpay.responseToJson(response);
 
         // 응답 처리
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(gson, str, response.getStatusLine().getStatusCode());
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> reject(BootpayStoreObject bootpay, OrderCancelActionParams params) throws Exception {
@@ -126,9 +128,10 @@ public class SOrderCancelService {
         // 파일 업로드 요청 (여러 파일)
         HttpPut put = bootpay.httpPut("order/cancel/" + params.orderCancelRequestHistoryId + "/reject", new StringEntity(gson.toJson(params), "UTF-8"));
         HttpResponse response = client.execute(put);
+        return bootpay.responseToJson(response);
 
         // 응답 처리
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(gson, str, response.getStatusLine().getStatusCode());
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 }

@@ -19,7 +19,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import java.net.URLEncoder;
 import java.util.*;
 
-import static kr.co.bootpay.BootpayResponse.responseJson;
 
 public class SSubscriptionSettingService {
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, ListParams params) throws Exception {
@@ -50,8 +49,9 @@ public class SSubscriptionSettingService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> create(BootpayStoreObject bootpay, SSubscriptionSetting subscriptionSetting) throws Exception {
@@ -65,10 +65,11 @@ public class SSubscriptionSettingService {
 
         HttpPost post = bootpay.httpPost("subscription_settings", new StringEntity(gson.toJson(subscriptionSetting), "UTF-8"));
         HttpResponse response = client.execute(post);
+        return bootpay.responseToJson(response);
 
         // 응답 처리
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(gson, str, response.getStatusLine().getStatusCode());
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> update(BootpayStoreObject bootpay, SSubscriptionSetting subscriptionSetting) throws Exception {
@@ -82,10 +83,11 @@ public class SSubscriptionSettingService {
 
         HttpPut put = bootpay.httpPut("subscription_settings/" + subscriptionSetting.subscriptionSettingId, new StringEntity(gson.toJson(subscriptionSetting), "UTF-8"));
         HttpResponse response = client.execute(put);
+        return bootpay.responseToJson(response);
 
         // 응답 처리
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(gson, str, response.getStatusLine().getStatusCode());
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
 
@@ -96,8 +98,9 @@ public class SSubscriptionSettingService {
         HttpGet get = bootpay.httpGet("subscription_settings/" + subscriptionSettingId);
 
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> delete(BootpayStoreObject bootpay, String subscriptionSettingId) throws Exception {
@@ -107,7 +110,8 @@ public class SSubscriptionSettingService {
         HttpDelete delete = bootpay.httpDelete("subscription_settings/" + subscriptionSettingId);
 
         HttpResponse response = client.execute(delete);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 }

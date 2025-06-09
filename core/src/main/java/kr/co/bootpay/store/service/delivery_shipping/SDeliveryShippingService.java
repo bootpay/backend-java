@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static kr.co.bootpay.BootpayResponse.responseJson;
-
 public class SDeliveryShippingService {
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, Optional<String> keyword, Optional<Integer> page, Optional<Integer> limit) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
@@ -52,8 +50,9 @@ public class SDeliveryShippingService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> create(BootpayStoreObject bootpay, SDeliveryShipping deliveryShipping) throws Exception {
@@ -67,10 +66,11 @@ public class SDeliveryShippingService {
 
         HttpPost post = bootpay.httpPost("delivery_shippings", new StringEntity(gson.toJson(deliveryShipping), "UTF-8"));
         HttpResponse response = client.execute(post);
+        return bootpay.responseToJson(response);
 
         // 응답 처리
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(gson, str, response.getStatusLine().getStatusCode());
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> update(BootpayStoreObject bootpay, SDeliveryShipping deliveryShipping) throws Exception {
@@ -84,10 +84,11 @@ public class SDeliveryShippingService {
 
         HttpPut put = bootpay.httpPut("delivery_shippings/" + deliveryShipping.deliveryShippingId, new StringEntity(gson.toJson(deliveryShipping), "UTF-8"));
         HttpResponse response = client.execute(put);
+        return bootpay.responseToJson(response);
 
         // 응답 처리
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(gson, str, response.getStatusLine().getStatusCode());
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
 
@@ -98,8 +99,9 @@ public class SDeliveryShippingService {
         HttpGet get = bootpay.httpGet("delivery_shippings/" + deliveryShippingId);
 
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> delete(BootpayStoreObject bootpay, String deliveryShippingId) throws Exception {
@@ -109,7 +111,8 @@ public class SDeliveryShippingService {
         HttpDelete delete = bootpay.httpDelete("delivery_shippings/" + deliveryShippingId);
 
         HttpResponse response = client.execute(delete);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 }
