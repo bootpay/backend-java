@@ -55,7 +55,7 @@ public class SOrderCancelService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonArray(response);
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
@@ -91,6 +91,10 @@ public class SOrderCancelService {
         // 파일 업로드 요청 (여러 파일)
         HttpPut put = bootpay.httpPut("order/cancel/" + orderCancelRequestHistoryId + "/withdraw", new StringEntity(gson.toJson(""), "UTF-8"));
         HttpResponse response = client.execute(put);
+
+        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        System.out.println(str);
+
         return bootpay.responseToJson(response);
         // 응답 처리
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");

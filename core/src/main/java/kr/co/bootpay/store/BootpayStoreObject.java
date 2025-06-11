@@ -75,7 +75,7 @@ public class BootpayStoreObject {
         get.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
         get.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
         get.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
-        get.setHeader("Authorization", getTokenValue());
+        if(token != null) get.setHeader("Authorization", getTokenValue());
         get.setURI(uri);
         return get;
     }
@@ -88,7 +88,7 @@ public class BootpayStoreObject {
         get.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
         get.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
         get.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
-        get.setHeader("Authorization", getTokenValue());
+        if(token != null) get.setHeader("Authorization", getTokenValue());
         URI uri = new URIBuilder(get.getURI()).addParameters(nameValuePairList).build();
         get.setURI(uri);
         return get;
@@ -102,7 +102,7 @@ public class BootpayStoreObject {
         post.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
         post.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
         post.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
-        post.setHeader("Authorization", getTokenValue());
+        if(token != null) post.setHeader("Authorization", getTokenValue());
         post.setEntity(entity);
         return post;
     }
@@ -114,7 +114,7 @@ public class BootpayStoreObject {
         post.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
         post.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
         post.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
-        post.setHeader("Authorization", getTokenValue());
+        if(token != null) post.setHeader("Authorization", getTokenValue());
 
         // 멀티파트 엔티티 구성
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -175,7 +175,7 @@ public class BootpayStoreObject {
         delete.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
         delete.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
         delete.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
-        delete.setHeader("Authorization", getTokenValue());
+        if(token != null) delete.setHeader("Authorization", getTokenValue());
         return delete;
     }
 
@@ -187,7 +187,7 @@ public class BootpayStoreObject {
         delete.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
         delete.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
         delete.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
-        delete.setHeader("Authorization", getTokenValue());
+        if(token != null) delete.setHeader("Authorization", getTokenValue());
         delete.setEntity(entity);
         return delete;
     }
@@ -197,14 +197,13 @@ public class BootpayStoreObject {
         put.setHeader("Accept", "application/json");
         put.setHeader("Content-Type", "application/json");
         put.setHeader("Accept-Charset", "utf-8");
-        put.setHeader("Authorization", getTokenValue());
+        if(token != null) put.setHeader("Authorization", getTokenValue());
         put.setEntity(entity);
         return put;
     }
 
     public HashMap<String, Object> responseToJsonArray(HttpResponse response)  throws Exception {
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        System.out.println(str);
 
         HashMap<String, Object>  result = new HashMap<>();
 //        Type resType = new TypeToken<List<HashMap<String, Object>>>(){}.getType();

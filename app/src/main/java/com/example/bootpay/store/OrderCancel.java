@@ -15,12 +15,12 @@ public class OrderCancel {
     public static void main(String[] args) {
         bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
         getToken();
-        list();
+//        list();
 //        request();
 //        detail();
 //        orderCancel();
 //        withdraw();
-//        approve();
+        approve();
 //        reject();
     }
 
@@ -76,11 +76,11 @@ public class OrderCancel {
 
     public static void withdraw() {
         try {
-            HashMap<String, Object> res = bootpayStore.orderCancel.withdraw("684673c0008fa2aeebcce874");
+            HashMap<String, Object> res = bootpayStore.orderCancel.withdraw("6847844b008fa2aeebcce8b9");
             if(res.get("error_code") == null) { //success
-                System.out.println("order cancel request: " + res);
+                System.out.println("order withdraw request: " + res);
             } else {
-                System.out.println("order cancel false: " + res);
+                System.out.println("order withdraw false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();

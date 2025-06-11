@@ -4,7 +4,6 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import kr.co.bootpay.BootpayResponse;
 import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.model.pojo.SInvoice;
 import kr.co.bootpay.store.model.pojo.SProduct;
@@ -28,7 +27,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 
-public class SProductService extends BootpayResponse {
+public class SProductService {
 
     static public HashMap<String, Object> create(BootpayStoreObject bootpay, SProduct product, List<URL> imagePaths) throws Exception {
         if (bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
@@ -54,10 +53,11 @@ public class SProductService extends BootpayResponse {
         // 파일 업로드 요청 (여러 파일)
         HttpPost post = bootpay.httpPostMultipart("products", fileList, params);
         HttpResponse response = client.execute(post);
+        return bootpay.responseToJson(response);
 
         // 응답 처리
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(gson, str, response.getStatusLine().getStatusCode());
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return bootpay.responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
     static public HashMap<String, Object> update(BootpayStoreObject bootpay, SProduct product) throws Exception {
@@ -74,10 +74,11 @@ public class SProductService extends BootpayResponse {
 //        HttpPost post = bootpay.httpPostMultipart("products", fileList, params);
         HttpPut put = bootpay.httpPut("products/" + product.productId, new StringEntity(gson.toJson(product), "UTF-8"));
         HttpResponse response = client.execute(put);
+        return bootpay.responseToJson(response);
 
         // 응답 처리
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(gson, str, response.getStatusLine().getStatusCode());
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
 
@@ -114,8 +115,9 @@ public class SProductService extends BootpayResponse {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
 
 //        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
 //        HashMap<String, Object> result = new Gson().fromJson(str, resType);
@@ -134,7 +136,8 @@ public class SProductService extends BootpayResponse {
         HttpGet get = bootpay.httpGet("products/" + productId);
 
         HttpResponse response = client.execute(get);
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+        return bootpay.responseToJson(response);
+//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 }

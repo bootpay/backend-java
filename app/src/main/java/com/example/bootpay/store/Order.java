@@ -51,7 +51,7 @@ public class Order {
 
     public static void detail() {
         try {
-            HashMap<String, Object> res = bootpayStore.order.detail("67caa1897b47af25bee6320b");
+            HashMap<String, Object> res = bootpayStore.order.detail("6848eb68008fa2aeebcce92c");
             if(res.get("error_code") == null) { //success
                 System.out.println("order success: " + res);
             } else {
