@@ -36,22 +36,11 @@ public class SUserJoinService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-
-        HttpPost post = bootpay.httpPost("users/join", new StringEntity(gson.toJson(user), "UTF-8"));
+        String role = "user" + "/";
+        HttpPost post = bootpay.httpPost(role + "users/join", new StringEntity(gson.toJson(user), "UTF-8"));
 
         HttpResponse response = client.execute(post);
-//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
         return bootpay.responseToJson(response);
-
-
-//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-//        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-//        if(result == null) {
-//            result = new HashMap<>();
-//        }
-//
-//        result.put("http_status", response.getStatusLine().getStatusCode());
-//        return result;
     }
 
 //    static public HashMap<String, Object> emailExist(BootpayStoreObject bootpay, String pk) throws Exception {
@@ -81,7 +70,8 @@ public class SUserJoinService {
 
         HttpClient client = HttpClientBuilder.create().build();
         // URL 구조: users/join/:path?pk=:pk
-        String url = String.format("users/join/%s?pk=%s", path, encodedPk);
+        String role = "user" + "/";
+        String url = String.format(role + "users/join/%s?pk=%s", path, encodedPk);
         HttpGet get = bootpay.httpGet(url);
         HttpResponse response = client.execute(get);
 

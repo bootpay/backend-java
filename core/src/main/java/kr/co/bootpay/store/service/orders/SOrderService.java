@@ -51,7 +51,8 @@ public class SOrderService {
         }
 
         // 파라미터를 URL 쿼리 문자열로 변환
-        StringBuilder query = new StringBuilder("orders?");
+        String role = "user" + "/";
+        StringBuilder query = new StringBuilder(role + "orders?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
             String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
             query.append(entry.getKey()).append("=").append(encodedValue).append("&");
@@ -80,32 +81,14 @@ public class SOrderService {
 
         HttpClient client = HttpClientBuilder.create().build();
 
-        HttpGet get = bootpay.httpGet("orders/" + orderId);
+        String role = "user" + "/";
+        HttpGet get = bootpay.httpGet(role + "orders/" + orderId);
 
         HttpResponse response = client.execute(get);
 
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
         System.out.println(str);
 
-        return bootpay.responseToJson(response);
-//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
-    }
-
-
-    static public HashMap<String, Object> cancel(BootpayStoreObject bootpay, OrderCancelParams orderCancelParams) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-
-        HttpClient client = HttpClientBuilder.create().build();
-        Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .create();
-
-        HttpPost post = bootpay.httpPost("role/supervisor/order/cancel", new StringEntity(gson.toJson(orderCancelParams), "UTF-8"));
-
-        HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());

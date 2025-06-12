@@ -36,7 +36,8 @@ public class SUserGroupService {
         if (params.limit != null) payload.put("limit", params.limit);
 
         // 파라미터를 URL 쿼리 문자열로 변환
-        StringBuilder query = new StringBuilder("user_groups?");
+        String role = "user" + "/";
+        StringBuilder query = new StringBuilder(role + "user_groups?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
             String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
             query.append(entry.getKey()).append("=").append(encodedValue).append("&");
@@ -54,17 +55,6 @@ public class SUserGroupService {
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);
-//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
-
-//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-//        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-//        if(result == null) {
-//            result = new HashMap<>();
-//        }
-//
-//        result.put("http_status", response.getStatusLine().getStatusCode());
-//        return result;
     }
 
     static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String userGroupId) throws Exception {
@@ -73,21 +63,11 @@ public class SUserGroupService {
         HttpClient client = HttpClientBuilder.create().build();
 
 
-        HttpGet get = bootpay.httpGet("user_groups/" + userGroupId);
+        String role = "user" + "/";
+        HttpGet get = bootpay.httpGet(role + "user_groups/" + userGroupId);
 
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);
-//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
-
-//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-//        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-//        if(result == null) {
-//            result = new HashMap<>();
-//        }
-//
-//        result.put("http_status", response.getStatusLine().getStatusCode());
-//        return result;
     }
 
     static public HashMap<String, Object> update(BootpayStoreObject bootpay, SUserGroup userGroup) throws Exception {
@@ -98,22 +78,10 @@ public class SUserGroupService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-
-        HttpPut put = bootpay.httpPut("user_groups/" + userGroup.userGroupId, new StringEntity(gson.toJson(userGroup), "UTF-8"));
+        String role = "user" + "/";
+        HttpPut put = bootpay.httpPut(role + "user_groups/" + userGroup.userGroupId, new StringEntity(gson.toJson(userGroup), "UTF-8"));
 
         HttpResponse response = client.execute(put);
         return bootpay.responseToJson(response);
-//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
-
-//        System.out.println(str);
-//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-//        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-//        if(result == null) {
-//            result = new HashMap<>();
-//        }
-//
-//        result.put("http_status", response.getStatusLine().getStatusCode());
-//        return result;
     }
 }

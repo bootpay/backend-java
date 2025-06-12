@@ -32,7 +32,8 @@ public class SSubscriptionSettingService {
         if (params.limit != null) payload.put("limit", params.limit);
 
         // 파라미터를 URL 쿼리 문자열로 변환
-        StringBuilder query = new StringBuilder("subscription_settings?");
+        String role = "user" + "/";
+        StringBuilder query = new StringBuilder(role + "subscription_settings?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
             String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
             query.append(entry.getKey()).append("=").append(encodedValue).append("&");
@@ -63,7 +64,8 @@ public class SSubscriptionSettingService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPost post = bootpay.httpPost("subscription_settings", new StringEntity(gson.toJson(subscriptionSetting), "UTF-8"));
+        String role = "user" + "/";
+        HttpPost post = bootpay.httpPost(role + "subscription_settings", new StringEntity(gson.toJson(subscriptionSetting), "UTF-8"));
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
 
@@ -81,7 +83,8 @@ public class SSubscriptionSettingService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPut put = bootpay.httpPut("subscription_settings/" + subscriptionSetting.subscriptionSettingId, new StringEntity(gson.toJson(subscriptionSetting), "UTF-8"));
+        String role = "user" + "/";
+        HttpPut put = bootpay.httpPut(role + "subscription_settings/" + subscriptionSetting.subscriptionSettingId, new StringEntity(gson.toJson(subscriptionSetting), "UTF-8"));
         HttpResponse response = client.execute(put);
         return bootpay.responseToJson(response);
 
@@ -95,7 +98,8 @@ public class SSubscriptionSettingService {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
-        HttpGet get = bootpay.httpGet("subscription_settings/" + subscriptionSettingId);
+        String role = "user" + "/";
+        HttpGet get = bootpay.httpGet(role + "subscription_settings/" + subscriptionSettingId);
 
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);
@@ -107,7 +111,8 @@ public class SSubscriptionSettingService {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
-        HttpDelete delete = bootpay.httpDelete("subscription_settings/" + subscriptionSettingId);
+        String role = "user" + "/";
+        HttpDelete delete = bootpay.httpDelete(role + "subscription_settings/" + subscriptionSettingId);
 
         HttpResponse response = client.execute(delete);
         return bootpay.responseToJson(response);

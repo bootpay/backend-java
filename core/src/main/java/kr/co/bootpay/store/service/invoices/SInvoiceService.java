@@ -33,8 +33,8 @@ public class SInvoiceService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-
-        HttpPost post = bootpay.httpPost("invoices", new StringEntity(gson.toJson(invoice), "UTF-8"));
+        String role = "user" + "/";
+        HttpPost post = bootpay.httpPost(role + "invoices", new StringEntity(gson.toJson(invoice), "UTF-8"));
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
@@ -54,7 +54,8 @@ public class SInvoiceService {
         if (params.limit != null) payload.put("limit", params.limit);
 
         // 파라미터를 URL 쿼리 문자열로 변환
-        StringBuilder query = new StringBuilder("invoices?");
+        String role = "user" + "/";
+        StringBuilder query = new StringBuilder(role + "invoices?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
             String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
             query.append(entry.getKey()).append("=").append(encodedValue).append("&");
@@ -88,7 +89,8 @@ public class SInvoiceService {
         invoice.sendTypes = sendTypes;
 //        invoice.invoiceId = invoiceId;
 
-        HttpPost post = bootpay.httpPost("invoices/" + invoiceId + "/notify" , new StringEntity(gson.toJson(invoice), "UTF-8"));
+        String role = "user" + "/";
+        HttpPost post = bootpay.httpPost(role + "invoices/" + invoiceId + "/notify" , new StringEntity(gson.toJson(invoice), "UTF-8"));
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
@@ -100,7 +102,8 @@ public class SInvoiceService {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
-        HttpGet get = bootpay.httpGet("invoices/" + invoiceId);
+        String role = "user" + "/";
+        HttpGet get = bootpay.httpGet(role + "invoices/" + invoiceId);
 
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);

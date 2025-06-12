@@ -51,7 +51,8 @@ public class SProductService {
         HashMap<String, String> params = gson.fromJson(jsonProduct, new TypeToken<HashMap<String, String>>(){}.getType());
 
         // 파일 업로드 요청 (여러 파일)
-        HttpPost post = bootpay.httpPostMultipart("products", fileList, params);
+        String role = "user" + "/";
+        HttpPost post = bootpay.httpPostMultipart(role + "products", fileList, params);
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
 
@@ -72,7 +73,8 @@ public class SProductService {
 
         // 파일 업로드 요청 (여러 파일)
 //        HttpPost post = bootpay.httpPostMultipart("products", fileList, params);
-        HttpPut put = bootpay.httpPut("products/" + product.productId, new StringEntity(gson.toJson(product), "UTF-8"));
+        String role = "user" + "/";
+        HttpPut put = bootpay.httpPut(role + "products/" + product.productId, new StringEntity(gson.toJson(product), "UTF-8"));
         HttpResponse response = client.execute(put);
         return bootpay.responseToJson(response);
 
@@ -133,7 +135,8 @@ public class SProductService {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
-        HttpGet get = bootpay.httpGet("products/" + productId);
+        String role = "user" + "/";
+        HttpGet get = bootpay.httpGet(role + "products/" + productId);
 
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);

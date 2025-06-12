@@ -33,11 +33,11 @@ public class SOrderSubscriptionBillService {
         if (params.limit != null) payload.put("limit", params.limit);
 
         // 파라미터를 URL 쿼리 문자열로 변환
-        StringBuilder query = new StringBuilder("order_subscription_bills?");
+        String role = "user" + "/";
+        StringBuilder query = new StringBuilder(role + "order_subscription_bills?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
             String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
             query.append(entry.getKey()).append("=").append(encodedValue).append("&");
-//            query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
 
         // 마지막 '&' 제거
@@ -60,7 +60,8 @@ public class SOrderSubscriptionBillService {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
-        HttpGet get = bootpay.httpGet("order_subscription_bills/" + orderSubscriptionBillId);
+        String role = "user" + "/";
+        HttpGet get = bootpay.httpGet(role + "order_subscription_bills/" + orderSubscriptionBillId);
 
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);
@@ -79,7 +80,8 @@ public class SOrderSubscriptionBillService {
 
         // 파일 업로드 요청 (여러 파일)
 //        HttpPost post = bootpay.httpPostMultipart("products", fileList, params);
-        HttpPut put = bootpay.httpPut("order_subscription_bills/" + orderSubscriptionBill.orderSubscriptionBillId, new StringEntity(gson.toJson(orderSubscriptionBill), "UTF-8"));
+        String role = "user" + "/";
+        HttpPut put = bootpay.httpPut(role + "order_subscription_bills/" + orderSubscriptionBill.orderSubscriptionBillId, new StringEntity(gson.toJson(orderSubscriptionBill), "UTF-8"));
         HttpResponse response = client.execute(put);
         return bootpay.responseToJson(response);
 

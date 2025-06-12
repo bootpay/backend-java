@@ -33,11 +33,11 @@ public class SDeliveryShippingService {
         limit.ifPresent(value -> params.put("limit", value));
 
         // 파라미터를 URL 쿼리 문자열로 변환
-        StringBuilder query = new StringBuilder("delivery_shippings?");
+        String role = "user" + "/";
+        StringBuilder query = new StringBuilder(role + "delivery_shippings?");
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
             query.append(entry.getKey()).append("=").append(encodedValue).append("&");
-//            query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
 
         // 마지막 '&' 제거
@@ -64,7 +64,8 @@ public class SDeliveryShippingService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPost post = bootpay.httpPost("delivery_shippings", new StringEntity(gson.toJson(deliveryShipping), "UTF-8"));
+        String role = "user" + "/";
+        HttpPost post = bootpay.httpPost(role + "delivery_shippings", new StringEntity(gson.toJson(deliveryShipping), "UTF-8"));
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
 
@@ -82,7 +83,8 @@ public class SDeliveryShippingService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPut put = bootpay.httpPut("delivery_shippings/" + deliveryShipping.deliveryShippingId, new StringEntity(gson.toJson(deliveryShipping), "UTF-8"));
+        String role = "user" + "/";
+        HttpPut put = bootpay.httpPut(role + "delivery_shippings/" + deliveryShipping.deliveryShippingId, new StringEntity(gson.toJson(deliveryShipping), "UTF-8"));
         HttpResponse response = client.execute(put);
         return bootpay.responseToJson(response);
 
@@ -96,7 +98,8 @@ public class SDeliveryShippingService {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
-        HttpGet get = bootpay.httpGet("delivery_shippings/" + deliveryShippingId);
+        String role = "user" + "/";
+        HttpGet get = bootpay.httpGet(role + "delivery_shippings/" + deliveryShippingId);
 
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);
@@ -108,7 +111,8 @@ public class SDeliveryShippingService {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
-        HttpDelete delete = bootpay.httpDelete("delivery_shippings/" + deliveryShippingId);
+        String role = "user" + "/";
+        HttpDelete delete = bootpay.httpDelete(role + "delivery_shippings/" + deliveryShippingId);
 
         HttpResponse response = client.execute(delete);
         return bootpay.responseToJson(response);

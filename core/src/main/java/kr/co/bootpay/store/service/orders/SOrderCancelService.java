@@ -38,7 +38,8 @@ public class SOrderCancelService {
 
 
         // 파라미터를 URL 쿼리 문자열로 변환
-        StringBuilder query = new StringBuilder("order/cancel?");
+        String role = "user" + "/";
+        StringBuilder query = new StringBuilder(role + "order/cancel?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
             String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
             query.append(entry.getKey()).append("=").append(encodedValue).append("&");
@@ -61,7 +62,7 @@ public class SOrderCancelService {
     }
 
 
-    static public HashMap<String, Object> request(BootpayStoreObject bootpay, OrderCancelParams orderCancelParams) throws Exception {
+    static public HashMap<String, Object> request(BootpayStoreObject bootpay, OrderCancelParams orderCancelParams, boolean isSupervisor) throws Exception {
         if (bootpay.token == null || bootpay.token.isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -71,7 +72,9 @@ public class SOrderCancelService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPost post = bootpay.httpPost("role/supervisor/order/cancel", new StringEntity(gson.toJson(orderCancelParams), "UTF-8"));
+        String role = "user" + "/";
+        if(isSupervisor) role = "supervisor" + "/";
+        HttpPost post = bootpay.httpPost(role + "order/cancel", new StringEntity(gson.toJson(orderCancelParams), "UTF-8"));
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
@@ -89,7 +92,8 @@ public class SOrderCancelService {
                 .create();
 
         // 파일 업로드 요청 (여러 파일)
-        HttpPut put = bootpay.httpPut("order/cancel/" + orderCancelRequestHistoryId + "/withdraw", new StringEntity(gson.toJson(""), "UTF-8"));
+        String role = "user" + "/";
+        HttpPut put = bootpay.httpPut(role + "order/cancel/" + orderCancelRequestHistoryId + "/withdraw", new StringEntity(gson.toJson(""), "UTF-8"));
         HttpResponse response = client.execute(put);
 
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
@@ -111,7 +115,8 @@ public class SOrderCancelService {
                 .create();
 
         // 파일 업로드 요청 (여러 파일)
-        HttpPut put = bootpay.httpPut("order/cancel/" + params.orderCancelRequestHistoryId + "/approve", new StringEntity(gson.toJson(params), "UTF-8"));
+        String role = "user" + "/";
+        HttpPut put = bootpay.httpPut(role + "order/cancel/" + params.orderCancelRequestHistoryId + "/approve", new StringEntity(gson.toJson(params), "UTF-8"));
         HttpResponse response = client.execute(put);
         return bootpay.responseToJson(response);
 
@@ -130,7 +135,8 @@ public class SOrderCancelService {
                 .create();
 
         // 파일 업로드 요청 (여러 파일)
-        HttpPut put = bootpay.httpPut("order/cancel/" + params.orderCancelRequestHistoryId + "/reject", new StringEntity(gson.toJson(params), "UTF-8"));
+        String role = "user" + "/";
+        HttpPut put = bootpay.httpPut(role + "order/cancel/" + params.orderCancelRequestHistoryId + "/reject", new StringEntity(gson.toJson(params), "UTF-8"));
         HttpResponse response = client.execute(put);
         return bootpay.responseToJson(response);
 
