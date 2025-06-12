@@ -19,12 +19,26 @@ import java.util.HashMap;
 
 public class STokenService {
     static public HashMap<String, Object> getAccessToken(BootpayStoreObject bootpay) throws Exception {
-        if(bootpay.serverKey == null || bootpay.serverKey.isEmpty()) throw new Exception("serverKey 값이 비어있습니다.");
-        if(bootpay.privateKey == null || bootpay.privateKey.isEmpty()) throw new Exception("privateKey 값이 비어있습니다.");
+
+        if(bootpay.tokenKey == null) {
+            throw new Exception("tokenKey 값이 비어있습니다.");
+        }
+        boolean clientKeyEmpty = bootpay.tokenKey.clientKey == null || bootpay.tokenKey.clientKey.isEmpty();
+        boolean secretKeyEmpty = bootpay.tokenKey.secretKey == null || bootpay.tokenKey.secretKey.isEmpty();
+        boolean serverKeyEmpty = bootpay.tokenKey.serverKey == null || bootpay.tokenKey.serverKey.isEmpty();
+        boolean privateKeyEmpty = bootpay.tokenKey.privateKey == null || bootpay.tokenKey.privateKey.isEmpty();
 
         SToken token = new SToken();
-        token.serverKey = bootpay.serverKey;
-        token.privateKey = bootpay.privateKey;
+        if(clientKeyEmpty || secretKeyEmpty) {
+            if(serverKeyEmpty && privateKeyEmpty) {
+                if(clientKeyEmpty) throw new Exception("clientKey 값이 비어있습니다.");
+                else throw new Exception("secretKey 값이 비어있습니다.");
+            }
+            if(serverKeyEmpty) throw new Exception("serverKey 값이 비어있습니다.");
+            if(privateKeyEmpty) throw new Exception("privateKey 값이 비어있습니다.");
+            token.serverKey = bootpay.tokenKey.serverKey;
+            token.privateKey = bootpay.tokenKey.privateKey;
+        }
 
         HttpClient client = HttpClientBuilder.create().build();
         Gson gson = new GsonBuilder()
