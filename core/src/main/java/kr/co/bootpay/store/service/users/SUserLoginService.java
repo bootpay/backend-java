@@ -35,7 +35,8 @@ public class SUserLoginService {
         Map<String, Object> params = new HashMap<>();
         params.put("user_id", userId);
 
-        HttpPost post = bootpay.httpPost("users/login/token", new StringEntity(gson.toJson(params), "UTF-8"));
+        String role = "user" + "/";
+        HttpPost post = bootpay.httpPost(role + "users/login/token", new StringEntity(gson.toJson(params), "UTF-8"));
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
@@ -55,7 +56,8 @@ public class SUserLoginService {
         params.put("login_pw", loginPw);
 
 
-        HttpPost post = bootpay.httpPost("users/login", new StringEntity(gson.toJson(params), "UTF-8"));
+        String role = "user" + "/";
+        HttpPost post = bootpay.httpPost(role + "users/login", new StringEntity(gson.toJson(params), "UTF-8"));
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
@@ -67,7 +69,8 @@ public class SUserLoginService {
         HttpClient client = HttpClientBuilder.create().build();
 
 
-        HttpGet get = bootpay.httpGet("users/" + userId);
+        String role = "user" + "/";
+        HttpGet get = bootpay.httpGet(role + "users/" + userId);
 
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);
@@ -78,8 +81,8 @@ public class SUserLoginService {
 
         HttpClient client = HttpClientBuilder.create().build();
 
-
-        HttpDelete delete = bootpay.httpDelete("users/" + userId + "/withdraw");
+        String role = "user" + "/";
+        HttpDelete delete = bootpay.httpDelete(role + "users/" + userId + "/withdraw");
 
         HttpResponse response = client.execute(delete);
         return bootpay.responseToJson(response);

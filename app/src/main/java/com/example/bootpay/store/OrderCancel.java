@@ -18,11 +18,11 @@ public class OrderCancel {
         bootpayStore = new BootpayStore(tokenKey, "DEVELOPMENT");
         getToken();
 //        list();
-//        request();
+        request();
 //        detail();
 //        orderCancel();
 //        withdraw();
-        approve();
+//        approve();
 //        reject();
     }
 

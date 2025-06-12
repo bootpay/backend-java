@@ -32,7 +32,8 @@ public class SUserAuthenticateService {
 
         HttpClient client = HttpClientBuilder.create().build();
         // URL 구조: users/join/:path?pk=:pk
-        String url = String.format("users/authenticate/%s", standId);
+        String role = "user" + "/";
+        String url = String.format(role + "users/authenticate/%s", standId);
         HttpGet get = bootpay.httpGet(url);
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);

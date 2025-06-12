@@ -13,16 +13,16 @@ public class User {
 
     static BootpayStore bootpayStore;
     public static void main(String[] args) {
-        TokenKey tokenKey = new TokenKey("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
+        TokenKey tokenKey = new TokenKey("JQxrL34gHuXXNsKg2X9I0g", "cws0oh0wcw5hK4t-FG7SfreniHxxftYapD9JNIVGfno=");
         bootpayStore = new BootpayStore(tokenKey, "DEVELOPMENT");
 
         System.out.println("start");
         getToken();
-//        joinIndividual();
+        joinIndividual();
 //        joinCorporate();
 //        authByUserStandbyId();
 //        login();
-        list();
+//        list();
 //        detail();
 //        update();
 //        withdraw();

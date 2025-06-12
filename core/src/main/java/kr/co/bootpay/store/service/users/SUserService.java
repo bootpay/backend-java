@@ -40,7 +40,8 @@ static public HashMap<String, Object> list(BootpayStoreObject bootpay, UserListP
         if (params.limit != null) payload.put("limit", params.limit);
 
         // 파라미터를 URL 쿼리 문자열로 변환
-        StringBuilder query = new StringBuilder("users?");
+        String role = "user" + "/";
+        StringBuilder query = new StringBuilder(role + "users?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
             String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
             query.append(entry.getKey()).append("=").append(encodedValue).append("&");
@@ -58,16 +59,6 @@ static public HashMap<String, Object> list(BootpayStoreObject bootpay, UserListP
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);
-//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-//
-//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-//        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-//        if(result == null) {
-//            result = new HashMap<>();
-//        }
-//
-//        result.put("http_status", response.getStatusLine().getStatusCode());
-//        return result;
     }
 
     static public HashMap<String, Object> update(BootpayStoreObject bootpay, SUser user) throws Exception {
@@ -79,19 +70,11 @@ static public HashMap<String, Object> list(BootpayStoreObject bootpay, UserListP
                 .create();
 
 
-        HttpPut put = bootpay.httpPut("users/" + user.userId, new StringEntity(gson.toJson(user), "UTF-8"));
+        String role = "user" + "/";
+        HttpPut put = bootpay.httpPut(role + "users/" + user.userId, new StringEntity(gson.toJson(user), "UTF-8"));
 
         HttpResponse response = client.execute(put);
         return bootpay.responseToJson(response);
-//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-//        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-//        if(result == null) {
-//            result = new HashMap<>();
-//        }
-//
-//        result.put("http_status", response.getStatusLine().getStatusCode());
-//        return result;
     }
 
 }
