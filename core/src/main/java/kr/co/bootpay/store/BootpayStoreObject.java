@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.co.bootpay.Version;
 import kr.co.bootpay.http.HttpDeleteWithBody;
+import kr.co.bootpay.store.model.request.TokenKey;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -20,16 +21,15 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class BootpayStoreObject {
     public String token;
-    public String serverKey;
-    public String privateKey;
+//    public String secretKey;
+//    public String serverKey;
+//    public String privateKey;
+    public TokenKey tokenKey = new TokenKey();
     public String baseUrl;
 
     public final String DEVELOPMENT = "https://dev-api.bootapi.com/v1/";
@@ -38,15 +38,17 @@ public class BootpayStoreObject {
     public final String PRODUCTION = "https://api.bootapi.com/v1/";
 
     public BootpayStoreObject() {}
-    public BootpayStoreObject(String serverKey, String privateKey) {
-        this.serverKey = serverKey;
-        this.privateKey = privateKey;
+    public BootpayStoreObject(TokenKey tokenKey) {
+//        this.serverKey = serverKey;
+//        this.privateKey = privateKey;
+        this.tokenKey = tokenKey;
         this.baseUrl = PRODUCTION;
     }
 
-    public BootpayStoreObject(String serverKey, String privateKey, String devMode) {
-        this.serverKey = serverKey;
-        this.privateKey = privateKey;
+    public BootpayStoreObject(TokenKey tokenKey, String devMode) {
+//        this.serverKey = serverKey;
+//        this.privateKey = privateKey;
+        this.tokenKey = tokenKey;
         if("DEVELOPMENT".equalsIgnoreCase(devMode)) {
             this.baseUrl = DEVELOPMENT;
         } else if("TEST".equalsIgnoreCase(devMode)) {
@@ -64,6 +66,13 @@ public class BootpayStoreObject {
 
     public String getTokenValue() {
         return "Bearer " + token;
+    }
+
+    public String requestAccessToken() {
+        if((tokenKey.clientKey == null || tokenKey.clientKey.isEmpty()) && (tokenKey.secretKey == null || tokenKey.secretKey.isEmpty())) return "";
+        String credentials = tokenKey.clientKey + ":" + tokenKey.secretKey;
+        String encoded = Base64.getEncoder().encodeToString(credentials.getBytes());
+        return "Basic " + encoded;
     }
 
     public HttpGet httpGet(String url) throws Exception {
@@ -96,13 +105,19 @@ public class BootpayStoreObject {
 
     public HttpPost httpPost(String url, StringEntity entity) {
         HttpPost post = new HttpPost(this.baseUrl + url);
+
         post.setHeader("Accept", "application/json");
         post.setHeader("Content-Type", "application/json");
         post.setHeader("Accept-Charset", "utf-8");
         post.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
         post.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
         post.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
-        if(token != null) post.setHeader("Authorization", getTokenValue());
+        if(token != null) {
+            post.setHeader("Authorization", getTokenValue());
+        } else { //토큰 발급
+            post.setHeader("Authorization", requestAccessToken());
+            System.out.println(requestAccessToken());
+        }
         post.setEntity(entity);
         return post;
     }

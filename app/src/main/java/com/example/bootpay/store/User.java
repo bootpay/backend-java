@@ -3,6 +3,7 @@ package com.example.bootpay.store;
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.pojo.SUserGroup;
+import kr.co.bootpay.store.model.request.TokenKey;
 import kr.co.bootpay.store.model.request.UserListParams;
 
 import java.util.HashMap;
@@ -12,7 +13,8 @@ public class User {
 
     static BootpayStore bootpayStore;
     public static void main(String[] args) {
-        bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
+        TokenKey tokenKey = new TokenKey("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
+        bootpayStore = new BootpayStore(tokenKey, "DEVELOPMENT");
 
         System.out.println("start");
         getToken();

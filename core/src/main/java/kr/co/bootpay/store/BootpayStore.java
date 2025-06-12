@@ -2,6 +2,7 @@ package kr.co.bootpay.store;
 
 
 import kr.co.bootpay.store.layer.*;
+import kr.co.bootpay.store.model.request.TokenKey;
 import kr.co.bootpay.store.service.STokenService;
 
 import java.util.HashMap;
@@ -21,15 +22,20 @@ public class BootpayStore extends BootpayStoreObject {
         initModules();
     }
 
-    public BootpayStore(String serverKey, String privateKey) {
-        super(serverKey, privateKey);
+    public BootpayStore(TokenKey tokenKey) {
+        super(tokenKey);
         initModules();
     }
 
-    public BootpayStore(String serverKey, String privateKey, String devMode) {
-        super(serverKey, privateKey, devMode);
+    public BootpayStore(TokenKey tokenKey, String devMode) {
+        super(tokenKey, devMode);
         initModules();
     }
+
+//    public BootpayStore(String serverKey, String privateKey, String devMode) {
+//        super(serverKey, privateKey, devMode);
+//        initModules();
+//    }
 
     private void initModules() {
         this.user = new User(this);
