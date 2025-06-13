@@ -25,11 +25,8 @@ public class SUserJoinService {
 
     static public HashMap<String, Object> join(BootpayStoreObject bootpay, SUser user) throws Exception {
         if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
-        if(user.group == null) throw new Exception("group 값이 비었습니다.");
+//        if(user.group == null) throw new Exception("group 값이 비었습니다.");
 
-//        SToken token = new SToken();
-//        token.serverKey = bootpay.serverKey;
-//        token.privateKey = bootpay.privateKey;
 
         HttpClient client = HttpClientBuilder.create().build();
         Gson gson = new GsonBuilder()
@@ -42,22 +39,6 @@ public class SUserJoinService {
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
     }
-
-//    static public HashMap<String, Object> emailExist(BootpayStoreObject bootpay, String pk) throws Exception {
-//        return checkExist(bootpay,  "email-exist", pk);
-//    }
-//
-//    static public HashMap<String, Object> idExist(BootpayStoreObject bootpay, String pk) throws Exception {
-//        return checkExist(bootpay,  "id-exist", pk);
-//    }
-//
-//    static public HashMap<String, Object> phoneExist(BootpayStoreObject bootpay, String pk) throws Exception {
-//        return checkExist(bootpay,  "phone-exist", pk);
-//    }
-//
-//    static public HashMap<String, Object> groupBusinessNumberExist(BootpayStoreObject bootpay, String pk) throws Exception {
-//        return checkExist(bootpay, "group-business-number-exist", pk);
-//    }
 
     static public HashMap<String, Object> checkExist(BootpayStoreObject bootpay, String path, String pk) throws Exception {
         if (bootpay.token == null || bootpay.token.isEmpty()) {
