@@ -55,11 +55,6 @@ public class User {
         return SUserService.list(
                 bootpay,
                 params
-//                Optional.ofNullable(memberType),
-//                Optional.ofNullable(type),
-//                Optional.ofNullable(keyword),
-//                Optional.ofNullable(page),
-//                Optional.ofNullable(limit)
         );
     }
 

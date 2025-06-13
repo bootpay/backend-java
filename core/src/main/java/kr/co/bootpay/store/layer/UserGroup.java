@@ -16,22 +16,31 @@ public class UserGroup {
         this.bootpay = bootpay;
     }
 
+    public HashMap<String, Object> create(SUserGroup userGroup) throws Exception {
+        return SUserGroupService.create(bootpay, userGroup);
+    }
+
     public HashMap<String, Object> list(UserGroupListParams params)  throws Exception {
         return SUserGroupService.list(
                 bootpay,
                 params
-//                Optional.ofNullable(keyword),
-//                Optional.ofNullable(page),
-//                Optional.ofNullable(limit)
         );
+    }
+
+
+    public HashMap<String, Object> update(SUserGroup userGroup) throws Exception {
+        return SUserGroupService.update(bootpay, userGroup);
     }
 
     public HashMap<String, Object> detail(String userGroupId) throws Exception {
         return SUserGroupService.detail(bootpay, userGroupId);
     }
 
-    public HashMap<String, Object> update(SUserGroup userGroup) throws Exception {
-        return SUserGroupService.update(bootpay, userGroup);
+    public HashMap<String, Object> addUser(String userGroupId, String userId) throws Exception {
+        return SUserGroupService.addUser(bootpay, userGroupId, userId);
     }
 
+    public HashMap<String, Object> removeUser(String userGroupId, String userId) throws Exception {
+        return SUserGroupService.removeUser(bootpay, userGroupId, userId);
+    }
 }

@@ -20,13 +20,13 @@ import java.util.HashMap;
 public class STokenService {
     static public HashMap<String, Object> getAccessToken(BootpayStoreObject bootpay) throws Exception {
 
-        if(bootpay.tokenKey == null) {
-            throw new Exception("tokenKey 값이 비어있습니다.");
+        if(bootpay.tokenPayload == null) {
+            throw new Exception("tokenPayload 값이 비어있습니다.");
         }
-        boolean clientKeyEmpty = bootpay.tokenKey.clientKey == null || bootpay.tokenKey.clientKey.isEmpty();
-        boolean secretKeyEmpty = bootpay.tokenKey.secretKey == null || bootpay.tokenKey.secretKey.isEmpty();
-        boolean serverKeyEmpty = bootpay.tokenKey.serverKey == null || bootpay.tokenKey.serverKey.isEmpty();
-        boolean privateKeyEmpty = bootpay.tokenKey.privateKey == null || bootpay.tokenKey.privateKey.isEmpty();
+        boolean clientKeyEmpty = bootpay.tokenPayload.clientKey == null || bootpay.tokenPayload.clientKey.isEmpty();
+        boolean secretKeyEmpty = bootpay.tokenPayload.secretKey == null || bootpay.tokenPayload.secretKey.isEmpty();
+        boolean serverKeyEmpty = bootpay.tokenPayload.serverKey == null || bootpay.tokenPayload.serverKey.isEmpty();
+        boolean privateKeyEmpty = bootpay.tokenPayload.privateKey == null || bootpay.tokenPayload.privateKey.isEmpty();
 
         SToken token = new SToken();
         if(clientKeyEmpty || secretKeyEmpty) {
@@ -36,8 +36,8 @@ public class STokenService {
             }
             if(serverKeyEmpty) throw new Exception("serverKey 값이 비어있습니다.");
             if(privateKeyEmpty) throw new Exception("privateKey 값이 비어있습니다.");
-            token.serverKey = bootpay.tokenKey.serverKey;
-            token.privateKey = bootpay.tokenKey.privateKey;
+            token.serverKey = bootpay.tokenPayload.serverKey;
+            token.privateKey = bootpay.tokenPayload.privateKey;
         }
 
         HttpClient client = HttpClientBuilder.create().build();
@@ -49,9 +49,6 @@ public class STokenService {
 
         HttpResponse response = client.execute(post);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-
-        System.out.println("goGetToken  " + str);
-
 
         STokenResponse res = new Gson().fromJson(str, STokenResponse.class);
         bootpay.token = res.access_token;

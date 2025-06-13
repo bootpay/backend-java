@@ -3,7 +3,7 @@ package com.example.bootpay.store;
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.pojo.SInvoice;
 import kr.co.bootpay.store.model.request.ListParams;
-import kr.co.bootpay.store.model.request.TokenKey;
+import kr.co.bootpay.store.model.request.TokenPayload;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,8 +14,8 @@ public class Invoice {
 
     static BootpayStore bootpayStore;
     public static void main(String[] args) {
-        TokenKey tokenKey = new TokenKey("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
-        bootpayStore = new BootpayStore(tokenKey, "DEVELOPMENT");
+        TokenPayload tokenPayload = new TokenPayload("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
+        bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
         getToken();
         list();
 //        detail();

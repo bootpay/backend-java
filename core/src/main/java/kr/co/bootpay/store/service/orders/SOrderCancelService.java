@@ -62,7 +62,7 @@ public class SOrderCancelService {
     }
 
 
-    static public HashMap<String, Object> request(BootpayStoreObject bootpay, OrderCancelParams orderCancelParams, boolean isSupervisor) throws Exception {
+    static public HashMap<String, Object> request(BootpayStoreObject bootpay, OrderCancelParams orderCancelParams) throws Exception {
         if (bootpay.token == null || bootpay.token.isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -73,7 +73,7 @@ public class SOrderCancelService {
                 .create();
 
         String role = "user" + "/";
-        if(isSupervisor) role = "supervisor" + "/";
+        if(orderCancelParams.isSupervisor) role = "supervisor" + "/";
         HttpPost post = bootpay.httpPost(role + "order/cancel", new StringEntity(gson.toJson(orderCancelParams), "UTF-8"));
 
         HttpResponse response = client.execute(post);
