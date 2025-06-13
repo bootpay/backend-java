@@ -1,8 +1,8 @@
 package kr.co.bootpay.store.model.request;
 
-public class TokenKey {
-    public TokenKey() {}
-    public TokenKey(String clientKey, String secretKey) {
+public class TokenPayload {
+    public TokenPayload() {}
+    public TokenPayload(String clientKey, String secretKey) {
         this.clientKey = clientKey;
         this.secretKey = secretKey;
     }

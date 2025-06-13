@@ -3,7 +3,7 @@ package com.example.bootpay.store;
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.pojo.SUserGroup;
-import kr.co.bootpay.store.model.request.TokenKey;
+import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.request.UserListParams;
 
 import java.util.HashMap;
@@ -13,10 +13,9 @@ public class User {
 
     static BootpayStore bootpayStore;
     public static void main(String[] args) {
-        TokenKey tokenKey = new TokenKey("JQxrL34gHuXXNsKg2X9I0g", "cws0oh0wcw5hK4t-FG7SfreniHxxftYapD9JNIVGfno=");
-        bootpayStore = new BootpayStore(tokenKey, "DEVELOPMENT");
-
-        System.out.println("start");
+        TokenPayload tokenPayload = new TokenPayload("JQxrL34gHuXXNsKg2X9I0g", "cws0oh0wcw5hK4t-FG7SfreniHxxftYapD9JNIVGfno=");
+        bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
+ 
         getToken();
         joinIndividual();
 //        joinCorporate();
@@ -46,12 +45,12 @@ public class User {
         }
     }
 
-//    {client_key=67c92fb8d01640bb9859c611, user_standby_id=67e0f47d03d0cb4e4117b082, http_status=200, status=2.0}
-//     {client_key=67c92fb8d01640bb9859c611, user_standby_id=67e64daa2739fbb9b5057cbe, http_status=200, status=2.0}
+
+//     {login_id=ehowlsla19, auth_sms=false, metadata=null, gender=null, group_tags=[], count=0, birth=null, created_at=2025-06-12T14:16:02+09:00, auth_email=false, individual_extension=null, updated_at=2025-06-12T14:16:02+09:00, phone=01000000000, auth_phone=false, user_id=684a6292b0eacea5cd9745ef, name=홍길동, comment=null, http_status=200, email=ehowlsla@bootpay.co.kr, membership_type=1, status=1}
     public static void joinIndividual() {
         try {
             SUser user = new SUser();
-            user.loginId = "ehowlsla18";
+            user.loginId = "ehowlsla19";
             user.loginPw = "km1178km";
             user.email = "ehowlsla@bootpay.co.kr";
             user.phone = "01000000000";

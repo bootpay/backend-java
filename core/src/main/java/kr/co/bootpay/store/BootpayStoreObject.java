@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.co.bootpay.Version;
 import kr.co.bootpay.http.HttpDeleteWithBody;
-import kr.co.bootpay.store.model.request.TokenKey;
+import kr.co.bootpay.store.model.request.TokenPayload;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -17,7 +17,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
 
 import java.io.File;
 import java.net.URI;
@@ -29,7 +28,7 @@ public class BootpayStoreObject {
 //    public String secretKey;
 //    public String serverKey;
 //    public String privateKey;
-    public TokenKey tokenKey = new TokenKey();
+    public TokenPayload tokenPayload = new TokenPayload();
     public String baseUrl;
 
     public final String DEVELOPMENT = "https://dev-api.bootapi.com/v1/";
@@ -38,17 +37,17 @@ public class BootpayStoreObject {
     public final String PRODUCTION = "https://api.bootapi.com/v1/";
 
     public BootpayStoreObject() {}
-    public BootpayStoreObject(TokenKey tokenKey) {
+    public BootpayStoreObject(TokenPayload tokenPayload) {
 //        this.serverKey = serverKey;
 //        this.privateKey = privateKey;
-        this.tokenKey = tokenKey;
+        this.tokenPayload = tokenPayload;
         this.baseUrl = PRODUCTION;
     }
 
-    public BootpayStoreObject(TokenKey tokenKey, String devMode) {
+    public BootpayStoreObject(TokenPayload tokenPayload, String devMode) {
 //        this.serverKey = serverKey;
 //        this.privateKey = privateKey;
-        this.tokenKey = tokenKey;
+        this.tokenPayload = tokenPayload;
         if("DEVELOPMENT".equalsIgnoreCase(devMode)) {
             this.baseUrl = DEVELOPMENT;
         } else if("TEST".equalsIgnoreCase(devMode)) {
@@ -69,8 +68,8 @@ public class BootpayStoreObject {
     }
 
     public String requestAccessToken() {
-        if((tokenKey.clientKey == null || tokenKey.clientKey.isEmpty()) && (tokenKey.secretKey == null || tokenKey.secretKey.isEmpty())) return "";
-        String credentials = tokenKey.clientKey + ":" + tokenKey.secretKey;
+        if((tokenPayload.clientKey == null || tokenPayload.clientKey.isEmpty()) && (tokenPayload.secretKey == null || tokenPayload.secretKey.isEmpty())) return "";
+        String credentials = tokenPayload.clientKey + ":" + tokenPayload.secretKey;
         String encoded = Base64.getEncoder().encodeToString(credentials.getBytes());
         return "Basic " + encoded;
     }
@@ -118,6 +117,32 @@ public class BootpayStoreObject {
             post.setHeader("Authorization", requestAccessToken());
             System.out.println(requestAccessToken());
         }
+        post.setEntity(entity);
+        return post;
+    }
+
+    public HttpPost httpPost(String url, StringEntity entity, Map<String, String> header) {
+        HttpPost post = new HttpPost(this.baseUrl + url);
+
+        post.setHeader("Accept", "application/json");
+        post.setHeader("Content-Type", "application/json");
+        post.setHeader("Accept-Charset", "utf-8");
+        post.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
+        post.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        post.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
+        if(token != null) {
+            post.setHeader("Authorization", getTokenValue());
+        } else { //토큰 발급
+            post.setHeader("Authorization", requestAccessToken());
+        }
+
+        // 사용자 정의 헤더 추가
+        if (header != null) {
+            for (Map.Entry<String, String> entry : header.entrySet()) {
+                post.setHeader(entry.getKey(), entry.getValue());
+            }
+        }
+
         post.setEntity(entity);
         return post;
     }
@@ -235,13 +260,19 @@ public class BootpayStoreObject {
     }
 
     public HashMap<String, Object> responseToJson(HttpResponse response)  throws Exception {
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        try {
+            String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+            System.out.println(str);
 
-        ObjectMapper mapper = new ObjectMapper();
-        TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {};
-        HashMap<String, Object> result = mapper.readValue(str, typeRef);
+            ObjectMapper mapper = new ObjectMapper();
+            TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {};
+            HashMap<String, Object> result = mapper.readValue(str, typeRef);
 
-        result.put("http_status", response.getStatusLine().getStatusCode());
-        return result;
+            result.put("http_status", response.getStatusLine().getStatusCode());
+            return result;
+        } catch (Exception e) {
+            return new HashMap<>();
+        }
+
     }
 }
