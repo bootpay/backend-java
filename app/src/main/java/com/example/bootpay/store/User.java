@@ -17,8 +17,8 @@ public class User {
         bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
  
         getToken();
-        joinIndividual();
-//        joinCorporate();
+//        joinIndividual();
+        joinCorporate();
 //        authByUserStandbyId();
 //        login();
 //        list();
@@ -50,13 +50,11 @@ public class User {
     public static void joinIndividual() {
         try {
             SUser user = new SUser();
-            user.loginId = "ehowlsla19";
+            user.loginId = "ehowlsla21";
             user.loginPw = "km1178km";
             user.email = "ehowlsla@bootpay.co.kr";
             user.phone = "01000000000";
             user.name = "홍길동";
-            user.group = new SUserGroup();
-            user.group.corporateType = SUserGroup.CORPORATE_TYPE_INDIVIDUAL;
 
             HashMap<String, Object> res = bootpayStore.user.join(user);
             if(res.get("error_code") == null) { //success
@@ -89,7 +87,7 @@ public class User {
     public static void joinCorporate() {
         try {
             SUser user = new SUser();
-            user.loginId = "ehowlsla6";
+            user.loginId = "ehowlsla22";
             user.loginPw = "km1178km";
             user.email = "ehowlsla@bootpay.co.kr";
             user.phone = "01000000000";
