@@ -10,6 +10,7 @@ import kr.co.bootpay.store.model.request.UserListParams;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -74,6 +75,32 @@ static public HashMap<String, Object> list(BootpayStoreObject bootpay, UserListP
         HttpPut put = bootpay.httpPut(role + "users/" + user.userId, new StringEntity(gson.toJson(user), "UTF-8"));
 
         HttpResponse response = client.execute(put);
+        return bootpay.responseToJson(response);
+    }
+
+    static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String userId) throws Exception {
+        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+
+        HttpClient client = HttpClientBuilder.create().build();
+
+
+        String role = "user" + "/";
+        HttpGet get = bootpay.httpGet(role + "users/" + userId);
+
+        HttpResponse response = client.execute(get);
+        return bootpay.responseToJson(response);
+    }
+
+    //    회원탈퇴
+    static public HashMap<String, Object> destroy(BootpayStoreObject bootpay, String userId) throws Exception {
+        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+
+        HttpClient client = HttpClientBuilder.create().build();
+
+        String role = "user" + "/";
+        HttpDelete delete = bootpay.httpDelete(role + "users/" + userId);
+
+        HttpResponse response = client.execute(delete);
         return bootpay.responseToJson(response);
     }
 

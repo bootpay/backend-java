@@ -115,7 +115,6 @@ public class BootpayStoreObject {
             post.setHeader("Authorization", getTokenValue());
         } else { //토큰 발급
             post.setHeader("Authorization", requestAccessToken());
-            System.out.println(requestAccessToken());
         }
         post.setEntity(entity);
         return post;

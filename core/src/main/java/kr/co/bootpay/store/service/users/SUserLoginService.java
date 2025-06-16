@@ -63,28 +63,5 @@ public class SUserLoginService {
         return bootpay.responseToJson(response);
     }
 
-    static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String userId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
-        HttpClient client = HttpClientBuilder.create().build();
-
-
-        String role = "user" + "/";
-        HttpGet get = bootpay.httpGet(role + "users/" + userId);
-
-        HttpResponse response = client.execute(get);
-        return bootpay.responseToJson(response);
-    }
-
-    static public HashMap<String, Object> withdraw(BootpayStoreObject bootpay, String userId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
-
-        HttpClient client = HttpClientBuilder.create().build();
-
-        String role = "user" + "/";
-        HttpDelete delete = bootpay.httpDelete(role + "users/" + userId + "/withdraw");
-
-        HttpResponse response = client.execute(delete);
-        return bootpay.responseToJson(response);
-    }
 }

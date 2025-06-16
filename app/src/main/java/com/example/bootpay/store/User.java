@@ -13,18 +13,18 @@ public class User {
 
     static BootpayStore bootpayStore;
     public static void main(String[] args) {
-        TokenPayload tokenPayload = new TokenPayload("JQxrL34gHuXXNsKg2X9I0g", "cws0oh0wcw5hK4t-FG7SfreniHxxftYapD9JNIVGfno=");
+        TokenPayload tokenPayload = new TokenPayload("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
         bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
  
         getToken();
 //        joinIndividual();
-        joinCorporate();
+//        joinCorporate();
 //        authByUserStandbyId();
 //        login();
 //        list();
 //        detail();
 //        update();
-//        withdraw();
+        delete();
 //        userToken();
         // emailExist();
 //        idExist();
@@ -69,7 +69,7 @@ public class User {
 
     public static void userToken() {
         try {
-            String userId = "67c9428f7b47af25bee631e7";
+            String userId = "684fa4a6b0eacea5cd97464e";
             HashMap<String, Object> res = bootpayStore.user.token(userId);
             if(res.get("error_code") == null) { //success
                 System.out.println("token success: " + res);
@@ -87,21 +87,12 @@ public class User {
     public static void joinCorporate() {
         try {
             SUser user = new SUser();
-            user.loginId = "ehowlsla22";
+            user.loginId = "ehowlsla27";
             user.loginPw = "km1178km";
             user.email = "ehowlsla@bootpay.co.kr";
             user.phone = "01000000000";
             user.name = "홍길동";
-            user.group = new SUserGroup();
-            user.group.businessNumber = "1088603663";
-            user.group.companyName = "섹시다이나마이트";
-            user.group.ceoName = "홍길동";
-            user.group.zipcode = "12345";
-            user.group.address = "서울특별시 강남구 역삼동 123-45";
-            user.group.addressDetail = "강남빌딩 1234호";
-            user.group.phone = "01000000000";
-            user.group.email = "help@sexydynamite.com";
-            user.group.corporateType = SUserGroup.CORPORATE_TYPE_CORPORATE;
+            user.userGroupId = "684a76feb0eacea5cd974603";
 
             HashMap<String, Object> res = bootpayStore.user.join(user);
             if(res.get("error_code") == null) { //success
@@ -214,7 +205,7 @@ public class User {
 
     public static void detail() {
         try {
-            HashMap<String, Object> res = bootpayStore.user.detail("67e0f47d03d0cb4e4117b083");
+            HashMap<String, Object> res = bootpayStore.user.detail("684fa4a6b0eacea5cd97464e");
             if(res.get("error_code") == null) { //success
                 System.out.println("detail success: " + res);
             } else {
@@ -229,8 +220,12 @@ public class User {
 
     public static void update() {
         SUser user = new SUser();
-        user.userId = "67e105ef03d0cb4e4117b0a1";
-        user.name = "홍상순2";
+        user.userId = "684fa4a6b0eacea5cd97464e";
+        user.loginId = "ehowlsla28";
+        user.loginPw = "km1178km";
+        user.email = "ehowlsla1@bootpay.co.kr";
+        user.phone = "01000000001";
+        user.name = "복떵";
 
         try {
             HashMap<String, Object> res = bootpayStore.user.update(user);
@@ -244,13 +239,13 @@ public class User {
         }
     }
 
-    public static void withdraw() {
+    public static void delete() {
         try {
-            HashMap<String, Object> res = bootpayStore.user.withdraw("67e64dab2739fbb9b5057cbf");
+            HashMap<String, Object> res = bootpayStore.user.delete("67e64dab2739fbb9b5057cbf");
             if(res.get("error_code") == null) { //success
-                System.out.println("withdraw success: " + res);
+                System.out.println("destroy success: " + res);
             } else {
-                System.out.println("withdraw false: " + res);
+                System.out.println("destroy false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();
