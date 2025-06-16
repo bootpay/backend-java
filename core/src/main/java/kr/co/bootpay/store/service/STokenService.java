@@ -39,6 +39,7 @@ public class STokenService {
             token.serverKey = bootpay.tokenPayload.serverKey;
             token.privateKey = bootpay.tokenPayload.privateKey;
         }
+        bootpay.token = null;
 
         HttpClient client = HttpClientBuilder.create().build();
         Gson gson = new GsonBuilder()

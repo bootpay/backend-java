@@ -17,10 +17,10 @@ public class UserGroup {
         getToken();
 //        list();
 //        detail();
-//        update();
+        update();
 //        create();
 //        addUser();
-        removeUser();
+//        removeUser();
     }
 
     public static void getToken() {
@@ -39,8 +39,8 @@ public class UserGroup {
     public static void create() {
         try {
             SUserGroup userGroup = new SUserGroup();
-            userGroup.companyName = "섹시다이나마이트3";
-            userGroup.businessNumber = "1088603664";
+            userGroup.companyName = "섹시다이나마이트4";
+            userGroup.businessNumber = "1088603666";
             userGroup.managerName = "홍길동";
             userGroup.zipcode = "12345";
             userGroup.address = "서울특별시 강남구 역삼동 123-45";
@@ -96,7 +96,7 @@ public class UserGroup {
         try {
             SUserGroup userGroup = new SUserGroup();
             userGroup.userGroupId = "67e2052b03d0cb4e4117b0af";
-            userGroup.companyName = "섹시다이나마이트3";
+            userGroup.companyName = "섹시다이나마이트13";
             userGroup.businessNumber = "1088603663";
             userGroup.managerName = "홍길동";
             userGroup.zipcode = "12345";
@@ -107,9 +107,9 @@ public class UserGroup {
 
             HashMap<String, Object> res = bootpayStore.userGroup.update(userGroup);
             if(res.get("error_code") == null) { //success
-                System.out.println("create success: " + res);
+                System.out.println("update success: " + res);
             } else {
-                System.out.println("create false: " + res);
+                System.out.println("update false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();
