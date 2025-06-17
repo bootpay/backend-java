@@ -24,7 +24,7 @@ import java.util.HashMap;
 public class SUserJoinService {
 
     static public HashMap<String, Object> join(BootpayStoreObject bootpay, SUser user) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 //        if(user.group == null) throw new Exception("group 값이 비었습니다.");
 
 
@@ -33,15 +33,14 @@ public class SUserJoinService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        String role = "user" + "/";
-        HttpPost post = bootpay.httpPost(role + "users/join", new StringEntity(gson.toJson(user), "UTF-8"));
+        HttpPost post = bootpay.httpPost("users", new StringEntity(gson.toJson(user), "UTF-8"));
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
     }
 
     static public HashMap<String, Object> checkExist(BootpayStoreObject bootpay, String path, String pk) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
 
@@ -51,8 +50,7 @@ public class SUserJoinService {
 
         HttpClient client = HttpClientBuilder.create().build();
         // URL 구조: users/join/:path?pk=:pk
-        String role = "user" + "/";
-        String url = String.format(role + "users/join/%s?pk=%s", path, encodedPk);
+        String url = String.format("users/join/%s?pk=%s", path, encodedPk);
         HttpGet get = bootpay.httpGet(url);
         HttpResponse response = client.execute(get);
 

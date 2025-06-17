@@ -23,7 +23,7 @@ import java.util.Optional;
 
 public class SDeliveryShippingService {
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, Optional<String> keyword, Optional<Integer> page, Optional<Integer> limit) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
         // 파라미터 맵 초기화
@@ -33,8 +33,7 @@ public class SDeliveryShippingService {
         limit.ifPresent(value -> params.put("limit", value));
 
         // 파라미터를 URL 쿼리 문자열로 변환
-        String role = "user" + "/";
-        StringBuilder query = new StringBuilder(role + "delivery_shippings?");
+        StringBuilder query = new StringBuilder("delivery_shippings?");
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
             query.append(entry.getKey()).append("=").append(encodedValue).append("&");
@@ -56,7 +55,7 @@ public class SDeliveryShippingService {
     }
 
     static public HashMap<String, Object> create(BootpayStoreObject bootpay, SDeliveryShipping deliveryShipping) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
         // Gson을 사용하여 Product 객체를 JSON 문자열로 변환
@@ -64,8 +63,7 @@ public class SDeliveryShippingService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        String role = "user" + "/";
-        HttpPost post = bootpay.httpPost(role + "delivery_shippings", new StringEntity(gson.toJson(deliveryShipping), "UTF-8"));
+        HttpPost post = bootpay.httpPost("delivery_shippings", new StringEntity(gson.toJson(deliveryShipping), "UTF-8"));
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
 
@@ -75,7 +73,7 @@ public class SDeliveryShippingService {
     }
 
     static public HashMap<String, Object> update(BootpayStoreObject bootpay, SDeliveryShipping deliveryShipping) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
         // Gson을 사용하여 Product 객체를 JSON 문자열로 변환
@@ -83,8 +81,7 @@ public class SDeliveryShippingService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        String role = "user" + "/";
-        HttpPut put = bootpay.httpPut(role + "delivery_shippings/" + deliveryShipping.deliveryShippingId, new StringEntity(gson.toJson(deliveryShipping), "UTF-8"));
+        HttpPut put = bootpay.httpPut("delivery_shippings/" + deliveryShipping.deliveryShippingId, new StringEntity(gson.toJson(deliveryShipping), "UTF-8"));
         HttpResponse response = client.execute(put);
         return bootpay.responseToJson(response);
 
@@ -95,11 +92,10 @@ public class SDeliveryShippingService {
 
 
     static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String deliveryShippingId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
-        String role = "user" + "/";
-        HttpGet get = bootpay.httpGet(role + "delivery_shippings/" + deliveryShippingId);
+        HttpGet get = bootpay.httpGet("delivery_shippings/" + deliveryShippingId);
 
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);
@@ -108,11 +104,10 @@ public class SDeliveryShippingService {
     }
 
     static public HashMap<String, Object> delete(BootpayStoreObject bootpay, String deliveryShippingId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
-        String role = "user" + "/";
-        HttpDelete delete = bootpay.httpDelete(role + "delivery_shippings/" + deliveryShippingId);
+        HttpDelete delete = bootpay.httpDelete("delivery_shippings/" + deliveryShippingId);
 
         HttpResponse response = client.execute(delete);
         return bootpay.responseToJson(response);

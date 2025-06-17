@@ -27,22 +27,25 @@ import java.util.Map;
 public class SUserGroupService {
 
     static public HashMap<String, Object> create(BootpayStoreObject bootpay, SUserGroup userGroup) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
         HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        String role = "user" + "/";
-        HttpPost post = bootpay.httpPost(role + "user_groups", new StringEntity(gson.toJson(userGroup), "UTF-8"));
+        HttpPost post = bootpay.httpPost("user_groups", new StringEntity(gson.toJson(userGroup), "UTF-8"));
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
     }
 
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, UserGroupListParams params) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
         HttpClient client = HttpClientBuilder.create().build();
 
         // 파라미터 맵 초기화
@@ -53,8 +56,7 @@ public class SUserGroupService {
         if (params.limit != null) payload.put("limit", params.limit);
 
         // 파라미터를 URL 쿼리 문자열로 변환
-        String role = "user" + "/";
-        StringBuilder query = new StringBuilder(role + "user_groups?");
+        StringBuilder query = new StringBuilder("user_groups?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
             String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
             query.append(entry.getKey()).append("=").append(encodedValue).append("&");
@@ -75,35 +77,39 @@ public class SUserGroupService {
     }
 
     static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String userGroupId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
 
         HttpClient client = HttpClientBuilder.create().build();
 
 
-        String role = "user" + "/";
-        HttpGet get = bootpay.httpGet(role + "user_groups/" + userGroupId);
+        HttpGet get = bootpay.httpGet("user_groups/" + userGroupId);
 
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);
     }
 
     static public HashMap<String, Object> update(BootpayStoreObject bootpay, SUserGroup userGroup) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
         HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        String role = "user" + "/";
-        HttpPut put = bootpay.httpPut(role + "user_groups/" + userGroup.userGroupId, new StringEntity(gson.toJson(userGroup), "UTF-8"));
+        HttpPut put = bootpay.httpPut("user_groups/" + userGroup.userGroupId, new StringEntity(gson.toJson(userGroup), "UTF-8"));
 
         HttpResponse response = client.execute(put);
         return bootpay.responseToJson(response);
     }
 
     static public HashMap<String, Object> addUser(BootpayStoreObject bootpay, String userGroupId, String userId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
         HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
@@ -113,19 +119,19 @@ public class SUserGroupService {
         Map<String, Object> params = new HashMap<>();
         params.put("user_id", userId);
 
-        String role = "user" + "/";
-        HttpPost post = bootpay.httpPost(role + "user_groups/" + userGroupId + "/add_user", new StringEntity(gson.toJson(params), "UTF-8"));
+        HttpPost post = bootpay.httpPost("user_groups/" + userGroupId + "/add_user", new StringEntity(gson.toJson(params), "UTF-8"));
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
     }
 
     static public HashMap<String, Object> removeUser(BootpayStoreObject bootpay, String userGroupId, String userId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
         HttpClient client = HttpClientBuilder.create().build();
 
-        String role = "user" + "/";
-        HttpDelete delete = bootpay.httpDelete(role + "user_groups/" + userGroupId + "/remove_user?user_id=" + userId);
+        HttpDelete delete = bootpay.httpDelete("user_groups/" + userGroupId + "/remove_user?user_id=" + userId);
 
         HttpResponse response = client.execute(delete);
         return bootpay.responseToJson(response);

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class SOrderService {
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, OrderListParams params) throws Exception {
 
-        if (bootpay.token == null || bootpay.token.isEmpty()) {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
 
@@ -51,8 +51,7 @@ public class SOrderService {
         }
 
         // 파라미터를 URL 쿼리 문자열로 변환
-        String role = "user" + "/";
-        StringBuilder query = new StringBuilder(role + "orders?");
+        StringBuilder query = new StringBuilder("orders?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
             String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
             query.append(entry.getKey()).append("=").append(encodedValue).append("&");
@@ -75,14 +74,13 @@ public class SOrderService {
     }
 
     static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String orderId) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
 
         HttpClient client = HttpClientBuilder.create().build();
 
-        String role = "user" + "/";
-        HttpGet get = bootpay.httpGet(role + "orders/" + orderId);
+        HttpGet get = bootpay.httpGet("orders/" + orderId);
 
         HttpResponse response = client.execute(get);
 
