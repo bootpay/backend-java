@@ -16,11 +16,15 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.NameValuePair;
 
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,77 +33,62 @@ public class SUserService {
 
 //    static public HashMap<String, Object> list(BootpayStoreObject bootpay, Optional<Integer> memberType, Optional<String> type, Optional<String> keyword, Optional<Integer> page, Optional<Integer> limit) throws Exception {
 static public HashMap<String, Object> list(BootpayStoreObject bootpay, UserListParams params) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
+
         HttpClient client = HttpClientBuilder.create().build();
-
-        // 파라미터 맵 초기화
-        Map<String, Object> payload = new HashMap<>();
-        if (params.memberType != null) payload.put("memberType", params.memberType);
-        if (params.keyword != null) payload.put("keyword", params.keyword);
-        if (params.type != null) payload.put("type", params.type);
-        if (params.page != null) payload.put("page", params.page);
-        if (params.limit != null) payload.put("limit", params.limit);
-
-        // 파라미터를 URL 쿼리 문자열로 변환
-        String role = "user" + "/";
-        StringBuilder query = new StringBuilder(role + "users?");
-        for (Map.Entry<String, Object> entry : payload.entrySet()) {
-            String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
-            query.append(entry.getKey()).append("=").append(encodedValue).append("&");
-//            query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
-        }
-
-        // 마지막 '&' 제거
-        if (query.charAt(query.length() - 1) == '&') {
-            query.deleteCharAt(query.length() - 1);
-        }
-
-        // GET 요청 객체 생성
-        HttpGet get = bootpay.httpGet(query.toString());
-
-        // HTTP 요청 전송 및 응답 수신
-        HttpResponse response = client.execute(get);
-        return bootpay.responseToJson(response);
-    }
-
-    static public HashMap<String, Object> update(BootpayStoreObject bootpay, SUser user) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
-        HttpClient client = HttpClientBuilder.create().build();
-
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
+        String url = "users";
+        if(params != null) {
+            List<NameValuePair> nameValuePairList = new ArrayList<>();
+            if(params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
+            if(params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
+            if(params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
+            if(params.memberType != null) nameValuePairList.add(new BasicNameValuePair("member_type", params.memberType.toString()));
+            if(params.type != null) nameValuePairList.add(new BasicNameValuePair("type", params.type));
 
-        String role = "user" + "/";
-        HttpPut put = bootpay.httpPut(role + "users/" + user.userId, new StringEntity(gson.toJson(user), "UTF-8"));
+            HttpGet get = bootpay.httpGet(url, nameValuePairList);
+            HttpResponse response = client.execute(get);
+            return bootpay.responseToJson(response);
+        } else {
+            HttpGet get = bootpay.httpGet(url);
+            HttpResponse response = client.execute(get);
+            return bootpay.responseToJson(response);
+        }
+    }
 
+    static public HashMap<String, Object> update(BootpayStoreObject bootpay, SUser user) throws Exception {
+        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
+
+        HttpClient client = HttpClientBuilder.create().build();
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        HttpPut put = bootpay.httpPut("users/" + user.userId, new StringEntity(gson.toJson(user), "UTF-8"));
         HttpResponse response = client.execute(put);
         return bootpay.responseToJson(response);
     }
 
     static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String userId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
 
-
-        String role = "user" + "/";
-        HttpGet get = bootpay.httpGet(role + "users/" + userId);
-
+        HttpGet get = bootpay.httpGet("users/" + userId);
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);
     }
 
     //    회원탈퇴
     static public HashMap<String, Object> destroy(BootpayStoreObject bootpay, String userId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
 
-        String role = "user" + "/";
-        HttpDelete delete = bootpay.httpDelete(role + "users/" + userId);
-
+        HttpDelete delete = bootpay.httpDelete("users/" + userId);
         HttpResponse response = client.execute(delete);
         return bootpay.responseToJson(response);
     }

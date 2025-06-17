@@ -52,5 +52,97 @@ public class BootpayStore extends BootpayStoreObject {
     public HashMap<String, Object> getAccessToken() throws Exception {
         return STokenService.getAccessToken(this);
     }
+    
+    /**
+     * 토큰을 발급받아 설정합니다.
+     * @return this (메서드 체이닝 지원)
+     */
+    public BootpayStore withToken() throws Exception {
+        getAccessToken();
+        return this;
+    }
+    
+    /**
+     * 현재 설정된 토큰을 반환합니다.
+     * @return 현재 토큰
+     */
+    public String getCurrentToken() {
+        return this.getToken();
+    }
+    
+    /**
+     * 토큰이 설정되어 있는지 확인합니다.
+     * @return 토큰 설정 여부
+     */
+    public boolean hasToken() {
+        return this.getToken() != null && !this.getToken().isEmpty();
+    }
+    
+    /**
+     * 현재 role을 설정합니다.
+     * @param role 설정할 role
+     * @return this (메서드 체이닝 지원)
+     */
+    public BootpayStore withRole(String role) {
+        this.setRole(role);
+        return this;
+    }
+    
+    /**
+     * 일반 사용자 role로 설정합니다.
+     * @return this (메서드 체이닝 지원)
+     */
+    public BootpayStore asUser() {
+        return withRole("user");
+    }
+    
+    /**
+     * 매니저 role로 설정합니다.
+     * @return this (메서드 체이닝 지원)
+     */
+    public BootpayStore asManager() {
+        return withRole("manager");
+    }
+    
+    /**
+     * 파트너 role로 설정합니다.
+     * @return this (메서드 체이닝 지원)
+     */
+    public BootpayStore asPartner() {
+        return withRole("partner");
+    }
+    
+    /**
+     * 벤더 role로 설정합니다.
+     * @return this (메서드 체이닝 지원)
+     */
+    public BootpayStore asVendor() {
+        return withRole("vendor");
+    }
+    
+    /**
+     * 슈퍼바이저 role로 설정합니다.
+     * @return this (메서드 체이닝 지원)
+     */
+    public BootpayStore asSupervisor() {
+        return withRole("supervisor");
+    }
+    
+    /**
+     * 현재 role을 반환합니다.
+     * @return 현재 설정된 role
+     */
+    public String getCurrentRole() {
+        return this.getRole();
+    }
+    
+    /**
+     * role을 기본값(user)으로 초기화합니다.
+     * @return this (메서드 체이닝 지원)
+     */
+    public BootpayStore clearRole() {
+        this.setRole("user");
+        return this;
+    }
 }
 

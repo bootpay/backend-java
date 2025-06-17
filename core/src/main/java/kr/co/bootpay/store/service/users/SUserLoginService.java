@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.context.RequestContext;
 import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.response.STokenResponse;
 import org.apache.commons.io.IOUtils;
@@ -25,7 +26,11 @@ import java.util.Map;
 public class SUserLoginService {
 
     static public HashMap<String, Object> token(BootpayStoreObject bootpay, String userId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        return token(bootpay, userId, null);
+    }
+
+    static public HashMap<String, Object> token(BootpayStoreObject bootpay, String userId, RequestContext context) throws Exception {
+        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
         Gson gson = new GsonBuilder()
@@ -35,8 +40,7 @@ public class SUserLoginService {
         Map<String, Object> params = new HashMap<>();
         params.put("user_id", userId);
 
-        String role = "user" + "/";
-        HttpPost post = bootpay.httpPost(role + "users/login/token", new StringEntity(gson.toJson(params), "UTF-8"));
+        HttpPost post = bootpay.httpPost("users/login/token", new StringEntity(gson.toJson(params), "UTF-8"), context);
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
@@ -44,7 +48,11 @@ public class SUserLoginService {
 
 
     static public HashMap<String, Object> login(BootpayStoreObject bootpay, String loginId, String loginPw) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        return login(bootpay, loginId, loginPw, null);
+    }
+
+    static public HashMap<String, Object> login(BootpayStoreObject bootpay, String loginId, String loginPw, RequestContext context) throws Exception {
+        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
         Gson gson = new GsonBuilder()
@@ -56,8 +64,7 @@ public class SUserLoginService {
         params.put("login_pw", loginPw);
 
 
-        String role = "user" + "/";
-        HttpPost post = bootpay.httpPost(role + "users/login", new StringEntity(gson.toJson(params), "UTF-8"));
+        HttpPost post = bootpay.httpPost("users/login", new StringEntity(gson.toJson(params), "UTF-8"), context);
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);

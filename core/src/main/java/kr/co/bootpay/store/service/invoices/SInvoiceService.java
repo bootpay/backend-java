@@ -26,15 +26,16 @@ import java.util.Optional;
 public class SInvoiceService {
 
     static public HashMap<String, Object> create(BootpayStoreObject bootpay, SInvoice invoice) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
         HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        String role = "user" + "/";
-        HttpPost post = bootpay.httpPost(role + "invoices", new StringEntity(gson.toJson(invoice), "UTF-8"));
+        HttpPost post = bootpay.httpPost("invoices", new StringEntity(gson.toJson(invoice), "UTF-8"));
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
@@ -44,7 +45,9 @@ public class SInvoiceService {
     }
 
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, ListParams params) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
         HttpClient client = HttpClientBuilder.create().build();
 
         // 파라미터 맵 초기화
@@ -54,8 +57,7 @@ public class SInvoiceService {
         if (params.limit != null) payload.put("limit", params.limit);
 
         // 파라미터를 URL 쿼리 문자열로 변환
-        String role = "user" + "/";
-        StringBuilder query = new StringBuilder(role + "invoices?");
+        StringBuilder query = new StringBuilder("invoices?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
             String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
             query.append(entry.getKey()).append("=").append(encodedValue).append("&");
@@ -78,7 +80,9 @@ public class SInvoiceService {
     }
 
     static public HashMap<String, Object> notify(BootpayStoreObject bootpay, String invoiceId, List<Integer> sendTypes) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
         HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
@@ -89,8 +93,7 @@ public class SInvoiceService {
         invoice.sendTypes = sendTypes;
 //        invoice.invoiceId = invoiceId;
 
-        String role = "user" + "/";
-        HttpPost post = bootpay.httpPost(role + "invoices/" + invoiceId + "/notify" , new StringEntity(gson.toJson(invoice), "UTF-8"));
+        HttpPost post = bootpay.httpPost("invoices/" + invoiceId + "/notify" , new StringEntity(gson.toJson(invoice), "UTF-8"));
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
@@ -99,11 +102,12 @@ public class SInvoiceService {
     }
 
     static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String invoiceId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
         HttpClient client = HttpClientBuilder.create().build();
 
-        String role = "user" + "/";
-        HttpGet get = bootpay.httpGet(role + "invoices/" + invoiceId);
+        HttpGet get = bootpay.httpGet("invoices/" + invoiceId);
 
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);

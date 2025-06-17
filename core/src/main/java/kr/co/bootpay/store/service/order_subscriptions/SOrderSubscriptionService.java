@@ -17,7 +17,9 @@ import java.util.Optional;
 
 public class SOrderSubscriptionService {
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, ListParams params) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
         HttpClient client = HttpClientBuilder.create().build();
 
         // 파라미터 맵 초기화
@@ -27,8 +29,7 @@ public class SOrderSubscriptionService {
         if (params.limit != null) payload.put("limit", params.limit);
 
         // 파라미터를 URL 쿼리 문자열로 변환
-        String role = "user" + "/";
-        StringBuilder query = new StringBuilder(role + "order_subscriptions?");
+        StringBuilder query = new StringBuilder("order_subscriptions?");
         for (Map.Entry<String, Object> entry : payload.entrySet()) {
             String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
             query.append(entry.getKey()).append("=").append(encodedValue).append("&");
@@ -52,11 +53,12 @@ public class SOrderSubscriptionService {
 
 
     static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String orderSubscriptionId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
         HttpClient client = HttpClientBuilder.create().build();
 
-        String role = "user" + "/";
-        HttpGet get = bootpay.httpGet(role + "order_subscriptions/" + orderSubscriptionId);
+        HttpGet get = bootpay.httpGet("order_subscriptions/" + orderSubscriptionId);
 
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);

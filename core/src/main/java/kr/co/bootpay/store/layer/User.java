@@ -52,10 +52,7 @@ public class User {
     }
 
     public HashMap<String, Object> list(UserListParams params) throws Exception {
-        return SUserService.list(
-                bootpay,
-                params
-        );
+        return SUserService.list(bootpay, params);
     }
 
     public HashMap<String, Object> detail(String userId) throws Exception {

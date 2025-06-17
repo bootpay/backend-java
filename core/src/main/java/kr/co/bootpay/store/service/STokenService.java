@@ -39,7 +39,7 @@ public class STokenService {
             token.serverKey = bootpay.tokenPayload.serverKey;
             token.privateKey = bootpay.tokenPayload.privateKey;
         }
-        bootpay.token = null;
+        bootpay.setTokenFromAPI(null);
 
         HttpClient client = HttpClientBuilder.create().build();
         Gson gson = new GsonBuilder()
@@ -52,7 +52,7 @@ public class STokenService {
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
         STokenResponse res = new Gson().fromJson(str, STokenResponse.class);
-        bootpay.token = res.access_token;
+        bootpay.setTokenFromAPI(res.access_token);
 
 //        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
 //        return new Gson().fromJson(str, resType);

@@ -30,7 +30,7 @@ import java.util.*;
 public class SProductService {
 
     static public HashMap<String, Object> create(BootpayStoreObject bootpay, SProduct product, List<URL> imagePaths) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
         // URL 리스트를 파일 리스트로 변환
@@ -51,8 +51,7 @@ public class SProductService {
         HashMap<String, String> params = gson.fromJson(jsonProduct, new TypeToken<HashMap<String, String>>(){}.getType());
 
         // 파일 업로드 요청 (여러 파일)
-        String role = "user" + "/";
-        HttpPost post = bootpay.httpPostMultipart(role + "products", fileList, params);
+        HttpPost post = bootpay.httpPostMultipart("products", fileList, params);
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);
 
@@ -62,7 +61,7 @@ public class SProductService {
     }
 
     static public HashMap<String, Object> update(BootpayStoreObject bootpay, SProduct product) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
 
@@ -73,8 +72,7 @@ public class SProductService {
 
         // 파일 업로드 요청 (여러 파일)
 //        HttpPost post = bootpay.httpPostMultipart("products", fileList, params);
-        String role = "user" + "/";
-        HttpPut put = bootpay.httpPut(role + "products/" + product.productId, new StringEntity(gson.toJson(product), "UTF-8"));
+        HttpPut put = bootpay.httpPut("products/" + product.productId, new StringEntity(gson.toJson(product), "UTF-8"));
         HttpResponse response = client.execute(put);
         return bootpay.responseToJson(response);
 
@@ -85,19 +83,23 @@ public class SProductService {
 
 
     static public HashMap<String, Object> list(BootpayStoreObject bootpay, ProductListParams params) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
         // 파라미터 맵 초기화
         Map<String, Object> payload = new HashMap<>();
-        if (params.type != null) payload.put("type", params.type);
-        if (params.periodType != null) payload.put("period_type", params.periodType);
-        if (params.sAt != null) payload.put("s_at", params.sAt);
-        if (params.eAt != null) payload.put("e_at", params.eAt);
-        if (params.categoryCode != null) payload.put("category_code", params.categoryCode);
-        if (params.keyword != null) payload.put("keyword", params.keyword);
-        if (params.page != null) payload.put("page", params.page);
-        if (params.limit != null) payload.put("limit", params.limit);
+        if(params != null) {
+            if (params.type != null) payload.put("type", params.type);
+            if (params.periodType != null) payload.put("period_type", params.periodType);
+            if (params.sAt != null) payload.put("s_at", params.sAt);
+            if (params.eAt != null) payload.put("e_at", params.eAt);
+            if (params.categoryCode != null) payload.put("category_code", params.categoryCode);
+            if (params.keyword != null) payload.put("keyword", params.keyword);
+            if (params.page != null) payload.put("page", params.page);
+            if (params.limit != null) payload.put("limit", params.limit);
+        }
+
+
 
         // 파라미터를 URL 쿼리 문자열로 변환
         StringBuilder query = new StringBuilder("products?");
@@ -132,11 +134,10 @@ public class SProductService {
     }
 
     static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String productId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
-        String role = "user" + "/";
-        HttpGet get = bootpay.httpGet(role + "products/" + productId);
+        HttpGet get = bootpay.httpGet("products/" + productId);
 
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);

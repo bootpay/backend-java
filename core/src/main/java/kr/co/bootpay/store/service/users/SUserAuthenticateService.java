@@ -27,13 +27,12 @@ public class SUserAuthenticateService {
      * The method handles both success and error scenarios.
      */
     static public HashMap<String, Object> authenticationData(BootpayStoreObject bootpay, String standId) throws Exception {
-        if(bootpay.token == null || bootpay.token.isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
 
         HttpClient client = HttpClientBuilder.create().build();
         // URL 구조: users/join/:path?pk=:pk
-        String role = "user" + "/";
-        String url = String.format(role + "users/authenticate/%s", standId);
+        String url = String.format("users/authenticate/%s", standId);
         HttpGet get = bootpay.httpGet(url);
         HttpResponse response = client.execute(get);
         return bootpay.responseToJson(response);
