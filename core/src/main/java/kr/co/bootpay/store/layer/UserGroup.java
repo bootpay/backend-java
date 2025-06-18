@@ -7,7 +7,6 @@ import kr.co.bootpay.store.model.request.UserGroupListParams;
 import kr.co.bootpay.store.service.user_groups.SUserGroupService;
 
 import java.util.HashMap;
-import java.util.Optional;
 
 public class UserGroup {
     private final BootpayStore bootpay;
@@ -36,11 +35,11 @@ public class UserGroup {
         return SUserGroupService.detail(bootpay, userGroupId);
     }
 
-    public HashMap<String, Object> addUser(String userGroupId, String userId) throws Exception {
-        return SUserGroupService.addUser(bootpay, userGroupId, userId);
+    public HashMap<String, Object> userCreate(String userGroupId, String userId) throws Exception {
+        return SUserGroupService.userCreate(bootpay, userGroupId, userId);
     }
 
-    public HashMap<String, Object> removeUser(String userGroupId, String userId) throws Exception {
-        return SUserGroupService.removeUser(bootpay, userGroupId, userId);
+    public HashMap<String, Object> userDelete(String userGroupId, String userId) throws Exception {
+        return SUserGroupService.userDelete(bootpay, userGroupId, userId);
     }
 }

@@ -4,7 +4,7 @@ import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.pojo.SProduct;
 import kr.co.bootpay.store.model.request.ProductListParams;
 import kr.co.bootpay.store.model.request.TokenPayload;
-import kr.co.bootpay.store.model.request.product.ProductStatusUpdateParams;
+import kr.co.bootpay.store.model.request.product.ProductStatusParams;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class Product {
 //        detail();
 //        update();
         statusUpdate();
-        delete();
+//        delete();
     }
 
     public static void getToken() {
@@ -111,8 +111,8 @@ public class Product {
 
     public static void statusUpdate() {
         try {
-            ProductStatusUpdateParams params = new ProductStatusUpdateParams();
-            params.productId = "68510082b0eacea5cd974776";
+            ProductStatusParams params = new ProductStatusParams();
+            params.productId = "6850fbd3b0eacea5cd97475d";
             
             // 옵셔널: 값이 null이면 해당 필드는 전송되지 않음
             params.statusDisplay = false;  // 전시상태 변경 (null이면 변경하지 않음)
@@ -120,9 +120,9 @@ public class Product {
 
             HashMap<String, Object> res = bootpayStore.product.status(params);
             if(res.get("error_code") == null) { //success
-                System.out.println("display success: " + res);
+                System.out.println("status update success: " + res);
             } else {
-                System.out.println("display false: " + res);
+                System.out.println("status update false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,7 +131,7 @@ public class Product {
 
     public static void delete() {
         try {
-            String productId = "68510082b0eacea5cd974776";
+            String productId = "6850fcebb0eacea5cd974762";
 
             HashMap<String, Object> res = bootpayStore.product.delete(productId);
             if(res.get("error_code") == null) { //success

@@ -1,6 +1,6 @@
 package kr.co.bootpay.store.model.request.product;
 
-public class ProductStatusUpdateParams {
+public class ProductStatusParams {
     public String productId;
 
     // 기존 필드
@@ -8,8 +8,8 @@ public class ProductStatusUpdateParams {
     public Boolean statusSale;           // 판매 상태 (null이면 전송 안함)
 
     // 추가 필드
-    public Boolean statusFrozen;         // 동결 여부
-    public Integer statusReview;         // 검수 상태 (숫자형 enum 등으로 사용 가능)
+    public Boolean statusFrozen;         // 판매금지 여부
+    public Integer statusReview;         // 공급사가 상품을 업로드 했을 경우 심사 후 판매할지에 대한 유무입니다.
 
     public Boolean useDisplayPeriod;     // 전시 기간 사용 여부
     public String displayStartAt; // 전시 시작일시
@@ -35,4 +35,5 @@ public class ProductStatusUpdateParams {
     public Integer stockSafe;            // 안전 재고 수량
 
     public Boolean useOptionStock;       // 옵션별 재고 사용 여부
+
 }
