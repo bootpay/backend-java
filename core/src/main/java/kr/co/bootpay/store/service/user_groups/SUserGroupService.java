@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUserGroup;
 import kr.co.bootpay.store.model.request.UserGroupListParams;
 import org.apache.http.HttpResponse;
@@ -22,7 +23,7 @@ import java.util.Map;
 
 public class SUserGroupService {
 
-    static public HashMap<String, Object> create(BootpayStoreObject bootpay, SUserGroup userGroup) throws Exception {
+    static public BootpayStoreResponse create(BootpayStoreObject bootpay, SUserGroup userGroup) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -35,10 +36,10 @@ public class SUserGroupService {
         HttpPost post = bootpay.httpPost("user_groups", new StringEntity(gson.toJson(userGroup), "UTF-8"));
 
         HttpResponse response = client.execute(post);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
     }
 
-    static public HashMap<String, Object> list(BootpayStoreObject bootpay, UserGroupListParams params) throws Exception {
+    static public BootpayStoreResponse list(BootpayStoreObject bootpay, UserGroupListParams params) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -69,10 +70,10 @@ public class SUserGroupService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
     }
 
-    static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String userGroupId) throws Exception {
+    static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String userGroupId) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -83,10 +84,10 @@ public class SUserGroupService {
         HttpGet get = bootpay.httpGet("user_groups/" + userGroupId);
 
         HttpResponse response = client.execute(get);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
     }
 
-    static public HashMap<String, Object> update(BootpayStoreObject bootpay, SUserGroup userGroup) throws Exception {
+    static public BootpayStoreResponse update(BootpayStoreObject bootpay, SUserGroup userGroup) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -99,10 +100,10 @@ public class SUserGroupService {
         HttpPut put = bootpay.httpPut("user_groups/" + userGroup.userGroupId, new StringEntity(gson.toJson(userGroup), "UTF-8"));
 
         HttpResponse response = client.execute(put);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
     }
 
-    static public HashMap<String, Object> userCreate(BootpayStoreObject bootpay, String userGroupId, String userId) throws Exception {
+    static public BootpayStoreResponse userCreate(BootpayStoreObject bootpay, String userGroupId, String userId) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -118,10 +119,10 @@ public class SUserGroupService {
         HttpPost post = bootpay.httpPost("user_groups/" + userGroupId + "/add_user", new StringEntity(gson.toJson(params), "UTF-8"));
 
         HttpResponse response = client.execute(post);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
     }
 
-    static public HashMap<String, Object> userDelete(BootpayStoreObject bootpay, String userGroupId, String userId) throws Exception {
+    static public BootpayStoreResponse userDelete(BootpayStoreObject bootpay, String userGroupId, String userId) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -130,6 +131,6 @@ public class SUserGroupService {
         HttpDelete delete = bootpay.httpDelete("user_groups/" + userGroupId + "/remove_user?user_id=" + userId);
 
         HttpResponse response = client.execute(delete);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
     }
 }

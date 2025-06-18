@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SOrderSubscriptionBill;
 import kr.co.bootpay.store.model.pojo.SProduct;
 import kr.co.bootpay.store.model.request.ListParams;
@@ -22,7 +23,7 @@ import java.util.Optional;
 
 
 public class SOrderSubscriptionBillService {
-    static public HashMap<String, Object> list(BootpayStoreObject bootpay, ListParams params) throws Exception {
+    static public BootpayStoreResponse list(BootpayStoreObject bootpay, ListParams params) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
@@ -49,25 +50,25 @@ public class SOrderSubscriptionBillService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
 
-    static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String orderSubscriptionBillId) throws Exception {
+    static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String orderSubscriptionBillId) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
         HttpGet get = bootpay.httpGet("order_subscription_bills/" + orderSubscriptionBillId);
 
         HttpResponse response = client.execute(get);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
-    static public HashMap<String, Object> update(BootpayStoreObject bootpay, SOrderSubscriptionBill orderSubscriptionBill) throws Exception {
+    static public BootpayStoreResponse update(BootpayStoreObject bootpay, SOrderSubscriptionBill orderSubscriptionBill) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
@@ -80,7 +81,7 @@ public class SOrderSubscriptionBillService {
 //        HttpPost post = bootpay.httpPostMultipart("products", fileList, params);
         HttpPut put = bootpay.httpPut("order_subscription_bills/" + orderSubscriptionBill.orderSubscriptionBillId, new StringEntity(gson.toJson(orderSubscriptionBill), "UTF-8"));
         HttpResponse response = client.execute(put);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
 
         // 응답 처리
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");

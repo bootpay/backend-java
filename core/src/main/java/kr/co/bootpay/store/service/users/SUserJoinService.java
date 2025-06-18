@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SToken;
 import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.response.STokenResponse;
@@ -23,7 +24,7 @@ import java.util.HashMap;
 
 public class SUserJoinService {
 
-    static public HashMap<String, Object> join(BootpayStoreObject bootpay, SUser user) throws Exception {
+    static public BootpayStoreResponse join(BootpayStoreObject bootpay, SUser user) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 //        if(user.group == null) throw new Exception("group 값이 비었습니다.");
 
@@ -36,10 +37,10 @@ public class SUserJoinService {
         HttpPost post = bootpay.httpPost("users/join", new StringEntity(gson.toJson(user), "UTF-8"));
 
         HttpResponse response = client.execute(post);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
     }
 
-    static public HashMap<String, Object> checkExist(BootpayStoreObject bootpay, String path, String pk) throws Exception {
+    static public BootpayStoreResponse checkExist(BootpayStoreObject bootpay, String path, String pk) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -54,6 +55,6 @@ public class SUserJoinService {
         HttpGet get = bootpay.httpGet(url);
         HttpResponse response = client.execute(get);
 
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
     }
 }

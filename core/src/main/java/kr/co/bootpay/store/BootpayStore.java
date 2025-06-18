@@ -44,7 +44,7 @@ public class BootpayStore extends BootpayStoreObject {
     }
 
     //token
-    public HashMap<String, Object> getAccessToken() throws Exception {
+    public BootpayStoreResponse getAccessToken() throws Exception {
         return STokenService.getAccessToken(this);
     }
     
@@ -53,7 +53,13 @@ public class BootpayStore extends BootpayStoreObject {
      * @return this (메서드 체이닝 지원)
      */
     public BootpayStore withToken() throws Exception {
-        getAccessToken();
+        BootpayStoreResponse response = getAccessToken();
+        if (response.isSuccess()) {
+            HashMap<String, Object> data = response.getDataAsMap();
+            if (data != null && data.containsKey("access_token")) {
+                this.setTokenFromAPI((String) data.get("access_token"));
+            }
+        }
         return this;
     }
     

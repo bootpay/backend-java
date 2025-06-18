@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.order.OrderListParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelActionParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelListParams;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 
 
 public class SOrderCancelService {
-    static public HashMap<String, Object> list(BootpayStoreObject bootpay, OrderCancelListParams params) throws Exception {
+    static public BootpayStoreResponse list(BootpayStoreObject bootpay, OrderCancelListParams params) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -55,13 +56,13 @@ public class SOrderCancelService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        return bootpay.responseToJsonArray(response);
+        return bootpay.responseToJsonArrayObject(response);
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
 
-    static public HashMap<String, Object> request(BootpayStoreObject bootpay, OrderCancelParams orderCancelParams) throws Exception {
+    static public BootpayStoreResponse request(BootpayStoreObject bootpay, OrderCancelParams orderCancelParams) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -75,12 +76,12 @@ public class SOrderCancelService {
         HttpPost post = bootpay.httpPost("order/cancel", new StringEntity(gson.toJson(orderCancelParams), "UTF-8"));
 
         HttpResponse response = client.execute(post);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
-    static public HashMap<String, Object> withdraw(BootpayStoreObject bootpay, String orderCancelRequestHistoryId) throws Exception {
+    static public BootpayStoreResponse withdraw(BootpayStoreObject bootpay, String orderCancelRequestHistoryId) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
@@ -96,13 +97,13 @@ public class SOrderCancelService {
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
         System.out.println(str);
 
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
         // 응답 처리
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
-    static public HashMap<String, Object> approve(BootpayStoreObject bootpay, OrderCancelActionParams params) throws Exception {
+    static public BootpayStoreResponse approve(BootpayStoreObject bootpay, OrderCancelActionParams params) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
@@ -114,14 +115,14 @@ public class SOrderCancelService {
         // 파일 업로드 요청 (여러 파일)
         HttpPut put = bootpay.httpPut("order/cancel/" + params.orderCancelRequestHistoryId + "/approve", new StringEntity(gson.toJson(params), "UTF-8"));
         HttpResponse response = client.execute(put);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
 
         // 응답 처리
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
-    static public HashMap<String, Object> reject(BootpayStoreObject bootpay, OrderCancelActionParams params) throws Exception {
+    static public BootpayStoreResponse reject(BootpayStoreObject bootpay, OrderCancelActionParams params) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
@@ -133,7 +134,7 @@ public class SOrderCancelService {
         // 파일 업로드 요청 (여러 파일)
         HttpPut put = bootpay.httpPut("order/cancel/" + params.orderCancelRequestHistoryId + "/reject", new StringEntity(gson.toJson(params), "UTF-8"));
         HttpResponse response = client.execute(put);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
 
         // 응답 처리
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");

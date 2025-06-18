@@ -2,6 +2,7 @@ package kr.co.bootpay.store.layer;
 
 
 import kr.co.bootpay.store.BootpayStore;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUserGroup;
 import kr.co.bootpay.store.model.request.UserGroupListParams;
 import kr.co.bootpay.store.service.user_groups.SUserGroupService;
@@ -15,11 +16,11 @@ public class UserGroup {
         this.bootpay = bootpay;
     }
 
-    public HashMap<String, Object> create(SUserGroup userGroup) throws Exception {
+    public BootpayStoreResponse create(SUserGroup userGroup) throws Exception {
         return SUserGroupService.create(bootpay, userGroup);
     }
 
-    public HashMap<String, Object> list(UserGroupListParams params)  throws Exception {
+    public BootpayStoreResponse list(UserGroupListParams params)  throws Exception {
         return SUserGroupService.list(
                 bootpay,
                 params
@@ -27,19 +28,19 @@ public class UserGroup {
     }
 
 
-    public HashMap<String, Object> update(SUserGroup userGroup) throws Exception {
+    public BootpayStoreResponse update(SUserGroup userGroup) throws Exception {
         return SUserGroupService.update(bootpay, userGroup);
     }
 
-    public HashMap<String, Object> detail(String userGroupId) throws Exception {
+    public BootpayStoreResponse detail(String userGroupId) throws Exception {
         return SUserGroupService.detail(bootpay, userGroupId);
     }
 
-    public HashMap<String, Object> userCreate(String userGroupId, String userId) throws Exception {
+    public BootpayStoreResponse userCreate(String userGroupId, String userId) throws Exception {
         return SUserGroupService.userCreate(bootpay, userGroupId, userId);
     }
 
-    public HashMap<String, Object> userDelete(String userGroupId, String userId) throws Exception {
+    public BootpayStoreResponse userDelete(String userGroupId, String userId) throws Exception {
         return SUserGroupService.userDelete(bootpay, userGroupId, userId);
     }
 }

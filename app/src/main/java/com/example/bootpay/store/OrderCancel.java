@@ -1,6 +1,7 @@
 package com.example.bootpay.store;
 
 import kr.co.bootpay.store.BootpayStore;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelActionParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelListParams;
@@ -13,25 +14,29 @@ public class OrderCancel {
 
     static BootpayStore bootpayStore;
     public static void main(String[] args) {
-        TokenPayload tokenPayload = new TokenPayload("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
-        bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
-        getToken();
-//        list();
-        request();
-//        detail();
-//        orderCancel();
-//        withdraw();
-//        approve();
-//        reject();
+        try {
+            TokenPayload tokenPayload = new TokenPayload("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
+            bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
+            getToken();
+            list();
+    //        request();
+    //        detail();
+    //        orderCancel();
+    //        withdraw();
+    //        approve();
+    //        reject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void getToken() {
         try {
-            HashMap<String, Object> res = bootpayStore.getAccessToken();
-            if(res.get("error_code") == null) { //success
-                System.out.println("goGetToken success: " + res);
+            BootpayStoreResponse res = bootpayStore.getAccessToken();
+            if(res.isSuccess()) {
+                System.out.println("goGetToken success: " + res.getDataAsMap());
             } else {
-                System.out.println("goGetToken false: " + res);
+                System.out.println("goGetToken false: " + res.getError());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -43,14 +48,14 @@ public class OrderCancel {
         try {
             OrderCancelListParams params = new OrderCancelListParams();
             params.orderNumber = "25060971162205013115";
-//          params.userId = "67c9428f7b47af25bee631e7"; // 특정 고객으로 조회
-//            params.userGroupId = "67c9428f7b47af25bee631e8"; // 그룹으로 조회, user_group_id가 법인 일 경우 해당 법인의 주문내역이 조호됨
+    //          params.userId = "67c9428f7b47af25bee631e7"; // 특정 고객으로 조회
+    //            params.userGroupId = "67c9428f7b47af25bee631e8"; // 그룹으로 조회, user_group_id가 법인 일 경우 해당 법인의 주문내역이 조호됨
 
-            HashMap<String, Object> res = bootpayStore.orderCancel.list(params);
-            if(res.get("error_code") == null) { //success
-                System.out.println("order list: " + res);
+            BootpayStoreResponse res = bootpayStore.orderCancel.list(params);
+            if(res.isSuccess()) {
+                System.out.println("order list: " + res.getDataAsMap());
             } else {
-                System.out.println("order false: " + res);
+                System.out.println("order false: " + res.getError());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,11 +69,11 @@ public class OrderCancel {
         params.requestCancelParameters.cancelPrice = 300;
 
         try {
-            HashMap<String, Object> res = bootpayStore.orderCancel.request(params);
-            if(res.get("error_code") == null) { //success
-                System.out.println("order cancel request: " + res);
+            BootpayStoreResponse res = bootpayStore.orderCancel.request(params);
+            if(res.isSuccess()) {
+                System.out.println("order cancel request: " + res.getDataAsMap());
             } else {
-                System.out.println("order cancel false: " + res);
+                System.out.println("order cancel false: " + res.getError());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,11 +82,11 @@ public class OrderCancel {
 
     public static void withdraw() {
         try {
-            HashMap<String, Object> res = bootpayStore.orderCancel.withdraw("6847844b008fa2aeebcce8b9");
-            if(res.get("error_code") == null) { //success
-                System.out.println("order withdraw request: " + res);
+            BootpayStoreResponse res = bootpayStore.orderCancel.withdraw("6847844b008fa2aeebcce8b9");
+            if(res.isSuccess()) {
+                System.out.println("order withdraw request: " + res.getDataAsMap());
             } else {
-                System.out.println("order withdraw false: " + res);
+                System.out.println("order withdraw false: " + res.getError());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,11 +99,11 @@ public class OrderCancel {
             params.orderCancelRequestHistoryId = "68468927008fa2aeebcce89c";
             params.message = "관리자 승인";
 
-            HashMap<String, Object> res = bootpayStore.orderCancel.approve(params);
-            if(res.get("error_code") == null) { //success
-                System.out.println("order cancel approve: " + res);
+            BootpayStoreResponse res = bootpayStore.orderCancel.approve(params);
+            if(res.isSuccess()) {
+                System.out.println("order cancel approve: " + res.getDataAsMap());
             } else {
-                System.out.println("order cancel approve: " + res);
+                System.out.println("order cancel approve: " + res.getError());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,11 +116,11 @@ public class OrderCancel {
             params.orderCancelRequestHistoryId = "684687e6008fa2aeebcce893";
             params.message = "관리자 승인 거절";
 
-            HashMap<String, Object> res = bootpayStore.orderCancel.reject(params);
-            if(res.get("error_code") == null) { //success
-                System.out.println("order cancel approve: " + res);
+            BootpayStoreResponse res = bootpayStore.orderCancel.reject(params);
+            if(res.isSuccess()) {
+                System.out.println("order cancel approve: " + res.getDataAsMap());
             } else {
-                System.out.println("order cancel approve: " + res);
+                System.out.println("order cancel approve: " + res.getError());
             }
         } catch (Exception e) {
             e.printStackTrace();

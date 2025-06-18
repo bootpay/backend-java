@@ -2,6 +2,7 @@ package kr.co.bootpay.store.layer;
 
 
 import kr.co.bootpay.store.BootpayStore;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SProduct;
 import kr.co.bootpay.store.model.request.ProductListParams;
 import kr.co.bootpay.store.model.request.product.ProductStatusParams;
@@ -18,14 +19,14 @@ public class Product {
         this.bootpay = bootpay;
     }
 
-    public HashMap<String, Object> list(ProductListParams params)  throws Exception {
+    public BootpayStoreResponse list(ProductListParams params)  throws Exception {
         return SProductService.list(
                 bootpay,
                 params
         );
     }
 
-    public HashMap<String, Object> create(SProduct product, List<URL> imagePaths)  throws Exception {
+    public BootpayStoreResponse create(SProduct product, List<URL> imagePaths)  throws Exception {
         return SProductService.create(
                 bootpay,
                 product,
@@ -33,28 +34,28 @@ public class Product {
         );
     }
 
-    public HashMap<String, Object> update(SProduct product)  throws Exception {
+    public BootpayStoreResponse update(SProduct product)  throws Exception {
         return SProductService.update(
                 bootpay,
                 product
         );
     }
 
-    public HashMap<String, Object> detail(String productId) throws Exception {
+    public BootpayStoreResponse detail(String productId) throws Exception {
         return SProductService.detail(
                 bootpay,
                 productId
         );
     }
 
-    public HashMap<String, Object> status(ProductStatusParams params) throws Exception {
+    public BootpayStoreResponse status(ProductStatusParams params) throws Exception {
         return SProductService.status(
                 bootpay,
                 params
         );
     }
 
-    public HashMap<String, Object> delete(String productId) throws Exception {
+    public BootpayStoreResponse delete(String productId) throws Exception {
         return SProductService.delete(
                 bootpay,
                 productId

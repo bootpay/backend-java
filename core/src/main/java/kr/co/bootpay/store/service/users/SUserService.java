@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.request.UserListParams;
 import org.apache.commons.io.IOUtils;
@@ -32,7 +33,7 @@ public class SUserService {
 
 
 //    static public HashMap<String, Object> list(BootpayStoreObject bootpay, Optional<Integer> memberType, Optional<String> type, Optional<String> keyword, Optional<Integer> page, Optional<Integer> limit) throws Exception {
-static public HashMap<String, Object> list(BootpayStoreObject bootpay, UserListParams params) throws Exception {
+static public BootpayStoreResponse list(BootpayStoreObject bootpay, UserListParams params) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
@@ -51,15 +52,15 @@ static public HashMap<String, Object> list(BootpayStoreObject bootpay, UserListP
 
             HttpGet get = bootpay.httpGet(url, nameValuePairList);
             HttpResponse response = client.execute(get);
-            return bootpay.responseToJson(response);
+            return bootpay.responseToJsonObject(response);
         } else {
             HttpGet get = bootpay.httpGet(url);
             HttpResponse response = client.execute(get);
-            return bootpay.responseToJson(response);
+            return bootpay.responseToJsonObject(response);
         }
     }
 
-    static public HashMap<String, Object> update(BootpayStoreObject bootpay, SUser user) throws Exception {
+    static public BootpayStoreResponse update(BootpayStoreObject bootpay, SUser user) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
@@ -69,28 +70,28 @@ static public HashMap<String, Object> list(BootpayStoreObject bootpay, UserListP
 
         HttpPut put = bootpay.httpPut("users/" + user.userId, new StringEntity(gson.toJson(user), "UTF-8"));
         HttpResponse response = client.execute(put);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
     }
 
-    static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String userId) throws Exception {
+    static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String userId) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
 
         HttpGet get = bootpay.httpGet("users/" + userId);
         HttpResponse response = client.execute(get);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
     }
 
     //    회원탈퇴
-    static public HashMap<String, Object> destroy(BootpayStoreObject bootpay, String userId) throws Exception {
+    static public BootpayStoreResponse destroy(BootpayStoreObject bootpay, String userId) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
 
         HttpDelete delete = bootpay.httpDelete("users/" + userId);
         HttpResponse response = client.execute(delete);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
     }
 
 }

@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SProduct;
 import kr.co.bootpay.store.model.request.ProductListParams;
 import kr.co.bootpay.store.model.request.product.ProductStatusParams;
@@ -24,7 +25,7 @@ import java.util.*;
 
 public class SProductService {
 
-    static public HashMap<String, Object> create(BootpayStoreObject bootpay, SProduct product, List<URL> imagePaths) throws Exception {
+    static public BootpayStoreResponse create(BootpayStoreObject bootpay, SProduct product, List<URL> imagePaths) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
@@ -48,14 +49,14 @@ public class SProductService {
         // 파일 업로드 요청 (여러 파일)
         HttpPost post = bootpay.httpPostMultipart("products", fileList, params);
         HttpResponse response = client.execute(post);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
 
         // 응답 처리
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return bootpay.responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
-    static public HashMap<String, Object> update(BootpayStoreObject bootpay, SProduct product) throws Exception {
+    static public BootpayStoreResponse update(BootpayStoreObject bootpay, SProduct product) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
@@ -69,7 +70,7 @@ public class SProductService {
 //        HttpPost post = bootpay.httpPostMultipart("products", fileList, params);
         HttpPut put = bootpay.httpPut("products/" + product.productId, new StringEntity(gson.toJson(product), "UTF-8"));
         HttpResponse response = client.execute(put);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
 
         // 응답 처리
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
@@ -77,7 +78,7 @@ public class SProductService {
     }
 
 
-    static public HashMap<String, Object> list(BootpayStoreObject bootpay, ProductListParams params) throws Exception {
+    static public BootpayStoreResponse list(BootpayStoreObject bootpay, ProductListParams params) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -117,7 +118,7 @@ public class SProductService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
 
@@ -131,19 +132,19 @@ public class SProductService {
 //        return result;
     }
 
-    static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String productId) throws Exception {
+    static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String productId) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
         HttpGet get = bootpay.httpGet("products/" + productId);
 
         HttpResponse response = client.execute(get);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
-    static public HashMap<String, Object> status(BootpayStoreObject bootpay, ProductStatusParams params) throws Exception {
+    static public BootpayStoreResponse status(BootpayStoreObject bootpay, ProductStatusParams params) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(params == null || params.productId == null || params.productId.isEmpty()) throw new Exception("params에 product_id 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
@@ -154,10 +155,10 @@ public class SProductService {
 
         HttpPut put = bootpay.httpPut("products/" + params.productId + "/status", new StringEntity(gson.toJson(params), "UTF-8"));
         HttpResponse response = client.execute(put);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
     }
 
-    static public HashMap<String, Object> delete(BootpayStoreObject bootpay, String productId) throws Exception {
+    static public BootpayStoreResponse delete(BootpayStoreObject bootpay, String productId) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
 
@@ -165,7 +166,7 @@ public class SProductService {
         HttpDelete delete = bootpay.httpDelete("products/" + productId);
 
         HttpResponse response = client.execute(delete);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
 
     }
 }

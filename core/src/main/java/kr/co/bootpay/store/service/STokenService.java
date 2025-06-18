@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SToken;
 import kr.co.bootpay.store.model.response.STokenResponse;
 import org.apache.commons.io.IOUtils;
@@ -18,7 +19,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 
 public class STokenService {
-    static public HashMap<String, Object> getAccessToken(BootpayStoreObject bootpay) throws Exception {
+    static public BootpayStoreResponse getAccessToken(BootpayStoreObject bootpay) throws Exception {
 
         if(bootpay.tokenPayload == null) {
             throw new Exception("tokenPayload 값이 비어있습니다.");
@@ -47,22 +48,12 @@ public class STokenService {
                 .create();
 
         HttpPost post = bootpay.httpPost("request/token", new StringEntity(gson.toJson(token), "UTF-8"));
-
         HttpResponse response = client.execute(post);
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-
         STokenResponse res = new Gson().fromJson(str, STokenResponse.class);
         bootpay.setTokenFromAPI(res.access_token);
 
-//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-//        return new Gson().fromJson(str, resType);
-        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-        if(result == null) {
-            result = new HashMap<>();
-        }
 
-        result.put("http_status", response.getStatusLine().getStatusCode());
-        return result;
+        return bootpay.responseToJsonObject(response);
     }
 }

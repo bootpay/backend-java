@@ -1,6 +1,7 @@
 package kr.co.bootpay.store.layer;
 
 import kr.co.bootpay.store.BootpayStore;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelActionParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelListParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelParams;
@@ -15,22 +16,22 @@ public class OrderCancel {
         this.bootpay = bootpay;
     }
 
-    public HashMap<String, Object> list(OrderCancelListParams params)  throws Exception {
+    public BootpayStoreResponse list(OrderCancelListParams params)  throws Exception {
         return SOrderCancelService.list( bootpay, params);
     }
-    public HashMap<String, Object> request(OrderCancelParams params) throws Exception {
+    public BootpayStoreResponse request(OrderCancelParams params) throws Exception {
         return SOrderCancelService.request(bootpay, params);
     }
 
-    public HashMap<String, Object> withdraw(String orderCancelRequestHistoryId) throws Exception {
+    public BootpayStoreResponse withdraw(String orderCancelRequestHistoryId) throws Exception {
         return SOrderCancelService.withdraw(bootpay, orderCancelRequestHistoryId);
     }
 
-    public HashMap<String, Object> approve(OrderCancelActionParams params) throws Exception {
+    public BootpayStoreResponse approve(OrderCancelActionParams params) throws Exception {
         return SOrderCancelService.approve(bootpay, params);
     }
 
-    public HashMap<String, Object> reject(OrderCancelActionParams params) throws Exception {
+    public BootpayStoreResponse reject(OrderCancelActionParams params) throws Exception {
         return SOrderCancelService.reject(bootpay, params);
     }
 
