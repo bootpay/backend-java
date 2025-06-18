@@ -28,7 +28,7 @@ public class OrderSubscription {
             if(res.isSuccess()) {
                 System.out.println("goGetToken success: " + res.getDataAsMap());
             } else {
-                System.out.println("goGetToken false: " + res.getError());
+                System.out.println("goGetToken false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -41,7 +41,7 @@ public class OrderSubscription {
             if(res.isSuccess()) {
                 System.out.println("orderSubscription list success: " + res.getDataAsMap());
             } else {
-                System.out.println("orderSubscription list false: " + res.getError());
+                System.out.println("orderSubscription list false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,7 +54,7 @@ public class OrderSubscription {
             if(res.isSuccess()) {
                 System.out.println("orderSubscription detail success: " + res.getDataAsMap());
             } else {
-                System.out.println("orderSubscription detail false: " + res.getError());
+                System.out.println("orderSubscription detail false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();

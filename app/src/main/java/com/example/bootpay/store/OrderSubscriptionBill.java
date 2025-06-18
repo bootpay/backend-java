@@ -30,7 +30,7 @@ public class OrderSubscriptionBill {
             if(res.isSuccess()) {
                 System.out.println("goGetToken success: " + res.getDataAsMap());
             } else {
-                System.out.println("goGetToken false: " + res.getError());
+                System.out.println("goGetToken false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -43,7 +43,7 @@ public class OrderSubscriptionBill {
             if(res.isSuccess()) {
                 System.out.println("orderSubscriptionBill list success: " + res.getDataAsMap());
             } else {
-                System.out.println("orderSubscriptionBill list false: " + res.getError());
+                System.out.println("orderSubscriptionBill list false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -56,7 +56,7 @@ public class OrderSubscriptionBill {
             if(res.isSuccess()) {
                 System.out.println("orderSubscriptionBill detail success: " + res.getDataAsMap());
             } else {
-                System.out.println("orderSubscriptionBill detail false: " + res.getError());
+                System.out.println("orderSubscriptionBill detail false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,7 +73,7 @@ public class OrderSubscriptionBill {
             if(res.isSuccess()) {
                 System.out.println("orderSubscriptionBill update success: " + res.getDataAsMap());
             } else {
-                System.out.println("orderSubscriptionBill update false: " + res.getError());
+                System.out.println("orderSubscriptionBill update false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();

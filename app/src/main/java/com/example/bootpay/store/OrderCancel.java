@@ -36,7 +36,7 @@ public class OrderCancel {
             if(res.isSuccess()) {
                 System.out.println("goGetToken success: " + res.getDataAsMap());
             } else {
-                System.out.println("goGetToken false: " + res.getError());
+                System.out.println("goGetToken false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,9 +53,9 @@ public class OrderCancel {
 
             BootpayStoreResponse res = bootpayStore.orderCancel.list(params);
             if(res.isSuccess()) {
-                System.out.println("order list: " + res.getDataAsMap());
+                System.out.println("order list: " + res.getDataAsList());
             } else {
-                System.out.println("order false: " + res.getError());
+                System.out.println("order false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,7 +73,7 @@ public class OrderCancel {
             if(res.isSuccess()) {
                 System.out.println("order cancel request: " + res.getDataAsMap());
             } else {
-                System.out.println("order cancel false: " + res.getError());
+                System.out.println("order cancel false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,7 +86,7 @@ public class OrderCancel {
             if(res.isSuccess()) {
                 System.out.println("order withdraw request: " + res.getDataAsMap());
             } else {
-                System.out.println("order withdraw false: " + res.getError());
+                System.out.println("order withdraw false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -103,7 +103,7 @@ public class OrderCancel {
             if(res.isSuccess()) {
                 System.out.println("order cancel approve: " + res.getDataAsMap());
             } else {
-                System.out.println("order cancel approve: " + res.getError());
+                System.out.println("order cancel approve: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,7 +120,7 @@ public class OrderCancel {
             if(res.isSuccess()) {
                 System.out.println("order cancel approve: " + res.getDataAsMap());
             } else {
-                System.out.println("order cancel approve: " + res.getError());
+                System.out.println("order cancel approve: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
