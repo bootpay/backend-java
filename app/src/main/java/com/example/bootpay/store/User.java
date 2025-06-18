@@ -16,12 +16,11 @@ public class User {
         bootpay = new BootpayStore(tokenPayload, "DEVELOPMENT");
 //        bootpay.withToken();
  
-//        getToken();
+        getToken();
 //        joinIndividual();
 //        joinCorporate();
 //        authByUserStandbyId();
-//        login();
-        list();
+//        list();
 //        detail();
 //        update();
 //        delete();
@@ -29,7 +28,7 @@ public class User {
         // emailExist();
 //        idExist();
 //        phoneExist();
-//        groupBusinessNumberExist();
+        groupBusinessNumberExist();
     }
 
     public static void getToken() {
@@ -87,7 +86,7 @@ public class User {
     public static void joinCorporate() {
         try {
             SUser user = new SUser();
-            user.loginId = "ehowlsla27";
+            user.loginId = "ehowlsla29";
             user.loginPw = "km1178km";
             user.email = "ehowlsla@bootpay.co.kr";
             user.phone = "01000000000";
@@ -112,20 +111,6 @@ public class User {
                 System.out.println("authByUserStandbyId success: " + res);
             } else {
                 System.out.println("authByUserStandbyId false: " + res);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-//    {http_status=200, token=eyJhbGciOiJSUzI1NiJ9.eyJ1dWlkIjpudWxsLCJpcCI6IjIyMy4xMzAuODIuNTgiLCJwdWJsaXNoZWRfYXQiOiIyMDI1LTAzLTI0VDE2OjEzOjUyKzA5OjAwIiwia2V5IjoiNjdlMTA2MzAwM2QwY2I0ZTQxMTdiMGE2IiwiZW5jcnlwdGVkX2tleSI6IjYwODY5NGQ0NjQxZDM1MTFkOTgxNGU3MmIyOTNiMTFkIn0.PU3kaYsvSwUfOg4d-PwgQGU8YEW11iP7L-UZMiG3GU5CdZm655nyiDaiXK0l0aNKG4J4jz6ZWsqfXev-l5jaEVb2z1RRMYN1yNAuoInWaC4aeCoKJlyzYlIyQj9w0Xl_p6hrFgFUKX__zwHO8XPTi_vhVpPubsRXPt52BVAu-LSLfNT746TvbIc5OJs--Udgp5pVGFGVmYHLFKcwZFtQtttNBBt4y6A5KPGksj7yDa0xZpqDrBBmP7mRr47W1--8NnConheia1AVs7ir7NBNOMXco8tZGAb5DwTKk6y2bUhMqvww4xEhZySq3yVcgsiEl0dVXNqeMQYRYQz3bJXS0Q}
-    public static void login() {
-        try {
-            HashMap<String, Object> res = bootpay.user.login("ehowlsla5", "km1178km");
-            if(res.get("error_code") == null) { //success
-                System.out.println("login success: " + res);
-            } else {
-                System.out.println("login false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -193,7 +178,6 @@ public class User {
 
         try {
             HashMap<String, Object> res = bootpay
-                    .withToken()
                     .user.list(params);
             if(res.get("error_code") == null) { //success
                 System.out.println("list success: " + res);
