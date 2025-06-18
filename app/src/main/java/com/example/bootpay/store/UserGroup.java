@@ -17,10 +17,10 @@ public class UserGroup {
         getToken();
 //        list();
 //        detail();
-        update();
+//        update();
 //        create();
 //        addUser();
-//        removeUser();
+        removeUser();
     }
 
     public static void getToken() {
@@ -39,8 +39,8 @@ public class UserGroup {
     public static void create() {
         try {
             SUserGroup userGroup = new SUserGroup();
-            userGroup.companyName = "섹시다이나마이트4";
-            userGroup.businessNumber = "1088603666";
+            userGroup.companyName = "섹시다이나마이트7";
+            userGroup.businessNumber = "1088603667";
             userGroup.managerName = "홍길동";
             userGroup.zipcode = "12345";
             userGroup.address = "서울특별시 강남구 역삼동 123-45";
@@ -121,7 +121,7 @@ public class UserGroup {
         String userId = "684a6292b0eacea5cd9745ef";
 
         try {
-            HashMap<String, Object> res = bootpayStore.userGroup.addUser(userGroupId, userId);
+            HashMap<String, Object> res = bootpayStore.asManager().userGroup.addUser(userGroupId, userId);
             if(res.get("error_code") == null) { //success
                 System.out.println("addUser success: " + res);
             } else {
@@ -137,11 +137,11 @@ public class UserGroup {
         String userId = "684a6292b0eacea5cd9745ef";
 
         try {
-            HashMap<String, Object> res = bootpayStore.userGroup.removeUser(userGroupId, userId);
+            HashMap<String, Object> res = bootpayStore.asManager().userGroup.removeUser(userGroupId, userId);
             if(res.get("error_code") == null) { //success
-                System.out.println("addUser success: " + res);
+                System.out.println("removeUser success: " + res);
             } else {
-                System.out.println("addUser false: " + res);
+                System.out.println("removeUser false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();

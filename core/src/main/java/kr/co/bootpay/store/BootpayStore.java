@@ -32,11 +32,6 @@ public class BootpayStore extends BootpayStoreObject {
         initModules();
     }
 
-//    public BootpayStore(String serverKey, String privateKey, String devMode) {
-//        super(serverKey, privateKey, devMode);
-//        initModules();
-//    }
-
     private void initModules() {
         this.user = new User(this);
         this.userGroup = new UserGroup(this);

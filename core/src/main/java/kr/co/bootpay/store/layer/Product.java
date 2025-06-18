@@ -4,12 +4,12 @@ package kr.co.bootpay.store.layer;
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.pojo.SProduct;
 import kr.co.bootpay.store.model.request.ProductListParams;
+import kr.co.bootpay.store.model.request.product.ProductStatusUpdateParams;
 import kr.co.bootpay.store.service.products.SProductService;
 
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 public class Product {
     private final BootpayStore bootpay;
@@ -42,6 +42,20 @@ public class Product {
 
     public HashMap<String, Object> detail(String productId) throws Exception {
         return SProductService.detail(
+                bootpay,
+                productId
+        );
+    }
+
+    public HashMap<String, Object> status(ProductStatusUpdateParams params) throws Exception {
+        return SProductService.status(
+                bootpay,
+                params
+        );
+    }
+
+    public HashMap<String, Object> delete(String productId) throws Exception {
+        return SProductService.delete(
                 bootpay,
                 productId
         );

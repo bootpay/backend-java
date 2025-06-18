@@ -33,7 +33,7 @@ public class SUserJoinService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPost post = bootpay.httpPost("users", new StringEntity(gson.toJson(user), "UTF-8"));
+        HttpPost post = bootpay.httpPost("users/join", new StringEntity(gson.toJson(user), "UTF-8"));
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJson(response);

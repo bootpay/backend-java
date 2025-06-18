@@ -171,8 +171,6 @@ public class BootpayStoreObject {
         String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
         if(tokenToUse != null) {
             post.setHeader("Authorization", "Bearer " + tokenToUse);
-        } else if(this.token != null) {
-            post.setHeader("Authorization", getTokenValue());
         } else { //토큰 발급
             post.setHeader("Authorization", requestAccessToken());
         }
@@ -204,8 +202,6 @@ public class BootpayStoreObject {
         
         String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
         if(tokenToUse != null) {
-            post.setHeader("Authorization", "Bearer " + tokenToUse);
-        } else if(this.token != null) {
             post.setHeader("Authorization", getTokenValue());
         } else { //토큰 발급
             post.setHeader("Authorization", requestAccessToken());
@@ -244,8 +240,6 @@ public class BootpayStoreObject {
         String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
         if(tokenToUse != null) {
             post.setHeader("Authorization", "Bearer " + tokenToUse);
-        } else if(this.token != null) {
-            post.setHeader("Authorization", getTokenValue());
         }
         
         // 멀티파트 엔티티 구성
@@ -322,8 +316,6 @@ public class BootpayStoreObject {
         String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
         if(tokenToUse != null) {
             delete.setHeader("Authorization", "Bearer " + tokenToUse);
-        } else if(this.token != null) {
-            delete.setHeader("Authorization", getTokenValue());
         }
         
         return delete;
@@ -352,8 +344,6 @@ public class BootpayStoreObject {
         String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
         if(tokenToUse != null) {
             delete.setHeader("Authorization", "Bearer " + tokenToUse);
-        } else if(this.token != null) {
-            delete.setHeader("Authorization", getTokenValue());
         }
         
         delete.setEntity(entity);
@@ -380,8 +370,6 @@ public class BootpayStoreObject {
         String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
         if(tokenToUse != null) {
             put.setHeader("Authorization", "Bearer " + tokenToUse);
-        } else if(this.token != null) {
-            put.setHeader("Authorization", getTokenValue());
         }
         
         put.setEntity(entity);
@@ -389,36 +377,87 @@ public class BootpayStoreObject {
     }
 
     public HashMap<String, Object> responseToJsonArray(HttpResponse response)  throws Exception {
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-
-        HashMap<String, Object>  result = new HashMap<>();
-//        Type resType = new TypeToken<List<HashMap<String, Object>>>(){}.getType();
-        TypeReference<List<HashMap<String, Object>>> typeRef = new TypeReference<List<HashMap<String, Object>>>() {};
-        ObjectMapper mapper = new ObjectMapper();
-        List<HashMap<String, Object>> data = mapper.readValue(str, typeRef);
-        if(data == null) {
-            data = new ArrayList<>();
-        }
-
+        HashMap<String, Object> result = new HashMap<>();
+        
+        // http_status는 항상 포함
         result.put("http_status", response.getStatusLine().getStatusCode());
-        result.put("data", data);
+        
+        try {
+            // response.getEntity()가 null인지 확인
+            if (response.getEntity() == null) {
+                result.put("data", new ArrayList<>());
+                return result;
+            }
+            
+            // content가 null인지 확인
+            if (response.getEntity().getContent() == null) {
+                result.put("data", new ArrayList<>());
+                return result;
+            }
+            
+            String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+            
+            // 빈 문자열인지 확인
+            if (str == null || str.trim().isEmpty() || "null".equalsIgnoreCase(str.trim())) {
+                result.put("data", new ArrayList<>());
+                return result;
+            }
+
+            TypeReference<List<HashMap<String, Object>>> typeRef = new TypeReference<List<HashMap<String, Object>>>() {};
+            ObjectMapper mapper = new ObjectMapper();
+            List<HashMap<String, Object>> data = mapper.readValue(str, typeRef);
+            if(data == null) {
+                data = new ArrayList<>();
+            }
+
+            result.put("data", data);
+            
+        } catch (Exception e) {
+            // 예외가 발생해도 http_status는 포함하고, data는 빈 배열로 설정
+            result.put("data", new ArrayList<>());
+            result.put("error", e.getMessage());
+        }
+        
         return result;
     }
 
     public HashMap<String, Object> responseToJson(HttpResponse response)  throws Exception {
+        HashMap<String, Object> result = new HashMap<>();
+        
+        // http_status는 항상 포함
+        result.put("http_status", response.getStatusLine().getStatusCode());
+        
         try {
+            // response.getEntity()가 null인지 확인
+            if (response.getEntity() == null) {
+                return result;
+            }
+            
+            // content가 null인지 확인
+            if (response.getEntity().getContent() == null) {
+                return result;
+            }
+            
             String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
             System.out.println(str);
 
+            // 빈 문자열인지 확인
+            if (str == null || str.trim().isEmpty() || "null".equalsIgnoreCase(str.trim())) {
+                return result;
+            }
+
             ObjectMapper mapper = new ObjectMapper();
             TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {};
-            HashMap<String, Object> result = mapper.readValue(str, typeRef);
-
-            result.put("http_status", response.getStatusLine().getStatusCode());
-            return result;
+            HashMap<String, Object> parsedData = mapper.readValue(str, typeRef);
+            
+            // 파싱된 데이터를 result에 병합
+            result.putAll(parsedData);
+            
         } catch (Exception e) {
-            return new HashMap<>();
+            // 예외가 발생해도 http_status는 포함하고, error 정보만 추가
+            result.put("error", e.getMessage());
         }
 
+        return result;
     }
 }
