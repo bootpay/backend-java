@@ -1,6 +1,7 @@
 package com.example.bootpay.store;
 
 import kr.co.bootpay.store.BootpayStore;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.request.order.OrderListParams;
 
@@ -11,24 +12,28 @@ public class Order {
 
     static BootpayStore bootpayStore;
     public static void main(String[] args) {
+        try {
 //        szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=
 //        bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
-        TokenPayload tokenPayload = new TokenPayload("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
-        bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
+            TokenPayload tokenPayload = new TokenPayload("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
+            bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
 //        bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
-        getToken();
+            getToken();
 //        list();
 //        detail();
 //        orderCancel();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void getToken() {
         try {
-            HashMap<String, Object> res = bootpayStore.getAccessToken();
-            if(res.get("error_code") == null) { //success
-                System.out.println("goGetToken success: " + res);
+            BootpayStoreResponse res = bootpayStore.getAccessToken();
+            if(res.isSuccess()) {
+                System.out.println("goGetToken success: " + res.getDataAsMap());
             } else {
-                System.out.println("goGetToken false: " + res);
+                System.out.println("goGetToken false: " + res.getError());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -42,11 +47,11 @@ public class Order {
 //          params.userId = "67c9428f7b47af25bee631e7"; // 특정 고객으로 조회
             params.userGroupId = "67c9428f7b47af25bee631e8"; // 그룹으로 조회, user_group_id가 법인 일 경우 해당 법인의 주문내역이 조호됨
 
-            HashMap<String, Object> res = bootpayStore.order.list(params);
-            if(res.get("error_code") == null) { //success
-                System.out.println("order success: " + res);
+            BootpayStoreResponse res = bootpayStore.order.list(params);
+            if(res.isSuccess()) {
+                System.out.println("order success: " + res.getDataAsMap());
             } else {
-                System.out.println("order false: " + res);
+                System.out.println("order false: " + res.getError());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,11 +60,11 @@ public class Order {
 
     public static void detail() {
         try {
-            HashMap<String, Object> res = bootpayStore.order.detail("6848eb68008fa2aeebcce92c");
-            if(res.get("error_code") == null) { //success
-                System.out.println("order success: " + res);
+            BootpayStoreResponse res = bootpayStore.order.detail("6848eb68008fa2aeebcce92c");
+            if(res.isSuccess()) {
+                System.out.println("order success: " + res.getDataAsMap());
             } else {
-                System.out.println("order false: " + res);
+                System.out.println("order false: " + res.getError());
             }
         } catch (Exception e) {
             e.printStackTrace();

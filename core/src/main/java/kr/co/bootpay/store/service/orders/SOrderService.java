@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.order.OrderListParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelParams;
 import org.apache.commons.io.IOUtils;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 
 
 public class SOrderService {
-    static public HashMap<String, Object> list(BootpayStoreObject bootpay, OrderListParams params) throws Exception {
+    static public BootpayStoreResponse list(BootpayStoreObject bootpay, OrderListParams params) throws Exception {
 
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
@@ -68,12 +69,12 @@ public class SOrderService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
-    static public HashMap<String, Object> detail(BootpayStoreObject bootpay, String orderId) throws Exception {
+    static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String orderId) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -87,7 +88,7 @@ public class SOrderService {
         String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
         System.out.println(str);
 
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }

@@ -2,6 +2,7 @@ package kr.co.bootpay.store.layer;
 
 
 import kr.co.bootpay.store.BootpayStore;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.request.UserListParams;
 import kr.co.bootpay.store.service.users.SUserAuthenticateService;
@@ -19,15 +20,15 @@ public class User {
         this.bootpay = bootpay;
     }
 
-    public HashMap<String, Object> token(String userId) throws Exception {
+    public BootpayStoreResponse token(String userId) throws Exception {
         return SUserLoginService.token(bootpay, userId);
     }
 
-    public HashMap<String, Object> join(SUser user) throws Exception {
+    public BootpayStoreResponse join(SUser user) throws Exception {
         return SUserJoinService.join(bootpay, user);
     }
 
-    public HashMap<String, Object> checkExist(String key, String value) throws Exception {
+    public BootpayStoreResponse checkExist(String key, String value) throws Exception {
         return SUserJoinService.checkExist(bootpay, key, value);
     }
 
@@ -43,27 +44,27 @@ public class User {
 //        return SUserJoinService.groupBusinessNumberExist(bootpay, pk);
 //    }
 
-    public HashMap<String, Object> authenticationData(String standId) throws Exception {
+    public BootpayStoreResponse authenticationData(String standId) throws Exception {
         return SUserAuthenticateService.authenticationData(bootpay, standId);
     }
 
-    public HashMap<String, Object> login(String loginId, String loginPw) throws Exception {
+    public BootpayStoreResponse login(String loginId, String loginPw) throws Exception {
         return SUserLoginService.login(bootpay, loginId, loginPw);
     }
 
-    public HashMap<String, Object> list(UserListParams params) throws Exception {
+    public BootpayStoreResponse list(UserListParams params) throws Exception {
         return SUserService.list(bootpay, params);
     }
 
-    public HashMap<String, Object> detail(String userId) throws Exception {
+    public BootpayStoreResponse detail(String userId) throws Exception {
         return SUserService.detail(bootpay, userId);
     }
 
-    public HashMap<String, Object> update(SUser user) throws Exception {
+    public BootpayStoreResponse update(SUser user) throws Exception {
         return SUserService.update(bootpay, user);
     }
 
-    public HashMap<String, Object> delete(String userId) throws Exception {
+    public BootpayStoreResponse delete(String userId) throws Exception {
         return SUserService.destroy(bootpay, userId);
     }
 }

@@ -1,4 +1,3 @@
-
 ## Bootpay Java Server Side Library
 부트페이 공식 Java 라이브러리 입니다 (서버사이드 용)
 
@@ -68,11 +67,11 @@ public class BootpayExample {
 
     public static void goGetToken() {
         try {
-            HashMap<String, Object> res = bootpay.getAccessToken();
-            if (res.get("error_code") == null) { //success
-                System.out.println("goGetToken success: " + res);
+            BootpayStoreResponse res = bootpay.getAccessToken();
+            if (res.isSuccess()) {
+                System.out.println("goGetToken success: " + res.getDataAsMap());
             } else {
-                System.out.println("goGetToken false: " + res);
+                System.out.println("goGetToken false: " + res.getError());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,11 +88,11 @@ public class BootpayExample {
 ```java 
 Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
 try {
-   HashMap<String, Object> res = bootpay.getAccessToken();
-   if(res.get("error_code") == null) { //success
-       System.out.println("goGetToken success: " + res);
+   BootpayStoreResponse res = bootpay.getAccessToken();
+   if(res.isSuccess()) {
+       System.out.println("goGetToken success: " + res.getDataAsMap());
    } else {
-       System.out.println("goGetToken false: " + res);
+       System.out.println("goGetToken false: " + res.getError());
    }
 } catch (Exception e) {
    e.printStackTrace();

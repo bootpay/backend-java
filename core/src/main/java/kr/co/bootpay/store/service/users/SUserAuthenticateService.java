@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.response.STokenResponse;
 import org.apache.commons.io.IOUtils;
@@ -26,7 +27,7 @@ public class SUserAuthenticateService {
      * Registers an individual user by creating an SUser object and sending the registration request to Bootpay.
      * The method handles both success and error scenarios.
      */
-    static public HashMap<String, Object> authenticationData(BootpayStoreObject bootpay, String standId) throws Exception {
+    static public BootpayStoreResponse authenticationData(BootpayStoreObject bootpay, String standId) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
 
@@ -35,6 +36,6 @@ public class SUserAuthenticateService {
         String url = String.format("users/authenticate/%s", standId);
         HttpGet get = bootpay.httpGet(url);
         HttpResponse response = client.execute(get);
-        return bootpay.responseToJson(response);
+        return bootpay.responseToJsonObject(response);
     }
 }
