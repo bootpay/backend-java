@@ -7,7 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.model.pojo.SProduct;
 import kr.co.bootpay.store.model.request.ProductListParams;
-import kr.co.bootpay.store.model.request.product.ProductStatusUpdateParams;
+import kr.co.bootpay.store.model.request.product.ProductStatusParams;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -143,7 +143,7 @@ public class SProductService {
 //        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
-    static public HashMap<String, Object> status(BootpayStoreObject bootpay, ProductStatusUpdateParams params) throws Exception {
+    static public HashMap<String, Object> status(BootpayStoreObject bootpay, ProductStatusParams params) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         if(params == null || params.productId == null || params.productId.isEmpty()) throw new Exception("params에 product_id 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();

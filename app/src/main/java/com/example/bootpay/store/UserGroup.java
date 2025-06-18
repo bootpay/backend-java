@@ -19,8 +19,8 @@ public class UserGroup {
 //        detail();
 //        update();
 //        create();
-//        addUser();
-        removeUser();
+        userCreate();
+        userDelete();
     }
 
     public static void getToken() {
@@ -116,12 +116,12 @@ public class UserGroup {
         }
     }
 
-    public static void addUser() {
+    public static void userCreate() {
         String userGroupId = "684a76feb0eacea5cd974603";
         String userId = "684a6292b0eacea5cd9745ef";
 
         try {
-            HashMap<String, Object> res = bootpayStore.asManager().userGroup.addUser(userGroupId, userId);
+            HashMap<String, Object> res = bootpayStore.asManager().userGroup.userCreate(userGroupId, userId);
             if(res.get("error_code") == null) { //success
                 System.out.println("addUser success: " + res);
             } else {
@@ -132,12 +132,12 @@ public class UserGroup {
         }
     }
 
-    public static void removeUser() {
+    public static void userDelete() {
         String userGroupId = "684a76feb0eacea5cd974603";
         String userId = "684a6292b0eacea5cd9745ef";
 
         try {
-            HashMap<String, Object> res = bootpayStore.asManager().userGroup.removeUser(userGroupId, userId);
+            HashMap<String, Object> res = bootpayStore.asManager().userGroup.userDelete(userGroupId, userId);
             if(res.get("error_code") == null) { //success
                 System.out.println("removeUser success: " + res);
             } else {

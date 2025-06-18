@@ -4,7 +4,7 @@ package kr.co.bootpay.store.layer;
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.pojo.SProduct;
 import kr.co.bootpay.store.model.request.ProductListParams;
-import kr.co.bootpay.store.model.request.product.ProductStatusUpdateParams;
+import kr.co.bootpay.store.model.request.product.ProductStatusParams;
 import kr.co.bootpay.store.service.products.SProductService;
 
 import java.net.URL;
@@ -47,7 +47,7 @@ public class Product {
         );
     }
 
-    public HashMap<String, Object> status(ProductStatusUpdateParams params) throws Exception {
+    public HashMap<String, Object> status(ProductStatusParams params) throws Exception {
         return SProductService.status(
                 bootpay,
                 params

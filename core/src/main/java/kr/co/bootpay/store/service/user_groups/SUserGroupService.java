@@ -3,12 +3,9 @@ package kr.co.bootpay.store.service.user_groups;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import kr.co.bootpay.http.HttpDeleteWithBody;
 import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.model.pojo.SUserGroup;
 import kr.co.bootpay.store.model.request.UserGroupListParams;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -18,7 +15,6 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -106,7 +102,7 @@ public class SUserGroupService {
         return bootpay.responseToJson(response);
     }
 
-    static public HashMap<String, Object> addUser(BootpayStoreObject bootpay, String userGroupId, String userId) throws Exception {
+    static public HashMap<String, Object> userCreate(BootpayStoreObject bootpay, String userGroupId, String userId) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -125,7 +121,7 @@ public class SUserGroupService {
         return bootpay.responseToJson(response);
     }
 
-    static public HashMap<String, Object> removeUser(BootpayStoreObject bootpay, String userGroupId, String userId) throws Exception {
+    static public HashMap<String, Object> userDelete(BootpayStoreObject bootpay, String userGroupId, String userId) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
