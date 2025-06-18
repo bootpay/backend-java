@@ -71,7 +71,7 @@ public class BootpayExample {
             if (res.isSuccess()) {
                 System.out.println("goGetToken success: " + res.getDataAsMap());
             } else {
-                System.out.println("goGetToken false: " + res.getError());
+                System.out.println("goGetToken false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,7 +92,7 @@ try {
    if(res.isSuccess()) {
        System.out.println("goGetToken success: " + res.getDataAsMap());
    } else {
-       System.out.println("goGetToken false: " + res.getError());
+       System.out.println("goGetToken false: " + res.getDataAsMap());
    }
 } catch (Exception e) {
    e.printStackTrace();

@@ -459,11 +459,11 @@ public class BootpayStoreObject {
             }
             
             // content가 null인지 확인
-            if (response.getEntity().getContent() == null) {
+            if (response.getEntity().getContent() == null || "null".equals(response.getEntity().getContent())) {
                 result.put("data", null);
                 return result;
             }
-            
+
             String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
             System.out.println(str);
             

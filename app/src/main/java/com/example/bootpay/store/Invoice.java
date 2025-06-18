@@ -34,7 +34,7 @@ public class Invoice {
             if(res.isSuccess()) {
                 System.out.println("goGetToken success: " + res.getDataAsMap());
             } else {
-                System.out.println("goGetToken false: " + res.getError());
+                System.out.println("goGetToken false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -50,7 +50,7 @@ public class Invoice {
             if(res.isSuccess()) {
                 System.out.println("invoice list success: " + res.getDataAsMap());
             } else {
-                System.out.println("invoice list false: " + res.getError());
+                System.out.println("invoice list false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,7 +68,7 @@ public class Invoice {
             if(res.isSuccess()) {
                 System.out.println("invoice create success: " + res.getDataAsMap());
             } else {
-                System.out.println("invoice create false: " + res.getError());
+                System.out.println("invoice create false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,7 +86,7 @@ public class Invoice {
             if(res.isSuccess()) {
                 System.out.println("invoice notify success: " + res.getDataAsMap());
             } else {
-                System.out.println("invoice notify false: " + res.getError());
+                System.out.println("invoice notify false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,7 +99,7 @@ public class Invoice {
             if(res.isSuccess()) {
                 System.out.println("invoice detail success: " + res.getDataAsMap());
             } else {
-                System.out.println("invoice detail false: " + res.getError());
+                System.out.println("invoice detail false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();

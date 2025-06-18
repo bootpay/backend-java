@@ -38,7 +38,7 @@ public class Product {
             if(res.isSuccess()) {
                 System.out.println("goGetToken success: " + res.getDataAsMap());
             } else {
-                System.out.println("goGetToken false: " + res.getError());
+                System.out.println("goGetToken false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,7 +60,7 @@ public class Product {
             if(res.isSuccess()) {
                 System.out.println("product create success: " + res.getDataAsMap());
             } else {
-                System.out.println("product create false: " + res.getError());
+                System.out.println("product create false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,7 +76,7 @@ public class Product {
             if(res.isSuccess()) {
                 System.out.println("product list success: " + res.getDataAsMap());
             } else {
-                System.out.println("product list false: " + res.getError());
+                System.out.println("product list false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,7 +94,7 @@ public class Product {
             if(res.isSuccess()) {
                 System.out.println("product update success: " + res.getDataAsMap());
             } else {
-                System.out.println("product update false: " + res.getError());
+                System.out.println("product update false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,7 +107,7 @@ public class Product {
             if(res.isSuccess()) {
                 System.out.println("product detail success: " + res.getDataAsMap());
             } else {
-                System.out.println("product detail false: " + res.getError());
+                System.out.println("product detail false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -125,7 +125,7 @@ public class Product {
             if(res.isSuccess()) {
                 System.out.println("product status success: " + res.getDataAsMap());
             } else {
-                System.out.println("product status false: " + res.getError());
+                System.out.println("product status false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,7 +139,7 @@ public class Product {
             if(res.isSuccess()) {
                 System.out.println("product delete success: " + res.getDataAsMap());
             } else {
-                System.out.println("product delete false: " + res.getError());
+                System.out.println("product delete false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -33,7 +33,7 @@ public class Order {
             if(res.isSuccess()) {
                 System.out.println("goGetToken success: " + res.getDataAsMap());
             } else {
-                System.out.println("goGetToken false: " + res.getError());
+                System.out.println("goGetToken false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,7 +51,7 @@ public class Order {
             if(res.isSuccess()) {
                 System.out.println("order success: " + res.getDataAsMap());
             } else {
-                System.out.println("order false: " + res.getError());
+                System.out.println("order false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,7 +64,7 @@ public class Order {
             if(res.isSuccess()) {
                 System.out.println("order success: " + res.getDataAsMap());
             } else {
-                System.out.println("order false: " + res.getError());
+                System.out.println("order false: " + res.getDataAsMap());
             }
         } catch (Exception e) {
             e.printStackTrace();
