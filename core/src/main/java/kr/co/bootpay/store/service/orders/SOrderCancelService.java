@@ -56,7 +56,7 @@ public class SOrderCancelService {
 
         // HTTP 요청 전송 및 응답 수신
         HttpResponse response = client.execute(get);
-        return bootpay.responseToJsonArrayObject(response);
+        return bootpay.responseToJsonObject(response);
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }

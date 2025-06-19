@@ -32,9 +32,9 @@ public class Invoice {
         try {
             BootpayStoreResponse res = bootpayStore.getAccessToken();
             if(res.isSuccess()) {
-                System.out.println("goGetToken success: " + res.getDataAsMap());
+                System.out.println("goGetToken success: " + res.getData());
             } else {
-                System.out.println("goGetToken false: " + res.getDataAsMap());
+                System.out.println("goGetToken false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -48,9 +48,9 @@ public class Invoice {
 
             BootpayStoreResponse res = bootpayStore.invoice.list(params);
             if(res.isSuccess()) {
-                System.out.println("invoice list success: " + res.getDataAsMap());
+                System.out.println("invoice list success: " + res.getData());
             } else {
-                System.out.println("invoice list false: " + res.getDataAsMap());
+                System.out.println("invoice list false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,9 +66,9 @@ public class Invoice {
 
             BootpayStoreResponse res = bootpayStore.invoice.create(invoice);
             if(res.isSuccess()) {
-                System.out.println("invoice create success: " + res.getDataAsMap());
+                System.out.println("invoice create success: " + res.getData());
             } else {
-                System.out.println("invoice create false: " + res.getDataAsMap());
+                System.out.println("invoice create false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,9 +84,9 @@ public class Invoice {
 
             BootpayStoreResponse res = bootpayStore.invoice.notify("67e4ead95ec892162491d0f3", sendTypes);
             if(res.isSuccess()) {
-                System.out.println("invoice notify success: " + res.getDataAsMap());
+                System.out.println("invoice notify success: " + res.getData());
             } else {
-                System.out.println("invoice notify false: " + res.getDataAsMap());
+                System.out.println("invoice notify false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,9 +97,9 @@ public class Invoice {
         try {
             BootpayStoreResponse res = bootpayStore.invoice.detail("67e4ead95ec892162491d0f3");
             if(res.isSuccess()) {
-                System.out.println("invoice detail success: " + res.getDataAsMap());
+                System.out.println("invoice detail success: " + res.getData());
             } else {
-                System.out.println("invoice detail false: " + res.getDataAsMap());
+                System.out.println("invoice detail false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();

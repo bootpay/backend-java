@@ -36,9 +36,9 @@ public class Product {
         try {
             BootpayStoreResponse res = bootpayStore.getAccessToken();
             if(res.isSuccess()) {
-                System.out.println("goGetToken success: " + res.getDataAsMap());
+                System.out.println("goGetToken success: " + res.getData());
             } else {
-                System.out.println("goGetToken false: " + res.getDataAsMap());
+                System.out.println("goGetToken false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,9 +58,9 @@ public class Product {
 
             BootpayStoreResponse res = bootpayStore.product.create(product, imagePaths);
             if(res.isSuccess()) {
-                System.out.println("product create success: " + res.getDataAsMap());
+                System.out.println("product create success: " + res.getData());
             } else {
-                System.out.println("product create false: " + res.getDataAsMap());
+                System.out.println("product create false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,9 +74,9 @@ public class Product {
 
             BootpayStoreResponse res = bootpayStore.product.list(params);
             if(res.isSuccess()) {
-                System.out.println("product list success: " + res.getDataAsMap());
+                System.out.println("product list success: " + res.getData());
             } else {
-                System.out.println("product list false: " + res.getDataAsMap());
+                System.out.println("product list false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,9 +92,9 @@ public class Product {
 
             BootpayStoreResponse res = bootpayStore.product.update(product);
             if(res.isSuccess()) {
-                System.out.println("product update success: " + res.getDataAsMap());
+                System.out.println("product update success: " + res.getData());
             } else {
-                System.out.println("product update false: " + res.getDataAsMap());
+                System.out.println("product update false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,9 +105,9 @@ public class Product {
         try {
             BootpayStoreResponse res = bootpayStore.product.detail("67e4b4425ec892162491d0ec");
             if(res.isSuccess()) {
-                System.out.println("product detail success: " + res.getDataAsMap());
+                System.out.println("product detail success: " + res.getData());
             } else {
-                System.out.println("product detail false: " + res.getDataAsMap());
+                System.out.println("product detail false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,9 +123,9 @@ public class Product {
 
             BootpayStoreResponse res = bootpayStore.product.status(params);
             if(res.isSuccess()) {
-                System.out.println("product status success: " + res.getDataAsMap());
+                System.out.println("product status success: " + res.getData());
             } else {
-                System.out.println("product status false: " + res.getDataAsMap());
+                System.out.println("product status false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -137,9 +137,9 @@ public class Product {
             String productId = "67e4b4425ec892162491d0ec";
             BootpayStoreResponse res = bootpayStore.product.delete(productId);
             if(res.isSuccess()) {
-                System.out.println("product delete success: " + res.getDataAsMap());
+                System.out.println("product delete success: " + res.getData());
             } else {
-                System.out.println("product delete false: " + res.getDataAsMap());
+                System.out.println("product delete false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();

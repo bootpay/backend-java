@@ -55,7 +55,7 @@ public class BootpayStore extends BootpayStoreObject {
     public BootpayStore withToken() throws Exception {
         BootpayStoreResponse response = getAccessToken();
         if (response.isSuccess()) {
-            HashMap<String, Object> data = response.getDataAsMap();
+            HashMap<String, Object> data = response.getData();
             if (data != null && data.containsKey("access_token")) {
                 this.setTokenFromAPI((String) data.get("access_token"));
             }

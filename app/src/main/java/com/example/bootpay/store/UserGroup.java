@@ -32,9 +32,9 @@ public class UserGroup {
         try {
             BootpayStoreResponse res = bootpayStore.getAccessToken();
             if(res.isSuccess()) {
-                System.out.println("goGetToken success: " + res.getDataAsMap());
+                System.out.println("goGetToken success: " + res.getData());
             } else {
-                System.out.println("goGetToken false: " + res.getDataAsMap());
+                System.out.println("goGetToken false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,9 +52,9 @@ public class UserGroup {
 
             BootpayStoreResponse res = bootpayStore.userGroup.create(userGroup);
             if(res.isSuccess()) {
-                System.out.println("userGroup create success: " + res.getDataAsMap());
+                System.out.println("userGroup create success: " + res.getData());
             } else {
-                System.out.println("userGroup create false: " + res.getDataAsMap());
+                System.out.println("userGroup create false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,9 +68,9 @@ public class UserGroup {
 
             BootpayStoreResponse res = bootpayStore.userGroup.list(params);
             if(res.isSuccess()) {
-                System.out.println("userGroup list success: " + res.getDataAsMap());
+                System.out.println("userGroup list success: " + res.getData());
             } else {
-                System.out.println("userGroup list false: " + res.getDataAsMap());
+                System.out.println("userGroup list false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,9 +81,9 @@ public class UserGroup {
         try {
             BootpayStoreResponse res = bootpayStore.userGroup.detail("67e2052b03d0cb4e4117b0af");
             if(res.isSuccess()) {
-                System.out.println("userGroup detail success: " + res.getDataAsMap());
+                System.out.println("userGroup detail success: " + res.getData());
             } else {
-                System.out.println("userGroup detail false: " + res.getDataAsMap());
+                System.out.println("userGroup detail false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,9 +102,9 @@ public class UserGroup {
 
             BootpayStoreResponse res = bootpayStore.userGroup.update(userGroup);
             if(res.isSuccess()) {
-                System.out.println("userGroup update success: " + res.getDataAsMap());
+                System.out.println("userGroup update success: " + res.getData());
             } else {
-                System.out.println("userGroup update false: " + res.getDataAsMap());
+                System.out.println("userGroup update false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,9 +118,9 @@ public class UserGroup {
 
             BootpayStoreResponse res = bootpayStore.asManager().userGroup.userCreate(userGroupId, userId);
             if(res.isSuccess()) {
-                System.out.println("userGroup userCreate success: " + res.getDataAsMap());
+                System.out.println("userGroup userCreate success: " + res.getData());
             } else {
-                System.out.println("userGroup userCreate false: " + res.getDataAsMap());
+                System.out.println("userGroup userCreate false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -134,9 +134,9 @@ public class UserGroup {
 
             BootpayStoreResponse res = bootpayStore.asManager().userGroup.userDelete(userGroupId, userId);
             if(res.isSuccess()) {
-                System.out.println("userGroup userDelete success: " + res.getDataAsMap());
+                System.out.println("userGroup userDelete success: " + res.getData());
             } else {
-                System.out.println("userGroup userDelete false: " + res.getDataAsMap());
+                System.out.println("userGroup userDelete false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();

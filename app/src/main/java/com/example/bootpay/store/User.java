@@ -35,9 +35,9 @@ public class User {
         try {
             BootpayStoreResponse res = bootpay.getAccessToken();
             if (res.isSuccess()) {
-                System.out.println("goGetToken success: " + res.getDataAsMap());
+                System.out.println("goGetToken success: " + res.getData());
             } else {
-                System.out.println("goGetToken false: " + res.getDataAsMap());
+                System.out.println("goGetToken false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -57,9 +57,9 @@ public class User {
 
             BootpayStoreResponse res = bootpay.user.join(user);
             if (res.isSuccess()) {
-                System.out.println("join success: " + res.getDataAsMap());
+                System.out.println("join success: " + res.getData());
             } else {
-                System.out.println("join false: " + res.getDataAsMap());
+                System.out.println("join false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,9 +71,9 @@ public class User {
             String userId = "684fa4a6b0eacea5cd97464e";
             BootpayStoreResponse res = bootpay.user.token(userId);
             if (res.isSuccess()) {
-                System.out.println("token success: " + res.getDataAsMap());
+                System.out.println("token success: " + res.getData());
             } else {
-                System.out.println("token false: " + res.getDataAsMap());
+                System.out.println("token false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,9 +93,9 @@ public class User {
 
             BootpayStoreResponse res = bootpay.user.join(user);
             if (res.isSuccess()) {
-                System.out.println("join success: " + res.getDataAsMap());
+                System.out.println("join success: " + res.getData());
             } else {
-                System.out.println("join false: " + res.getDataAsMap());
+                System.out.println("join false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,9 +106,9 @@ public class User {
 //        try {
 //            BootpayStoreResponse res = bootpay.user.authenticationData("67e0f47d03d0cb4e4117b082");
 //            if (res.isSuccess()) {
-//                System.out.println("authByUserStandbyId success: " + res.getDataAsMap());
+//                System.out.println("authByUserStandbyId success: " + res.getData());
 //            } else {
-//                System.out.println("authByUserStandbyId false: " + res.getDataAsMap());
+//                System.out.println("authByUserStandbyId false: " + res.getData());
 //            }
 //        } catch (Exception e) {
 //            e.printStackTrace();
@@ -119,9 +119,9 @@ public class User {
         try {
             BootpayStoreResponse res = bootpay.user.checkExist("email-exist", "ehowlsla@bootpay.co.kr");
             if (res.isSuccess()) {
-                System.out.println("emailExist success: " + res.getDataAsMap());
+                System.out.println("emailExist success: " + res.getData());
             } else {
-                System.out.println("emailExist false: " + res.getDataAsMap());
+                System.out.println("emailExist false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -132,9 +132,9 @@ public class User {
         try {
             BootpayStoreResponse res = bootpay.user.checkExist("id-exist", "ehowlsla2");
             if (res.isSuccess()) {
-                System.out.println("idExist success: " + res.getDataAsMap());
+                System.out.println("idExist success: " + res.getData());
             } else {
-                System.out.println("idExist false: " + res.getDataAsMap());
+                System.out.println("idExist false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -145,9 +145,9 @@ public class User {
         try {
             BootpayStoreResponse res = bootpay.user.checkExist("phone-exist", "01000000000");
             if (res.isSuccess()) {
-                System.out.println("phoneExist success: " + res.getDataAsMap());
+                System.out.println("phoneExist success: " + res.getData());
             } else {
-                System.out.println("phoneExist false: " + res.getDataAsMap());
+                System.out.println("phoneExist false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,9 +158,9 @@ public class User {
         try {
             BootpayStoreResponse res = bootpay.user.checkExist("group-business-number-exist", "1088603663");
             if (res.isSuccess()) {
-                System.out.println("groupBusinessNumberExist success: " + res.getDataAsMap());
+                System.out.println("groupBusinessNumberExist success: " + res.getData());
             } else {
-                System.out.println("groupBusinessNumberExist false: " + res.getDataAsMap());
+                System.out.println("groupBusinessNumberExist false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -178,9 +178,9 @@ public class User {
             BootpayStoreResponse res = bootpay
                     .user.list(params);
             if (res.isSuccess()) {
-                System.out.println("list success: " + res.getDataAsMap());
+                System.out.println("list success: " + res.getData());
             } else {
-                System.out.println("list false: " + res.getDataAsMap());
+                System.out.println("list false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -191,9 +191,9 @@ public class User {
         try {
             BootpayStoreResponse res = bootpay.user.detail("684fa4a6b0eacea5cd97464e");
             if (res.isSuccess()) {
-                System.out.println("detail success: " + res.getDataAsMap());
+                System.out.println("detail success: " + res.getData());
             } else {
-                System.out.println("detail false: " + res.getDataAsMap());
+                System.out.println("detail false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -214,9 +214,9 @@ public class User {
         try {
             BootpayStoreResponse res = bootpay.user.update(user);
             if (res.isSuccess()) {
-                System.out.println("update success: " + res.getDataAsMap());
+                System.out.println("update success: " + res.getData());
             } else {
-                System.out.println("update false: " + res.getDataAsMap());
+                System.out.println("update false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -227,9 +227,9 @@ public class User {
         try {
             BootpayStoreResponse res = bootpay.user.delete("684fa4a6b0eacea5cd97464e");
             if (res.isSuccess()) {
-                System.out.println("delete success: " + res.getDataAsMap());
+                System.out.println("delete success: " + res.getData());
             } else {
-                System.out.println("delete false: " + res.getDataAsMap());
+                System.out.println("delete false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
