@@ -28,9 +28,9 @@ public class OrderSubscriptionBill {
         try {
             BootpayStoreResponse res = bootpayStore.getAccessToken();
             if(res.isSuccess()) {
-                System.out.println("goGetToken success: " + res.getDataAsMap());
+                System.out.println("goGetToken success: " + res.getData());
             } else {
-                System.out.println("goGetToken false: " + res.getDataAsMap());
+                System.out.println("goGetToken false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -41,9 +41,9 @@ public class OrderSubscriptionBill {
         try {
             BootpayStoreResponse res = bootpayStore.orderSubscriptionBill.list(null);
             if(res.isSuccess()) {
-                System.out.println("orderSubscriptionBill list success: " + res.getDataAsMap());
+                System.out.println("orderSubscriptionBill list success: " + res.getData());
             } else {
-                System.out.println("orderSubscriptionBill list false: " + res.getDataAsMap());
+                System.out.println("orderSubscriptionBill list false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,9 +54,9 @@ public class OrderSubscriptionBill {
         try {
             BootpayStoreResponse res = bootpayStore.orderSubscriptionBill.detail("67e5100d5ec892162491d111");
             if(res.isSuccess()) {
-                System.out.println("orderSubscriptionBill detail success: " + res.getDataAsMap());
+                System.out.println("orderSubscriptionBill detail success: " + res.getData());
             } else {
-                System.out.println("orderSubscriptionBill detail false: " + res.getDataAsMap());
+                System.out.println("orderSubscriptionBill detail false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,9 +71,9 @@ public class OrderSubscriptionBill {
 
             BootpayStoreResponse res = bootpayStore.orderSubscriptionBill.update(orderSubscriptionBill);
             if(res.isSuccess()) {
-                System.out.println("orderSubscriptionBill update success: " + res.getDataAsMap());
+                System.out.println("orderSubscriptionBill update success: " + res.getData());
             } else {
-                System.out.println("orderSubscriptionBill update false: " + res.getDataAsMap());
+                System.out.println("orderSubscriptionBill update false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();

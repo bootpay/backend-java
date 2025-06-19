@@ -33,45 +33,9 @@ public class BootpayStoreResponse {
 
     // 데이터 반환 (타입 자동 판단)
     @SuppressWarnings("unchecked")
-    public <T> T getData() {
-        if (data instanceof HashMap) {
-            return (T) data;
-        } else if (data instanceof List) {
-            return (T) data;
-        } else {
-            return (T) data;
-        }
-    }
-
-    // 데이터가 HashMap인지 확인
-    public boolean isDataMap() {
-        return data instanceof HashMap;
-    }
-
-    // 데이터가 List인지 확인
-    public boolean isDataList() {
-        return data instanceof List;
-    }
-
-    // 데이터가 null인지 확인
-    public boolean isDataNull() {
-        return data == null;
-    }
-
-    // 데이터를 HashMap으로 캐스팅하여 반환
-    @SuppressWarnings("unchecked")
-    public HashMap<String, Object> getDataAsMap() {
+    public HashMap<String, Object> getData() {
         if (data instanceof HashMap) {
             return (HashMap<String, Object>) data;
-        }
-        return null;
-    }
-
-    // 데이터를 List로 캐스팅하여 반환
-    @SuppressWarnings("unchecked")
-    public List<HashMap<String, Object>> getDataAsList() {
-        if (data instanceof List) {
-            return (List<HashMap<String, Object>>) data;
         }
         return null;
     }

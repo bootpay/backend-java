@@ -69,9 +69,9 @@ public class BootpayExample {
         try {
             BootpayStoreResponse res = bootpay.getAccessToken();
             if (res.isSuccess()) {
-                System.out.println("goGetToken success: " + res.getDataAsMap());
+                System.out.println("goGetToken success: " + res.getData());
             } else {
-                System.out.println("goGetToken false: " + res.getDataAsMap());
+                System.out.println("goGetToken false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,9 +90,9 @@ Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A
 try {
    BootpayStoreResponse res = bootpay.getAccessToken();
    if(res.isSuccess()) {
-       System.out.println("goGetToken success: " + res.getDataAsMap());
+       System.out.println("goGetToken success: " + res.getData());
    } else {
-       System.out.println("goGetToken false: " + res.getDataAsMap());
+       System.out.println("goGetToken false: " + res.getData());
    }
 } catch (Exception e) {
    e.printStackTrace();

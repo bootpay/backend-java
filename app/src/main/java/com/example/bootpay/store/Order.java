@@ -19,9 +19,8 @@ public class Order {
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
 //        bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
             getToken();
-//        list();
-//        detail();
-//        orderCancel();
+            list();
+            detail();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -31,9 +30,9 @@ public class Order {
         try {
             BootpayStoreResponse res = bootpayStore.getAccessToken();
             if(res.isSuccess()) {
-                System.out.println("goGetToken success: " + res.getDataAsMap());
+                System.out.println("goGetToken success: " + res.getData());
             } else {
-                System.out.println("goGetToken false: " + res.getDataAsMap());
+                System.out.println("goGetToken false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,14 +43,13 @@ public class Order {
     public static void list() {
         try {
             OrderListParams params = new OrderListParams();
-//          params.userId = "67c9428f7b47af25bee631e7"; // 특정 고객으로 조회
-            params.userGroupId = "67c9428f7b47af25bee631e8"; // 그룹으로 조회, user_group_id가 법인 일 경우 해당 법인의 주문내역이 조호됨
+            params.cssAt = "2025-03-20"; // 검색 시작일
 
             BootpayStoreResponse res = bootpayStore.order.list(params);
             if(res.isSuccess()) {
-                System.out.println("order success: " + res.getDataAsMap());
+                System.out.println("order success: " + res.getData());
             } else {
-                System.out.println("order false: " + res.getDataAsMap());
+                System.out.println("order false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,11 +58,12 @@ public class Order {
 
     public static void detail() {
         try {
-            BootpayStoreResponse res = bootpayStore.order.detail("6848eb68008fa2aeebcce92c");
+            String orderId = "6847e188008fa2aeebcce8da";
+            BootpayStoreResponse res = bootpayStore.order.detail(orderId);
             if(res.isSuccess()) {
-                System.out.println("order success: " + res.getDataAsMap());
+                System.out.println("order success: " + res.getData());
             } else {
-                System.out.println("order false: " + res.getDataAsMap());
+                System.out.println("order false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();

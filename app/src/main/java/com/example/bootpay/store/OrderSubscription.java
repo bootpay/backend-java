@@ -26,9 +26,9 @@ public class OrderSubscription {
         try {
             BootpayStoreResponse res = bootpayStore.getAccessToken();
             if(res.isSuccess()) {
-                System.out.println("goGetToken success: " + res.getDataAsMap());
+                System.out.println("goGetToken success: " + res.getData());
             } else {
-                System.out.println("goGetToken false: " + res.getDataAsMap());
+                System.out.println("goGetToken false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -39,9 +39,9 @@ public class OrderSubscription {
         try {
             BootpayStoreResponse res = bootpayStore.orderSubscription.list(null);
             if(res.isSuccess()) {
-                System.out.println("orderSubscription list success: " + res.getDataAsMap());
+                System.out.println("orderSubscription list success: " + res.getData());
             } else {
-                System.out.println("orderSubscription list false: " + res.getDataAsMap());
+                System.out.println("orderSubscription list false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,9 +52,9 @@ public class OrderSubscription {
         try {
             BootpayStoreResponse res = bootpayStore.orderSubscription.detail("67e5100c5ec892162491d108");
             if(res.isSuccess()) {
-                System.out.println("orderSubscription detail success: " + res.getDataAsMap());
+                System.out.println("orderSubscription detail success: " + res.getData());
             } else {
-                System.out.println("orderSubscription detail false: " + res.getDataAsMap());
+                System.out.println("orderSubscription detail false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();

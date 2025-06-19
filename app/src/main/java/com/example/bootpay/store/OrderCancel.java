@@ -34,9 +34,9 @@ public class OrderCancel {
         try {
             BootpayStoreResponse res = bootpayStore.getAccessToken();
             if(res.isSuccess()) {
-                System.out.println("goGetToken success: " + res.getDataAsMap());
+                System.out.println("goGetToken success: " + res.getData());
             } else {
-                System.out.println("goGetToken false: " + res.getDataAsMap());
+                System.out.println("goGetToken false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,15 +47,15 @@ public class OrderCancel {
     public static void list() {
         try {
             OrderCancelListParams params = new OrderCancelListParams();
-            params.orderNumber = "25060971162205013115";
+            params.orderNumber = "25061041373033253116";
     //          params.userId = "67c9428f7b47af25bee631e7"; // 특정 고객으로 조회
     //            params.userGroupId = "67c9428f7b47af25bee631e8"; // 그룹으로 조회, user_group_id가 법인 일 경우 해당 법인의 주문내역이 조호됨
 
             BootpayStoreResponse res = bootpayStore.orderCancel.list(params);
             if(res.isSuccess()) {
-                System.out.println("order list: " + res.getDataAsList());
+                System.out.println("order cancel list: " + res.getData());
             } else {
-                System.out.println("order false: " + res.getDataAsMap());
+                System.out.println("order cancel false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,9 +71,9 @@ public class OrderCancel {
         try {
             BootpayStoreResponse res = bootpayStore.orderCancel.request(params);
             if(res.isSuccess()) {
-                System.out.println("order cancel request: " + res.getDataAsMap());
+                System.out.println("order cancel request: " + res.getData());
             } else {
-                System.out.println("order cancel false: " + res.getDataAsMap());
+                System.out.println("order cancel false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,9 +84,9 @@ public class OrderCancel {
         try {
             BootpayStoreResponse res = bootpayStore.orderCancel.withdraw("6847844b008fa2aeebcce8b9");
             if(res.isSuccess()) {
-                System.out.println("order withdraw request: " + res.getDataAsMap());
+                System.out.println("order withdraw request: " + res.getData());
             } else {
-                System.out.println("order withdraw false: " + res.getDataAsMap());
+                System.out.println("order withdraw false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,9 +101,9 @@ public class OrderCancel {
 
             BootpayStoreResponse res = bootpayStore.orderCancel.approve(params);
             if(res.isSuccess()) {
-                System.out.println("order cancel approve: " + res.getDataAsMap());
+                System.out.println("order cancel approve: " + res.getData());
             } else {
-                System.out.println("order cancel approve: " + res.getDataAsMap());
+                System.out.println("order cancel approve: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,9 +118,9 @@ public class OrderCancel {
 
             BootpayStoreResponse res = bootpayStore.orderCancel.reject(params);
             if(res.isSuccess()) {
-                System.out.println("order cancel approve: " + res.getDataAsMap());
+                System.out.println("order cancel approve: " + res.getData());
             } else {
-                System.out.println("order cancel approve: " + res.getDataAsMap());
+                System.out.println("order cancel approve: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
