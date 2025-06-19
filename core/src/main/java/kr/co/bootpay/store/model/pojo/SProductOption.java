@@ -17,8 +17,8 @@ public class SProductOption {
     public List<String> keys; // 옵션 키값 목록
 
     public List<String> images; // 이미지 리스트
-    public double price; // 추가금액
-    public double taxFreePrice; // 면세 가격
+    public Double price; // 추가금액
+    public Double taxFreePrice; // 면세 가격
     public String sku; // Stock Keeping Unit (관리 코드)
     public int status; // 사용 여부 (사용자 체크)
 

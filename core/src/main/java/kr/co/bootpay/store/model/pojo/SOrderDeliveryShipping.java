@@ -16,10 +16,10 @@ public class SOrderDeliveryShipping {
     public List<String> productOptionIds;
     public List<String> productOptionSnapshotIds;
 
-    public double totalFee;
-    public double baseFee;
-    public double areaJejuFee;
-    public double areaRemoteFee;
+    public Double totalFee;
+    public Double baseFee;
+    public Double areaJejuFee;
+    public Double areaRemoteFee;
 
     public String productId;
     public String productSnapshotId;

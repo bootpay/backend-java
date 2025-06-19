@@ -1,12 +1,10 @@
 package com.example.bootpay.store;
 
 import kr.co.bootpay.store.BootpayStore;
-import kr.co.bootpay.store.BootpayStoreResponse;
+import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.request.TokenPayload;
-import kr.co.bootpay.store.model.request.UserListParams;
-
-import java.util.HashMap;
+import kr.co.bootpay.store.model.request.user.UserListParams;
 
 public class User {
     static BootpayStore bootpay;
@@ -18,7 +16,7 @@ public class User {
 //            bootpay.getAccessToken();
 
             getToken();
-            joinIndividual();
+//            joinIndividual();
 //            userToken();
 //            joinCorporate();
 //            authByUserStandbyId();
@@ -26,6 +24,7 @@ public class User {
 //            idExist();
 //            phoneExist();
 //            groupBusinessNumberExist();
+            update();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -204,12 +203,12 @@ public class User {
 
     public static void update() {
         SUser user = new SUser();
-        user.userId = "684fa4a6b0eacea5cd97464e";
-        user.loginId = "ehowlsla28";
-        user.loginPw = "km1178km";
-        user.email = "ehowlsla1@bootpay.co.kr";
-        user.phone = "01000000001";
-        user.name = "복떵";
+        user.userId = "68527d03b0eacea5cd974821";
+//        user.loginId = "ehowlsla28";
+//        user.loginPw = "km1178km";
+//        user.email = "ehowlsla1@bootpay.co.kr";
+        user.phone = "01040334678";
+        user.name = "복떵2";
 
         try {
             BootpayStoreResponse res = bootpay.user.update(user);

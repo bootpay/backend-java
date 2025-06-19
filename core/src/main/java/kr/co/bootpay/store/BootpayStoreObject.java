@@ -6,6 +6,7 @@ import kr.co.bootpay.Version;
 import kr.co.bootpay.http.HttpDeleteWithBody;
 import kr.co.bootpay.store.context.RequestContext;
 import kr.co.bootpay.store.model.request.TokenPayload;
+import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

@@ -11,8 +11,8 @@ public class CashReceipt {
     public String identityNo; //전화번호
     public String purchasedAt;
     public String cashReceiptType; //소득공제
-    public double price;
-    public double taxFree;
+    public Double price;
+    public Double taxFree;
     public Map<String, Object> metadata = new HashMap<>();
     public Map<String, Object> extra = new HashMap<>();
 

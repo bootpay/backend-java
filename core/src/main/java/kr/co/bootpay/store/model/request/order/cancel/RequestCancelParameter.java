@@ -4,8 +4,8 @@ import java.util.List;
 
 public class RequestCancelParameter {
     public String cancelId;
-    public double cancelPrice;
-    public double cancelTaxFreePrice;
+    public Double cancelPrice;
+    public Double cancelTaxFreePrice;
     public String cancelRequester;
     public String cancelMessage;
     public List<CancelProduct> cancelProducts;

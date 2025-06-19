@@ -16,8 +16,8 @@ public class Subscribe {
     public String cardExpireYear; // 카드 유효기간 년
     public String cardExpireMonth; // 카드 유효기간 월
 
-    public double price; //빌링키 발급과 동시에 첫 결제할 금액
-    public double taxFree; //빌링키 발급과 동시에 첫 결제할 비과세금액
+    public Double price; //빌링키 발급과 동시에 첫 결제할 금액
+    public Double taxFree; //빌링키 발급과 동시에 첫 결제할 비과세금액
     public Map<String, Object> metadata = new HashMap<>();
     public User user; // 구매자 정보
     public SubscribeExtra extra;

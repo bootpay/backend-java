@@ -3,13 +3,9 @@ package kr.co.bootpay.store.service.users;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import kr.co.bootpay.store.BootpayStoreObject;
-import kr.co.bootpay.store.BootpayStoreResponse;
-import kr.co.bootpay.store.model.pojo.SToken;
+import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUser;
-import kr.co.bootpay.store.model.response.STokenResponse;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -17,10 +13,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import java.lang.reflect.Type;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 
 public class SUserJoinService {
 

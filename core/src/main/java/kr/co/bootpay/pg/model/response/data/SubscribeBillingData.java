@@ -2,7 +2,7 @@ package kr.co.bootpay.pg.model.response.data;
 
 public class SubscribeBillingData {
     public String receipt_id;
-    public double price;
+    public Double price;
     public String card_no;
     public String card_code;
     public String card_name;

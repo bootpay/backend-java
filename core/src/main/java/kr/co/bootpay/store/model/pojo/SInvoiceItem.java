@@ -7,8 +7,8 @@ public class SInvoiceItem {
     public String productOptionId;
     public String name;
     public String description;
-    public double price;
-    public double originPrice;
+    public Double price;
+    public Double originPrice;
     public int quantity;
 }
 

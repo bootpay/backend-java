@@ -34,13 +34,13 @@ public class SOrderSubscriptionTransaction {
     public String orderPreId;
     public String orderId;
 
-    public double purchasePrice;
-    public double purchaseTaxFreePrice;
+    public Double purchasePrice;
+    public Double purchaseTaxFreePrice;
     public int unit;
 
-    public double cancelledPrice;
-    public double cancelledTaxFreePrice;
-    public double cancelledFee;
+    public Double cancelledPrice;
+    public Double cancelledTaxFreePrice;
+    public Double cancelledFee;
 
     public String purchasedAt;
     public String revokedAt;

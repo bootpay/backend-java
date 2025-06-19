@@ -6,15 +6,15 @@ import java.util.UUID;
 public class SOrderCancellationRequestHistory {
     public int orderRequestType;
     public String cancelId;
-    public double cancelBeforePrice;
-    public double cancelBeforeTaxFreePrice;
+    public Double cancelBeforePrice;
+    public Double cancelBeforeTaxFreePrice;
 
-    public double cancelPrice;
-    public double cancelTaxFreePrice;
+    public Double cancelPrice;
+    public Double cancelTaxFreePrice;
 
-    public double cancelAfterPrice; // 결제 취소 후 금액
+    public Double cancelAfterPrice; // 결제 취소 후 금액
 
-    public double cancelAfterTaxFreePrice; // 결제 취소 후 비과세 금액
+    public Double cancelAfterTaxFreePrice; // 결제 취소 후 비과세 금액
 
     public String cancelRequester;
 

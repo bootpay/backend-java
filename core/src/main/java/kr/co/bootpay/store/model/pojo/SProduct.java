@@ -25,17 +25,17 @@ public class SProduct {
     public boolean useStockSafe; // 안전 재고 관리 여부
     public int stockSafe; // 안전 재고 임계값
 
-    public double displayPrice; // 판매가
-    public double taxFreePrice; // 비과세 가격
+    public Double displayPrice; // 판매가
+    public Double taxFreePrice; // 비과세 가격
     public boolean useDiscount; // 할인 사용 여부
-    public double discountPrice; // 할인가
+    public Double discountPrice; // 할인가
     public int discountPriceType; // 할인 유형 (정률, 정액)
     public boolean useDiscountPeriod; // 할인 기간 사용 여부
     public String discountStartAt; // 할인 시작일
     public String discountEndAt; // 할인 종료일
 
     public boolean useAccumulation; // 적립금 사용 여부
-    public double accumulationPoint; // 적립금 값
+    public Double accumulationPoint; // 적립금 값
     public int accumulationPointType; // 적립금 유형
 
     public boolean statusDisplay; // 쇼핑몰 전시 여부
@@ -89,7 +89,7 @@ public class SProduct {
     public String manufacturedAt; // 제조일자
 
     public boolean useSetupFee; // 추가비용/설치비용 여부
-    public double setupFeeValue; // 추가비용 기본값
+    public Double setupFeeValue; // 추가비용 기본값
     public int setupFeeType; // 설치비 유형
     public String setupFeeName; // 설치비 이름
     public String setupFeeText; // 설치비 설명

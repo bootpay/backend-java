@@ -12,9 +12,9 @@ public class SOrderSubscriptionBillHistory {
     public String requester; // 요청자 이름 (API용)
     public String message; // 요청 메시지 (API용)
 
-    public double cancelPrice; // 취소된 금액, 음수일 경우 취소 원복
-    public double cancelTaxFreePrice; // 취소된 비과세 금액, 음수일 경우 취소 원복
-    public double cancelFee; // 취소 수수료 (예: 배송상품 환불/수거 비용)
+    public Double cancelPrice; // 취소된 금액, 음수일 경우 취소 원복
+    public Double cancelTaxFreePrice; // 취소된 비과세 금액, 음수일 경우 취소 원복
+    public Double cancelFee; // 취소 수수료 (예: 배송상품 환불/수거 비용)
 
     public int actionType; // 변경 유형
     public String actionAt; // 변경 발생 시간

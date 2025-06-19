@@ -7,12 +7,12 @@ public class VerificationData {
     public String order_id;
     public String name;
     public String item_name;
-    public double price;
-    public double tax_free;
-    public double remain_price;
-    public double remain_tax_free;
-    public double cancelled_price;
-    public double cancelled_tax_free;
+    public Double price;
+    public Double tax_free;
+    public Double remain_price;
+    public Double remain_tax_free;
+    public Double cancelled_price;
+    public Double cancelled_tax_free;
 
     public String receipt_url;
     public String unit;

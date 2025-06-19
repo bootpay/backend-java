@@ -1,13 +1,11 @@
 package kr.co.bootpay.store.layer;
 
 import kr.co.bootpay.store.BootpayStore;
-import kr.co.bootpay.store.BootpayStoreResponse;
+import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelActionParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelListParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelParams;
 import kr.co.bootpay.store.service.orders.SOrderCancelService;
-
-import java.util.HashMap;
 
 public class OrderCancel {
     private final BootpayStore bootpay;

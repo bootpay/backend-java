@@ -20,20 +20,20 @@ public class SOrderSubscriptionBill {
     public int duration; // 회차
     public int totalSubscriptionDuration; // 총 회차
 
-    public double oneUnitPrice; // 상품 한 개의 가격
-    public double oneUnitTaxFreePrice; // 상품 한 개의 비과세 가격
-    public double setupPrice; // 초기설정 금액 (1회차인 경우만 존재)
+    public Double oneUnitPrice; // 상품 한 개의 가격
+    public Double oneUnitTaxFreePrice; // 상품 한 개의 비과세 가격
+    public Double setupPrice; // 초기설정 금액 (1회차인 경우만 존재)
 
-    public double price; // 본래 상품 결제 금액
-    public double taxFreePrice; // 본래 상품 비과세 결제 금액
+    public Double price; // 본래 상품 결제 금액
+    public Double taxFreePrice; // 본래 상품 비과세 결제 금액
     public int unit; // 통화 단위
 
-    public double purchasePrice; // 지불 금액
-    public double purchaseTaxFreePrice; // 지불 비과세 금액
+    public Double purchasePrice; // 지불 금액
+    public Double purchaseTaxFreePrice; // 지불 비과세 금액
 
-    public double cancelledPrice; // 취소된 금액
-    public double cancelledTaxFreePrice; // 취소된 비과세 금액
-    public double cancelledFee; // 취소 수수료 (예: 배송상품 환불/수거 비용)
+    public Double cancelledPrice; // 취소된 금액
+    public Double cancelledTaxFreePrice; // 취소된 비과세 금액
+    public Double cancelledFee; // 취소 수수료 (예: 배송상품 환불/수거 비용)
 
     public int membershipType; // 멤버십 유형
 

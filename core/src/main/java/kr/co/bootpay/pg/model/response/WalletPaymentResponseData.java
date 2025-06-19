@@ -6,10 +6,10 @@ import kr.co.bootpay.pg.model.response.data.WalletData;
 import java.util.Map;
 
 public class WalletPaymentResponseData {
-    public double cancelled_price;
+    public Double cancelled_price;
     public WalletData wallet_data;
     public Map<String, Object> metadata;
-    public double cancelled_tax_free;
+    public Double cancelled_tax_free;
     public String method;
     public CardData card_data;
     public boolean sandbox;
@@ -20,8 +20,8 @@ public class WalletPaymentResponseData {
     public String receipt_url;
     public String method_symbol;
     public String purchased_at;
-    public double tax_free;
-    public double price;
+    public Double tax_free;
+    public Double price;
     public String company_name;
     public String pg;
     public String status_locale;

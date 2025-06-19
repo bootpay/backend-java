@@ -7,8 +7,8 @@ import java.util.Map;
 public class WalletPayload {
     public String userId; // 개발사에서 관리하는 회원 고유 ID
     public String orderName; // 결제할 상품명
-    public double price; // 결제할 상품금액
-    public double taxFree; // 면세 상품일 경우 해당만큼의 금액을 설정
+    public Double price; // 결제할 상품금액
+    public Double taxFree; // 면세 상품일 경우 해당만큼의 금액을 설정
 
     public String webhookUrl; // webhook 통지시 받으실 url 주소 (localhost 사용 불가)
     public String contentType; // webhook 통지시 받으실 데이터 타입 (application/json 또는 application/x-www-form-urlencoded 선택)

@@ -2,16 +2,13 @@ package kr.co.bootpay.store.layer;
 
 
 import kr.co.bootpay.store.BootpayStore;
-import kr.co.bootpay.store.BootpayStoreResponse;
+import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUser;
-import kr.co.bootpay.store.model.request.UserListParams;
+import kr.co.bootpay.store.model.request.user.UserListParams;
 import kr.co.bootpay.store.service.users.SUserAuthenticateService;
 import kr.co.bootpay.store.service.users.SUserJoinService;
 import kr.co.bootpay.store.service.users.SUserLoginService;
 import kr.co.bootpay.store.service.users.SUserService;
-
-import java.util.HashMap;
-import java.util.Optional;
 
 public class User {
     private final BootpayStore bootpay;

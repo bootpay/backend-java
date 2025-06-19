@@ -17,16 +17,16 @@ public class SOrderSubscriptionAction {
     public String approvalMessage;
 
     // 돈 계산 관련
-    public double cancelFee;
-    public double cancelFeeTaxFree;
-    public double fixedCancelFee;
-    public double fixedCancelFeeTaxFree;
-    public double extendFee;
-    public double extendFeeTaxFree;
-    public double returnFee;
-    public double returnFeeTaxFree;
-    public double purchaseFee;
-    public double purchaseFeeTaxFree;
+    public Double cancelFee;
+    public Double cancelFeeTaxFree;
+    public Double fixedCancelFee;
+    public Double fixedCancelFeeTaxFree;
+    public Double extendFee;
+    public Double extendFeeTaxFree;
+    public Double returnFee;
+    public Double returnFeeTaxFree;
+    public Double purchaseFee;
+    public Double purchaseFeeTaxFree;
 
     public int status;
 

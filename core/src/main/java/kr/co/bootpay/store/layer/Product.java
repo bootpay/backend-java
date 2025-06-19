@@ -2,14 +2,13 @@ package kr.co.bootpay.store.layer;
 
 
 import kr.co.bootpay.store.BootpayStore;
-import kr.co.bootpay.store.BootpayStoreResponse;
+import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SProduct;
-import kr.co.bootpay.store.model.request.ProductListParams;
+import kr.co.bootpay.store.model.request.product.ProductListParams;
 import kr.co.bootpay.store.model.request.product.ProductStatusParams;
 import kr.co.bootpay.store.service.products.SProductService;
 
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 
 public class Product {

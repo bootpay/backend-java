@@ -17,8 +17,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 
-import kr.co.bootpay.store.BootpayStoreResponse;
-
 public class Main {
 
     static Bootpay bootpay;
@@ -135,7 +133,7 @@ public class Main {
         payload.billingKey = "66541c40419d33cdcb43e268";
 
         payload.orderName = "아이템01";
-        payload.price = 100;
+        payload.price = 100.0;
         payload.user = new User();
         payload.user.phone = "01012345678";
         payload.orderId = "" + (System.currentTimeMillis() / 1000);
@@ -158,7 +156,7 @@ public class Main {
 
         payload.billingKey = "66541c40419d33cdcb43e268";
         payload.orderName = "아이템01";
-        payload.price = 1000;
+        payload.price = 1000.0;
         payload.orderId = "" + (System.currentTimeMillis() / 1000);
         payload.metadata.put("0", "1234");
         payload.metadata.put("1", "5678");
@@ -436,7 +434,7 @@ public class Main {
     public static void cashReceipt() {
         CashReceipt cashReceipt = new CashReceipt();
         cashReceipt.pg = "토스";
-        cashReceipt.price = 1000;
+        cashReceipt.price = 1000.0;
         cashReceipt.orderName = "테스트";
         cashReceipt.cashReceiptType = "소득공제";
         cashReceipt.identityNo = "01000000000";
@@ -638,7 +636,7 @@ public class Main {
             WalletPayload payload = new WalletPayload();
             payload.userId = "bootpay";
             payload.orderName = "테스트 결제";
-            payload.price = 100;
+            payload.price = 100.0;
             payload.orderId = "" + (System.currentTimeMillis() / 1000);
             payload.sandbox = true;
             payload.user = new User();
