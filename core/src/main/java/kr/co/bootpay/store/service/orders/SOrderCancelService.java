@@ -4,8 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStoreObject;
-import kr.co.bootpay.store.BootpayStoreResponse;
-import kr.co.bootpay.store.model.request.order.OrderListParams;
+import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelActionParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelListParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelParams;
@@ -21,7 +20,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 public class SOrderCancelService {

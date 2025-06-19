@@ -26,8 +26,8 @@ public class SStore {
     public boolean useRealtimeOrder;
     public List<String> realtimeOrderAvailableTime; // 실시간 주문 가능 시간
     public List<Integer> realtimeOrderAvailableDay; // 실시간 주문 가능 요일
-    public double realtimeRadius; // 실시간 주문 반경 (km, 0이면 무제한)
-    public double realtimeMinimumOrderAmount; // 실시간 주문 최소 주문 금액 (0이면 무제한)
+    public Double realtimeRadius; // 실시간 주문 반경 (km, 0이면 무제한)
+    public Double realtimeMinimumOrderAmount; // 실시간 주문 최소 주문 금액 (0이면 무제한)
     public int realtimeRequiredTime; // 메뉴당 최대 준비 시간 (분)
     public String realtimeMemo; // 실시간 주문 메모 (사용자에게 노출)
 
@@ -35,7 +35,7 @@ public class SStore {
     public boolean useReservation;
     public List<String> reservationAvailableTime; // 예약 주문 가능 시간
     public List<Integer> reservationAvailableDay; // 예약 주문 가능 요일
-    public double reservationMinimumOrderPrice; // 예약 주문 최소 주문 금액 (0이면 무제한)
+    public Double reservationMinimumOrderPrice; // 예약 주문 최소 주문 금액 (0이면 무제한)
     public String reservationMemo; // 예약 주문 메모 (사용자에게 노출)
 
     public Map<String, Object> metadata; // 메타데이터 (예: {"parking": false, "wifi": true, "valet": true})

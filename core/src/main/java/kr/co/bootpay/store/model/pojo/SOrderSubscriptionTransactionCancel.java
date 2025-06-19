@@ -13,9 +13,9 @@ public class SOrderSubscriptionTransactionCancel {
     public String orderSubscriptionTransactionId;
 
     // 결제 취소 관련 정보
-    public double price;
-    public double taxFreePrice;
-    public double fee;
+    public Double price;
+    public Double taxFreePrice;
+    public Double fee;
 
     // 취소 요청 정보
     public String requester;
@@ -29,8 +29,8 @@ public class SOrderSubscriptionTransactionCancel {
     public String revokedReason;
 
     // 배송비 변동 금액
-    public double amountDeliveryFee;
-    public double discountPrice;
+    public Double amountDeliveryFee;
+    public Double discountPrice;
 
     // 승인 및 거절 정보
     public String adminName;

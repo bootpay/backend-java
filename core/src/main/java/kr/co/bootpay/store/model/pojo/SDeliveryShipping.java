@@ -21,11 +21,11 @@ public class SDeliveryShipping {
     public int feeType; // Const.DELIVERY_FEE_TYPE_FREE
     public int feePayType; // Const.FEE_PAY_TYPE_PREPAID
 
-    public double baseFee;
-    public double areaJejuFee;
-    public double areaRemoteFee;
-    public double freeShippingThreshold;
-    public double weightSurchargeThreshold;
+    public Double baseFee;
+    public Double areaJejuFee;
+    public Double areaRemoteFee;
+    public Double freeShippingThreshold;
+    public Double weightSurchargeThreshold;
 
     public int expectedDeliveryPeriodType;
     public String expectedDeliveryDirectInput;
@@ -35,8 +35,8 @@ public class SDeliveryShipping {
     public String pickupAddressId;
 
     public int claimReturnType; // Const.DELIVERY_METHOD_RETURN_INDIVIDUAL
-    public double claimReturnDeliveryFee;
-    public double claimExchangeDeliveryFee;
+    public Double claimReturnDeliveryFee;
+    public Double claimExchangeDeliveryFee;
     public String claimReturnDeliveryCompanyCode;
 
     public int status; // Const.ABLE

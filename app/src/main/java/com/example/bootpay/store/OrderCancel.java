@@ -1,13 +1,11 @@
 package com.example.bootpay.store;
 
 import kr.co.bootpay.store.BootpayStore;
-import kr.co.bootpay.store.BootpayStoreResponse;
+import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelActionParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelListParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelParams;
-
-import java.util.HashMap;
 
 
 public class OrderCancel {
@@ -48,8 +46,7 @@ public class OrderCancel {
         try {
             OrderCancelListParams params = new OrderCancelListParams();
             params.orderNumber = "25061041373033253116";
-    //          params.userId = "67c9428f7b47af25bee631e7"; // 특정 고객으로 조회
-    //            params.userGroupId = "67c9428f7b47af25bee631e8"; // 그룹으로 조회, user_group_id가 법인 일 경우 해당 법인의 주문내역이 조호됨
+    //          params.orderId = "67c9428f7b47af25bee631e7"; // 고유 주문번호로 조회
 
             BootpayStoreResponse res = bootpayStore.orderCancel.list(params);
             if(res.isSuccess()) {
@@ -66,7 +63,7 @@ public class OrderCancel {
     public static void request() {
         OrderCancelParams params = new OrderCancelParams();
         params.orderNumber = "25060971162205013115";
-        params.requestCancelParameters.cancelPrice = 300;
+        params.requestCancelParameters.cancelPrice = 300.0;
 
         try {
             BootpayStoreResponse res = bootpayStore.orderCancel.request(params);

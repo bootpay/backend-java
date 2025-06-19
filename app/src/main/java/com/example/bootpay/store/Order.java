@@ -1,11 +1,9 @@
 package com.example.bootpay.store;
 
 import kr.co.bootpay.store.BootpayStore;
-import kr.co.bootpay.store.BootpayStoreResponse;
+import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.request.order.OrderListParams;
-
-import java.util.HashMap;
 
 
 public class Order {

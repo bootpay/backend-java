@@ -1,15 +1,13 @@
 package com.example.bootpay.store;
 
 import kr.co.bootpay.store.BootpayStore;
-import kr.co.bootpay.store.BootpayStoreResponse;
+import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.TokenPayload;
-import kr.co.bootpay.store.model.request.ProductListParams;
+import kr.co.bootpay.store.model.request.product.ProductListParams;
 import kr.co.bootpay.store.model.request.product.ProductStatusParams;
 import kr.co.bootpay.store.model.pojo.SProduct;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -54,7 +52,7 @@ public class Product {
 
             SProduct product = new SProduct();
             product.name = "테스트 상품";
-            product.displayPrice = 1000;
+            product.displayPrice = 1000.0;
 
             BootpayStoreResponse res = bootpayStore.product.create(product, imagePaths);
             if(res.isSuccess()) {
@@ -88,7 +86,7 @@ public class Product {
             SProduct product = new SProduct();
             product.productId = "67e4b4425ec892162491d0ec";
             product.name = "수정된 상품명";
-            product.displayPrice = 2000;
+            product.displayPrice = 2000.0;
 
             BootpayStoreResponse res = bootpayStore.product.update(product);
             if(res.isSuccess()) {

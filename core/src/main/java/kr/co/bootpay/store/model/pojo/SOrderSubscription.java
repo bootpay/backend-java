@@ -22,11 +22,11 @@ public class SOrderSubscription {
     public int quantity = 1;
     public boolean isFirstPrepaid;
 
-    public double oneUnitPrice;
-    public double oneUnitTaxFreePrice;
-    public double price;
-    public double taxFreePrice;
-    public double setupPrice;
+    public Double oneUnitPrice;
+    public Double oneUnitTaxFreePrice;
+    public Double price;
+    public Double taxFreePrice;
+    public Double setupPrice;
 
     public int unit;
     public String orderName;

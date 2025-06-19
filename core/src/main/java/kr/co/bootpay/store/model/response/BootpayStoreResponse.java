@@ -1,4 +1,4 @@
-package kr.co.bootpay.store;
+package kr.co.bootpay.store.model.response;
 
 import java.util.HashMap;
 import java.util.List;

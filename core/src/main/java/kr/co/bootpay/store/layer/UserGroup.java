@@ -2,12 +2,10 @@ package kr.co.bootpay.store.layer;
 
 
 import kr.co.bootpay.store.BootpayStore;
-import kr.co.bootpay.store.BootpayStoreResponse;
+import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUserGroup;
-import kr.co.bootpay.store.model.request.UserGroupListParams;
+import kr.co.bootpay.store.model.request.userGroup.UserGroupListParams;
 import kr.co.bootpay.store.service.user_groups.SUserGroupService;
-
-import java.util.HashMap;
 
 public class UserGroup {
     private final BootpayStore bootpay;

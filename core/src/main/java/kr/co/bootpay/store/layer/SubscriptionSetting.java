@@ -2,13 +2,10 @@ package kr.co.bootpay.store.layer;
 
 
 import kr.co.bootpay.store.BootpayStore;
-import kr.co.bootpay.store.BootpayStoreResponse;
+import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SSubscriptionSetting;
 import kr.co.bootpay.store.model.request.ListParams;
 import kr.co.bootpay.store.service.subscription_setting.SSubscriptionSettingService;
-
-import java.util.HashMap;
-import java.util.Optional;
 
 public class SubscriptionSetting {
     private final BootpayStore bootpay;

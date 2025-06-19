@@ -3,6 +3,7 @@ package kr.co.bootpay.store;
 
 import kr.co.bootpay.store.layer.*;
 import kr.co.bootpay.store.model.request.TokenPayload;
+import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.service.STokenService;
 
 import java.util.HashMap;

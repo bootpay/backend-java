@@ -18,10 +18,10 @@ public class SOrder {
     public int currency; // 통화 (예: KRW, USD 등)
     public boolean isSubscription; // 정기결제 여부
     public boolean isLeaf; // 단일 주문 여부
-    public double totalPrice; // 총 가격
-    public double taxFreePrice; // 비과세 금액
-    public double discountAmount; // 할인 금액
-    public double deliveryPrice; // 배송비
+    public Double totalPrice; // 총 가격
+    public Double taxFreePrice; // 비과세 금액
+    public Double discountAmount; // 할인 금액
+    public Double deliveryPrice; // 배송비
     public String paymentMethod; // 결제 수단 (카드, 가상계좌, 포인트 등)
     public String receiptId; // 결제 완료된 경우 영수증 ID
     public String webhookUrl; // 웹훅 URL

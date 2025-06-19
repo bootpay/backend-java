@@ -13,7 +13,7 @@ public class SSubscriptionSetting {
     public int type = 1; // Const::SUBSCRIPTION_TYPE_REGULAR
 
     public boolean useSetupFee = false;
-    public double setupFeeValue = 0;
+    public Double setupFeeValue = 0.0;
     public int setupFeeType = 0; // Const::UNIT_TYPE_FIXED_PRICE
     public String setupFeeName;
     public String setupFeeText = "초기비용";
@@ -22,7 +22,7 @@ public class SSubscriptionSetting {
 
     public boolean useFirstDiscount = false;
     public int firstDiscountType = 0; // Const::UNIT_TYPE_FIXED_PRICE
-    public double firstDiscountValue = 0;
+    public Double firstDiscountValue = 0.0;
 
     public boolean useApplyCoupon = false;
     public boolean useApplyPoint = false;
@@ -45,7 +45,7 @@ public class SSubscriptionSetting {
 
     public boolean useLateFee = false;
     public int lateFeeType = 1; // Const::LATE_FEE_TYPE_SINGLE
-    public double lateFeeValue = 0;
+    public Double lateFeeValue = 0.0;
     public int lateFeeValueType = 0;
     public int lateFeeDate = 1;
     public String lateFeeText = "연체료";
@@ -86,23 +86,23 @@ public class SSubscriptionSetting {
     public boolean useExpiredReturnFee = false;
     public boolean useExpiredReturnFeeAuto = false;
     public int expiredReturnFeeType = 0;
-    public double expiredReturnFeeValue = 0;
+    public Double expiredReturnFeeValue = 0.0;
 
     public boolean useExpiredPurchase = false;
     public boolean useExpiredPurchaseFee = false;
     public boolean useExpiredPurchaseFeeAuto = false;
     public int expiredPurchaseFeeType = 0;
-    public double expiredPurchaseFeeValue = 0;
+    public Double expiredPurchaseFeeValue = 0.0;
 
     public boolean useExpiredExtend = false;
     public boolean useExpiredExtendFee = false;
     public boolean useExpiredExtendFeeAuto = false;
     public int expiredExtendFeeType = 0;
-    public double expiredExtendFeeValue = 0;
+    public Double expiredExtendFeeValue = 0.0;
 
     public boolean useExpiredExtendSale = false;
     public int expiredExtendSaleType = 0;
-    public double expiredExtendSaleValue = 0;
+    public Double expiredExtendSaleValue = 0.0;
 
     public String templateName;
     public int status = 1;
