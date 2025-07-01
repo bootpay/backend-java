@@ -1,9 +1,15 @@
 package com.example.bootpay.store;
 
 import kr.co.bootpay.store.BootpayStore;
+import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionListParams;
+import kr.co.bootpay.store.model.request.orderSubscriptionBill.OrderSubscriptionBillListParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.pojo.SOrderSubscriptionBill;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class OrderSubscriptionBill {
@@ -14,7 +20,7 @@ public class OrderSubscriptionBill {
             TokenPayload tokenPayload = new TokenPayload("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
             getToken();
-    //        list();
+            list();
     //        detail();
     //        update();
         } catch (Exception e) {
@@ -37,7 +43,11 @@ public class OrderSubscriptionBill {
 
     public static void list() {
         try {
-            BootpayStoreResponse res = bootpayStore.orderSubscriptionBill.list(null);
+            OrderSubscriptionBillListParams params = new OrderSubscriptionBillListParams();
+            params.orderSubscriptionId = "685b7b10b0eacea5cd974a93";
+            params.status = List.of(1);
+
+            BootpayStoreResponse res = bootpayStore.orderSubscriptionBill.list(params);
             if(res.isSuccess()) {
                 System.out.println("orderSubscriptionBill list success: " + res.getData());
             } else {

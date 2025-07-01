@@ -1,52 +1,55 @@
 package kr.co.bootpay.store.service.order_subscriptions;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionListParams;
+import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionUpdateParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.ListParams;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.NameValuePair;
 
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class SOrderSubscriptionService {
-    static public BootpayStoreResponse list(BootpayStoreObject bootpay, ListParams params) throws Exception {
+    static public BootpayStoreResponse list(BootpayStoreObject bootpay, OrderSubscriptionListParams params) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
         HttpClient client = HttpClientBuilder.create().build();
 
-        // 파라미터 맵 초기화
-        Map<String, Object> payload = new HashMap<>();
-        if (params.keyword != null) payload.put("keyword", params.keyword);
-        if (params.page != null) payload.put("page", params.page);
-        if (params.limit != null) payload.put("limit", params.limit);
+        String url = "order_subscriptions";
+        if(params != null) {
+            List<NameValuePair> nameValuePairList = new ArrayList<>();
+            if(params.sAt != null) nameValuePairList.add(new BasicNameValuePair("s_at", params.sAt));
+            if(params.eAt != null) nameValuePairList.add(new BasicNameValuePair("e_at", params.eAt));
 
-        // 파라미터를 URL 쿼리 문자열로 변환
-        StringBuilder query = new StringBuilder("order_subscriptions?");
-        for (Map.Entry<String, Object> entry : payload.entrySet()) {
-            String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
-            query.append(entry.getKey()).append("=").append(encodedValue).append("&");
-//            query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+            if(params.requestType != null) nameValuePairList.add(new BasicNameValuePair("request_type", params.eAt));
+            if(params.userGroupId != null) nameValuePairList.add(new BasicNameValuePair("user_group_id", params.userGroupId));
+            if(params.userId != null) nameValuePairList.add(new BasicNameValuePair("user_id", params.userId));
+
+            if(params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
+            if(params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
+            if(params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
+
+            HttpGet get = bootpay.httpGet(url, nameValuePairList);
+            HttpResponse response = client.execute(get);
+            return bootpay.responseToJsonObject(response);
+        } else {
+            HttpGet get = bootpay.httpGet(url);
+            HttpResponse response = client.execute(get);
+            return bootpay.responseToJsonObject(response);
         }
-
-        // 마지막 '&' 제거
-        if (query.charAt(query.length() - 1) == '&') {
-            query.deleteCharAt(query.length() - 1);
-        }
-
-        // GET 요청 객체 생성
-        HttpGet get = bootpay.httpGet(query.toString());
-
-        // HTTP 요청 전송 및 응답 수신
-        HttpResponse response = client.execute(get);
-        return bootpay.responseToJsonObject(response);
-//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
 
@@ -60,7 +63,26 @@ public class SOrderSubscriptionService {
 
         HttpResponse response = client.execute(get);
         return bootpay.responseToJsonObject(response);
-//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+    }
+
+    static public BootpayStoreResponse update(BootpayStoreObject bootpay, OrderSubscriptionUpdateParams params) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+        if(params == null) {
+            throw new Exception("params 값이 비어있습니다");
+        }
+        if(params.orderSubscriptionId == null || params.orderSubscriptionId.isEmpty()) {
+            throw new Exception("order_subscription_id 값이 비어있습니다");
+        }
+        HttpClient client = HttpClientBuilder.create().build();
+
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+        HttpPut put = bootpay.httpPut("order_subscriptions/" + params.orderSubscriptionId, new StringEntity(gson.toJson(params), "UTF-8"));
+
+        HttpResponse response = client.execute(put);
+        return bootpay.responseToJsonObject(response);
     }
 }
