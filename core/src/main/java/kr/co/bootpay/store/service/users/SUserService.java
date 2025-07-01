@@ -28,9 +28,6 @@ static public BootpayStoreResponse list(BootpayStoreObject bootpay, UserListPara
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
-        Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .create();
 
         String url = "users";
         if(params != null) {

@@ -17,10 +17,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.NameValuePair;
 
 import java.io.File;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.*;
 
 public class SProductService {
@@ -85,51 +86,26 @@ public class SProductService {
 
         HttpClient client = HttpClientBuilder.create().build();
 
-        // 파라미터 맵 초기화
-        Map<String, Object> payload = new HashMap<>();
+        String url = "products";
         if(params != null) {
-            if (params.type != null) payload.put("type", params.type);
-            if (params.periodType != null) payload.put("period_type", params.periodType);
-            if (params.sAt != null) payload.put("s_at", params.sAt);
-            if (params.eAt != null) payload.put("e_at", params.eAt);
-            if (params.categoryCode != null) payload.put("category_code", params.categoryCode);
-            if (params.keyword != null) payload.put("keyword", params.keyword);
-            if (params.page != null) payload.put("page", params.page);
-            if (params.limit != null) payload.put("limit", params.limit);
+            List<NameValuePair> nameValuePairList = new ArrayList<>();
+            if (params.type != null) nameValuePairList.add(new BasicNameValuePair("type", params.type.toString()));
+            if (params.periodType != null) nameValuePairList.add(new BasicNameValuePair("period_type", params.periodType));
+            if (params.sAt != null) nameValuePairList.add(new BasicNameValuePair("s_at", params.sAt));
+            if (params.eAt != null) nameValuePairList.add(new BasicNameValuePair("e_at", params.eAt));
+            if (params.categoryCode != null) nameValuePairList.add(new BasicNameValuePair("category_code", params.categoryCode));
+            if (params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
+            if (params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
+            if (params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
+
+            HttpGet get = bootpay.httpGet(url, nameValuePairList);
+            HttpResponse response = client.execute(get);
+            return bootpay.responseToJsonObject(response);
+        } else {
+            HttpGet get = bootpay.httpGet(url);
+            HttpResponse response = client.execute(get);
+            return bootpay.responseToJsonObject(response);
         }
-
-
-
-        // 파라미터를 URL 쿼리 문자열로 변환
-        StringBuilder query = new StringBuilder("products?");
-        for (Map.Entry<String, Object> entry : payload.entrySet()) {
-            String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
-            query.append(entry.getKey()).append("=").append(encodedValue).append("&");
-//            query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
-        }
-
-        // 마지막 '&' 제거
-        if (query.charAt(query.length() - 1) == '&') {
-            query.deleteCharAt(query.length() - 1);
-        }
-
-        // GET 요청 객체 생성
-        HttpGet get = bootpay.httpGet(query.toString());
-
-        // HTTP 요청 전송 및 응답 수신
-        HttpResponse response = client.execute(get);
-        return bootpay.responseToJsonObject(response);
-//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
-
-//        Type resType = new TypeToken<HashMap<String, Object>>(){}.getType();
-//        HashMap<String, Object> result = new Gson().fromJson(str, resType);
-//        if(result == null) {
-//            result = new HashMap<>();
-//        }
-//
-//        result.put("http_status", response.getStatusLine().getStatusCode());
-//        return result;
     }
 
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String productId) throws Exception {

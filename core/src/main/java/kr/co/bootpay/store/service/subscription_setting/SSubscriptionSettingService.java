@@ -15,9 +15,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.NameValuePair;
 
-import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class SSubscriptionSettingService {
@@ -25,33 +27,21 @@ public class SSubscriptionSettingService {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
-        // 파라미터 맵 초기화
-        Map<String, Object> payload = new HashMap<>();
-        if (params.keyword != null) payload.put("keyword", params.keyword);
-        if (params.page != null) payload.put("page", params.page);
-        if (params.limit != null) payload.put("limit", params.limit);
+        String url = "subscription_settings";
+        if(params != null) {
+            List<NameValuePair> nameValuePairList = new ArrayList<>();
+            if (params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
+            if (params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
+            if (params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
 
-        // 파라미터를 URL 쿼리 문자열로 변환
-        StringBuilder query = new StringBuilder("subscription_settings?");
-        for (Map.Entry<String, Object> entry : payload.entrySet()) {
-            String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
-            query.append(entry.getKey()).append("=").append(encodedValue).append("&");
-//            query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+            HttpGet get = bootpay.httpGet(url, nameValuePairList);
+            HttpResponse response = client.execute(get);
+            return bootpay.responseToJsonObject(response);
+        } else {
+            HttpGet get = bootpay.httpGet(url);
+            HttpResponse response = client.execute(get);
+            return bootpay.responseToJsonObject(response);
         }
-
-        // 마지막 '&' 제거
-        if (query.charAt(query.length() - 1) == '&') {
-            query.deleteCharAt(query.length() - 1);
-        }
-
-        // GET 요청 객체 생성
-        HttpGet get = bootpay.httpGet(query.toString());
-
-        // HTTP 요청 전송 및 응답 수신
-        HttpResponse response = client.execute(get);
-        return bootpay.responseToJsonObject(response);
-//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
     static public BootpayStoreResponse create(BootpayStoreObject bootpay, SSubscriptionSetting subscriptionSetting) throws Exception {

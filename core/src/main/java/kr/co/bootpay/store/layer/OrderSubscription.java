@@ -2,6 +2,8 @@ package kr.co.bootpay.store.layer;
 
 
 import kr.co.bootpay.store.BootpayStore;
+import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionListParams;
+import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionUpdateParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.ListParams;
 import kr.co.bootpay.store.service.order_subscriptions.SOrderSubscriptionService;
@@ -13,7 +15,7 @@ public class OrderSubscription {
         this.bootpay = bootpay;
     }
 
-    public BootpayStoreResponse list(ListParams params)  throws Exception {
+    public BootpayStoreResponse list(OrderSubscriptionListParams params)  throws Exception {
         return SOrderSubscriptionService.list(
                 bootpay,
                 params
@@ -21,5 +23,9 @@ public class OrderSubscription {
     }
     public BootpayStoreResponse detail(String orderSubscriptionId) throws Exception {
         return SOrderSubscriptionService.detail(bootpay, orderSubscriptionId);
+    }
+
+    public BootpayStoreResponse update(OrderSubscriptionUpdateParams params) throws Exception {
+        return SOrderSubscriptionService.update(bootpay, params);
     }
 }

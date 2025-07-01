@@ -8,10 +8,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.NameValuePair;
 
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -24,48 +25,36 @@ public class SOrderService {
 
         HttpClient client = HttpClientBuilder.create().build();
 
-        // 파라미터 맵 초기화
-        Map<String, Object> payload = new HashMap<>();
-        if (params.keyword != null) payload.put("keyword", params.keyword);
-        if (params.csType != null) payload.put("cs_type", params.csType);
-        if (params.cssAt != null) payload.put("css_at", params.cssAt);
-        if (params.cseAt != null) payload.put("cse_at", params.cseAt);
-        if (params.page != null) payload.put("page", params.page);
-        if (params.limit != null) payload.put("limit", params.limit);
-        if (params.userId != null) payload.put("user_id", params.userId);
-        if (params.userGroupId != null) payload.put("user_group_id", params.userGroupId);
+        String url = "orders";
+        if(params != null) {
+            List<NameValuePair> nameValuePairList = new ArrayList<>();
+            if (params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
+            if (params.csType != null) nameValuePairList.add(new BasicNameValuePair("cs_type", params.csType));
+            if (params.cssAt != null) nameValuePairList.add(new BasicNameValuePair("css_at", params.cssAt));
+            if (params.cseAt != null) nameValuePairList.add(new BasicNameValuePair("cse_at", params.cseAt));
+            if (params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
+            if (params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
+            if (params.userId != null) nameValuePairList.add(new BasicNameValuePair("user_id", params.userId));
+            if (params.userGroupId != null) nameValuePairList.add(new BasicNameValuePair("user_group_id", params.userGroupId));
 
-        if (params.status != null && !params.status.isEmpty()) {
-            String joined = params.status.stream().map(String::valueOf).collect(Collectors.joining(","));
-            payload.put("status", joined);
+            if (params.status != null && !params.status.isEmpty()) {
+                String joined = params.status.stream().map(String::valueOf).collect(Collectors.joining(","));
+                nameValuePairList.add(new BasicNameValuePair("status", joined));
+            }
+
+            if (params.paymentStatus != null && !params.paymentStatus.isEmpty()) {
+                String joined = params.paymentStatus.stream().map(String::valueOf).collect(Collectors.joining(","));
+                nameValuePairList.add(new BasicNameValuePair("payment_status", joined));
+            }
+
+            HttpGet get = bootpay.httpGet(url, nameValuePairList);
+            HttpResponse response = client.execute(get);
+            return bootpay.responseToJsonObject(response);
+        } else {
+            HttpGet get = bootpay.httpGet(url);
+            HttpResponse response = client.execute(get);
+            return bootpay.responseToJsonObject(response);
         }
-
-        if (params.paymentStatus != null && !params.paymentStatus.isEmpty()) {
-            String joined = params.paymentStatus.stream().map(String::valueOf).collect(Collectors.joining(","));
-            payload.put("payment_status", joined);
-        }
-
-        // 파라미터를 URL 쿼리 문자열로 변환
-        StringBuilder query = new StringBuilder("orders?");
-        for (Map.Entry<String, Object> entry : payload.entrySet()) {
-            String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
-            query.append(entry.getKey()).append("=").append(encodedValue).append("&");
-//            query.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
-        }
-
-        // 마지막 '&' 제거
-        if (query.charAt(query.length() - 1) == '&') {
-            query.deleteCharAt(query.length() - 1);
-        }
-
-        // GET 요청 객체 생성
-        HttpGet get = bootpay.httpGet(query.toString());
-
-        // HTTP 요청 전송 및 응답 수신
-        HttpResponse response = client.execute(get);
-        return bootpay.responseToJsonObject(response);
-//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String orderId) throws Exception {
