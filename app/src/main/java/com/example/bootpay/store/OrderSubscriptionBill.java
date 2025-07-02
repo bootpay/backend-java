@@ -20,8 +20,8 @@ public class OrderSubscriptionBill {
             TokenPayload tokenPayload = new TokenPayload("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
             getToken();
-            list();
-    //        detail();
+//            list();
+            detail();
     //        update();
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,7 +45,7 @@ public class OrderSubscriptionBill {
         try {
             OrderSubscriptionBillListParams params = new OrderSubscriptionBillListParams();
             params.orderSubscriptionId = "685b7b10b0eacea5cd974a93";
-            params.status = List.of(1);
+//            params.status = List.of(1);
 
             BootpayStoreResponse res = bootpayStore.orderSubscriptionBill.list(params);
             if(res.isSuccess()) {
@@ -60,7 +60,7 @@ public class OrderSubscriptionBill {
 
     public static void detail() {
         try {
-            BootpayStoreResponse res = bootpayStore.orderSubscriptionBill.detail("67e5100d5ec892162491d111");
+            BootpayStoreResponse res = bootpayStore.orderSubscriptionBill.detail("6863851f9ee6691f52f21fc1");
             if(res.isSuccess()) {
                 System.out.println("orderSubscriptionBill detail success: " + res.getData());
             } else {
