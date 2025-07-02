@@ -377,51 +377,51 @@ public class BootpayStoreObject {
         return put;
     }
 
-    public HashMap<String, Object> responseToJsonArray(HttpResponse response)  throws Exception {
-        HashMap<String, Object> result = new HashMap<>();
-        
-        int statusCode = response.getStatusLine().getStatusCode();
-        result.put("http_status", statusCode);
-        result.put("success", statusCode >= 200 && statusCode < 300);
-        
-        try {
-            // response.getEntity()가 null인지 확인
-            if (response.getEntity() == null) {
-                result.put("data", new ArrayList<>());
-                return result;
-            }
-            
-            // content가 null인지 확인
-            if (response.getEntity().getContent() == null) {
-                result.put("data", new ArrayList<>());
-                return result;
-            }
-            
-            String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-            
-            // 빈 문자열인지 확인
-            if (str == null || str.trim().isEmpty() || "null".equalsIgnoreCase(str.trim())) {
-                result.put("data", new ArrayList<>());
-                return result;
-            }
-
-            TypeReference<List<HashMap<String, Object>>> typeRef = new TypeReference<List<HashMap<String, Object>>>() {};
-            ObjectMapper mapper = new ObjectMapper();
-            List<HashMap<String, Object>> parsedData = mapper.readValue(str, typeRef);
-            if(parsedData == null) {
-                parsedData = new ArrayList<>();
-            }
-
-            result.put("data", parsedData);
-            
-        } catch (Exception e) {
-            // 예외가 발생해도 http_status와 success는 포함하고, data는 빈 배열로 설정
-            result.put("data", new ArrayList<>());
-            result.put("error", e.getMessage());
-        }
-        
-        return result;
-    }
+//    public HashMap<String, Object> responseToJsonArray(HttpResponse response)  throws Exception {
+//        HashMap<String, Object> result = new HashMap<>();
+//
+//        int statusCode = response.getStatusLine().getStatusCode();
+//        result.put("http_status", statusCode);
+//        result.put("success", statusCode >= 200 && statusCode < 300);
+//
+//        try {
+//            // response.getEntity()가 null인지 확인
+//            if (response.getEntity() == null) {
+//                result.put("data", new ArrayList<>());
+//                return result;
+//            }
+//
+//            // content가 null인지 확인
+//            if (response.getEntity().getContent() == null) {
+//                result.put("data", new ArrayList<>());
+//                return result;
+//            }
+//
+//            String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+//
+//            // 빈 문자열인지 확인
+//            if (str == null || str.trim().isEmpty() || "null".equalsIgnoreCase(str.trim())) {
+//                result.put("data", new ArrayList<>());
+//                return result;
+//            }
+//
+//            TypeReference<List<HashMap<String, Object>>> typeRef = new TypeReference<List<HashMap<String, Object>>>() {};
+//            ObjectMapper mapper = new ObjectMapper();
+//            List<HashMap<String, Object>> parsedData = mapper.readValue(str, typeRef);
+//            if(parsedData == null) {
+//                parsedData = new ArrayList<>();
+//            }
+//
+//            result.put("data", parsedData);
+//
+//        } catch (Exception e) {
+//            // 예외가 발생해도 http_status와 success는 포함하고, data는 빈 배열로 설정
+//            result.put("data", new ArrayList<>());
+//            result.put("error", e.getMessage());
+//        }
+//
+//        return result;
+//    }
 
     public BootpayStoreResponse responseToJsonObject(HttpResponse response) throws Exception {
         HashMap<String, Object> result = responseToJson(response);
@@ -434,31 +434,31 @@ public class BootpayStoreObject {
         return new BootpayStoreResponse(httpStatus, success, data, error);
     }
 
-    public BootpayStoreResponse responseToJsonArrayObject(HttpResponse response) throws Exception {
-        HashMap<String, Object> result = responseToJsonArray(response);
-        
-        int httpStatus = (Integer) result.get("http_status");
-        boolean success = (Boolean) result.get("success");
-        Object data = result.get("data");
-        String error = (String) result.get("error");
-        
-        return new BootpayStoreResponse(httpStatus, success, data, error);
-    }
+//    public BootpayStoreResponse responseToJsonArrayObject(HttpResponse response) throws Exception {
+//        HashMap<String, Object> result = responseToJsonArray(response);
+//
+//        int httpStatus = (Integer) result.get("http_status");
+//        boolean success = (Boolean) result.get("success");
+//        Object data = result.get("data");
+//        String error = (String) result.get("error");
+//
+//        return new BootpayStoreResponse(httpStatus, success, data, error);
+//    }
 
     public HashMap<String, Object> responseToJson(HttpResponse response)  throws Exception {
         HashMap<String, Object> result = new HashMap<>();
-        
+
         int statusCode = response.getStatusLine().getStatusCode();
         result.put("http_status", statusCode);
         result.put("success", statusCode >= 200 && statusCode < 300);
-        
+
         try {
             // response.getEntity()가 null인지 확인
             if (response.getEntity() == null) {
                 result.put("data", null);
                 return result;
             }
-            
+
             // content가 null인지 확인
             if (response.getEntity().getContent() == null || "null".equals(response.getEntity().getContent())) {
                 result.put("data", null);
@@ -467,7 +467,7 @@ public class BootpayStoreObject {
 
             String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
             System.out.println(str);
-            
+
             // 빈 문자열인지 확인
             if (str == null || str.trim().isEmpty() || "null".equalsIgnoreCase(str.trim())) {
                 result.put("data", null);
@@ -477,10 +477,10 @@ public class BootpayStoreObject {
             ObjectMapper mapper = new ObjectMapper();
             TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {};
             HashMap<String, Object> parsedData = mapper.readValue(str, typeRef);
-            
+
             // 파싱된 데이터를 data 키에 저장
             result.put("data", parsedData);
-            
+
         } catch (Exception e) {
             // 예외가 발생해도 http_status와 success는 포함하고, data는 null로 설정
             result.put("data", null);

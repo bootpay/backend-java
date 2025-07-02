@@ -2,6 +2,7 @@ package kr.co.bootpay.store;
 
 
 import kr.co.bootpay.store.layer.*;
+import kr.co.bootpay.store.model.pojo.SOrderSubscriptionAdjustment;
 import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.service.STokenService;
@@ -17,6 +18,10 @@ public class BootpayStore extends BootpayStoreObject {
     public OrderCancel orderCancel;
     public OrderSubscription orderSubscription;
     public OrderSubscriptionBill orderSubscriptionBill;
+
+    public OrderSubscriptionAdjustment orderSubscriptionAdjustment;
+
+
 
     public BootpayStore() {
         super();
@@ -42,6 +47,7 @@ public class BootpayStore extends BootpayStoreObject {
         this.orderCancel = new OrderCancel(this);
         this.orderSubscription = new OrderSubscription(this);
         this.orderSubscriptionBill = new OrderSubscriptionBill(this);
+        this.orderSubscriptionAdjustment = new OrderSubscriptionAdjustment(this);
     }
 
     //token

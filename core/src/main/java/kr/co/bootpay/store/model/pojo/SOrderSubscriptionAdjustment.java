@@ -4,10 +4,10 @@ package kr.co.bootpay.store.model.pojo;
 public class SOrderSubscriptionAdjustment {
 
     public String orderSubscriptionAdjustmentId;
-    public String chosenProductOptionId;
-    public String orderSubscriptionId;
-    public String orderSubscriptionBillId;
-    public String orderSubscriptionHistoryDataId;
+//    public String chosenProductOptionId;
+//    public String orderSubscriptionId;
+//    public String orderSubscriptionBillId;
+//    public String orderSubscriptionHistoryDataId;
 
     public int duration; // 결제 회차 (-1: 동일한 회차 결제, 양수: 회차별 할인/선결제 포함된 금액)
 
@@ -18,6 +18,18 @@ public class SOrderSubscriptionAdjustment {
 
     public String createdAt; // LocalDateTime → String 변환
 
+    public SOrderSubscriptionAdjustment() {
+    }
 
+    public SOrderSubscriptionAdjustment(String name, Double price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public SOrderSubscriptionAdjustment(String name, Double price, Double taxFreePrice) {
+        this.name = name;
+        this.price = price;
+        this.taxFreePrice = taxFreePrice;
+    }
 }
 
