@@ -6,6 +6,7 @@ import java.util.List;
 
 public class OrderListParams extends ListParams {
     public String csType;
+    public List<String> orderSubscriptionIds;
     public String cssAt;
     public String cseAt;
     public List<Integer> status;

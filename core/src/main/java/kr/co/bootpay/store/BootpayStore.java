@@ -18,7 +18,6 @@ public class BootpayStore extends BootpayStoreObject {
     public OrderCancel orderCancel;
     public OrderSubscription orderSubscription;
     public OrderSubscriptionBill orderSubscriptionBill;
-
     public OrderSubscriptionAdjustment orderSubscriptionAdjustment;
 
 

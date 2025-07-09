@@ -5,6 +5,8 @@ import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.request.order.OrderListParams;
 
+import java.util.List;
+
 
 public class Order {
 
@@ -18,7 +20,7 @@ public class Order {
 //        bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
             getToken();
             list();
-            detail();
+//            detail();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,6 +43,7 @@ public class Order {
     public static void list() {
         try {
             OrderListParams params = new OrderListParams();
+            params.orderSubscriptionIds = List.of("685b7b10b0eacea5cd974a93");
             params.cssAt = "2025-03-20"; // 검색 시작일
 
             BootpayStoreResponse res = bootpayStore.order.list(params);
