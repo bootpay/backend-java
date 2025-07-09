@@ -22,9 +22,9 @@ public class OrderSubscriptionAdjustment {
 //            list();
 //            detail();
     //        update();
-//            create();
+            create();
 //            update();
-            delete();
+//            delete();
         } catch (Exception e) {
             e.printStackTrace();
         }

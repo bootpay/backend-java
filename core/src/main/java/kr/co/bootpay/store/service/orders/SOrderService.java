@@ -47,6 +47,11 @@ public class SOrderService {
                 nameValuePairList.add(new BasicNameValuePair("payment_status", joined));
             }
 
+            if (params.orderSubscriptionIds != null && !params.orderSubscriptionIds.isEmpty()) {
+                String joined = params.orderSubscriptionIds.stream().map(String::valueOf).collect(Collectors.joining(","));
+                nameValuePairList.add(new BasicNameValuePair("order_subscription_ids", joined));
+            }
+
             HttpGet get = bootpay.httpGet(url, nameValuePairList);
             HttpResponse response = client.execute(get);
             return bootpay.responseToJsonObject(response);
