@@ -31,7 +31,24 @@ public class OrderSubscriptionRequestIng {
     public BootpayStoreResponse calculateTerminationFee(String orderSubscriptionId)  throws Exception {
         return SOrderSubscriptionRequestIngService.calculateTerminationFee(
                 bootpay,
-                orderSubscriptionId
+                orderSubscriptionId,
+                null
+        );
+    }
+
+    public BootpayStoreResponse calculateTerminationFee(String orderSubscriptionId, String orderNumber)  throws Exception {
+        return SOrderSubscriptionRequestIngService.calculateTerminationFee(
+                bootpay,
+                orderSubscriptionId,
+                orderNumber
+        );
+    }
+
+    public BootpayStoreResponse calculateTerminationFeeByOrderNumber(String orderNumber)  throws Exception {
+        return SOrderSubscriptionRequestIngService.calculateTerminationFee(
+                bootpay,
+                null,
+                orderNumber
         );
     }
 

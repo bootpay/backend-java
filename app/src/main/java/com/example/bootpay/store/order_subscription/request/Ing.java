@@ -1,6 +1,8 @@
 package com.example.bootpay.store.order_subscription.request;
 
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionPauseParams;
@@ -21,14 +23,13 @@ public class Ing {
             TokenPayload tokenPayload = new TokenPayload("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
             getToken();
-//            list();
 //            detail();
 //            pause();
 //            resume();
-            CalcTerminateFeeResponse response = calcTerminateFee();
-            if (response != null) {
-                termination(response);
-            }
+//            CalcTerminateFeeResponse response = calcTerminateFee();
+//            if (response != null) {
+//                termination(response);
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -94,11 +95,15 @@ public class Ing {
 
     public static CalcTerminateFeeResponse calcTerminateFee() {
         try {
-            String orderSubscriptionId = "686dc2f2b0eacea5cd974ca2";
+//            String orderSubscriptionId = "686f21edb0eacea5cd974d47";
+            String orderNumber = "25071005285051338174";
 
-            BootpayStoreResponse res = bootpayStore.orderSubscription.requestIng.calculateTerminationFee(orderSubscriptionId);
+            BootpayStoreResponse res = bootpayStore.orderSubscription.requestIng.calculateTerminationFeeByOrderNumber(orderNumber);
             if(res.isSuccess()) {
-                Gson gson = new Gson();
+                Gson gson = new GsonBuilder()
+                        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                        .create();
+
                 String json = gson.toJson(res.getData());
                 CalcTerminateFeeResponse response = gson.fromJson(json, CalcTerminateFeeResponse.class);
                 System.out.println("orderSubscription calcTerminateFee success: " + json);

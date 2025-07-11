@@ -20,6 +20,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,17 +62,44 @@ public class SOrderSubscriptionRequestIngService {
     }
 
 
-    static public BootpayStoreResponse calculateTerminationFee(BootpayStoreObject bootpay, String orderSubscriptionId) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
+    static public BootpayStoreResponse calculateTerminationFee(BootpayStoreObject bootpay, String orderSubscriptionId, String orderNumber) throws Exception {
+        // 토큰 유효성 검증
+        if (bootpay == null || bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new IllegalArgumentException("Bootpay 토큰이 비어있습니다.");
         }
 
+        // orderSubscriptionId 또는 orderNumber 중 하나는 필수
+        boolean hasOrderSubscriptionId = orderSubscriptionId != null && !orderSubscriptionId.trim().isEmpty();
+        boolean hasOrderNumber = orderNumber != null && !orderNumber.trim().isEmpty();
+
+        if (!hasOrderSubscriptionId && !hasOrderNumber) {
+            throw new IllegalArgumentException("orderSubscriptionId 또는 orderNumber 중 하나는 필수입니다.");
+        }
+
+        // URL 구성
+        StringBuilder url = new StringBuilder("order_subscriptions/requests/ing/calculate_termination_fee?");
+        if (hasOrderSubscriptionId) {
+            url.append("order_subscription_id=").append(URLEncoder.encode(orderSubscriptionId, StandardCharsets.UTF_8));
+        } else {
+            url.append("order_number=").append(URLEncoder.encode(orderNumber, StandardCharsets.UTF_8));
+        }
+
+        // 요청 실행
         HttpClient client = HttpClientBuilder.create().build();
-
-        HttpGet get = bootpay.httpGet("order_subscriptions/requests/ing/calculate_termination_fee?order_subscription_id=" + orderSubscriptionId);
-
+        HttpGet get = bootpay.httpGet(url.toString());
         HttpResponse response = client.execute(get);
+
         return bootpay.responseToJsonObject(response);
+    }
+
+    // 오버로드: orderNumber만 전달하는 경우
+    static public BootpayStoreResponse calculateTerminationFeeByOrderNumber(BootpayStoreObject bootpay, String orderNumber) throws Exception {
+        return calculateTerminationFee(bootpay, null, orderNumber);
+    }
+
+    // 오버로드: orderSubscriptionId만 전달하는 경우
+    static public BootpayStoreResponse calculateTerminationFeeBySubscriptionId(BootpayStoreObject bootpay, String orderSubscriptionId) throws Exception {
+        return calculateTerminationFee(bootpay, orderSubscriptionId, null);
     }
 
 
