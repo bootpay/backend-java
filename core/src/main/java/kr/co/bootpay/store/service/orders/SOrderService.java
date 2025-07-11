@@ -36,6 +36,7 @@ public class SOrderService {
             if (params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
             if (params.userId != null) nameValuePairList.add(new BasicNameValuePair("user_id", params.userId));
             if (params.userGroupId != null) nameValuePairList.add(new BasicNameValuePair("user_group_id", params.userGroupId));
+            if (params.subscriptionBillingType != null) nameValuePairList.add(new BasicNameValuePair("subscription_billing_type", params.subscriptionBillingType.toString()));
 
             if (params.status != null && !params.status.isEmpty()) {
                 String joined = params.status.stream().map(String::valueOf).collect(Collectors.joining(","));

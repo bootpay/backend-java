@@ -13,4 +13,10 @@ public class OrderListParams extends ListParams {
     public List<Integer> paymentStatus;
     public String userId;
     public String userGroupId;
+    public Integer subscriptionBillingType;
+
+    public static final int SUBSCRIPTION_BILLING_TYPE_NONE = 0; //구독결제 아님
+    public static final int SUBSCRIPTION_BILLING_TYPE_EACH = 1; //각각 결제
+    public static final int SUBSCRIPTION_BILLING_TYPE_GROUP = 2; //통합 결제
+
 }

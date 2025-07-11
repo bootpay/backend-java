@@ -43,8 +43,9 @@ public class Order {
     public static void list() {
         try {
             OrderListParams params = new OrderListParams();
-            params.orderSubscriptionIds = List.of("685b7b10b0eacea5cd974a93");
+//            params.orderSubscriptionIds = List.of("685b7b10b0eacea5cd974a93");
             params.cssAt = "2025-03-20"; // 검색 시작일
+            params.subscriptionBillingType = OrderListParams.SUBSCRIPTION_BILLING_TYPE_NONE;
 
             BootpayStoreResponse res = bootpayStore.order.list(params);
             if(res.isSuccess()) {
