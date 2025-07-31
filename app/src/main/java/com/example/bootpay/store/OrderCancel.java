@@ -17,7 +17,7 @@ public class OrderCancel {
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
             getToken();
             list();
-    //        request();
+            request();
     //        detail();
     //        orderCancel();
     //        withdraw();
@@ -46,7 +46,6 @@ public class OrderCancel {
         try {
             OrderCancelListParams params = new OrderCancelListParams();
             params.orderNumber = "25061041373033253116";
-    //          params.orderId = "67c9428f7b47af25bee631e7"; // 고유 주문번호로 조회
 
             BootpayStoreResponse res = bootpayStore.orderCancel.list(params);
             if(res.isSuccess()) {

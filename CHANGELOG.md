@@ -1,3 +1,6 @@
+### 3.0.2
+- store api 여러 기능 추가 
+- 
 ### 3.0.1
 - store api 사용법 변경
 - store 주문관리 api 추가 

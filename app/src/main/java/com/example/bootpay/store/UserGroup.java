@@ -1,6 +1,8 @@
 package com.example.bootpay.store;
 
 import kr.co.bootpay.store.BootpayStore;
+import kr.co.bootpay.store.model.request.userGroup.UserGroupAggregateTransactionParams;
+import kr.co.bootpay.store.model.request.userGroup.UserGroupLimitParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUserGroup;
 import kr.co.bootpay.store.model.request.TokenPayload;
@@ -15,12 +17,14 @@ public class UserGroup {
             TokenPayload tokenPayload = new TokenPayload("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
             getToken();
-        list();
+//        list();
 //        detail();
 //        update();
 //        create();
-        userCreate();
-        userDelete();
+//        userCreate();
+//        userDelete();
+//            updateLimit();
+            updateAggregateTransaction();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,7 +66,7 @@ public class UserGroup {
     public static void list() {
         try {
             UserGroupListParams params = new UserGroupListParams();
-            params.keyword = "테스트";
+//            params.keyword = "테스트";
 
             BootpayStoreResponse res = bootpayStore.userGroup.list(params);
             if(res.isSuccess()) {
@@ -77,11 +81,50 @@ public class UserGroup {
 
     public static void detail() {
         try {
-            BootpayStoreResponse res = bootpayStore.userGroup.detail("67e2052b03d0cb4e4117b0af");
+            BootpayStoreResponse res = bootpayStore.userGroup.detail("6850d49cb0eacea5cd97470a");
             if(res.isSuccess()) {
                 System.out.println("userGroup detail success: " + res.getData());
             } else {
                 System.out.println("userGroup detail false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateLimit() {
+        try {
+            UserGroupLimitParams params = new UserGroupLimitParams();
+            params.userGroupId = "6850d49cb0eacea5cd97470a";
+            params.useLimit = true;
+            params.purchaseLimit = 3000000.0;
+//            params.
+
+            BootpayStoreResponse res = bootpayStore.asManager().userGroup.limit(params);
+            if(res.isSuccess()) {
+                System.out.println("userGroup update success: " + res.getData());
+            } else {
+                System.out.println("userGroup update false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateAggregateTransaction() {
+        try {
+            UserGroupAggregateTransactionParams params = new UserGroupAggregateTransactionParams();
+            params.userGroupId = "6850d49cb0eacea5cd97470a";
+            params.useSubscriptionAggregateTransaction = true;
+            params.subscriptionMonthDay = 3;
+            params.subscriptionWeekDay = 3;
+
+
+            BootpayStoreResponse res = bootpayStore.asManager().userGroup.aggregateTransaction(params);
+            if(res.isSuccess()) {
+                System.out.println("userGroup update success: " + res.getData());
+            } else {
+                System.out.println("userGroup update false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();

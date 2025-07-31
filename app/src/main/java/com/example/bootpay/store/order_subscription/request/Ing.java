@@ -26,10 +26,10 @@ public class Ing {
 //            detail();
 //            pause();
 //            resume();
-//            CalcTerminateFeeResponse response = calcTerminateFee();
-//            if (response != null) {
-//                termination(response);
-//            }
+            CalcTerminateFeeResponse response = calcTerminateFee();
+            if (response != null) {
+                termination(response);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -95,8 +95,8 @@ public class Ing {
 
     public static CalcTerminateFeeResponse calcTerminateFee() {
         try {
-//            String orderSubscriptionId = "686f21edb0eacea5cd974d47";
-            String orderNumber = "25071005285051338174";
+//            String orderSubscriptionId = "68709fa0b0eacea5cd974f2d";
+            String orderNumber = "25071173847426287179";
 
             BootpayStoreResponse res = bootpayStore.orderSubscription.requestIng.calculateTerminationFeeByOrderNumber(orderNumber);
             if(res.isSuccess()) {

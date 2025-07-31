@@ -73,10 +73,6 @@ public class SOrderService {
         HttpGet get = bootpay.httpGet("orders/" + orderId);
 
         HttpResponse response = client.execute(get);
-
-        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-        System.out.println(str);
-
         return bootpay.responseToJsonObject(response);
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
