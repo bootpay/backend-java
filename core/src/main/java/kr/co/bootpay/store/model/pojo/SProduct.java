@@ -14,6 +14,8 @@ public class SProduct {
     public String brandId;
     public String manufacturerId;
 
+    public String exUid;
+
     public String name; // 상품명
     public String description; // 요약 설명
     public List<String> images; // 이미지 리스트

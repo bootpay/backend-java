@@ -19,8 +19,8 @@ public class Order {
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
 //        bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
             getToken();
-            list();
-//            detail();
+//            list();
+            detail();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,7 +60,7 @@ public class Order {
 
     public static void detail() {
         try {
-            String orderId = "6847e188008fa2aeebcce8da";
+            String orderId = "68707c59b0eacea5cd974efd";
             BootpayStoreResponse res = bootpayStore.order.detail(orderId);
             if(res.isSuccess()) {
                 System.out.println("order success: " + res.getData());

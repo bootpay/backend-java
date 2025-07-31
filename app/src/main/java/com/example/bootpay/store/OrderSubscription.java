@@ -15,7 +15,7 @@ public class OrderSubscription {
             TokenPayload tokenPayload = new TokenPayload("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
             getToken();
-//            list();
+            list();
 //            detail();
             update();
         } catch (Exception e) {
@@ -54,7 +54,8 @@ public class OrderSubscription {
 
     public static void detail() {
         try {
-            BootpayStoreResponse res = bootpayStore.orderSubscription.detail("67e5100c5ec892162491d108");
+            String orderSubscriptionId = "67e5100c5ec892162491d108";
+            BootpayStoreResponse res = bootpayStore.orderSubscription.detail(orderSubscriptionId);
             if(res.isSuccess()) {
                 System.out.println("orderSubscription detail success: " + res.getData());
             } else {
@@ -79,6 +80,14 @@ public class OrderSubscription {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void approve() {
+
+    }
+
+    public static void reject() {
+
     }
 }
 

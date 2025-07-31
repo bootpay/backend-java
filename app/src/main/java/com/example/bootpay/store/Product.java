@@ -19,7 +19,7 @@ public class Product {
             TokenPayload tokenPayload = new TokenPayload("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
             getToken();
-    //        create();
+            create();
     //        list();
     //        update();
     //        detail();
@@ -53,6 +53,7 @@ public class Product {
             SProduct product = new SProduct();
             product.name = "테스트 상품";
             product.displayPrice = 1000.0;
+            product.exUid = "1234";
 
             BootpayStoreResponse res = bootpayStore.product.create(product, imagePaths);
             if(res.isSuccess()) {

@@ -2,6 +2,8 @@ package kr.co.bootpay.store.layer;
 
 
 import kr.co.bootpay.store.BootpayStore;
+import kr.co.bootpay.store.model.request.userGroup.UserGroupAggregateTransactionParams;
+import kr.co.bootpay.store.model.request.userGroup.UserGroupLimitParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUserGroup;
 import kr.co.bootpay.store.model.request.userGroup.UserGroupListParams;
@@ -40,5 +42,13 @@ public class UserGroup {
 
     public BootpayStoreResponse userDelete(String userGroupId, String userId) throws Exception {
         return SUserGroupService.userDelete(bootpay, userGroupId, userId);
+    }
+
+    public BootpayStoreResponse limit(UserGroupLimitParams params) throws Exception {
+        return SUserGroupService.limit(bootpay, params);
+    }
+
+    public BootpayStoreResponse aggregateTransaction(UserGroupAggregateTransactionParams params) throws Exception {
+        return SUserGroupService.aggregateTransaction(bootpay, params);
     }
 }

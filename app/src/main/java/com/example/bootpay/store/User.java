@@ -17,14 +17,14 @@ public class User {
 
             getToken();
 //            joinIndividual();
-//            userToken();
+            userToken();
 //            joinCorporate();
 //            authByUserStandbyId();
 //            emailExist();
 //            idExist();
 //            phoneExist();
 //            groupBusinessNumberExist();
-            update();
+//            update();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,7 +116,7 @@ public class User {
 
     public static void emailExist() {
         try {
-            BootpayStoreResponse res = bootpay.user.checkExist("email-exist", "ehowlsla@bootpay.co.kr");
+            BootpayStoreResponse res = bootpay.withToken().user.checkExist("email-exist", "ehowlsla@bootpay.co.kr");
             if (res.isSuccess()) {
                 System.out.println("emailExist success: " + res.getData());
             } else {
