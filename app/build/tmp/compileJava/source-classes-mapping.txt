@@ -12,13 +12,13 @@ com/example/bootpay/store/order_subscription/request/Ing.java
  com.example.bootpay.store.order_subscription.request.Ing
 com/example/bootpay/store/Invoice.java
  com.example.bootpay.store.Invoice
+com/example/bootpay/store/UserGroup.java
+ com.example.bootpay.store.UserGroup
 com/example/bootpay/store/OrderSubscriptionBill.java
  com.example.bootpay.store.OrderSubscriptionBill
-com/example/bootpay/store/OrderSubscription.java
- com.example.bootpay.store.OrderSubscription
 com/example/bootpay/store/OrderSubscriptionAdjustment.java
  com.example.bootpay.store.OrderSubscriptionAdjustment
 com/example/bootpay/store/User.java
  com.example.bootpay.store.User
-com/example/bootpay/store/UserGroup.java
- com.example.bootpay.store.UserGroup
+com/example/bootpay/store/OrderSubscription.java
+ com.example.bootpay.store.OrderSubscription

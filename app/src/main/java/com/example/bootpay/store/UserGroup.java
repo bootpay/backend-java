@@ -23,8 +23,8 @@ public class UserGroup {
 //        create();
 //        userCreate();
 //        userDelete();
-//            updateLimit();
-            updateAggregateTransaction();
+            updateLimit();
+//            updateAggregateTransaction();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,7 +97,8 @@ public class UserGroup {
             UserGroupLimitParams params = new UserGroupLimitParams();
             params.userGroupId = "6850d49cb0eacea5cd97470a";
             params.useLimit = true;
-            params.purchaseLimit = 3000000.0;
+            params.limitMonthPurchase = 3500000.0;
+            params.limitWeekPurchase = 100000.0;
 //            params.
 
             BootpayStoreResponse res = bootpayStore.asManager().userGroup.limit(params);
