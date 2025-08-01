@@ -15,9 +15,9 @@ public class OrderSubscription {
             TokenPayload tokenPayload = new TokenPayload("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
             getToken();
-            list();
-//            detail();
-            update();
+//            list();
+            detail();
+//            update();
         } catch (Exception e) {
             e.printStackTrace();
         }
