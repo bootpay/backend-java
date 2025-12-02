@@ -5,7 +5,7 @@ echo "🚀 Central Portal 배포 시작..."
 echo "========================================"
 
 # 프로젝트 루트로 이동
-cd /Users/taesupyoon/bootpay/server/sdk/backend-java
+cd /Users/taesupyoon/bootpay/server/sdk/java
 
 echo "📦 Step 1: 기존 빌드 정리..."
 rm -rf core/build/repo

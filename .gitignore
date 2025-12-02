@@ -1,6 +1,11 @@
 .gradle
 .idea
 *.iml
+
+# Build 디렉토리
+build/
+*/build/
+app/build/
 core/build/
 
 # Eclipse 파일
@@ -10,6 +15,19 @@ core/build/
 
 # 바이너리 파일
 */bin/
+bin/
 app/bin/
 core/bin/
+*.class
+*.jar
+
+# 배포 관련
 central-bundle.zip
+
+# 로컬 설정
+local.properties
+*.asc
+
+# OS 파일
+.DS_Store
+Thumbs.db
