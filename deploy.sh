@@ -7,6 +7,20 @@ echo "========================================"
 # 프로젝트 루트로 이동
 cd /Users/taesupyoon/bootpay/server/sdk/java
 
+# 배포 설정 (publish.gradle과 동기화)
+PUBLISH_GROUP_ID="io.github.bootpay"
+PUBLISH_ARTIFACT_ID="backend"
+PUBLISH_VERSION="3.0.3"
+
+# 그룹 ID를 경로로 변환 (io.github.bootpay -> io/github/bootpay)
+GROUP_PATH="${PUBLISH_GROUP_ID//.//}"
+
+echo "📋 배포 정보:"
+echo "   - Group ID: $PUBLISH_GROUP_ID"
+echo "   - Artifact ID: $PUBLISH_ARTIFACT_ID"
+echo "   - Version: $PUBLISH_VERSION"
+echo "========================================"
+
 echo "📦 Step 1: 기존 빌드 정리..."
 rm -rf core/build/repo
 rm -f central-bundle.zip
@@ -16,13 +30,10 @@ echo "📦 Step 2: 새로운 publication 생성..."
 
 echo "📦 Step 3: 번들 생성..."
 cd core/build/repo
+
+# 버전 디렉토리의 모든 파일을 번들에 포함 (jar, pom, module 및 서명/체크섬 파일)
 zip -r ../../../central-bundle.zip \
-  ${PUBLISH_GROUP_ID//.//}/${PUBLISH_ARTIFACT_ID}/${PUBLISH_VERSION}/*.aar \
-  ${PUBLISH_GROUP_ID//.//}/${PUBLISH_ARTIFACT_ID}/${PUBLISH_VERSION}/*.pom \
-  ${PUBLISH_GROUP_ID//.//}/${PUBLISH_ARTIFACT_ID}/${PUBLISH_VERSION}/*.module \
-  ${PUBLISH_GROUP_ID//.//}/${PUBLISH_ARTIFACT_ID}/${PUBLISH_VERSION}/*.md5 \
-  ${PUBLISH_GROUP_ID//.//}/${PUBLISH_ARTIFACT_ID}/${PUBLISH_VERSION}/*.sha1 \
-  ${PUBLISH_GROUP_ID//.//}/${PUBLISH_ARTIFACT_ID}/${PUBLISH_VERSION}/*.asc
+  ${GROUP_PATH}/${PUBLISH_ARTIFACT_ID}/${PUBLISH_VERSION}/
 cd ../../../
 
 echo "✅ 번들 생성 완료: $(ls -lh central-bundle.zip)"
