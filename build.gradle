@@ -1,6 +1,5 @@
 plugins {
     id 'java-library'
-    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
 }
 
 java {
@@ -8,8 +7,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-apply plugin: 'io.github.gradle-nexus.publish-plugin'
-apply from: "${rootDir}/scripts/publish-root.gradle"
 apply from: 'publish.gradle'
 
 //maven {

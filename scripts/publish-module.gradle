@@ -1,6 +1,18 @@
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
+// 서명 설정 읽기
+ext["signing.keyId"] = ''
+ext["signing.password"] = ''
+ext["signing.secretKeyRingFile"] = ''
+
+File secretPropsFile = project.rootProject.file('local.properties')
+if (secretPropsFile.exists()) {
+    Properties p = new Properties()
+    new FileInputStream(secretPropsFile).withCloseable { is -> p.load(is) }
+    p.each { name, value -> ext[name] = value }
+}
+
 java {
     withSourcesJar()
     withJavadocJar()
@@ -46,6 +58,12 @@ afterEvaluate {
                         url = PUBLISH_SCM_URL
                     }
                 }
+            }
+        }
+        repositories {
+            maven {
+                name = "LocalRepo"
+                url = uri("file://${buildDir}/repo")
             }
         }
     }

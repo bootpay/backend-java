@@ -15,12 +15,13 @@ public class Order {
         try {
 //        szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=
 //        bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
-            TokenPayload tokenPayload = new TokenPayload("4T4tlQq2xpPHioq216K-RQ", "szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=");
+            TokenPayload tokenPayload = new TokenPayload("hxS-Up--5RvT6oU6QJE0JA", "r5zxvDcQJiAP2PBQ0aJjSHQtblNmYFt6uFoEMhti_mg=");
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
 //        bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
             getToken();
 //            list();
             detail();
+//            month();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -44,14 +45,14 @@ public class Order {
         try {
             OrderListParams params = new OrderListParams();
 //            params.orderSubscriptionIds = List.of("685b7b10b0eacea5cd974a93");
-            params.cssAt = "2025-03-20"; // 검색 시작일
-            params.subscriptionBillingType = OrderListParams.SUBSCRIPTION_BILLING_TYPE_NONE;
+//            params.cssAt = "2025-03-20"; // 검색 시작일
+//            params.subscriptionBillingType = OrderListParams.SUBSCRIPTION_BILLING_TYPE_NONE;
 
             BootpayStoreResponse res = bootpayStore.order.list(params);
             if(res.isSuccess()) {
-                System.out.println("order success: " + res.getData());
+                System.out.println("list success: " + res.getData());
             } else {
-                System.out.println("order false: " + res.getData());
+                System.out.println("list false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,12 +61,27 @@ public class Order {
 
     public static void detail() {
         try {
-            String orderId = "68707c59b0eacea5cd974efd";
+            String orderId = "25112705501124352134";
             BootpayStoreResponse res = bootpayStore.order.detail(orderId);
             if(res.isSuccess()) {
-                System.out.println("order success: " + res.getData());
+                System.out.println("detail success: " + res.getData());
             } else {
-                System.out.println("order false: " + res.getData());
+                System.out.println("detail false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void month() {
+        try {
+            String userGroupId = "688b0cae76aaedb147d82c81";
+            String searchDate = "2025-08";
+            BootpayStoreResponse res = bootpayStore.order.month(userGroupId, searchDate);
+            if(res.isSuccess()) {
+                System.out.println("month success: " + res.getData());
+            } else {
+                System.out.println("month false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
