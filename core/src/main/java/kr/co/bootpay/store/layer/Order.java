@@ -20,7 +20,7 @@ public class Order {
         return SOrderService.detail(bootpay, orderId);
     }
 
-//    public HashMap<String, Object> cancel(OrderCancelParams orderCancelParams) throws Exception {
-//        return SOrderService.cancel(bootpay, orderCancelParams);
-//    }
+    public BootpayStoreResponse month(String userGroupId, String searchDate) throws Exception {
+        return SOrderService.month(bootpay, userGroupId, searchDate);
+    }
 }

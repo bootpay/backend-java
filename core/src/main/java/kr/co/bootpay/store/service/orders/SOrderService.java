@@ -1,5 +1,8 @@
 package kr.co.bootpay.store.service.orders;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.order.OrderListParams;
@@ -7,12 +10,16 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.NameValuePair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -74,7 +81,35 @@ public class SOrderService {
 
         HttpResponse response = client.execute(get);
         return bootpay.responseToJsonObject(response);
-//        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-//        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
+    }
+
+    static public BootpayStoreResponse month(BootpayStoreObject bootpay, String userGroupId, String searchDate) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+        if (userGroupId == null || userGroupId.isEmpty()) {
+            throw new Exception("user_group_id 값이 비어있습니다.");
+        }
+        if (searchDate == null || searchDate.isEmpty()) {
+            throw new Exception("search_date 값이 비어있습니다.");
+        }
+
+        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
+
+        HttpClient client = HttpClientBuilder.create().build();
+
+
+        List<NameValuePair> nameValuePairList = new ArrayList<>();
+        nameValuePairList.add(new BasicNameValuePair("user_group_id", userGroupId));
+        nameValuePairList.add(new BasicNameValuePair("search_date", searchDate));
+
+
+
+//        HttpPost post = bootpay.httpPost("orders/month", new StringEntity(gson.toJson(params), "UTF-8"));
+
+
+        HttpGet get = bootpay.httpGet("orders/month", nameValuePairList);
+        HttpResponse response = client.execute(get);
+        return bootpay.responseToJsonObject(response);
     }
 }
