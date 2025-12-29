@@ -1,12 +1,21 @@
 plugins {
     id 'java-library'
+    id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
 }
 
 java {
+    // SDK는 Java 8부터 지원 (최신 JDK로 빌드 가능)
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+// Java 8 타겟 관련 경고 억제 (최신 JDK 빌드 시)
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['-Xlint:-options']
+}
+
+apply plugin: 'io.github.gradle-nexus.publish-plugin'
+apply from: "${rootDir}/scripts/publish-root.gradle"
 apply from: 'publish.gradle'
 
 //maven {
