@@ -21,6 +21,10 @@ public class User {
         return SUserLoginService.token(bootpay, userId);
     }
 
+    public BootpayStoreResponse token(String userId, String corporateType, String membershipType) throws Exception {
+        return SUserLoginService.token(bootpay, userId, corporateType, membershipType);
+    }
+
     public BootpayStoreResponse join(SUser user) throws Exception {
         return SUserJoinService.join(bootpay, user);
     }

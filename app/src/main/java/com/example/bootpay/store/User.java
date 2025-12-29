@@ -17,10 +17,10 @@ public class User {
 
             getToken();
 //            joinIndividual();
-//            userToken();
+            userToken();
 //            joinCorporate();
 //            authByUserStandbyId();
-            emailExist();
+//            emailExist();
 //            idExist();
 //            phoneExist();
 //            groupBusinessNumberExist();
@@ -68,7 +68,9 @@ public class User {
     public static void userToken() {
         try {
             String userId = "684fa4a6b0eacea5cd97464e";
-            BootpayStoreResponse res = bootpay.user.token(userId);
+            String corporateType = "individual"; // individual: 개인, corporate: 기업
+            String membershipType = "guest"; // guest: 게스트, member: 회원
+            BootpayStoreResponse res = bootpay.user.token(userId, corporateType, membershipType);
             if (res.isSuccess()) {
                 System.out.println("token success: " + res.getData());
             } else {

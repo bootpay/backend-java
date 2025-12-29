@@ -18,10 +18,14 @@ import java.util.Map;
 public class SUserLoginService {
 
     static public BootpayStoreResponse token(BootpayStoreObject bootpay, String userId) throws Exception {
-        return token(bootpay, userId, null);
+        return token(bootpay, userId, "", "", null);
     }
 
-    static public BootpayStoreResponse token(BootpayStoreObject bootpay, String userId, RequestContext context) throws Exception {
+    static public BootpayStoreResponse token(BootpayStoreObject bootpay, String userId, String corporateType, String membershipType) throws Exception {
+        return token(bootpay, userId, corporateType, membershipType, null);
+    }
+
+    static public BootpayStoreResponse token(BootpayStoreObject bootpay, String userId, String corporateType, String membershipType, RequestContext context) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
@@ -31,6 +35,12 @@ public class SUserLoginService {
 
         Map<String, Object> params = new HashMap<>();
         params.put("user_id", userId);
+        if(corporateType != null && !corporateType.isEmpty()) {
+            params.put("corporate_type", corporateType);
+        }
+        if(membershipType != null && !membershipType.isEmpty()) {
+            params.put("membership_type", membershipType);
+        }
 
         HttpPost post = bootpay.httpPost("users/login/token", new StringEntity(gson.toJson(params), "UTF-8"), context);
 
