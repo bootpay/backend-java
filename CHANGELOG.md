@@ -1,3 +1,6 @@
+### 3.0.4
+- user.token API에 corporate_type, membership_type 파라미터 추가
+
 ### 3.0.3
 - 내부 로직 개선
 
