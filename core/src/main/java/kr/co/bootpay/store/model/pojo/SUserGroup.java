@@ -54,7 +54,7 @@ public class SUserGroup {
     public Double purchaseLimit;
     public Double subscribedLimit;
     public String limitMessage;
-    public String exUid; // 가맹점에서 관리하는 고유키
+    public String externalUid; // 가맹점에서 관리하는 고유키
     public String isExternal; // 가맹점에서 API 로 가입시켰는지에 대한 여부
 
 }

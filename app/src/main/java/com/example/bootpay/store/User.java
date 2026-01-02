@@ -40,7 +40,7 @@ public class User {
             // === 조회 ===
 //            list();
 //            detail();                     // user_id로 조회
-//            detailByExternalUid();        // ex_uid로 조회
+            detailByExternalUid();        // ex_uid로 조회
 //            detailByLoginId();            // login_id로 조회
 
             // === 수정 ===
@@ -108,7 +108,7 @@ public class User {
             user.email = "external@example.com";
             user.phone = "01012345678";
             user.name = "외부회원";
-            user.exUid = "my_shop_user_12345"; // 가맹점 고유 ID 설정
+            user.externalUid = "my_shop_user_12345"; // 가맹점 고유 ID 설정
 
             BootpayStoreResponse res = bootpay.user.join(user);
             if (res.isSuccess()) {
@@ -287,7 +287,7 @@ public class User {
      */
     public static void detailByExternalUid() {
         try {
-            // ex_uid로 조회 (회원가입 시 설정한 exUid 값)
+            // external_uid로 조회 (회원가입 시 설정한 externalUid 값)
             BootpayStoreResponse res = bootpay.user.detail("my_shop_user_12345");
             if (res.isSuccess()) {
                 System.out.println("detailByExternalUid success: " + res.getData());

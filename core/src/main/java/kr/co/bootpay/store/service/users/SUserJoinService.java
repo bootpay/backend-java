@@ -25,7 +25,7 @@ public class SUserJoinService {
      * </p>
      *
      * @param bootpay BootpayStoreObject 인스턴스
-     * @param user 가입할 사용자 정보 (exUid 필드에 외부 고유 ID 설정 가능)
+     * @param user 가입할 사용자 정보 (externalUid 필드에 외부 고유 ID 설정 가능)
      * @return BootpayStoreResponse 가입된 사용자 정보
      */
     static public BootpayStoreResponse join(BootpayStoreObject bootpay, SUser user) throws Exception {
