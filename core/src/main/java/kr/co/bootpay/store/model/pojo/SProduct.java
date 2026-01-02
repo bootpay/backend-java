@@ -14,7 +14,7 @@ public class SProduct {
     public String brandId;
     public String manufacturerId;
 
-    public String exUid;
+    public String externalUid;
 
     public String name; // 상품명
     public String description; // 요약 설명

@@ -16,7 +16,7 @@ import kr.co.bootpay.store.service.users.SUserService;
  * 조회/수정/삭제 API에서 사용자 식별자로 다음 중 하나를 사용할 수 있습니다:
  * <ul>
  *   <li>user_id: 부트페이 시스템 고유 ID (MongoDB ObjectId 형식)</li>
- *   <li>ex_uid: 가맹점에서 설정한 외부 고유 ID (회원가입 시 exUid 필드로 설정)</li>
+ *   <li>external_uid: 가맹점에서 설정한 외부 고유 ID (회원가입 시 externalUid 필드로 설정)</li>
  *   <li>login_id: 로그인 ID</li>
  * </ul>
  * 서버에서 user_id → ex_uid → login_id 순서로 검색합니다.
@@ -26,7 +26,7 @@ import kr.co.bootpay.store.service.users.SUserService;
  * // ex_uid를 활용한 가입 예시
  * SUser user = new SUser();
  * user.loginId = "user001";
- * user.exUid = "my_shop_user_12345"; // 가맹점 고유 ID
+ * user.externalUid = "my_shop_user_12345"; // 가맹점 고유 ID
  * bootpay.user.join(user);
  *
  * // 이후 ex_uid로 조회/수정/삭제 가능
@@ -61,7 +61,7 @@ public class User {
 
     /**
      * 회원가입
-     * @param user 가입할 사용자 정보 (exUid 필드로 외부 고유 ID 설정 가능)
+     * @param user 가입할 사용자 정보 (externalUid 필드로 외부 고유 ID 설정 가능)
      */
     public BootpayStoreResponse join(SUser user) throws Exception {
         return SUserJoinService.join(bootpay, user);

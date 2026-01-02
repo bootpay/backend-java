@@ -53,7 +53,7 @@ public class Product {
             SProduct product = new SProduct();
             product.name = "테스트 상품";
             product.displayPrice = 1000.0;
-            product.exUid = "1234";
+            product.externalUid = "1234";
 
             BootpayStoreResponse res = bootpayStore.product.create(product, imagePaths);
             if(res.isSuccess()) {
