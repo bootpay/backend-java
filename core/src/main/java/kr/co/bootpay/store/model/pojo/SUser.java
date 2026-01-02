@@ -63,7 +63,7 @@ public class SUser {
 
     public SUserGroup group;
 
-    public String externalUid; // 가맹점에서 관리하는 고유키
+    public String exUid; // 가맹점에서 관리하는 고유키
     public String isExternal; // 가맹점에서 API 로 가입시켰는지에 대한 여부
 
     public String userGroupId; // 가입하고자 하는 기업 ID

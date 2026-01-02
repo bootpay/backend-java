@@ -6,6 +6,16 @@ import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.request.user.UserListParams;
 
+/**
+ * 사용자 관리 예제
+ * <p>
+ * 사용자 조회/수정/삭제 시 다음 식별자 중 하나를 사용할 수 있습니다:
+ * - user_id: 부트페이 시스템 고유 ID (MongoDB ObjectId 형식, 예: "684fa4a6b0eacea5cd97464e")
+ * - ex_uid: 가맹점에서 설정한 외부 고유 ID (예: "my_shop_user_12345")
+ * - login_id: 로그인 ID (예: "ehowlsla19")
+ * <p>
+ * 서버에서 user_id → ex_uid → login_id 순서로 검색합니다.
+ */
 public class User {
     static BootpayStore bootpay;
 
@@ -13,18 +23,37 @@ public class User {
         try {
             TokenPayload tokenPayload = new TokenPayload("hxS-Up--5RvT6oU6QJE0JA", "r5zxvDcQJiAP2PBQ0aJjSHQtblNmYFt6uFoEMhti_mg=");
             bootpay = new BootpayStore(tokenPayload, "DEVELOPMENT");
-//            bootpay.getAccessToken();
 
             getToken();
+
+            // === 회원가입 ===
 //            joinIndividual();
-            userToken();
-//            joinCorporate();
-//            authByUserStandbyId();
+//            joinIndividualWithExternalUid(); // ex_uid를 활용한 가입
+
+            // === 중복 체크 ===
 //            emailExist();
 //            idExist();
 //            phoneExist();
+//            uidExist(); // ex_uid 중복 체크
 //            groupBusinessNumberExist();
-//            update();
+
+            // === 조회 ===
+//            list();
+//            detail();                     // user_id로 조회
+//            detailByExternalUid();        // ex_uid로 조회
+//            detailByLoginId();            // login_id로 조회
+
+            // === 수정 ===
+//            update();                     // user_id로 수정
+//            updateByExternalUid();        // ex_uid로 수정
+
+            // === 삭제 ===
+//            delete();                     // user_id로 삭제
+            deleteByExternalUid();        // ex_uid로 삭제
+
+            // === 기타 ===
+//            userToken();
+//            login();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,7 +77,7 @@ public class User {
     public static void joinIndividual() {
         try {
             SUser user = new SUser();
-            user.loginId = "ehowlsla21";
+            user.loginId = "ehowlsla22";
             user.loginPw = "km1178km";
             user.email = "ehowlsla@bootpay.co.kr";
             user.phone = "01000000000";
@@ -59,6 +88,37 @@ public class User {
                 System.out.println("join success: " + res.getData());
             } else {
                 System.out.println("join false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 외부 고유 ID(ex_uid)를 활용한 개인 회원 가입
+     * <p>
+     * ex_uid는 가맹점에서 관리하는 고유 식별자로, 이후 조회/수정/삭제 시 user_id 대신 사용 가능합니다.
+     * 서버에서 id 조회 시 user_id → ex_uid → login_id 순서로 검색합니다.
+     */
+    public static void joinIndividualWithExternalUid() {
+        try {
+            SUser user = new SUser();
+            user.loginId = "exuser003";
+            user.loginPw = "password123";
+            user.email = "external@example.com";
+            user.phone = "01012345678";
+            user.name = "외부회원";
+            user.exUid = "my_shop_user_12345"; // 가맹점 고유 ID 설정
+
+            BootpayStoreResponse res = bootpay.user.join(user);
+            if (res.isSuccess()) {
+                System.out.println("joinWithExternalUid success: " + res.getData());
+                // 이제 다음 중 어떤 것으로도 조회/수정/삭제 가능:
+                // - user_id (응답의 user_id 값)
+                // - ex_uid ("my_shop_user_12345")
+                // - login_id ("exuser001")
+            } else {
+                System.out.println("joinWithExternalUid false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -155,6 +215,25 @@ public class User {
         }
     }
 
+    /**
+     * 외부 고유 ID(ex_uid) 존재 여부 체크
+     * <p>
+     * 회원가입 전 ex_uid 중복 여부를 확인할 때 사용합니다.
+     */
+    public static void uidExist() {
+        try {
+            BootpayStoreResponse res = bootpay.user.checkExist("uid-exist", "my_shop_user_12345");
+            if (res.isSuccess()) {
+                System.out.println("uidExist success: " + res.getData());
+                // { exists: true } 또는 { exists: false }
+            } else {
+                System.out.println("uidExist failed: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void groupBusinessNumberExist() {
         try {
             BootpayStoreResponse res = bootpay.user.checkExist("group-business-number-exist", "1088603663");
@@ -201,15 +280,51 @@ public class User {
         }
     }
 
-//    public static void
+    /**
+     * 외부 고유 ID(ex_uid)로 고객 상세 조회
+     * <p>
+     * detail() 메서드에 user_id, ex_uid, login_id 중 아무거나 전달 가능합니다.
+     */
+    public static void detailByExternalUid() {
+        try {
+            // ex_uid로 조회 (회원가입 시 설정한 exUid 값)
+            BootpayStoreResponse res = bootpay.user.detail("my_shop_user_12345");
+            if (res.isSuccess()) {
+                System.out.println("detailByExternalUid success: " + res.getData());
+            } else {
+                System.out.println("detailByExternalUid failed: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    /**
+     * 로그인 ID(login_id)로 고객 상세 조회
+     * <p>
+     * detail() 메서드에 user_id, ex_uid, login_id 중 아무거나 전달 가능합니다.
+     */
+    public static void detailByLoginId() {
+        try {
+            // login_id로 조회
+            BootpayStoreResponse res = bootpay.user.detail("exuser001");
+            if (res.isSuccess()) {
+                System.out.println("detailByLoginId success: " + res.getData());
+            } else {
+                System.out.println("detailByLoginId failed: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * user_id로 고객 정보 수정
+     */
     public static void update() {
         SUser user = new SUser();
-        user.userId = "68527d03b0eacea5cd974821";
-//        user.loginId = "ehowlsla28";
-//        user.loginPw = "km1178km";
-//        user.email = "ehowlsla1@bootpay.co.kr";
-        user.phone = "01040334678";
+        user.userId = "68527d03b0eacea5cd974821"; // user_id 사용
+        user.phone = "01040334671";
         user.name = "복떵2";
 
         try {
@@ -217,20 +332,78 @@ public class User {
             if (res.isSuccess()) {
                 System.out.println("update success: " + res.getData());
             } else {
-                System.out.println("update false: " + res.getData());
+                System.out.println("update failed: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * 외부 고유 ID(ex_uid)로 고객 정보 수정
+     * <p>
+     * user.userId에 user_id, ex_uid, login_id 중 아무거나 설정 가능합니다.
+     */
+    public static void updateByExternalUid() {
+        SUser user = new SUser();
+        user.userId = "my_shop_user_12345"; // ex_uid 사용
+        user.phone = "01098765432";
+        user.name = "수정된이름";
+
+        try {
+            BootpayStoreResponse res = bootpay.user.update(user);
+            if (res.isSuccess()) {
+                System.out.println("updateByExternalUid success: " + res.getData());
+            } else {
+                System.out.println("updateByExternalUid failed: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * user_id로 고객 삭제 (회원탈퇴)
+     */
     public static void delete() {
         try {
             BootpayStoreResponse res = bootpay.user.delete("684fa4a6b0eacea5cd97464e");
             if (res.isSuccess()) {
                 System.out.println("delete success: " + res.getData());
             } else {
-                System.out.println("delete false: " + res.getData());
+                System.out.println("delete failed: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 외부 고유 ID(ex_uid)로 고객 삭제 (회원탈퇴)
+     * <p>
+     * delete() 메서드에 user_id, ex_uid, login_id 중 아무거나 전달 가능합니다.
+     */
+    public static void deleteByExternalUid() {
+        try {
+            // ex_uid로 삭제
+            BootpayStoreResponse res = bootpay.user.delete("my_shop_user_12345");
+            if (res.isSuccess()) {
+                System.out.println("deleteByExternalUid success: " + res.getData());
+            } else {
+                System.out.println("deleteByExternalUid failed: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void login() {
+        try {
+            BootpayStoreResponse res = bootpay.user.login("ehowlsla21", "km1178km");
+            if (res.isSuccess()) {
+                System.out.println("login success: " + res.getData());
+            } else {
+                System.out.println("login false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();

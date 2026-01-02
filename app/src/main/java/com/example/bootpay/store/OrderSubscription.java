@@ -12,12 +12,21 @@ public class OrderSubscription {
     static BootpayStore bootpayStore;
     public static void main(String[] args) {
         try {
-            TokenPayload tokenPayload = new TokenPayload("hxS-Up--5RvT6oU6QJE0JA", "r5zxvDcQJiAP2PBQ0aJjSHQtblNmYFt6uFoEMhti_mg=");
-            bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
+//            TokenPayload tokenPayload = new TokenPayload("uz0ZZtIrwS1LBLkDO5yCvw", "_1Byx_FQ2Z076_no3rGPBBqUrhpU-0_Tl883DCfBjFI="); //dev
+//            bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
+
+            TokenPayload tokenPayload = new TokenPayload("L4VKNqhkNxuo7d83-x0u_Q", "DnZD1royBjNICCatlnmi97TwzyJRSggVM22nv866i5A="); //dev
+            bootpayStore = new BootpayStore(tokenPayload);
+
+
+
+
+
             getToken();
-            list();
+//            list();
 //            detail();
-//            update();
+//
+            update();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -68,8 +77,8 @@ public class OrderSubscription {
     public static void update() {
         try {
             OrderSubscriptionUpdateParams params = new OrderSubscriptionUpdateParams();
-            params.orderSubscriptionId = "685b7b10b0eacea5cd974a93";
-            params.orderName = "구독계약 변경 테스트";
+            params.orderSubscriptionId = "692ac59a763cd765570c4b63";
+            params.orderName = "구독계약 변경 테스트2";
 
             BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.update(params);
             if(res.isSuccess()) {
@@ -82,12 +91,5 @@ public class OrderSubscription {
         }
     }
 
-    public static void approve() {
-
-    }
-
-    public static void reject() {
-
-    }
 }
 
