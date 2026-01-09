@@ -33,9 +33,19 @@ public class SOrderSubscriptionService {
             if(params.sAt != null) nameValuePairList.add(new BasicNameValuePair("s_at", params.sAt));
             if(params.eAt != null) nameValuePairList.add(new BasicNameValuePair("e_at", params.eAt));
 
-            if(params.requestType != null) nameValuePairList.add(new BasicNameValuePair("request_type", params.eAt));
+            if(params.requestType != null) nameValuePairList.add(new BasicNameValuePair("request_type", params.requestType.toString()));
+
+            // user_group_id 또는 ex_uid 지원
             if(params.userGroupId != null) nameValuePairList.add(new BasicNameValuePair("user_group_id", params.userGroupId));
+            if(params.userGroupExUid != null) nameValuePairList.add(new BasicNameValuePair("user_group_ex_uid", params.userGroupExUid));
+            if(params.userGroupExternalUid != null) nameValuePairList.add(new BasicNameValuePair("user_group_external_uid", params.userGroupExternalUid));
+            if(params.userGroupUid != null) nameValuePairList.add(new BasicNameValuePair("user_group_uid", params.userGroupUid));
+
+            // user_id 또는 ex_uid 지원
             if(params.userId != null) nameValuePairList.add(new BasicNameValuePair("user_id", params.userId));
+            if(params.userExUid != null) nameValuePairList.add(new BasicNameValuePair("user_ex_uid", params.userExUid));
+            if(params.userExternalUid != null) nameValuePairList.add(new BasicNameValuePair("user_external_uid", params.userExternalUid));
+            if(params.userUid != null) nameValuePairList.add(new BasicNameValuePair("user_uid", params.userUid));
 
             if(params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
             if(params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
@@ -80,6 +90,69 @@ public class SOrderSubscriptionService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
         HttpPut put = bootpay.httpPut("order_subscriptions/" + params.orderSubscriptionId, new StringEntity(gson.toJson(params), "UTF-8"));
+
+        HttpResponse response = client.execute(put);
+        return bootpay.responseToJsonObject(response);
+    }
+
+    /**
+     * 구독 승인
+     * @param bootpay BootpayStoreObject
+     * @param orderSubscriptionId 구독 ID 또는 external_uid
+     * @param reason 승인 사유 (선택)
+     * @return BootpayStoreResponse
+     */
+    static public BootpayStoreResponse approve(BootpayStoreObject bootpay, String orderSubscriptionId, String reason) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+        if(orderSubscriptionId == null || orderSubscriptionId.isEmpty()) {
+            throw new Exception("order_subscription_id 값이 비어있습니다");
+        }
+        HttpClient client = HttpClientBuilder.create().build();
+
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        java.util.Map<String, String> params = new java.util.HashMap<>();
+        if(reason != null && !reason.isEmpty()) {
+            params.put("reason", reason);
+        }
+
+        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/approve", new StringEntity(gson.toJson(params), "UTF-8"));
+
+        HttpResponse response = client.execute(put);
+        return bootpay.responseToJsonObject(response);
+    }
+
+    /**
+     * 구독 거절
+     * @param bootpay BootpayStoreObject
+     * @param orderSubscriptionId 구독 ID 또는 external_uid
+     * @param reason 거절 사유 (필수)
+     * @return BootpayStoreResponse
+     */
+    static public BootpayStoreResponse reject(BootpayStoreObject bootpay, String orderSubscriptionId, String reason) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+        if(orderSubscriptionId == null || orderSubscriptionId.isEmpty()) {
+            throw new Exception("order_subscription_id 값이 비어있습니다");
+        }
+        if(reason == null || reason.isEmpty()) {
+            throw new Exception("reason 값이 비어있습니다 (거절 사유 필수)");
+        }
+        HttpClient client = HttpClientBuilder.create().build();
+
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        java.util.Map<String, String> params = new java.util.HashMap<>();
+        params.put("reason", reason);
+
+        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/reject", new StringEntity(gson.toJson(params), "UTF-8"));
 
         HttpResponse response = client.execute(put);
         return bootpay.responseToJsonObject(response);

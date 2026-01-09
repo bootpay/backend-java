@@ -10,6 +10,7 @@ import kr.co.bootpay.store.service.STokenService;
 import java.util.HashMap;
 
 public class BootpayStore extends BootpayStoreObject {
+    public Project project;
     public User user;
     public UserGroup userGroup;
     public Product product;
@@ -38,6 +39,7 @@ public class BootpayStore extends BootpayStoreObject {
     }
 
     private void initModules() {
+        this.project = new Project(this);
         this.user = new User(this);
         this.userGroup = new UserGroup(this);
         this.product = new Product(this);

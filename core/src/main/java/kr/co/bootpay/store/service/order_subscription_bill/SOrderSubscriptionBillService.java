@@ -30,7 +30,12 @@ public class SOrderSubscriptionBillService {
         String url = "order_subscription_bills";
         if(params != null) {
             List<NameValuePair> nameValuePairList = new ArrayList<>();
+            // order_subscription_id 또는 ex_uid 지원
             if (params.orderSubscriptionId != null) nameValuePairList.add(new BasicNameValuePair("order_subscription_id", params.orderSubscriptionId));
+            if (params.exUid != null) nameValuePairList.add(new BasicNameValuePair("ex_uid", params.exUid));
+            if (params.externalUid != null) nameValuePairList.add(new BasicNameValuePair("external_uid", params.externalUid));
+            if (params.uid != null) nameValuePairList.add(new BasicNameValuePair("uid", params.uid));
+
             if (params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
             if (params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
             if (params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
