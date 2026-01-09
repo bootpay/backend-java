@@ -28,7 +28,7 @@ public class User {
 
             // === 회원가입 ===
 //            joinIndividual();
-//            joinIndividualWithExternalUid(); // ex_uid를 활용한 가입
+            joinIndividualWithExternalUid(); // ex_uid를 활용한 가입
 
             // === 중복 체크 ===
 //            emailExist();
@@ -40,7 +40,7 @@ public class User {
             // === 조회 ===
 //            list();
 //            detail();                     // user_id로 조회
-            detailByExternalUid();        // ex_uid로 조회
+//            detailByExternalUid();        // ex_uid로 조회
 //            detailByLoginId();            // login_id로 조회
 
             // === 수정 ===
@@ -103,12 +103,12 @@ public class User {
     public static void joinIndividualWithExternalUid() {
         try {
             SUser user = new SUser();
-            user.loginId = "exuser003";
+            user.loginId = "exuser004";
             user.loginPw = "password123";
             user.email = "external@example.com";
             user.phone = "01012345678";
             user.name = "외부회원";
-            user.externalUid = "my_shop_user_12345"; // 가맹점 고유 ID 설정
+            user.externalUid = "my_shop_user_123456"; // 가맹점 고유 ID 설정
 
             BootpayStoreResponse res = bootpay.user.join(user);
             if (res.isSuccess()) {
@@ -386,7 +386,7 @@ public class User {
     public static void deleteByExternalUid() {
         try {
             // ex_uid로 삭제
-            BootpayStoreResponse res = bootpay.user.delete("my_shop_user_12345");
+            BootpayStoreResponse res = bootpay.user.delete("my_shop_user_123456");
             if (res.isSuccess()) {
                 System.out.println("deleteByExternalUid success: " + res.getData());
             } else {
