@@ -1,3 +1,6 @@
+### 3.0.5
+- orderSubscription.terminate 메서드 추가 (관리자 직접 구독 해지)
+
 ### 3.0.4
 - user.token API에 corporate_type, membership_type 파라미터 추가
 

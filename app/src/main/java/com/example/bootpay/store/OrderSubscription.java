@@ -27,10 +27,11 @@ public class OrderSubscription {
 
             getToken();
 //            list();
-            detail();
+//            detail();
 //            update();
 //            approve();
 //            reject();
+            terminate();  // 관리자 직접 해지 (supervisor 권한 필요)
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -195,6 +196,51 @@ public class OrderSubscription {
                 System.out.println("orderSubscription update by external_uid success: " + res.getData());
             } else {
                 System.out.println("orderSubscription update by external_uid false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 관리자 직접 구독 해지 (supervisor 권한 필요)
+     * - 검증 최소화, 즉시 해지 처리
+     * - 일반 사용자의 해지 요청과 달리 승인 대기 없이 바로 해지됨
+     * - 수수료 계산 없이 바로 해지 가능
+     */
+    public static void terminate() {
+        try {
+            String orderSubscriptionId = "6964abf14cb8149d077124e8";
+            String reason = "관리자 직접 해지";
+
+            // supervisor 권한으로 바로 해지 처리
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.terminate(orderSubscriptionId, reason);
+
+            if(res.isSuccess()) {
+                System.out.println("orderSubscription terminate success: " + res.getData());
+            } else {
+                System.out.println("orderSubscription terminate failed: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * external_uid로 관리자 직접 구독 해지
+     */
+    public static void terminateByExternalUid() {
+        try {
+            // external_uid 사용
+            String externalUid = "my_subscription_12345";
+            String reason = "관리자 직접 해지 (external_uid)";
+
+            BootpayStoreResponse res = bootpayStore.orderSubscription.terminate(externalUid, reason);
+
+            if(res.isSuccess()) {
+                System.out.println("orderSubscription terminate by external_uid success: " + res.getData());
+            } else {
+                System.out.println("orderSubscription terminate by external_uid failed: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
