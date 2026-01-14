@@ -1,5 +1,10 @@
 plugins {
     id 'java'
+    id 'application'
+}
+
+application {
+    mainClass = 'com.example.bootpay.store.OrderSubscription'
 }
 
 group 'com.example.bootpay'

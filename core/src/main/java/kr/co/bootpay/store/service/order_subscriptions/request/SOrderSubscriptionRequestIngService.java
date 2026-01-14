@@ -120,8 +120,6 @@ public class SOrderSubscriptionRequestIngService {
         return bootpay.responseToJsonObject(response);
     }
 
-
-
 //    static public BootpayStoreResponse purchase(BootpayStoreObject bootpay, OrderSubscriptionPauseParams params) throws Exception {
 //
 //    }

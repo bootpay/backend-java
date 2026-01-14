@@ -10,6 +10,7 @@ import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubs
 import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionTerminationParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.response.orderSubscription.request.ing.CalcTerminateFeeResponse;
+import kr.co.bootpay.store.model.response.orderSubscription.request.ing.CalcTerminateFeeResponseWrapper;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -23,13 +24,12 @@ public class Ing {
             TokenPayload tokenPayload = new TokenPayload("hxS-Up--5RvT6oU6QJE0JA", "r5zxvDcQJiAP2PBQ0aJjSHQtblNmYFt6uFoEMhti_mg=");
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
             getToken();
-//            detail();
 //            pause();
 //            resume();
-            CalcTerminateFeeResponse response = calcTerminateFee();
-            if (response != null) {
-                termination(response);
-            }
+//            calcTerminateFeeBySubscriptionId();
+//            calcTerminateFeeByOrderNumber();
+//            termination();
+            terminationWithCalcResult();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -93,9 +93,38 @@ public class Ing {
         }
     }
 
-    public static CalcTerminateFeeResponse calcTerminateFee() {
+    /**
+     * orderSubscriptionId로 해지 수수료 계산
+     */
+    public static CalcTerminateFeeResponse calcTerminateFeeBySubscriptionId() {
         try {
-//            String orderSubscriptionId = "68709fa0b0eacea5cd974f2d";
+            String orderSubscriptionId = "6966f2cf4cb8149d077125cd";
+
+            BootpayStoreResponse res = bootpayStore.orderSubscription.requestIng.calculateTerminationFee(orderSubscriptionId);
+            if(res.isSuccess()) {
+                Gson gson = new GsonBuilder()
+                        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                        .create();
+
+                String json = gson.toJson(res.getData());
+                // 응답은 { termination: {...}, has_pending_request: boolean } 구조
+                CalcTerminateFeeResponseWrapper wrapper = gson.fromJson(json, CalcTerminateFeeResponseWrapper.class);
+                System.out.println("orderSubscription calcTerminateFee (by subscriptionId) success: " + json);
+                return wrapper.termination;
+            } else {
+                System.out.println("orderSubscription calcTerminateFee (by subscriptionId) false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * orderNumber로 해지 수수료 계산
+     */
+    public static CalcTerminateFeeResponse calcTerminateFeeByOrderNumber() {
+        try {
             String orderNumber = "25071173847426287179";
 
             BootpayStoreResponse res = bootpayStore.orderSubscription.requestIng.calculateTerminationFeeByOrderNumber(orderNumber);
@@ -105,11 +134,12 @@ public class Ing {
                         .create();
 
                 String json = gson.toJson(res.getData());
-                CalcTerminateFeeResponse response = gson.fromJson(json, CalcTerminateFeeResponse.class);
-                System.out.println("orderSubscription calcTerminateFee success: " + json);
-                return response;
+                // 응답은 { termination: {...}, has_pending_request: boolean } 구조
+                CalcTerminateFeeResponseWrapper wrapper = gson.fromJson(json, CalcTerminateFeeResponseWrapper.class);
+                System.out.println("orderSubscription calcTerminateFee (by orderNumber) success: " + json);
+                return wrapper.termination;
             } else {
-                System.out.println("orderSubscription calcTerminateFee false: " + res.getData());
+                System.out.println("orderSubscription calcTerminateFee (by orderNumber) false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -117,22 +147,64 @@ public class Ing {
         return null;
     }
 
-    public static void termination(CalcTerminateFeeResponse calcResponse) {
+    /**
+     * 직접 파라미터를 설정하여 해지 요청
+     */
+    public static void termination() {
         try {
             OrderSubscriptionTerminationParams params = new OrderSubscriptionTerminationParams();
 
-            params.orderSubscriptionId = calcResponse.orderSubscriptionId;
-            params.finalFee = calcResponse.finalFee;
-            params.terminationFee = calcResponse.terminationFee;;
-            params.serviceEndAt = calcResponse.serviceEndAt;
-            params.lastBillRefundPrice = calcResponse.lastBillRefundPrice;
+            params.orderSubscriptionId = "6964abf14cb8149d077124e8";
+            params.finalFee = 10000.0;
+            params.terminationFee = 0.0;
+            params.serviceEndAt = "2025-07-31";
+            params.lastBillRefundPrice = 0.0;
             params.reason = "중도 해지 요청";
 
-            // terminationFee 등 필요한 값이 있으면 아래처럼 추가
-            // params.terminationFee = calcResponse.terminationFee;
-//            params.reason = "내 마음 리턴";
-
             BootpayStoreResponse res = bootpayStore.orderSubscription.requestIng.termination(params);
+            if(res.isSuccess()) {
+                System.out.println("orderSubscription termination success: " + res.getData());
+            } else {
+                System.out.println("orderSubscription termination false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * calculateTerminationFee 결과를 사용하여 해지 요청 (권장 방법)
+     * - calculate 결과에서 terminationFee, lastBillRefundPrice, finalFee를 가져와서 params에 설정
+     * - serviceEndAt은 오늘 + 1일로 설정
+     */
+    public static void terminationWithCalcResult() {
+        try {
+            // 1. 먼저 해지 수수료 계산
+            CalcTerminateFeeResponse calcResult = calcTerminateFeeBySubscriptionId();
+            if (calcResult == null) {
+                System.out.println("calcTerminateFee 실패");
+                return;
+            }
+
+            System.out.println("계산된 해지 수수료 정보:");
+            System.out.println("  - orderSubscriptionId: " + calcResult.orderSubscriptionId);
+            System.out.println("  - terminationFee: " + calcResult.terminationFee);
+            System.out.println("  - lastBillRefundPrice: " + calcResult.lastBillRefundPrice);
+            System.out.println("  - finalFee: " + calcResult.finalFee);
+//            System.out.println("  - serviceEndAt: " + calcResult.serviceEndAt);
+
+            // 2. 계산 결과를 사용하여 params 구성
+            OrderSubscriptionTerminationParams params = new OrderSubscriptionTerminationParams();
+            params.orderSubscriptionId = calcResult.orderSubscriptionId;
+            params.terminationFee = calcResult.terminationFee;
+            params.lastBillRefundPrice = calcResult.lastBillRefundPrice;
+            params.finalFee = calcResult.finalFee;
+            params.serviceEndAt = LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")); // 오늘 + 1일
+            params.reason = "중도 해지 요청";
+
+            // 3. 해지 요청
+            BootpayStoreResponse res = bootpayStore.orderSubscription.requestIng.termination(params);
+
             if(res.isSuccess()) {
                 System.out.println("orderSubscription termination success: " + res.getData());
             } else {
