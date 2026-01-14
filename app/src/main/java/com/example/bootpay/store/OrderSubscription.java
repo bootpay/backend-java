@@ -20,21 +20,17 @@ public class OrderSubscription {
     static BootpayStore bootpayStore;
     public static void main(String[] args) {
         try {
-//            TokenPayload tokenPayload = new TokenPayload("uz0ZZtIrwS1LBLkDO5yCvw", "_1Byx_FQ2Z076_no3rGPBBqUrhpU-0_Tl883DCfBjFI="); //dev
-//            bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
-
-            TokenPayload tokenPayload = new TokenPayload("L4VKNqhkNxuo7d83-x0u_Q", "DnZD1royBjNICCatlnmi97TwzyJRSggVM22nv866i5A="); //dev
-            bootpayStore = new BootpayStore(tokenPayload);
-
-
-
-
+            TokenPayload tokenPayload = new TokenPayload("hxS-Up--5RvT6oU6QJE0JA", "r5zxvDcQJiAP2PBQ0aJjSHQtblNmYFt6uFoEMhti_mg=");
+            bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
+//            TokenPayload tokenPayload = new TokenPayload("L4VKNqhkNxuo7d83-x0u_Q", "DnZD1royBjNICCatlnmi97TwzyJRSggVM22nv866i5A="); //dev
+//            bootpayStore = new BootpayStore(tokenPayload);
 
             getToken();
 //            list();
-//            detail();
-//
-            update();
+            detail();
+//            update();
+//            approve();
+//            reject();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,7 +70,7 @@ public class OrderSubscription {
      */
     public static void detail() {
         try {
-            String orderSubscriptionId = "67e5100c5ec892162491d108";
+            String orderSubscriptionId = "6966f2cf4cb8149d077125cd";
             BootpayStoreResponse res = bootpayStore.orderSubscription.detail(orderSubscriptionId);
             if(res.isSuccess()) {
                 System.out.println("orderSubscription detail success: " + res.getData());
@@ -111,9 +107,9 @@ public class OrderSubscription {
      */
     public static void approve() {
         try {
-            String orderSubscriptionId = "67e5100c5ec892162491d108";
+            String orderSubscriptionId = "6965f4344cb8149d07712508";
             // 사유 없이 승인
-            BootpayStoreResponse res = bootpayStore.orderSubscription.approve(orderSubscriptionId);
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.approve(orderSubscriptionId);
             if(res.isSuccess()) {
                 System.out.println("orderSubscription approve success: " + res.getData());
             } else {
@@ -133,7 +129,7 @@ public class OrderSubscription {
             // external_uid 사용 예시
             String externalUid = "my_subscription_12345";
             String reason = "심사 완료";
-            BootpayStoreResponse res = bootpayStore.orderSubscription.approve(externalUid, reason);
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.approve(externalUid, reason);
             if(res.isSuccess()) {
                 System.out.println("orderSubscription approve success: " + res.getData());
             } else {
@@ -150,9 +146,9 @@ public class OrderSubscription {
      */
     public static void reject() {
         try {
-            String orderSubscriptionId = "67e5100c5ec892162491d108";
+            String orderSubscriptionId = "6965f4cf4cb8149d0771251d";
             String reason = "심사 기준 미달";  // 필수
-            BootpayStoreResponse res = bootpayStore.orderSubscription.reject(orderSubscriptionId, reason);
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.reject(orderSubscriptionId, reason);
             if(res.isSuccess()) {
                 System.out.println("orderSubscription reject success: " + res.getData());
             } else {
@@ -169,8 +165,8 @@ public class OrderSubscription {
     public static void update() {
         try {
             OrderSubscriptionUpdateParams params = new OrderSubscriptionUpdateParams();
-            params.orderSubscriptionId = "692ac59a763cd765570c4b63";
-            params.orderName = "구독계약 변경 테스트2";
+            params.orderSubscriptionId = "6964abf14cb8149d077124e8";
+            params.orderName = "테스트 상품 2";
 
             BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.update(params);
             if(res.isSuccess()) {
@@ -191,7 +187,7 @@ public class OrderSubscription {
         try {
             OrderSubscriptionUpdateParams params = new OrderSubscriptionUpdateParams();
             // external_uid 사용
-            params.orderSubscriptionId = "my_subscription_12345";
+            params.orderSubscriptionId = "696055674cb8149d0771249c";
             params.orderName = "구독계약 변경 테스트 (external_uid)";
 
             BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.update(params);

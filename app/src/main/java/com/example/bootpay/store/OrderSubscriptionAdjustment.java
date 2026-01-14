@@ -19,12 +19,10 @@ public class OrderSubscriptionAdjustment {
             TokenPayload tokenPayload = new TokenPayload("hxS-Up--5RvT6oU6QJE0JA", "r5zxvDcQJiAP2PBQ0aJjSHQtblNmYFt6uFoEMhti_mg=");
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
             getToken();
-//            list();
-//            detail();
     //        update();
-            create();
+//            create();
 //            update();
-//            delete();
+            delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -46,7 +44,7 @@ public class OrderSubscriptionAdjustment {
 
     public static void create() {
         try {
-            String orderSubscriptionId = "685b7b10b0eacea5cd974a93";
+            String orderSubscriptionId = "6964abf14cb8149d077124e8";
             SOrderSubscriptionAdjustment adjustment = new SOrderSubscriptionAdjustment();
             adjustment.name = "추가비용2";
             adjustment.price = 500.0;
@@ -66,9 +64,9 @@ public class OrderSubscriptionAdjustment {
     public static void update() {
         try {
             OrderSubscriptionAdjustmentUpdateParams params = new OrderSubscriptionAdjustmentUpdateParams();
-            params.orderSubscriptionId = "685b7b10b0eacea5cd974a93";
-            params.duration = 1;
-            params.adjustments = List.of(new SOrderSubscriptionAdjustment("추가비용2", 600.0));
+            params.orderSubscriptionId = "6964abf14cb8149d077124e8";
+            params.duration = 2;
+            params.adjustments = List.of(new SOrderSubscriptionAdjustment("추가비용2 전체갱신", 600.0));
 
             BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscriptionAdjustment.update(params);
             if(res.isSuccess()) {
@@ -83,8 +81,8 @@ public class OrderSubscriptionAdjustment {
 
     public static void delete() {
         try {
-            String orderSubscriptionId = "685b7b10b0eacea5cd974a93";
-            String orderSubscriptionAdjustmentId = "6864e066b0eacea5cd974b16";
+            String orderSubscriptionId = "6964abf14cb8149d077124e8";
+            String orderSubscriptionAdjustmentId = "6965fced4cb8149d0771253a";
 
             BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscriptionAdjustment.delete(orderSubscriptionId, orderSubscriptionAdjustmentId);
             if(res.isSuccess()) {

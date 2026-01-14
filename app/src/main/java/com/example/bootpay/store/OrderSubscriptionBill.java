@@ -60,7 +60,7 @@ public class OrderSubscriptionBill {
 
     public static void detail() {
         try {
-            BootpayStoreResponse res = bootpayStore.orderSubscriptionBill.detail("6863851f9ee6691f52f21fc1");
+            BootpayStoreResponse res = bootpayStore.orderSubscriptionBill.detail("6965f45c4cb8149d0771250d");
             if(res.isSuccess()) {
                 System.out.println("orderSubscriptionBill detail success: " + res.getData());
             } else {
