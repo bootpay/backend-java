@@ -84,4 +84,27 @@ public class OrderSubscription {
     public BootpayStoreResponse reject(String orderSubscriptionId, String reason) throws Exception {
         return SOrderSubscriptionService.reject(bootpay, orderSubscriptionId, reason);
     }
+
+    /**
+     * 관리자 구독 해지 (supervisor 권한 필요)
+     * - 검증 최소화, 즉시 해지 처리
+     * - 일반 사용자의 해지 요청과 달리 승인 대기 없이 바로 해지됨
+     * @param orderSubscriptionId 구독 ID 또는 external_uid (가맹점 고유 ID)
+     * @return BootpayStoreResponse
+     */
+    public BootpayStoreResponse terminate(String orderSubscriptionId) throws Exception {
+        return SOrderSubscriptionService.terminate(bootpay, orderSubscriptionId, null);
+    }
+
+    /**
+     * 관리자 구독 해지 (supervisor 권한 필요)
+     * - 검증 최소화, 즉시 해지 처리
+     * - 일반 사용자의 해지 요청과 달리 승인 대기 없이 바로 해지됨
+     * @param orderSubscriptionId 구독 ID 또는 external_uid (가맹점 고유 ID)
+     * @param reason 해지 사유
+     * @return BootpayStoreResponse
+     */
+    public BootpayStoreResponse terminate(String orderSubscriptionId, String reason) throws Exception {
+        return SOrderSubscriptionService.terminate(bootpay, orderSubscriptionId, reason);
+    }
 }

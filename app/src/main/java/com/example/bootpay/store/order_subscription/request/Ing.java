@@ -98,7 +98,7 @@ public class Ing {
      */
     public static CalcTerminateFeeResponse calcTerminateFeeBySubscriptionId() {
         try {
-            String orderSubscriptionId = "6966f2cf4cb8149d077125cd";
+            String orderSubscriptionId = "6964abf14cb8149d077124e8";
 
             BootpayStoreResponse res = bootpayStore.orderSubscription.requestIng.calculateTerminationFee(orderSubscriptionId);
             if(res.isSuccess()) {
@@ -202,8 +202,11 @@ public class Ing {
             params.serviceEndAt = LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")); // 오늘 + 1일
             params.reason = "중도 해지 요청";
 
-            // 3. 해지 요청
-            BootpayStoreResponse res = bootpayStore.orderSubscription.requestIng.termination(params);
+            // 3-1. 사용자권한 일 경우 구독상품 설정에 따라 요청이 실패할 수 있음
+//            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.requestIng.termination(params);
+
+            // 3-2. 관리자 권한일 경우 강제로 구독해지 처리함
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.requestIng.termination(params);
 
             if(res.isSuccess()) {
                 System.out.println("orderSubscription termination success: " + res.getData());
@@ -214,5 +217,6 @@ public class Ing {
             e.printStackTrace();
         }
     }
+
 }
 

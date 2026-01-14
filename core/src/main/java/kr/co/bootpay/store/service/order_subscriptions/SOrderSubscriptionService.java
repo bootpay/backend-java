@@ -158,4 +158,36 @@ public class SOrderSubscriptionService {
         return bootpay.responseToJsonObject(response);
     }
 
+    /**
+     * 관리자 구독 해지 (supervisor 권한 필요)
+     * - 검증 최소화, 즉시 해지 처리
+     * @param bootpay BootpayStoreObject
+     * @param orderSubscriptionId 구독 ID 또는 external_uid
+     * @param reason 해지 사유 (선택)
+     * @return BootpayStoreResponse
+     */
+    static public BootpayStoreResponse terminate(BootpayStoreObject bootpay, String orderSubscriptionId, String reason) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+        if(orderSubscriptionId == null || orderSubscriptionId.isEmpty()) {
+            throw new Exception("order_subscription_id 값이 비어있습니다");
+        }
+        HttpClient client = HttpClientBuilder.create().build();
+
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        java.util.Map<String, String> params = new java.util.HashMap<>();
+        if(reason != null && !reason.isEmpty()) {
+            params.put("reason", reason);
+        }
+
+        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/terminate", new StringEntity(gson.toJson(params), "UTF-8"));
+
+        HttpResponse response = client.execute(put);
+        return bootpay.responseToJsonObject(response);
+    }
+
 }
