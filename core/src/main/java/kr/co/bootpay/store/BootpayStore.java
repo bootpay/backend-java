@@ -13,6 +13,7 @@ public class BootpayStore extends BootpayStoreObject {
     public User user;
     public UserGroup userGroup;
     public Product product;
+    public Store store;
     public Invoice invoice;
     public Order order;
     public OrderCancel orderCancel;
@@ -41,6 +42,7 @@ public class BootpayStore extends BootpayStoreObject {
         this.user = new User(this);
         this.userGroup = new UserGroup(this);
         this.product = new Product(this);
+        this.store = new Store(this);
         this.invoice = new Invoice(this);
         this.order = new Order(this);
         this.orderCancel = new OrderCancel(this);

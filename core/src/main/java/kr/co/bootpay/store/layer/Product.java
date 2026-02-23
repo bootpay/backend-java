@@ -47,6 +47,16 @@ public class Product {
         );
     }
 
+    // Mall API alias
+    public BootpayStoreResponse products(ProductListParams params) throws Exception {
+        return this.list(params);
+    }
+
+    // Mall API alias
+    public BootpayStoreResponse productDetail(String productId) throws Exception {
+        return this.detail(productId);
+    }
+
     public BootpayStoreResponse status(ProductStatusParams params) throws Exception {
         return SProductService.status(
                 bootpay,

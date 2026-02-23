@@ -49,6 +49,21 @@ public class User {
         return SUserLoginService.login(bootpay, loginId, loginPw);
     }
 
+    // Mall API alias
+    public BootpayStoreResponse userLogin(String loginId, String loginPw) throws Exception {
+        return this.login(loginId, loginPw);
+    }
+
+    // Mall API alias
+    public BootpayStoreResponse userJoin(SUser user) throws Exception {
+        return this.join(user);
+    }
+
+    // Mall API alias
+    public BootpayStoreResponse userJoinCheck(String key, String value) throws Exception {
+        return this.checkExist(key, value);
+    }
+
     public BootpayStoreResponse list(UserListParams params) throws Exception {
         return SUserService.list(bootpay, params);
     }
