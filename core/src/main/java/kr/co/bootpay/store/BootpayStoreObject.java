@@ -85,6 +85,7 @@ public class BootpayStoreObject {
         this.role = role;
     }
 
+    @Deprecated
     public String requestAccessToken() {
         if((tokenPayload.clientKey == null || tokenPayload.clientKey.isEmpty()) && (tokenPayload.secretKey == null || tokenPayload.secretKey.isEmpty())) return "";
         String credentials = tokenPayload.clientKey + ":" + tokenPayload.secretKey;
