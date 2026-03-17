@@ -21,7 +21,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,6 +32,8 @@ public class BootpayObject {
     public String token;
     public String application_id;
     public String private_key;
+    public String client_key;
+    public String secret_key;
     public String baseUrl;
 
     public final String DEVELOPMENT = "https://dev-api.bootpay.co.kr/v2/";
@@ -44,21 +48,25 @@ public class BootpayObject {
 
     public BootpayObject() {}
     public BootpayObject(String rest_application_id, String private_key) {
-        this.application_id = rest_application_id;
-        this.private_key = private_key;
-        this.baseUrl = PRODUCTION;
+        this(rest_application_id, private_key, null, null, "PRODUCTION");
     }
 
     public BootpayObject(String rest_application_id, String private_key, String devMode) {
+        this(rest_application_id, private_key, null, null, devMode);
+    }
+
+    public BootpayObject(String rest_application_id, String private_key, String client_key, String secret_key, String devMode) {
         this.application_id = rest_application_id;
         this.private_key = private_key;
+        this.client_key = client_key;
+        this.secret_key = secret_key;
         if("DEVELOPMENT".equals(devMode)) {
             this.baseUrl = DEVELOPMENT;
         } else if("TEST".equalsIgnoreCase(devMode)) {
             this.baseUrl = TEST;
         } else if("STAGE".equalsIgnoreCase(devMode)) {
             this.baseUrl = STAGE;
-        } else if("PRODUCTION".equalsIgnoreCase(devMode)) {
+        } else {
             this.baseUrl = PRODUCTION;
         }
     }
@@ -84,9 +92,26 @@ public class BootpayObject {
     }
 
     protected void setAuthHeader(HttpRequestBase request) {
-        if (this.token != null && !this.token.isEmpty()) {
-            request.setHeader("Authorization", getTokenValue());
+        String authorization = getAuthorizationHeader();
+        if (authorization != null && !authorization.isEmpty()) {
+            request.setHeader("Authorization", authorization);
         }
+    }
+
+    protected String getAuthorizationHeader() {
+        if (this.token != null && !this.token.isEmpty()) {
+            return getTokenValue();
+        }
+
+        if (this.client_key != null && !this.client_key.isEmpty() && this.secret_key != null && !this.secret_key.isEmpty()) {
+            return "Basic " + Base64.getEncoder().encodeToString((this.client_key + ":" + this.secret_key).getBytes(StandardCharsets.UTF_8));
+        }
+
+        if (this.application_id != null && !this.application_id.isEmpty() && this.private_key != null && !this.private_key.isEmpty()) {
+            return "Basic " + Base64.getEncoder().encodeToString((this.application_id + ":" + this.private_key).getBytes(StandardCharsets.UTF_8));
+        }
+
+        return null;
     }
 
     // ========================================
