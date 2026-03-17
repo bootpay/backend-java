@@ -99,16 +99,14 @@ public class BootpayObject {
     }
 
     protected String getAuthorizationHeader() {
-        if (this.token != null && !this.token.isEmpty()) {
-            return getTokenValue();
-        }
-
         if (this.client_key != null && !this.client_key.isEmpty() && this.secret_key != null && !this.secret_key.isEmpty()) {
             return "Basic " + Base64.getEncoder().encodeToString((this.client_key + ":" + this.secret_key).getBytes(StandardCharsets.UTF_8));
         }
 
-        if (this.application_id != null && !this.application_id.isEmpty() && this.private_key != null && !this.private_key.isEmpty()) {
-            return "Basic " + Base64.getEncoder().encodeToString((this.application_id + ":" + this.private_key).getBytes(StandardCharsets.UTF_8));
+        if (this.application_id != null && !this.application_id.isEmpty()) {
+            if (this.token != null && !this.token.isEmpty()) {
+                return getTokenValue();
+            }
         }
 
         return null;
