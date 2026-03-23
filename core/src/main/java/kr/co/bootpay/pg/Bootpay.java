@@ -132,4 +132,13 @@ public class Bootpay extends BootpayObject {
     public HashMap<String, Object> publishBillingKeyTransfer(String receiptId) throws Exception {
         return BillingService.publishBillingKeyTransfer(this, receiptId);
     }
+
+    //wallet
+    public HashMap<String, Object> getUserWallets(String userId, boolean sandbox) throws Exception {
+        return WalletService.getUserWallets(this, userId, sandbox);
+    }
+
+    public HashMap<String, Object> requestWalletPayment(WalletPayment walletPayment) throws Exception {
+        return WalletService.requestWalletPayment(this, walletPayment);
+    }
 }
