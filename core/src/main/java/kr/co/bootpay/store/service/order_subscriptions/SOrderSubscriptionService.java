@@ -6,6 +6,8 @@ import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionListParams;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionUpdateParams;
+import kr.co.bootpay.store.model.request.orderSubscription.SupervisorPauseParams;
+import kr.co.bootpay.store.model.request.orderSubscription.SupervisorResumeParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -185,6 +187,60 @@ public class SOrderSubscriptionService {
         }
 
         HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/terminate", new StringEntity(gson.toJson(params), "UTF-8"));
+
+        HttpResponse response = client.execute(put);
+        return bootpay.responseToJsonObject(response);
+    }
+
+    /**
+     * 관리자 구독 일시정지 (supervisor 권한 필요)
+     * @param bootpay BootpayStoreObject
+     * @param orderSubscriptionId 구독 ID 또는 external_uid
+     * @param params 일시정지 파라미터 (pausedAt 필수, reason/expectedResumeAt 선택)
+     * @return BootpayStoreResponse
+     */
+    static public BootpayStoreResponse supervisorPause(BootpayStoreObject bootpay, String orderSubscriptionId, SupervisorPauseParams params) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+        if(orderSubscriptionId == null || orderSubscriptionId.isEmpty()) {
+            throw new Exception("order_subscription_id 값이 비어있습니다");
+        }
+        HttpClient client = HttpClientBuilder.create().build();
+
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        String json = (params != null) ? gson.toJson(params) : "{}";
+        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/pause", new StringEntity(json, "UTF-8"));
+
+        HttpResponse response = client.execute(put);
+        return bootpay.responseToJsonObject(response);
+    }
+
+    /**
+     * 관리자 구독 재개 (supervisor 권한 필요)
+     * @param bootpay BootpayStoreObject
+     * @param orderSubscriptionId 구독 ID 또는 external_uid
+     * @param params 재개 파라미터 (reason 선택)
+     * @return BootpayStoreResponse
+     */
+    static public BootpayStoreResponse supervisorResume(BootpayStoreObject bootpay, String orderSubscriptionId, SupervisorResumeParams params) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+        if(orderSubscriptionId == null || orderSubscriptionId.isEmpty()) {
+            throw new Exception("order_subscription_id 값이 비어있습니다");
+        }
+        HttpClient client = HttpClientBuilder.create().build();
+
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        String json = (params != null) ? gson.toJson(params) : "{}";
+        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/resume", new StringEntity(json, "UTF-8"));
 
         HttpResponse response = client.execute(put);
         return bootpay.responseToJsonObject(response);
