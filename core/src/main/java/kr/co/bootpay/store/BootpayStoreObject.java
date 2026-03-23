@@ -483,7 +483,6 @@ public class BootpayStoreObject {
             }
 
             String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-            System.out.println(str);
 
             // 빈 문자열인지 확인
             if (str == null || str.trim().isEmpty() || "null".equalsIgnoreCase(str.trim())) {
