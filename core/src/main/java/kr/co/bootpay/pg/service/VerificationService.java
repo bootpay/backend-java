@@ -18,6 +18,6 @@ public class VerificationService {
             throw new Exception("token 값이 비어있습니다.");
         }
 
-        return bootpay.doGet("certificate/" + receiptId + ".json");
+        return bootpay.doGet("certificate/" + receiptId);
     }
 }

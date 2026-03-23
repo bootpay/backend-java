@@ -15,7 +15,10 @@ public class Authentication {
     public String siteUrl; //본인인증 하는 url 또는 App 명
 
     public String authenticateType;
+    public String clientIp;
 
+    public Extra extra;
+    public User user;
     public Map<String, Object> metadata = new HashMap<>();
 
     public String authenticationId;

@@ -19,7 +19,7 @@ public class TokenService {
         token.private_key = bootpay.private_key;
 
         // 토큰 발급은 인증 없이 호출
-        HashMap<String, Object> result = bootpay.doPostWithoutAuth("request/token.json", token);
+        HashMap<String, Object> result = bootpay.doPostWithoutAuth("request/token", token);
 
         // 발급된 토큰을 bootpay 객체에 설정
         if (result != null && result.containsKey("access_token")) {
