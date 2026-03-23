@@ -5,6 +5,8 @@ import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.layer.order_subscription.request.OrderSubscriptionRequestIng;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionListParams;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionUpdateParams;
+import kr.co.bootpay.store.model.request.orderSubscription.SupervisorPauseParams;
+import kr.co.bootpay.store.model.request.orderSubscription.SupervisorResumeParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.service.order_subscriptions.SOrderSubscriptionService;
 
@@ -106,5 +108,37 @@ public class OrderSubscription {
      */
     public BootpayStoreResponse terminate(String orderSubscriptionId, String reason) throws Exception {
         return SOrderSubscriptionService.terminate(bootpay, orderSubscriptionId, reason);
+    }
+
+    /**
+     * 관리자 구독 일시정지 (supervisor 권한 필요)
+     * - 검증 최소화, 즉시 일시정지 처리
+     * @param orderSubscriptionId 구독 ID 또는 external_uid (가맹점 고유 ID)
+     * @param params 일시정지 파라미터 (pausedAt 필수, reason/expectedResumeAt 선택)
+     * @return BootpayStoreResponse
+     */
+    public BootpayStoreResponse supervisorPause(String orderSubscriptionId, SupervisorPauseParams params) throws Exception {
+        return SOrderSubscriptionService.supervisorPause(bootpay, orderSubscriptionId, params);
+    }
+
+    /**
+     * 관리자 구독 재개 (supervisor 권한 필요)
+     * - 검증 최소화, 즉시 재개 처리
+     * @param orderSubscriptionId 구독 ID 또는 external_uid (가맹점 고유 ID)
+     * @return BootpayStoreResponse
+     */
+    public BootpayStoreResponse supervisorResume(String orderSubscriptionId) throws Exception {
+        return SOrderSubscriptionService.supervisorResume(bootpay, orderSubscriptionId, null);
+    }
+
+    /**
+     * 관리자 구독 재개 (supervisor 권한 필요)
+     * - 검증 최소화, 즉시 재개 처리
+     * @param orderSubscriptionId 구독 ID 또는 external_uid (가맹점 고유 ID)
+     * @param params 재개 파라미터 (reason 선택)
+     * @return BootpayStoreResponse
+     */
+    public BootpayStoreResponse supervisorResume(String orderSubscriptionId, SupervisorResumeParams params) throws Exception {
+        return SOrderSubscriptionService.supervisorResume(bootpay, orderSubscriptionId, params);
     }
 }
