@@ -102,8 +102,8 @@ public class BootpayStoreObject {
         get.setHeader("Accept", "application/json");
         get.setHeader("Content-Type", "application/json");
         get.setHeader("Accept-Charset", "utf-8");
-        get.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        get.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        get.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        get.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         get.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
 
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
@@ -133,8 +133,8 @@ public class BootpayStoreObject {
         get.setHeader("Accept", "application/json");
         get.setHeader("Content-Type", "application/json");
         get.setHeader("Accept-Charset", "utf-8");
-        get.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        get.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        get.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        get.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         get.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
 
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
@@ -166,8 +166,8 @@ public class BootpayStoreObject {
         post.setHeader("Accept", "application/json");
         post.setHeader("Content-Type", "application/json");
         post.setHeader("Accept-Charset", "utf-8");
-        post.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        post.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        post.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        post.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         post.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
         
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
@@ -198,8 +198,8 @@ public class BootpayStoreObject {
         post.setHeader("Accept", "application/json");
         post.setHeader("Content-Type", "application/json");
         post.setHeader("Accept-Charset", "utf-8");
-        post.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        post.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        post.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        post.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         post.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
         
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
@@ -235,8 +235,8 @@ public class BootpayStoreObject {
         HttpPost post = new HttpPost(this.baseUrl + url);
         post.setHeader("Accept", "application/json");
         post.setHeader("Accept-Charset", "utf-8");
-        post.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        post.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        post.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        post.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         post.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
         
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
@@ -311,8 +311,8 @@ public class BootpayStoreObject {
         delete.setHeader("Accept", "application/json");
         delete.setHeader("Content-Type", "application/json");
         delete.setHeader("Accept-Charset", "utf-8");
-        delete.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        delete.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        delete.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        delete.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         delete.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
 
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
@@ -341,8 +341,8 @@ public class BootpayStoreObject {
         delete.setHeader("Accept", "application/json");
         delete.setHeader("Content-Type", "application/json");
         delete.setHeader("Accept-Charset", "utf-8");
-        delete.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        delete.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        delete.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        delete.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         delete.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
 
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
@@ -372,8 +372,8 @@ public class BootpayStoreObject {
         put.setHeader("Accept", "application/json");
         put.setHeader("Content-Type", "application/json");
         put.setHeader("Accept-Charset", "utf-8");
-        put.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        put.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        put.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        put.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         put.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
 
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
