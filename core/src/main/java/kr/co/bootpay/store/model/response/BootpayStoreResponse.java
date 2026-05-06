@@ -16,7 +16,13 @@ public class BootpayStoreResponse {
         this.error = error;
     }
 
-    // HTTP 상태 코드 반환
+    /**
+     * HTTP 상태 코드 반환.
+     *
+     * @deprecated 성공 여부 판단은 {@link #isSuccess()} 를 사용하세요. HTTP status 노출은 다음 메이저 버전에서
+     *             제거 예정이며, 기존 사용 코드는 그대로 동작합니다.
+     */
+    @Deprecated
     public int getHttpStatus() {
         return httpStatus;
     }
@@ -53,6 +59,7 @@ public class BootpayStoreResponse {
     // HashMap으로 변환 (기존 코드와의 호환성을 위해)
     public HashMap<String, Object> toHashMap() {
         HashMap<String, Object> result = new HashMap<>();
+        // Deprecated: "http_status" 키는 다음 메이저 버전에서 제거 예정 — 성공 여부는 "success" 키 사용
         result.put("http_status", httpStatus);
         result.put("success", success);
         result.put("data", data);
