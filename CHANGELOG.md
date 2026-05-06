@@ -1,3 +1,9 @@
+### Unreleased
+- `ResDefault.http_status`, `BootpayStoreResponse.getHttpStatus()` 를 `@Deprecated` 처리.
+  - 동작 변경 없음 — 필드/getter/HashMap 키(`"http_status"`) 모두 그대로 유지.
+  - 성공 여부 판단은 `ResDefault.error_code == 0` 또는 `BootpayStoreResponse.isSuccess()` 사용 권장.
+  - 다음 메이저 버전(예: 4.x)에서 제거 예정. 기존 가맹점 코드는 영향 없음.
+
 ### 3.0.5
 - orderSubscription.terminate 메서드 추가 (관리자 직접 구독 해지)
 
