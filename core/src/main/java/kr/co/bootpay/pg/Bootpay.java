@@ -17,6 +17,18 @@ public class Bootpay extends BootpayObject {
         super(restApplicationId, privateKey, devMode);
     }
 
+    private Bootpay(String clientKey, String secretKey, String devMode, boolean useClientKey) {
+        super(clientKey, secretKey, devMode, useClientKey);
+    }
+
+    public static Bootpay withClientKey(String clientKey, String secretKey) {
+        return new Bootpay(clientKey, secretKey, "PRODUCTION", true);
+    }
+
+    public static Bootpay withClientKey(String clientKey, String secretKey, String devMode) {
+        return new Bootpay(clientKey, secretKey, devMode, true);
+    }
+
     //token
     public HashMap<String, Object> getAccessToken() throws Exception {
         return TokenService.getAccessToken(this);
@@ -134,10 +146,20 @@ public class Bootpay extends BootpayObject {
     }
 
     //wallet
+    /**
+     * @deprecated 다음 메이저 버전에서 제거 예정. wallet 엔드포인트는 폐기 예정이며,
+     * 결제는 Request::PaymentController#create 의 wallet_id + user_token 으로 처리됩니다.
+     */
+    @Deprecated
     public HashMap<String, Object> getUserWallets(String userId, boolean sandbox) throws Exception {
         return WalletService.getUserWallets(this, userId, sandbox);
     }
 
+    /**
+     * @deprecated 다음 메이저 버전에서 제거 예정. wallet 엔드포인트는 폐기 예정이며,
+     * 결제는 wallet_id + user_token 흐름으로 전환하세요.
+     */
+    @Deprecated
     public HashMap<String, Object> requestWalletPayment(WalletPayment walletPayment) throws Exception {
         return WalletService.requestWalletPayment(this, walletPayment);
     }

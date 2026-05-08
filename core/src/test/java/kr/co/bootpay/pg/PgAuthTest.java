@@ -1,4 +1,6 @@
-package kr.co.bootpay;
+package kr.co.bootpay.pg;
+
+import kr.co.bootpay.TestConfig;
 
 import kr.co.bootpay.pg.Bootpay;
 import kr.co.bootpay.pg.model.request.Authentication;

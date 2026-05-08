@@ -1,20 +1,22 @@
 package com.example.bootpay.store;
 
+import com.example.bootpay.Config;
+
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.TokenPayload;
 
 /**
  * 프로젝트 조회 예제
- * SDK 초기화 시 설정한 application_id와 private_key로 연결된 프로젝트 정보를 확인합니다.
+ * SDK 초기화 시 설정한 client_key와 secret_key로 연결된 프로젝트 정보를 확인합니다.
  */
 public class Project {
     static BootpayStore bootpay;
 
     public static void main(String[] args) {
         try {
-            // SDK 초기화 - application_id와 private_key 설정
-            TokenPayload tokenPayload = new TokenPayload("hxS-Up--5RvT6oU6QJE0JA", "r5zxvDcQJiAP2PBQ0aJjSHQtblNmYFt6uFoEMhti_mg=");
+            // SDK 초기화 - client_key와 secret_key 설정
+            TokenPayload tokenPayload = new TokenPayload(Config.Commerce.getClientKey(), Config.Commerce.getSecretKey());
             bootpay = new BootpayStore(tokenPayload, "DEVELOPMENT");
 
             // 토큰 발급

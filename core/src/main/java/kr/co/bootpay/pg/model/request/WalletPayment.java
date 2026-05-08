@@ -4,6 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @deprecated wallet 엔드포인트는 폐기 예정. 다음 메이저 버전에서 제거됩니다.
+ * wallet_id + user_token 흐름으로 전환하세요.
+ */
+@Deprecated
 public class WalletPayment {
     public String userId;
     public String orderName;

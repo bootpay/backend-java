@@ -14,8 +14,8 @@ public class BootpayExample {
     static Bootpay bootpay;
 
     public static void main(String[] args) {
-        // Config에서 현재 환경에 맞는 키를 가져옴
-        bootpay = new Bootpay(Config.PG.getApplicationId(), Config.PG.getPrivateKey());
+        // BOOTPAY_AUTH_MODE=new (default) → client_key/secret_key, =legacy → application_id/private_key.
+        bootpay = Config.PG.createBootpay();
 
         System.out.println("bootpay: " + BankCode.신한);
 

@@ -1,5 +1,6 @@
-package kr.co.bootpay;
+package kr.co.bootpay.pg;
 
+import kr.co.bootpay.TestConfig;
 import kr.co.bootpay.pg.Bootpay;
 import kr.co.bootpay.pg.model.request.Item;
 import kr.co.bootpay.pg.model.request.User;
@@ -14,7 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("PG API - Wallet (간편결제 지갑)")
+@DisplayName("PG API - Wallet (간편결제 지갑) [@Deprecated]")
 class PgWalletTest {
 
     private static Bootpay bootpay;

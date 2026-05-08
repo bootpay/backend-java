@@ -17,7 +17,7 @@ import java.lang.reflect.Type;
 public class LinkService {
     // 이 메서드는 ResDefault<String> 타입을 반환하므로 기존 패턴 유지 (호환성)
     static public ResDefault<String> requestLink(BootpayObject bootpay, Payload payload) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) {
+        if (!bootpay.hasAuth()) {
             throw new Exception("token 값이 비어있습니다.");
         }
 

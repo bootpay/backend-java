@@ -1,8 +1,18 @@
-### Unreleased
-- `ResDefault.http_status`, `BootpayStoreResponse.getHttpStatus()` 를 `@Deprecated` 처리.
-  - 동작 변경 없음 — 필드/getter/HashMap 키(`"http_status"`) 모두 그대로 유지.
-  - 성공 여부 판단은 `ResDefault.error_code == 0` 또는 `BootpayStoreResponse.isSuccess()` 사용 권장.
-  - 다음 메이저 버전(예: 4.x)에서 제거 예정. 기존 가맹점 코드는 영향 없음.
+### 3.1.0
+- 인증: client_key/secret_key Basic Auth 지원 (PG + Commerce 공통).
+  - 기존 application_id/private_key Bearer 방식 하위 호환 유지.
+  - PG: `Bootpay.withClientKey(clientKey, secretKey [, devMode])` 팩토리 추가.
+    - ck/sk 모드에서는 매 요청 자동 Basic Auth 헤더 부착 — `getAccessToken()` 은 합성 응답을 반환하며 `request/token` 호출이 발생하지 않음.
+    - 한쪽만 지정 + legacy 키도 없으면 검증 실패.
+  - Commerce: `BootpayStore` 의 모든 호출이 `tokenPayload` 의 ck/sk 로 Basic Auth 사용.
+  - `BootpayObject.hasAuth()` / `getBasicAuthValue()` 헬퍼 추가 — 서비스 계층의 인증 전제 검사를 통합.
+- Wallet API (`requestWalletPayment`, `WalletPayment`) `@Deprecated` 표시 — 다음 메이저 버전에서 제거 예정.
+- `ResDefault.http_status`, `BootpayStoreResponse.getHttpStatus()` `@Deprecated` 표시 — 다음 메이저 버전에서 제거 예정 (성공 여부는 `error_code == 0` / `isSuccess()`).
+- 응답 파싱 견고성 개선:
+  - `responseToJsonArray` — 서버가 객체로 답해도 그대로 노출 (e.g. lookup/order 오류 응답).
+  - `responseToJson` — 서버가 배열로 답해도 `data` 로 wrapping (e.g. wallet 목록).
+  - `STokenService` — 응답 스트림 1회 read 로 통합 (이중 read 시 closed-stream 예외 수정).
+- 테스트 인프라: `.env` / `BOOTPAY_AUTH_MODE=new|legacy` / `BOOTPAY_ENV` 토글로 ck/sk · legacy 양쪽 검증, 테스트 디렉터리 `pg/`·`commerce/` 분리.
 
 ### 3.0.5
 - orderSubscription.terminate 메서드 추가 (관리자 직접 구독 해지)

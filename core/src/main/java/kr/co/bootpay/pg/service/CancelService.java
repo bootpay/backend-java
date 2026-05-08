@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class CancelService {
     static public HashMap<String, Object> receiptCancel(BootpayObject bootpay, Cancel cancel) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) {
+        if (!bootpay.hasAuth()) {
             throw new Exception("token 값이 비어있습니다.");
         }
         if (cancel.receiptId == null || cancel.receiptId.isEmpty()) {
