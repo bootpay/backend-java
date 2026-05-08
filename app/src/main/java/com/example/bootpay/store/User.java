@@ -1,5 +1,7 @@
 package com.example.bootpay.store;
 
+import com.example.bootpay.Config;
+
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUser;
@@ -21,7 +23,7 @@ public class User {
 
     public static void main(String[] args) {
         try {
-            TokenPayload tokenPayload = new TokenPayload("hxS-Up--5RvT6oU6QJE0JA", "r5zxvDcQJiAP2PBQ0aJjSHQtblNmYFt6uFoEMhti_mg=");
+            TokenPayload tokenPayload = new TokenPayload(Config.Commerce.getClientKey(), Config.Commerce.getSecretKey());
             bootpay = new BootpayStore(tokenPayload, "DEVELOPMENT");
 
             getToken();

@@ -7,14 +7,18 @@ import java.util.HashMap;
 
 public class WalletService {
 
-    private static void validateToken(BootpayObject bootpay) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) {
+    private static void validateAuth(BootpayObject bootpay) throws Exception {
+        if (!bootpay.hasAuth()) {
             throw new Exception("token 값이 비어있습니다.");
         }
     }
 
+    /**
+     * @deprecated 다음 메이저 버전에서 제거 예정.
+     */
+    @Deprecated
     static public HashMap<String, Object> getUserWallets(BootpayObject bootpay, String userId, boolean sandbox) throws Exception {
-        validateToken(bootpay);
+        validateAuth(bootpay);
         if (userId == null || userId.isEmpty()) {
             throw new Exception("userId 값을 입력해주세요.");
         }
@@ -23,8 +27,12 @@ public class WalletService {
         return bootpay.doGet("wallet?user_id=" + userId + "&sandbox=" + sandboxStr);
     }
 
+    /**
+     * @deprecated 다음 메이저 버전에서 제거 예정. wallet_id + user_token 흐름으로 전환하세요.
+     */
+    @Deprecated
     static public HashMap<String, Object> requestWalletPayment(BootpayObject bootpay, WalletPayment walletPayment) throws Exception {
-        validateToken(bootpay);
+        validateAuth(bootpay);
         if (walletPayment.userId == null || walletPayment.userId.isEmpty()) throw new Exception("userId 값을 입력해주세요.");
         if (walletPayment.orderName == null || walletPayment.orderName.isEmpty()) throw new Exception("order_name 값을 입력해주세요.");
         if (walletPayment.price == null || walletPayment.price <= 0) throw new Exception("price 금액을 설정을 해주세요.");

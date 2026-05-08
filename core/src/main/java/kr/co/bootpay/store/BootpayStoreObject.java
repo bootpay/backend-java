@@ -29,7 +29,7 @@ public class BootpayStoreObject {
     private String token;
     private String role = "user"; // 기본값을 user로 설정
 //    public String secretKey;
-//    public String serverKey;
+//    public String secretKey;
 //    public String privateKey;
     public TokenPayload tokenPayload = new TokenPayload();
     public String baseUrl;
@@ -113,12 +113,7 @@ public class BootpayStoreObject {
         }
         get.setHeader("BOOTPAY-ROLE", roleToUse);
 
-        String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
-        if(tokenToUse != null) {
-            get.setHeader("Authorization", "Bearer " + tokenToUse);
-        } else {
-            get.setHeader("Authorization", requestAccessToken());
-        }
+        get.setHeader("Authorization", requestAccessToken());
 
         get.setURI(uri);
         return get;
@@ -144,12 +139,7 @@ public class BootpayStoreObject {
         }
         get.setHeader("BOOTPAY-ROLE", roleToUse);
 
-        String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
-        if(tokenToUse != null) {
-            get.setHeader("Authorization", "Bearer " + tokenToUse);
-        } else {
-            get.setHeader("Authorization", requestAccessToken());
-        }
+        get.setHeader("Authorization", requestAccessToken());
 
         URI uri = new URIBuilder(get.getURI()).addParameters(nameValuePairList).build();
         get.setURI(uri);
@@ -177,13 +167,8 @@ public class BootpayStoreObject {
         }
         post.setHeader("BOOTPAY-ROLE", roleToUse);
         
-        String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
-        if(tokenToUse != null) {
-            post.setHeader("Authorization", "Bearer " + tokenToUse);
-        } else { //토큰 발급
-            post.setHeader("Authorization", requestAccessToken());
-        }
-        
+        post.setHeader("Authorization", requestAccessToken());
+
         post.setEntity(entity);
         return post;
     }
@@ -209,13 +194,8 @@ public class BootpayStoreObject {
         }
         post.setHeader("BOOTPAY-ROLE", roleToUse);
         
-        String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
-        if(tokenToUse != null) {
-            post.setHeader("Authorization", getTokenValue());
-        } else { //토큰 발급
-            post.setHeader("Authorization", requestAccessToken());
-        }
-        
+        post.setHeader("Authorization", requestAccessToken());
+
         // 사용자 정의 헤더 추가
         if (header != null) {
             for (Map.Entry<String, String> entry : header.entrySet()) {
@@ -246,11 +226,8 @@ public class BootpayStoreObject {
         }
         post.setHeader("BOOTPAY-ROLE", roleToUse);
         
-        String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
-        if(tokenToUse != null) {
-            post.setHeader("Authorization", "Bearer " + tokenToUse);
-        }
-        
+        post.setHeader("Authorization", requestAccessToken());
+
         // 멀티파트 엔티티 구성
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -322,12 +299,7 @@ public class BootpayStoreObject {
         }
         delete.setHeader("BOOTPAY-ROLE", roleToUse);
 
-        String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
-        if(tokenToUse != null) {
-            delete.setHeader("Authorization", "Bearer " + tokenToUse);
-        } else {
-            delete.setHeader("Authorization", requestAccessToken());
-        }
+        delete.setHeader("Authorization", requestAccessToken());
 
         return delete;
     }
@@ -352,12 +324,7 @@ public class BootpayStoreObject {
         }
         delete.setHeader("BOOTPAY-ROLE", roleToUse);
 
-        String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
-        if(tokenToUse != null) {
-            delete.setHeader("Authorization", "Bearer " + tokenToUse);
-        } else {
-            delete.setHeader("Authorization", requestAccessToken());
-        }
+        delete.setHeader("Authorization", requestAccessToken());
 
         delete.setEntity(entity);
         return delete;
@@ -383,12 +350,7 @@ public class BootpayStoreObject {
         }
         put.setHeader("BOOTPAY-ROLE", roleToUse);
 
-        String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
-        if(tokenToUse != null) {
-            put.setHeader("Authorization", "Bearer " + tokenToUse);
-        } else {
-            put.setHeader("Authorization", requestAccessToken());
-        }
+        put.setHeader("Authorization", requestAccessToken());
 
         put.setEntity(entity);
         return put;

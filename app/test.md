@@ -33,7 +33,7 @@ cd /Users/taesupyoon/bootpay/server/sdk/java
 
 ```java
 public static void main(String[] args) {
-    bootpay = new Bootpay(Config.PG.getApplicationId(), Config.PG.getPrivateKey());
+    bootpay = Bootpay.withClientKey(Config.PG.getClientKey(), Config.PG.getSecretKey());
 
     goGetToken();           // 토큰 발급
 //  getReceipt();           // 결제 조회
@@ -94,3 +94,66 @@ app/src/main/java/com/example/bootpay/
     ├── Invoice.java
     └── ...
 ```
+
+## PG 인증 방식 토글 (BOOTPAY_AUTH_MODE)
+
+PG 테스트는 기본적으로 신규 `client_key/secret_key` 방식으로 동작한다. 매 실행 시 환경변수로 레거시 `application_id/private_key` 방식으로 전환할 수 있다.
+
+### 토글 contract
+
+| `BOOTPAY_AUTH_MODE` | 동작 |
+|---|---|
+| `new` (기본, 미설정 시 동일) | `Bootpay.withClientKey(clientKey, secretKey, mode)` 로 인스턴스 생성. Basic Auth 헤더 자동 부착. |
+| `legacy` | `new Bootpay(applicationId, privateKey, mode)` 로 인스턴스 생성. `getAccessToken()` 호출 후 `Bearer` 헤더 사용. |
+
+키 값은 모두 `.env` (또는 환경변수) 로 주입한다 — `.env.example` 참고.
+
+### 사용법
+
+```bash
+# (1) 기본 — env var 생략 (= new)
+./gradlew :app:run
+
+# (2) 한 번만 legacy 로 전환
+BOOTPAY_AUTH_MODE=legacy ./gradlew :app:run
+
+# (3) JUnit 통합 테스트도 동일하게 환경변수로 토글
+BOOTPAY_AUTH_MODE=legacy ./gradlew :core:test --tests "kr.co.bootpay.pg.*"
+
+# (4) 셸 세션 동안 legacy 고정
+export BOOTPAY_AUTH_MODE=legacy
+./gradlew :app:run
+./gradlew :core:test
+unset BOOTPAY_AUTH_MODE
+
+# (5) 영구 전환 — .env 의 BOOTPAY_AUTH_MODE 값을 legacy 로 바꾸면 셸 export 없이도 동작
+```
+
+### 진입 헬퍼 — 어디서 토글이 흡수되는가
+
+| 테스트 종류 | 위치 | 헬퍼 |
+|---|---|---|
+| Example 앱 (`app/src/main/...`) | `Config.java` | `Config.PG.createBootpay()` |
+| JUnit 통합 테스트 (`core/src/test/...`) | `TestConfig.java` | `TestConfig.createBootpay()` / `createBootpayWithToken()` |
+
+JUnit `createBootpayWithToken()` 은 legacy 모드에서만 실제로 토큰 발급을 수행한다 (ck/sk 모드는 매 요청 Basic Auth 로 처리되어 발급 불필요). 어느 모드든 테스트 코드는 동일하다:
+
+```java
+Bootpay bootpay = TestConfig.createBootpayWithToken();
+```
+
+### 실행 시 인증 모드 표시
+
+`createBootpay()` 가 호출될 때마다 stdout 에 한 줄로 어떤 모드가 활성화됐는지 표시된다 (`./gradlew :app:run` 로그 또는 `./gradlew :core:test --info` 출력에서 확인):
+
+```
+[BOOTPAY_AUTH_MODE=new] PG: client_key/secret_key (Basic Auth) | env=production
+[BOOTPAY_AUTH_MODE=legacy] PG: application_id/private_key (Bearer) | env=production
+```
+
+### 토글의 영향을 받지 않는 파일
+
+다음 core 테스트는 두 모드를 한 함수 안에서 모두 검증하므로 환경변수에 무관하게 동일한 동작을 한다:
+
+- `core/src/test/java/kr/co/bootpay/pg/PgTokenTest.java`
+- `core/src/test/java/kr/co/bootpay/pg/LegacyCompatibilityTest.java`

@@ -43,7 +43,35 @@ dependencies {
 }
 ```
 
+
+## 환경변수 설정
+
+예제와 테스트는 각 SDK 루트의 `.env` 파일을 우선 읽습니다. 먼저 `.env.example`을 복사한 뒤 필요한 키만 변경하세요. `.env`는 gitignore 처리되어 커밋되지 않습니다.
+
+```bash
+cp .env.example .env
+# BOOTPAY_ENV=production 또는 development
+```
+
+주요 변수:
+
+```env
+BOOTPAY_ENV=production
+BOOTPAY_PG_CLIENT_KEY_PROD=...
+BOOTPAY_PG_SECRET_KEY_PROD=...
+BOOTPAY_PG_CLIENT_KEY_DEV=...
+BOOTPAY_PG_SECRET_KEY_DEV=...
+BOOTPAY_COMMERCE_CLIENT_KEY_PROD=...
+BOOTPAY_COMMERCE_SECRET_KEY_PROD=...
+BOOTPAY_COMMERCE_CLIENT_KEY_DEV=...
+BOOTPAY_COMMERCE_SECRET_KEY_DEV=...
+```
+
+변수가 없으면 SDK 테스트용 기본값(NodeJS 기준 ck/sk)으로 fallback 합니다.
+
 # 사용하기 
+> 권장 인증 방식은 `client_key/secret_key`입니다. 기존 `application_id/private_key` 생성자도 하위 호환을 위해 계속 동작합니다.
+
 BootpayExample.java
 
 ```java 
@@ -61,7 +89,8 @@ public class BootpayExample {
     static Bootpay bootpay;
 
     public static void main(String[] args) {
-        bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+        bootpay = Bootpay.withClientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"), System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"));
+// Legacy fallback: new Bootpay(System.getenv("BOOTPAY_APPLICATION_ID"), System.getenv("BOOTPAY_PRIVATE_KEY"));
         goGetToken();
     }
 
@@ -86,7 +115,8 @@ public class BootpayExample {
 부트페이와 서버간 통신을 하기 위해서는 부트페이 서버로부터 토큰을 발급받아야 합니다.  
 발급된 토큰은 30분간 유효하며, 최초 발급일로부터 30분이 지날 경우 토큰 발급 함수를 재호출 해주셔야 합니다.
 ```java 
-Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+Bootpay bootpay = Bootpay.withClientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"), System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"));
+// Legacy fallback: new Bootpay(System.getenv("BOOTPAY_APPLICATION_ID"), System.getenv("BOOTPAY_PRIVATE_KEY"));
 try {
    BootpayStoreResponse res = bootpay.getAccessToken();
    if(res.isSuccess()) {
@@ -102,7 +132,8 @@ try {
 ## 2. 결제 단건 조회
 결제창 및 정기결제에서 승인/취소된 결제건에 대하여 올바른 결제건인지 서버간 통신으로 결제검증을 합니다.
 ```java 
-Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+Bootpay bootpay = Bootpay.withClientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"), System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"));
+// Legacy fallback: new Bootpay(System.getenv("BOOTPAY_APPLICATION_ID"), System.getenv("BOOTPAY_PRIVATE_KEY"));
 bootpay.getAccessToken();
 
 try {
@@ -128,7 +159,8 @@ price를 지정하지 않으면 전액취소 됩니다.
 
 간혹 개발사에서 실수로 여러번 부분취소를 보내서 여러번 취소되는 경우가 있기때문에, 부트페이에서는 부분취소 중복 요청을 막기 위해 cancel_id 라는 필드를 추가했습니다. cancel_id를 지정하시면, 해당 건에 대해 중복 요청방지가 가능합니다.  
 ```java 
-Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+Bootpay bootpay = Bootpay.withClientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"), System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"));
+// Legacy fallback: new Bootpay(System.getenv("BOOTPAY_APPLICATION_ID"), System.getenv("BOOTPAY_PRIVATE_KEY"));
 bootpay.getAccessToken();
 
 Cancel cancel = new Cancel();
@@ -161,7 +193,8 @@ REST API 방식으로 고객으로부터 카드 정보를 전달하여, PG사에
 발급받은 빌링키를 저장하고 있다가, 원하는 시점, 원하는 금액에 결제 승인 요청하여 좀 더 자유로운 결제시나리오에 적용이 가능합니다.
 * 비인증 정기결제(REST API) 방식을 지원하는 PG사만 사용 가능합니다.
 ```java 
-Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+Bootpay bootpay = Bootpay.withClientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"), System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"));
+// Legacy fallback: new Bootpay(System.getenv("BOOTPAY_APPLICATION_ID"), System.getenv("BOOTPAY_PRIVATE_KEY"));
 bootpay.getAccessToken();
 
 Subscribe subscribe = new Subscribe();
@@ -243,7 +276,8 @@ public static void publishBillingKeyTransfer() {
 ## 4-3. 결제 요청하기
 발급된 빌링키로 원하는 시점에 원하는 금액으로 결제 승인 요청을 할 수 있습니다. 잔액이 부족하거나 도난 카드 등의 특별한 건이 아니면 PG사에서 결제를 바로 승인합니다.
 ```java 
-Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+Bootpay bootpay = Bootpay.withClientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"), System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"));
+// Legacy fallback: new Bootpay(System.getenv("BOOTPAY_APPLICATION_ID"), System.getenv("BOOTPAY_PRIVATE_KEY"));
 bootpay.getAccessToken();
 
 SubscribePayload payload = new SubscribePayload();
@@ -271,7 +305,8 @@ try {
 ## 4-4. 결제 예약하기
 원하는 시점에 4-1로 결제 승인 요청을 보내도 되지만, 빌링키 발급 이후에 바로 결제 예약 할 수 있습니다. (빌링키당 최대 10건)
 ```java 
-Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+Bootpay bootpay = Bootpay.withClientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"), System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"));
+// Legacy fallback: new Bootpay(System.getenv("BOOTPAY_APPLICATION_ID"), System.getenv("BOOTPAY_PRIVATE_KEY"));
 bootpay.getAccessToken();
 
 SubscribePayload payload = new SubscribePayload(); 
@@ -321,7 +356,8 @@ try {
 ## 4-6. 예약 취소하기
 예약시 응답받은 reserveId로 예약된 건을 취소합니다.
 ```java 
-Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+Bootpay bootpay = Bootpay.withClientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"), System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"));
+// Legacy fallback: new Bootpay(System.getenv("BOOTPAY_APPLICATION_ID"), System.getenv("BOOTPAY_PRIVATE_KEY"));
 bootpay.getAccessToken();
 
 String reserveId = "628b316cd01c7e00219b6081";
@@ -341,7 +377,8 @@ try {
 ## 4-7. 빌링키 삭제하기
 발급된 빌링키를 삭제합니다. 삭제하더라도 예약된 결제건은 취소되지 않습니다. 예약된 결제건 취소를 원하시면 예약 취소하기를 요청하셔야 합니다.
 ```java 
-Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+Bootpay bootpay = Bootpay.withClientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"), System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"));
+// Legacy fallback: new Bootpay(System.getenv("BOOTPAY_APPLICATION_ID"), System.getenv("BOOTPAY_PRIVATE_KEY"));
 bootpay.getAccessToken();
 
 String receiptId = "628b2644d01c7e00209b6092";
@@ -364,7 +401,8 @@ try {
 클라이언트에서 빌링키 발급시, 보안상 클라이언트 이벤트에 빌링키를 전달해주지 않습니다. 그러므로 이 API를 통해 조회해야 합니다.
 다음은 빌링키 발급 요청했던 receiptId 로 빌링키를 조회합니다.
 ```java 
-Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+Bootpay bootpay = Bootpay.withClientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"), System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"));
+// Legacy fallback: new Bootpay(System.getenv("BOOTPAY_APPLICATION_ID"), System.getenv("BOOTPAY_PRIVATE_KEY"));
 bootpay.getAccessToken();
 
 String receiptId = "62c7ccebcf9f6d001b3adcd4";
@@ -403,7 +441,8 @@ try {
 ㅇㅇ페이 사용을 위해 가맹점 회원의 토큰을 발급합니다. 가맹점은 회원의 고유번호를 관리해야합니다.
 이 토큰값을 기반으로 클라이언트에서 결제요청(payload.user_token) 하시면 되겠습니다.
 ```java 
-Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+Bootpay bootpay = Bootpay.withClientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"), System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"));
+// Legacy fallback: new Bootpay(System.getenv("BOOTPAY_APPLICATION_ID"), System.getenv("BOOTPAY_PRIVATE_KEY"));
 bootpay.getAccessToken();
 
 UserToken userToken = new UserToken();
@@ -430,7 +469,8 @@ try {
 2. 단일 트랜잭션의 개념이 필요할 경우 - 재고파악이 중요한 커머스를 운영할 경우 트랜잭션 개념이 필요할 수 있겠으며, 이를 위해서는 서버 승인을 사용해야 합니다. 
 
 ```java 
-Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+Bootpay bootpay = Bootpay.withClientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"), System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"));
+// Legacy fallback: new Bootpay(System.getenv("BOOTPAY_APPLICATION_ID"), System.getenv("BOOTPAY_PRIVATE_KEY"));
 bootpay.getAccessToken();
 
 String receiptId = "62876963d01c7e00209b6028";
@@ -450,7 +490,8 @@ try {
 다날 본인인증 후 결과값을 조회합니다. 
 다날 본인인증에서 통신사, 외국인여부, 전화번호 이 3가지 정보는 다날에 추가로 요청하셔야 받으실 수 있습니다.
 ```java 
-Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+Bootpay bootpay = Bootpay.withClientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"), System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"));
+// Legacy fallback: new Bootpay(System.getenv("BOOTPAY_APPLICATION_ID"), System.getenv("BOOTPAY_PRIVATE_KEY"));
 bootpay.getAccessToken();
 
 try {
@@ -470,7 +511,8 @@ try {
 
 PG사로 배송정보( 이니시스, KCP만 지원 )를 보내서 에스크로 상태를 변경하는 API 입니다.
 ```java 
-Bootpay bootpay = new Bootpay("5b8f6a4d396fa665fdc2b5ea", "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=");
+Bootpay bootpay = Bootpay.withClientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"), System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"));
+// Legacy fallback: new Bootpay(System.getenv("BOOTPAY_APPLICATION_ID"), System.getenv("BOOTPAY_PRIVATE_KEY"));
 bootpay.getAccessToken();
 
 Shipping shipping = new Shipping();

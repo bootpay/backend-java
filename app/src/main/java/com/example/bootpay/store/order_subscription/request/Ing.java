@@ -1,5 +1,7 @@
 package com.example.bootpay.store.order_subscription.request;
 
+import com.example.bootpay.Config;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,7 +23,7 @@ public class Ing {
     static BootpayStore bootpayStore;
     public static void main(String[] args) {
         try {
-            TokenPayload tokenPayload = new TokenPayload("hxS-Up--5RvT6oU6QJE0JA", "r5zxvDcQJiAP2PBQ0aJjSHQtblNmYFt6uFoEMhti_mg=");
+            TokenPayload tokenPayload = new TokenPayload(Config.Commerce.getClientKey(), Config.Commerce.getSecretKey());
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
             getToken();
 //            pause();

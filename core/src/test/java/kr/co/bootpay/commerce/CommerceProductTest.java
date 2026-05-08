@@ -1,4 +1,6 @@
-package kr.co.bootpay;
+package kr.co.bootpay.commerce;
+
+import kr.co.bootpay.TestConfig;
 
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.pojo.SProduct;

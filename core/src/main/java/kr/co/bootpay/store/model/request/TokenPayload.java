@@ -9,6 +9,5 @@ public class TokenPayload {
 
     public String clientKey;
     public String secretKey;
-    public String serverKey;
     public String privateKey;
 }

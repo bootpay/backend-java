@@ -8,7 +8,7 @@ import java.util.HashMap;
 // 에스크로 서비스
 public class EscrowService {
     static public HashMap<String, Object> shippingStart(BootpayObject bootpay, Shipping shipping) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) {
+        if (!bootpay.hasAuth()) {
             throw new Exception("token 값이 비어있습니다.");
         }
 

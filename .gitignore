@@ -37,3 +37,11 @@ local.properties
 # OS 파일
 .DS_Store
 Thumbs.db
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Tool runtime dirs
+.omj/
