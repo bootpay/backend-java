@@ -21,6 +21,11 @@ public class BootpayStore extends BootpayStoreObject {
     public OrderSubscription orderSubscription;
     public OrderSubscriptionBill orderSubscriptionBill;
     public OrderSubscriptionAdjustment orderSubscriptionAdjustment;
+    public OrderSubscriptionRequest orderSubscriptionRequest;
+    public Category category;
+    public Coupon coupon;
+    public Point point;
+    public Cart cart;
 
 
 
@@ -51,6 +56,11 @@ public class BootpayStore extends BootpayStoreObject {
         this.orderSubscription = new OrderSubscription(this);
         this.orderSubscriptionBill = new OrderSubscriptionBill(this);
         this.orderSubscriptionAdjustment = new OrderSubscriptionAdjustment(this);
+        this.orderSubscriptionRequest = new OrderSubscriptionRequest(this);
+        this.category = new Category(this);
+        this.coupon = new Coupon(this);
+        this.point = new Point(this);
+        this.cart = new Cart(this);
     }
 
     //token
