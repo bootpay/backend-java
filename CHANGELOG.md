@@ -13,6 +13,7 @@
   - `responseToJson` — 서버가 배열로 답해도 `data` 로 wrapping (e.g. wallet 목록).
   - `STokenService` — 응답 스트림 1회 read 로 통합 (이중 read 시 closed-stream 예외 수정).
 - 테스트 인프라: `.env` / `BOOTPAY_AUTH_MODE=new|legacy` / `BOOTPAY_ENV` 토글로 ck/sk · legacy 양쪽 검증, 테스트 디렉터리 `pg/`·`commerce/` 분리.
+- PG: `getReceipt(receiptId, lookupUserData)` 오버로드 추가 — NodeJS `receipt(receiptId, lookupUserData)` 와 parity. 기존 `getReceipt(receiptId)` 는 내부적으로 `lookupUserData=false` 위임 (백워드 호환).
 
 ### 3.0.5
 - orderSubscription.terminate 메서드 추가 (관리자 직접 구독 해지)
