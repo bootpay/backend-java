@@ -59,12 +59,7 @@ public class TestConfig {
     }
 
     // ── PG API 키 ─────────────────────────────────────────────
-    // ck/sk 는 .env / 환경변수 로 주입한다 (.env.example 참고). legacy application_id/private_key 만 SDK 내부에 둔다.
-    private static final String PG_APP_ID_DEV = "59bfc738e13f337dbd6ca48a";
-    private static final String PG_PRIVATE_KEY_DEV = "pDc0NwlkEX3aSaHTp/PPL/i8vn5E/CqRChgyEp/gHD0=";
-    private static final String PG_APP_ID_PROD = "5b8f6a4d396fa665fdc2b5ea";
-    private static final String PG_PRIVATE_KEY_PROD = "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=";
-
+    // ck/sk 와 legacy application_id/private_key 모두 .env / 환경변수 로 주입한다 (.env.example 참고).
     public static String getPgClientKey() {
         return isProduction() ? env("BOOTPAY_PG_CLIENT_KEY_PROD", "") : env("BOOTPAY_PG_CLIENT_KEY_DEV", "");
     }
@@ -74,11 +69,11 @@ public class TestConfig {
     }
 
     public static String getPgAppId() {
-        return isProduction() ? PG_APP_ID_PROD : PG_APP_ID_DEV;
+        return isProduction() ? env("BOOTPAY_PG_APPLICATION_ID_PROD", "") : env("BOOTPAY_PG_APPLICATION_ID_DEV", "");
     }
 
     public static String getPgPrivateKey() {
-        return isProduction() ? PG_PRIVATE_KEY_PROD : PG_PRIVATE_KEY_DEV;
+        return isProduction() ? env("BOOTPAY_PG_PRIVATE_KEY_PROD", "") : env("BOOTPAY_PG_PRIVATE_KEY_DEV", "");
     }
 
     // ── Commerce API 키 ───────────────────────────────────────

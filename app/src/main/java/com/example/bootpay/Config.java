@@ -43,14 +43,8 @@ public class Config {
     // 매 실행 시 BOOTPAY_AUTH_MODE 환경변수로 토글한다.
     public static final String AUTH_MODE = env("BOOTPAY_AUTH_MODE", "new").toLowerCase();
 
-    // PG API 키 - ck/sk 는 .env / 환경변수 로 주입한다 (.env.example 참고)
+    // PG API 키 - ck/sk 와 legacy application_id/private_key 모두 .env / 환경변수 로 주입한다 (.env.example 참고)
     public static class PG {
-        // Legacy fallback (application_id/private_key 는 SDK 내부 보존)
-        public static final String PRODUCTION_APPLICATION_ID = "5b8f6a4d396fa665fdc2b5ea";
-        public static final String PRODUCTION_PRIVATE_KEY = "rm6EYECr6aroQVG2ntW0A6LpWnkTgP4uQ3H18sDDUYw=";
-        public static final String DEV_APPLICATION_ID = "59bfc738e13f337dbd6ca48a";
-        public static final String DEV_PRIVATE_KEY = "pDc0NwlkEX3aSaHTp/PPL/i8vn5E/CqRChgyEp/gHD0=";
-
         public static String getClientKey() {
             return CURRENT_ENV.equals("production") ? env("BOOTPAY_PG_CLIENT_KEY_PROD", "") : env("BOOTPAY_PG_CLIENT_KEY_DEV", "");
         }
@@ -60,11 +54,11 @@ public class Config {
         }
 
         public static String getApplicationId() {
-            return CURRENT_ENV.equals("production") ? PRODUCTION_APPLICATION_ID : DEV_APPLICATION_ID;
+            return CURRENT_ENV.equals("production") ? env("BOOTPAY_PG_APPLICATION_ID_PROD", "") : env("BOOTPAY_PG_APPLICATION_ID_DEV", "");
         }
 
         public static String getPrivateKey() {
-            return CURRENT_ENV.equals("production") ? PRODUCTION_PRIVATE_KEY : DEV_PRIVATE_KEY;
+            return CURRENT_ENV.equals("production") ? env("BOOTPAY_PG_PRIVATE_KEY_PROD", "") : env("BOOTPAY_PG_PRIVATE_KEY_DEV", "");
         }
 
         /**
