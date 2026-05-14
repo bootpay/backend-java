@@ -98,6 +98,9 @@ public class Bootpay extends BootpayObject {
     public HashMap<String, Object> getReceipt(String receiptId) throws Exception {
         return VerificationService.receipt(this, receiptId);
     }
+    public HashMap<String, Object> getReceipt(String receiptId, boolean lookupUserData) throws Exception {
+        return VerificationService.receipt(this, receiptId, lookupUserData);
+    }
     public HashMap<String, Object> certificate(String receiptId) throws Exception {
         return VerificationService.certificate(this, receiptId);
     }
