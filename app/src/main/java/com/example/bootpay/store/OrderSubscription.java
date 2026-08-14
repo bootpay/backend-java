@@ -3,8 +3,13 @@ package com.example.bootpay.store;
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionListParams;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionUpdateParams;
+import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscriptionChargeParams;
+import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscriptionChargeRevokeParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.TokenPayload;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class OrderSubscription {
@@ -18,6 +23,8 @@ public class OrderSubscription {
             list();
 //            detail();
 //            update();
+//            supervisorCharge();
+//            supervisorChargeRevoke();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -76,6 +83,46 @@ public class OrderSubscription {
                 System.out.println("orderSubscription update success: " + res.getData());
             } else {
                 System.out.println("orderSubscription update false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 수시결제(온디맨드) charge_key 즉시 결제
+    public static void supervisorCharge() {
+        try {
+            SupervisorOrderSubscriptionChargeParams params = new SupervisorOrderSubscriptionChargeParams();
+            params.chargeKey = "6d1f1a2b3c4d5e6f70819200";
+            params.price = 1000d;
+            params.taxFreePrice = 0d;
+
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("memo", "수시결제 테스트");
+            params.metadata = metadata;
+
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.supervisorCharge(params);
+            if(res.isSuccess()) {
+                System.out.println("orderSubscription supervisorCharge success: " + res.getData());
+            } else {
+                System.out.println("orderSubscription supervisorCharge false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 수시결제(온디맨드) charge_key 해지
+    public static void supervisorChargeRevoke() {
+        try {
+            SupervisorOrderSubscriptionChargeRevokeParams params = new SupervisorOrderSubscriptionChargeRevokeParams();
+            params.chargeKey = "6d1f1a2b3c4d5e6f70819200";
+
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.supervisorChargeRevoke(params);
+            if(res.isSuccess()) {
+                System.out.println("orderSubscription supervisorChargeRevoke success: " + res.getData());
+            } else {
+                System.out.println("orderSubscription supervisorChargeRevoke false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();

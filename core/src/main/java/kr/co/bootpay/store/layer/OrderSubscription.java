@@ -10,6 +10,8 @@ import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscr
 import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscriptionTerminateParams;
 import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscriptionPauseParams;
 import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscriptionResumeParams;
+import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscriptionChargeParams;
+import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscriptionChargeRevokeParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.service.order_subscriptions.SOrderSubscriptionService;
 
@@ -54,5 +56,13 @@ public class OrderSubscription {
 
     public BootpayStoreResponse supervisorResume(String orderSubscriptionId, SupervisorOrderSubscriptionResumeParams params) throws Exception {
         return SOrderSubscriptionService.supervisorResume(bootpay, orderSubscriptionId, params);
+    }
+
+    public BootpayStoreResponse supervisorCharge(SupervisorOrderSubscriptionChargeParams params) throws Exception {
+        return SOrderSubscriptionService.supervisorCharge(bootpay, params);
+    }
+
+    public BootpayStoreResponse supervisorChargeRevoke(SupervisorOrderSubscriptionChargeRevokeParams params) throws Exception {
+        return SOrderSubscriptionService.supervisorChargeRevoke(bootpay, params);
     }
 }

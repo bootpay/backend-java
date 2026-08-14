@@ -3,8 +3,12 @@ package kr.co.bootpay.pg.service;
 import kr.co.bootpay.pg.BootpayObject;
 import kr.co.bootpay.pg.model.request.Subscribe;
 import kr.co.bootpay.pg.model.request.SubscribePayload;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class BillingService {
 
@@ -37,6 +41,18 @@ public class BillingService {
         if (billingKey == null || billingKey.isEmpty()) throw new Exception("billingKey 값이 비어있습니다.");
 
         return bootpay.doGet("billing_key/" + billingKey);
+    }
+
+    // 우선순위 결제 빌링키 조회
+    static public HashMap<String, Object> lookupSequentialBillingKey(BootpayObject bootpay, String widgetKey, String billingKey) throws Exception {
+        validateToken(bootpay);
+        if (widgetKey == null || widgetKey.isEmpty()) throw new Exception("widgetKey 값이 비어있습니다.");
+        if (billingKey == null || billingKey.isEmpty()) throw new Exception("billingKey 값이 비어있습니다.");
+
+        List<NameValuePair> nameValuePairList = new ArrayList<>();
+        nameValuePairList.add(new BasicNameValuePair("widget_key", widgetKey));
+
+        return bootpay.doGet("subscribe/sequential_billing_key/" + billingKey, nameValuePairList);
     }
 
     static public HashMap<String, Object> destroyBillingKey(BootpayObject bootpay, String billingKey) throws Exception {
