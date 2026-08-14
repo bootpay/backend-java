@@ -26,6 +26,7 @@ public class BootpayExample {
 //        reserveSubscribe();
 //        reserveCancelSubscribe();
 //        destroyBillingKey();
+//        lookupSequentialBillingKey();
 //        getUserToken();
 //        confirm();
 //        certificate();
@@ -291,6 +292,21 @@ public class BootpayExample {
                 System.out.println("lookupBillingKeyByKey success: " + res);
             } else {
                 System.out.println("lookupBillingKeyByKey false: " + res);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void lookupSequentialBillingKey() {
+        String widgetKey = "66542dfb4d18d5fc7b43e1b7";
+        String billingKey = "66542dfb4d18d5fc7b43e1b6";
+        try {
+            HashMap<String, Object> res = bootpay.lookupSequentialBillingKey(widgetKey, billingKey);
+            if(res.get("error_code") == null) { //success
+                System.out.println("lookupSequentialBillingKey success: " + res);
+            } else {
+                System.out.println("lookupSequentialBillingKey false: " + res);
             }
         } catch (Exception e) {
             e.printStackTrace();

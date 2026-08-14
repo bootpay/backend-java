@@ -11,10 +11,14 @@ import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscr
 import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscriptionTerminateParams;
 import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscriptionPauseParams;
 import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscriptionResumeParams;
+import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscriptionChargeParams;
+import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscriptionChargeRevokeParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
+import kr.co.bootpay.http.HttpDeleteWithBody;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -22,7 +26,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.NameValuePair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 
 public class SOrderSubscriptionService {
@@ -108,6 +115,61 @@ public class SOrderSubscriptionService {
 
     static public BootpayStoreResponse supervisorResume(BootpayStoreObject bootpay, String orderSubscriptionId, SupervisorOrderSubscriptionResumeParams params) throws Exception {
         return supervisorAction(bootpay, "order_subscriptions/" + orderSubscriptionId + "/resume", params == null ? new SupervisorOrderSubscriptionResumeParams() : params);
+    }
+
+    // 수시결제(온디맨드) charge_key 즉시 결제
+    // charge_key는 body로만 전송한다 (URL/query 금지 - 액세스 로그 노출 방지)
+    static public BootpayStoreResponse supervisorCharge(BootpayStoreObject bootpay, SupervisorOrderSubscriptionChargeParams params) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+        if (params == null) {
+            throw new Exception("params 값이 비어있습니다");
+        }
+        if (params.chargeKey == null || params.chargeKey.isEmpty()) {
+            throw new Exception("charge_key 값이 비어있습니다");
+        }
+        if (params.price == null) {
+            throw new Exception("price 금액을 설정을 해주세요.");
+        }
+        HttpClient client = HttpClientBuilder.create().build();
+        Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+        HttpPost post = bootpay.httpPost(
+                "order_subscriptions/charge",
+                new StringEntity(gson.toJson(params), "UTF-8"),
+                supervisorHeaders(params.idempotencyKey)
+        );
+        HttpResponse response = client.execute(post);
+        return bootpay.responseToJsonObject(response);
+    }
+
+    // 수시결제(온디맨드) charge_key 해지
+    // 해지 이후 해당 키로의 재결제는 불가능하다
+    static public BootpayStoreResponse supervisorChargeRevoke(BootpayStoreObject bootpay, SupervisorOrderSubscriptionChargeRevokeParams params) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+        if (params == null) {
+            throw new Exception("params 값이 비어있습니다");
+        }
+        if (params.chargeKey == null || params.chargeKey.isEmpty()) {
+            throw new Exception("charge_key 값이 비어있습니다");
+        }
+        HttpClient client = HttpClientBuilder.create().build();
+        Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+        HttpDeleteWithBody delete = bootpay.httpDeleteWithBody("order_subscriptions/charge", new StringEntity(gson.toJson(params), "UTF-8"));
+        for (Map.Entry<String, String> entry : supervisorHeaders(params.idempotencyKey).entrySet()) {
+            delete.setHeader(entry.getKey(), entry.getValue());
+        }
+        HttpResponse response = client.execute(delete);
+        return bootpay.responseToJsonObject(response);
+    }
+
+    static private Map<String, String> supervisorHeaders(String idempotencyKey) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Idempotency-Key", (idempotencyKey == null || idempotencyKey.isEmpty()) ? UUID.randomUUID().toString() : idempotencyKey);
+        headers.put("BOOTPAY-ROLE", "supervisor");
+        return headers;
     }
 
     static private BootpayStoreResponse supervisorAction(BootpayStoreObject bootpay, String uri, Object params) throws Exception {

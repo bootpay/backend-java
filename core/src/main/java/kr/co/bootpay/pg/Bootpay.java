@@ -29,6 +29,11 @@ public class Bootpay extends BootpayObject {
         return BillingService.lookupBillingKeyByKey(this, billingKey);
     }
 
+    // 우선순위 결제 빌링키 조회
+    public HashMap<String, Object> lookupSequentialBillingKey(String widgetKey, String billingKey) throws Exception {
+        return BillingService.lookupSequentialBillingKey(this, widgetKey, billingKey);
+    }
+
 
 
     public HashMap<String, Object> lookupPaymentMethods() throws Exception {
