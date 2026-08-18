@@ -7,8 +7,10 @@ import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionListParams;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionUpdateParams;
 import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionPauseParams;
+import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionPurchaseParams;
 import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionResumeParams;
 import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionTerminationParams;
+import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionTransferParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -121,10 +123,39 @@ public class SOrderSubscriptionRequestIngService {
     }
 
 
+    // 중도인수 요청 (POST order_subscriptions/requests/ing/purchase)
+    static public BootpayStoreResponse purchase(BootpayStoreObject bootpay, OrderSubscriptionPurchaseParams params) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+        HttpClient client = HttpClientBuilder.create().build();
 
-//    static public BootpayStoreResponse purchase(BootpayStoreObject bootpay, OrderSubscriptionPauseParams params) throws Exception {
-//
-//    }
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        HttpPost post = bootpay.httpPost("order_subscriptions/requests/ing/purchase", new StringEntity(gson.toJson(params), "UTF-8"));
+
+        HttpResponse response = client.execute(post);
+        return bootpay.responseToJsonObject(response);
+    }
+
+    // 구독 이전/승계 요청 (POST order_subscriptions/requests/ing/transfer)
+    static public BootpayStoreResponse transfer(BootpayStoreObject bootpay, OrderSubscriptionTransferParams params) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+        HttpClient client = HttpClientBuilder.create().build();
+
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        HttpPost post = bootpay.httpPost("order_subscriptions/requests/ing/transfer", new StringEntity(gson.toJson(params), "UTF-8"));
+
+        HttpResponse response = client.execute(post);
+        return bootpay.responseToJsonObject(response);
+    }
 
 
 //    static public BootpayStoreResponse calculatePurchasePrice(BootpayStoreObject bootpay, String orderSubscriptionId) throws Exception {

@@ -21,6 +21,7 @@ public class BootpayStore extends BootpayStoreObject {
     public OrderSubscription orderSubscription;
     public OrderSubscriptionBill orderSubscriptionBill;
     public OrderSubscriptionAdjustment orderSubscriptionAdjustment;
+    public Webhook webhook;
 
 
 
@@ -51,6 +52,7 @@ public class BootpayStore extends BootpayStoreObject {
         this.orderSubscription = new OrderSubscription(this);
         this.orderSubscriptionBill = new OrderSubscriptionBill(this);
         this.orderSubscriptionAdjustment = new OrderSubscriptionAdjustment(this);
+        this.webhook = new Webhook(this);
     }
 
     //token

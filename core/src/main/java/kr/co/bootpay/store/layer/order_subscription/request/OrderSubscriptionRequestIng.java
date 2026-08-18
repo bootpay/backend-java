@@ -2,8 +2,10 @@ package kr.co.bootpay.store.layer.order_subscription.request;
 
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionPauseParams;
+import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionPurchaseParams;
 import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionResumeParams;
 import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionTerminationParams;
+import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionTransferParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.service.order_subscriptions.request.SOrderSubscriptionRequestIngService;
 
@@ -54,6 +56,20 @@ public class OrderSubscriptionRequestIng {
 
     public BootpayStoreResponse termination(OrderSubscriptionTerminationParams params)  throws Exception {
         return SOrderSubscriptionRequestIngService.termination(
+                bootpay,
+                params
+        );
+    }
+
+    public BootpayStoreResponse purchase(OrderSubscriptionPurchaseParams params)  throws Exception {
+        return SOrderSubscriptionRequestIngService.purchase(
+                bootpay,
+                params
+        );
+    }
+
+    public BootpayStoreResponse transfer(OrderSubscriptionTransferParams params)  throws Exception {
+        return SOrderSubscriptionRequestIngService.transfer(
                 bootpay,
                 params
         );

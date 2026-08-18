@@ -45,14 +45,24 @@ public class BillingService {
 
     // 우선순위 결제 빌링키 조회
     static public HashMap<String, Object> lookupSequentialBillingKey(BootpayObject bootpay, String widgetKey, String billingKey) throws Exception {
+        return lookupSequentialBillingKey(bootpay, widgetKey, billingKey, null);
+    }
+
+    // 우선순위 결제 빌링키 조회 (user_id 로 조회 대상을 한정한다)
+    static public HashMap<String, Object> lookupSequentialBillingKey(BootpayObject bootpay, String widgetKey, String billingKey, String userId) throws Exception {
         validateToken(bootpay);
         if (widgetKey == null || widgetKey.isEmpty()) throw new Exception("widgetKey 값이 비어있습니다.");
         if (billingKey == null || billingKey.isEmpty()) throw new Exception("billingKey 값이 비어있습니다.");
 
+        return bootpay.doGet("subscribe/sequential_billing_key/" + billingKey, sequentialBillingKeyParams(widgetKey, userId));
+    }
+
+    // 값이 설정되지 않은 필드는 전송하지 않는다
+    static List<NameValuePair> sequentialBillingKeyParams(String widgetKey, String userId) {
         List<NameValuePair> nameValuePairList = new ArrayList<>();
         nameValuePairList.add(new BasicNameValuePair("widget_key", widgetKey));
-
-        return bootpay.doGet("subscribe/sequential_billing_key/" + billingKey, nameValuePairList);
+        if (userId != null && !userId.isEmpty()) nameValuePairList.add(new BasicNameValuePair("user_id", userId));
+        return nameValuePairList;
     }
 
     static public HashMap<String, Object> destroyBillingKey(BootpayObject bootpay, String billingKey) throws Exception {

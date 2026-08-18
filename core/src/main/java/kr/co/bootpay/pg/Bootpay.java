@@ -34,6 +34,11 @@ public class Bootpay extends BootpayObject {
         return BillingService.lookupSequentialBillingKey(this, widgetKey, billingKey);
     }
 
+    // 우선순위 결제 빌링키 조회 (user_id 로 조회 대상을 한정한다)
+    public HashMap<String, Object> lookupSequentialBillingKey(String widgetKey, String billingKey, String userId) throws Exception {
+        return BillingService.lookupSequentialBillingKey(this, widgetKey, billingKey, userId);
+    }
+
 
 
     public HashMap<String, Object> lookupPaymentMethods() throws Exception {

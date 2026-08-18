@@ -7,6 +7,7 @@ import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SInvoice;
 import kr.co.bootpay.store.model.request.ListParams;
+import kr.co.bootpay.store.model.request.invoice.InvoiceListParams;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -44,27 +45,40 @@ public class SInvoiceService {
 //        return responseJson(gson, str, response.getStatusLine().getStatusCode());
     }
 
+    // 청구서 목록 조회 (GET invoices)
+    // InvoiceListParams를 넘기면 cs_type / user_id / product_type / css_at / cse_at 필터도 함께 전송한다
     static public BootpayStoreResponse list(BootpayStoreObject bootpay, ListParams params) throws Exception {
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpGet get = listRequest(bootpay, params);
+        HttpResponse response = client.execute(get);
+        return bootpay.responseToJsonObject(response);
+    }
+
+    static HttpGet listRequest(BootpayStoreObject bootpay, ListParams params) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         String url = "invoices";
-        if(params != null) {
-            List<NameValuePair> nameValuePairList = new ArrayList<>();
-            if (params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
-            if (params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
-            if (params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
+        if (params == null) return bootpay.httpGet(url);
 
-            HttpGet get = bootpay.httpGet(url, nameValuePairList);
-            HttpResponse response = client.execute(get);
-            return bootpay.responseToJsonObject(response);
-        } else {
-            HttpGet get = bootpay.httpGet(url);
-            HttpResponse response = client.execute(get);
-            return bootpay.responseToJsonObject(response);
+        // 값이 설정되지 않은 필드는 전송하지 않는다 (ruby의 compact 동작)
+        List<NameValuePair> nameValuePairList = new ArrayList<>();
+        if (params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
+        if (params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
+        if (params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
+
+        if (params instanceof InvoiceListParams) {
+            InvoiceListParams invoiceParams = (InvoiceListParams) params;
+            if (invoiceParams.type != null) nameValuePairList.add(new BasicNameValuePair("type", invoiceParams.type.toString()));
+            if (invoiceParams.csType != null) nameValuePairList.add(new BasicNameValuePair("cs_type", invoiceParams.csType));
+            if (invoiceParams.userId != null) nameValuePairList.add(new BasicNameValuePair("user_id", invoiceParams.userId));
+            if (invoiceParams.productType != null) nameValuePairList.add(new BasicNameValuePair("product_type", invoiceParams.productType.toString()));
+            if (invoiceParams.cssAt != null) nameValuePairList.add(new BasicNameValuePair("css_at", invoiceParams.cssAt));
+            if (invoiceParams.cseAt != null) nameValuePairList.add(new BasicNameValuePair("cse_at", invoiceParams.cseAt));
         }
+
+        return bootpay.httpGet(url, nameValuePairList);
     }
 
     static public BootpayStoreResponse notify(BootpayStoreObject bootpay, String invoiceId, List<Integer> sendTypes) throws Exception {
