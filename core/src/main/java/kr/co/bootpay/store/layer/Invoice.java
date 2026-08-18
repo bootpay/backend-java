@@ -16,6 +16,7 @@ public class Invoice {
         this.bootpay = bootpay;
     }
 
+    // InvoiceListParams를 넘기면 cs_type / user_id / product_type / css_at / cse_at 필터도 함께 전송한다
     public BootpayStoreResponse list(ListParams params)  throws Exception {
         return SInvoiceService.list(
                 bootpay,

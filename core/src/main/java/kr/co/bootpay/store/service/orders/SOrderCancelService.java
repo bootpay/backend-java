@@ -102,7 +102,7 @@ public class SOrderCancelService {
                 .create();
 
         // 파일 업로드 요청 (여러 파일)
-        HttpPut put = bootpay.httpPut("order/cancel/" + params.orderCancelRequestHistoryId + "/approve", new StringEntity(gson.toJson(params), "UTF-8"));
+        HttpPut put = bootpay.httpPut("order/cancel/" + resolveCancellationId(params) + "/approve", new StringEntity(gson.toJson(params), "UTF-8"));
         HttpResponse response = client.execute(put);
         return bootpay.responseToJsonObject(response);
 
@@ -121,12 +121,20 @@ public class SOrderCancelService {
                 .create();
 
         // 파일 업로드 요청 (여러 파일)
-        HttpPut put = bootpay.httpPut("order/cancel/" + params.orderCancelRequestHistoryId + "/reject", new StringEntity(gson.toJson(params), "UTF-8"));
+        HttpPut put = bootpay.httpPut("order/cancel/" + resolveCancellationId(params) + "/reject", new StringEntity(gson.toJson(params), "UTF-8"));
         HttpResponse response = client.execute(put);
         return bootpay.responseToJsonObject(response);
 
         // 응답 처리
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(gson, str, response.getStatusLine().getStatusCode());
+    }
+
+    // 승인/반려 모두 order_cancellation_request_id를 :id로 사용한다 (구 인자명도 하위호환으로 받는다)
+    static private String resolveCancellationId(OrderCancelActionParams params) throws Exception {
+        if (params == null) throw new Exception("params 값이 비어있습니다");
+        String cancellationId = params.resolveOrderCancellationRequestId();
+        if (cancellationId == null || cancellationId.isEmpty()) throw new Exception("order_cancellation_request_id 값이 비어있습니다");
+        return cancellationId;
     }
 }

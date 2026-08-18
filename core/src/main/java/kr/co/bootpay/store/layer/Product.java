@@ -25,6 +25,14 @@ public class Product {
         );
     }
 
+    // 이미지가 있으면 multipart, 없으면 JSON으로 전송한다
+    public BootpayStoreResponse create(SProduct product)  throws Exception {
+        return SProductService.create(
+                bootpay,
+                product
+        );
+    }
+
     public BootpayStoreResponse create(SProduct product, List<URL> imagePaths)  throws Exception {
         return SProductService.create(
                 bootpay,

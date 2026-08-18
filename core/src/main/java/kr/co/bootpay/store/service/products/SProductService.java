@@ -26,9 +26,26 @@ import java.util.*;
 
 public class SProductService {
 
+    // 이미지 없이 상품을 등록한다 (POST products)
+    // 이미지가 있으면 multipart, 없으면 JSON으로 전송한다
+    static public BootpayStoreResponse create(BootpayStoreObject bootpay, SProduct product) throws Exception {
+        return create(bootpay, product, null);
+    }
+
     static public BootpayStoreResponse create(BootpayStoreObject bootpay, SProduct product, List<URL> imagePaths) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
+
+        // 이미지가 없으면 multipart 대신 JSON으로 전송한다
+        if (imagePaths == null || imagePaths.isEmpty()) {
+            Gson jsonGson = new GsonBuilder()
+                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                    .create();
+
+            HttpPost jsonPost = bootpay.httpPost("products", new StringEntity(jsonGson.toJson(product), "UTF-8"));
+            HttpResponse jsonResponse = client.execute(jsonPost);
+            return bootpay.responseToJsonObject(jsonResponse);
+        }
 
         // URL 리스트를 파일 리스트로 변환
         List<File> fileList = new ArrayList<>();

@@ -6,8 +6,10 @@ import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionPauseParams;
+import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionPurchaseParams;
 import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionResumeParams;
 import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionTerminationParams;
+import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubscriptionTransferParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.response.orderSubscription.request.ing.CalcTerminateFeeResponse;
 
@@ -142,5 +144,48 @@ public class Ing {
             e.printStackTrace();
         }
     }
-}
 
+    // 중도인수 요청
+    public static void purchase() {
+        try {
+            OrderSubscriptionPurchaseParams params = new OrderSubscriptionPurchaseParams();
+
+            params.orderSubscriptionId = "686dc2f2b0eacea5cd974ca2";
+            params.price = 10000.0;
+            params.taxFreePrice = 0.0;
+            params.reason = "중도 인수 요청";
+
+            BootpayStoreResponse res = bootpayStore.orderSubscription.requestIng.purchase(params);
+            if(res.isSuccess()) {
+                System.out.println("orderSubscription purchase success: " + res.getData());
+            } else {
+                System.out.println("orderSubscription purchase false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 구독 이전/승계 요청
+    public static void transfer() {
+        try {
+            OrderSubscriptionTransferParams params = new OrderSubscriptionTransferParams();
+
+            params.orderSubscriptionId = "686dc2f2b0eacea5cd974ca2";
+            params.newUserId = "6870a0c1b0eacea5cd974f3e";
+            params.newUsername = "홍길동";
+            params.newUserEmail = "help@bootpay.co.kr";
+            params.newUserPhone = "01000000000";
+            params.reason = "구독 승계 요청";
+
+            BootpayStoreResponse res = bootpayStore.orderSubscription.requestIng.transfer(params);
+            if(res.isSuccess()) {
+                System.out.println("orderSubscription transfer success: " + res.getData());
+            } else {
+                System.out.println("orderSubscription transfer false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
