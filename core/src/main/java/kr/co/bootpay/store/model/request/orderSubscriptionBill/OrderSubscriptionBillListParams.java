@@ -25,6 +25,9 @@ public class OrderSubscriptionBillListParams extends ListParams {
     public String externalUid;
     public String uid;
 
+    /** 미지정시 자동 생성 (Idempotency-Key 헤더로 전송, query 에는 포함되지 않는다) */
+    public transient String idempotencyKey;
+
     public OrderSubscriptionBillListParams() {
         this.status = new ArrayList<>();
     }

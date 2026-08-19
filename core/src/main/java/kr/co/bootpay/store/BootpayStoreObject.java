@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -92,6 +93,17 @@ public class BootpayStoreObject {
         return "Basic " + encoded;
     }
 
+    // RequestContext에 지정된 부가 헤더 부착 — Idempotency-Key, Bootpay-User-JWT는 값이 있을 때만 붙는다
+    private void applyContextHeaders(HttpRequestBase request, RequestContext context) {
+        if (context == null) return;
+        if (context.getIdempotencyKey() != null && !context.getIdempotencyKey().isEmpty()) {
+            request.setHeader("Idempotency-Key", context.getIdempotencyKey());
+        }
+        if (context.getUserJwt() != null && !context.getUserJwt().isEmpty()) {
+            request.setHeader("Bootpay-User-JWT", context.getUserJwt());
+        }
+    }
+
     public HttpGet httpGet(String url) throws Exception {
         return httpGet(url, (RequestContext) null);
     }
@@ -114,6 +126,7 @@ public class BootpayStoreObject {
         get.setHeader("BOOTPAY-ROLE", roleToUse);
 
         get.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(get, context);
 
         get.setURI(uri);
         return get;
@@ -140,6 +153,7 @@ public class BootpayStoreObject {
         get.setHeader("BOOTPAY-ROLE", roleToUse);
 
         get.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(get, context);
 
         URI uri = new URIBuilder(get.getURI()).addParameters(nameValuePairList).build();
         get.setURI(uri);
@@ -166,8 +180,9 @@ public class BootpayStoreObject {
             roleToUse = "user"; // 기본값
         }
         post.setHeader("BOOTPAY-ROLE", roleToUse);
-        
+
         post.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(post, context);
 
         post.setEntity(entity);
         return post;
@@ -195,6 +210,7 @@ public class BootpayStoreObject {
         post.setHeader("BOOTPAY-ROLE", roleToUse);
         
         post.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(post, context);
 
         // 사용자 정의 헤더 추가
         if (header != null) {
@@ -225,17 +241,20 @@ public class BootpayStoreObject {
             roleToUse = "user"; // 기본값
         }
         post.setHeader("BOOTPAY-ROLE", roleToUse);
-        
+
         post.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(post, context);
 
         // 멀티파트 엔티티 구성
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
         // 여러 파일 첨부
+        // ⚠️ Rails 는 반복된 `images` 를 배열로 받지 않는다. images[0], images[1] ... 로 인덱싱해야 한다.
         if (files != null) {
-            for (File file : files) {
-                builder.addBinaryBody("images", file, ContentType.APPLICATION_OCTET_STREAM, file.getName());
+            for (int i = 0; i < files.size(); i++) {
+                File file = files.get(i);
+                builder.addBinaryBody("images[" + i + "]", file, ContentType.APPLICATION_OCTET_STREAM, file.getName());
             }
         }
 
@@ -300,6 +319,7 @@ public class BootpayStoreObject {
         delete.setHeader("BOOTPAY-ROLE", roleToUse);
 
         delete.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(delete, context);
 
         return delete;
     }
@@ -325,6 +345,7 @@ public class BootpayStoreObject {
         delete.setHeader("BOOTPAY-ROLE", roleToUse);
 
         delete.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(delete, context);
 
         delete.setEntity(entity);
         return delete;
@@ -351,6 +372,7 @@ public class BootpayStoreObject {
         put.setHeader("BOOTPAY-ROLE", roleToUse);
 
         put.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(put, context);
 
         put.setEntity(entity);
         return put;

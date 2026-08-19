@@ -22,6 +22,7 @@ class PgWalletTest {
 
     @BeforeAll
     static void setUp() throws Exception {
+        TestConfig.assumePgLiveAllowed();
         bootpay = TestConfig.createBootpayWithToken();
     }
 

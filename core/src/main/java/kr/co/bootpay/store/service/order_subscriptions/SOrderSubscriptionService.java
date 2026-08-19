@@ -3,15 +3,20 @@ package kr.co.bootpay.store.service.order_subscriptions;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import kr.co.bootpay.http.HttpDeleteWithBody;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.context.RequestContext;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionListParams;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionUpdateParams;
+import kr.co.bootpay.store.model.request.orderSubscription.SupervisorChargeParams;
+import kr.co.bootpay.store.model.request.orderSubscription.SupervisorChargeRevokeParams;
 import kr.co.bootpay.store.model.request.orderSubscription.SupervisorPauseParams;
 import kr.co.bootpay.store.model.request.orderSubscription.SupervisorResumeParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -34,8 +39,11 @@ public class SOrderSubscriptionService {
             List<NameValuePair> nameValuePairList = new ArrayList<>();
             if(params.sAt != null) nameValuePairList.add(new BasicNameValuePair("s_at", params.sAt));
             if(params.eAt != null) nameValuePairList.add(new BasicNameValuePair("e_at", params.eAt));
+            if(params.searchDateFrom != null) nameValuePairList.add(new BasicNameValuePair("search_date_from", params.searchDateFrom));
+            if(params.searchDateTo != null) nameValuePairList.add(new BasicNameValuePair("search_date_to", params.searchDateTo));
 
             if(params.requestType != null) nameValuePairList.add(new BasicNameValuePair("request_type", params.requestType.toString()));
+            if(params.status != null) nameValuePairList.add(new BasicNameValuePair("status", params.status.toString()));
 
             // user_group_id 또는 ex_uid 지원
             if(params.userGroupId != null) nameValuePairList.add(new BasicNameValuePair("user_group_id", params.userGroupId));
@@ -91,10 +99,71 @@ public class SOrderSubscriptionService {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
-        HttpPut put = bootpay.httpPut("order_subscriptions/" + params.orderSubscriptionId, new StringEntity(gson.toJson(params), "UTF-8"));
+        HttpPut put = bootpay.httpPut("order_subscriptions/" + params.orderSubscriptionId, new StringEntity(gson.toJson(params), "UTF-8"),
+                supervisorContext(params.idempotencyKey));
 
         HttpResponse response = client.execute(put);
         return bootpay.responseToJsonObject(response);
+    }
+
+    /**
+     * 수시결제(온디맨드) charge_key 즉시 결제 (supervisor 전용)
+     * POST /v1/order_subscriptions/charge
+     * ⚠️ charge_key 는 body 로만 전송한다 (URL/query 금지 — 액세스 로그 노출 방지)
+     */
+    static public BootpayStoreResponse supervisorCharge(BootpayStoreObject bootpay, SupervisorChargeParams params) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+        if(params == null || params.chargeKey == null || params.chargeKey.isEmpty()) {
+            throw new Exception("charge_key 값이 비어있습니다");
+        }
+        HttpClient client = HttpClientBuilder.create().build();
+
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        HttpPost post = bootpay.httpPost("order_subscriptions/charge", new StringEntity(gson.toJson(params), "UTF-8"),
+                supervisorContext(params.idempotencyKey));
+
+        HttpResponse response = client.execute(post);
+        return bootpay.responseToJsonObject(response);
+    }
+
+    /**
+     * 수시결제(온디맨드) charge_key 해지 (supervisor 전용)
+     * DELETE /v1/order_subscriptions/charge
+     * 해지 이후 해당 키로의 재결제는 불가능하다. charge_key 는 body 로만 전송한다.
+     */
+    static public BootpayStoreResponse supervisorChargeRevoke(BootpayStoreObject bootpay, SupervisorChargeRevokeParams params) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+        if(params == null || params.chargeKey == null || params.chargeKey.isEmpty()) {
+            throw new Exception("charge_key 값이 비어있습니다");
+        }
+        HttpClient client = HttpClientBuilder.create().build();
+
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        HttpDeleteWithBody delete = bootpay.httpDeleteWithBody("order_subscriptions/charge", new StringEntity(gson.toJson(params), "UTF-8"),
+                supervisorContext(params.idempotencyKey));
+
+        HttpResponse response = client.execute(delete);
+        return bootpay.responseToJsonObject(response);
+    }
+
+    /**
+     * supervisor 전용 요청 컨텍스트 — Idempotency-Key 는 미지정시 매 호출마다 생성된다.
+     */
+    private static RequestContext supervisorContext(String idempotencyKey) {
+        return RequestContext.builder()
+                .role("supervisor")
+                .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
+                .build();
     }
 
     /**

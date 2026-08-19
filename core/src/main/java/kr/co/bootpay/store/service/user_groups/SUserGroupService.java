@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.context.RequestContext;
 import kr.co.bootpay.store.model.request.userGroup.UserGroupAggregateTransactionParams;
 import kr.co.bootpay.store.model.request.userGroup.UserGroupLimitParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
@@ -145,7 +146,8 @@ public class SUserGroupService {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
-        HttpPut put = bootpay.httpPut("user-groups/" + params.userGroupId + "/limit", new StringEntity(gson.toJson(params), "UTF-8"));
+        HttpPut put = bootpay.httpPut("user-groups/" + params.userGroupId + "/limit", new StringEntity(gson.toJson(params), "UTF-8"),
+                managerContext(params.idempotencyKey));
 
         HttpResponse response = client.execute(put);
         return bootpay.responseToJsonObject(response);
@@ -166,9 +168,21 @@ public class SUserGroupService {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
-        HttpPut put = bootpay.httpPut("user-groups/" + params.userGroupId + "/aggregate-transaction", new StringEntity(gson.toJson(params), "UTF-8"));
+        HttpPut put = bootpay.httpPut("user-groups/" + params.userGroupId + "/aggregate-transaction", new StringEntity(gson.toJson(params), "UTF-8"),
+                managerContext(params.idempotencyKey));
 
         HttpResponse response = client.execute(put);
         return bootpay.responseToJsonObject(response);
+    }
+
+    /**
+     * 그룹 한도/합산청구 설정 요청 컨텍스트 — 서버가 manager scope 를 요구한다.
+     * Idempotency-Key 는 미지정시 매 호출마다 생성된다.
+     */
+    private static RequestContext managerContext(String idempotencyKey) {
+        return RequestContext.builder()
+                .role("manager")
+                .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
+                .build();
     }
 }

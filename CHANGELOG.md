@@ -1,3 +1,32 @@
+### 3.2.0
+
+NodeJS SDK 2.9.0 과 기능 동등(parity).
+
+- PG: `lookupSequentialBillingKey(widgetKey, billingKey, userId)` 추가 — `GET subscribe/sequential_billing_key/{billing_key}?widget_key={widget_key}&user_id={user_id}` (우선순위/순차 결제 빌링키 조회).
+- Commerce: 몰 설정 모듈 `mallSetting` 추가 (supervisor 전용) — `getMallSetting`/`detail`: `GET mall-setting`, `updateMallSetting`/`update`: `PUT mall-setting` (flatten 바디, null 값 미전송). `SMallSetting` pojo 에 parity 필드 추가 (`addr_1`/`addr_2`, 서버 오타 필드 `use_oder_cancel_approval` 직렬화 정정 포함).
+- Commerce: `webhook.sendTest([headerContentType][, idempotencyKey])` 추가 — `POST webhook/test`.
+- Commerce: 수시결제(온디맨드) charge_key 결제/해지 추가 (supervisor 전용)
+  - `orderSubscription.supervisorCharge(SupervisorChargeParams)`: `POST order_subscriptions/charge` — charge_key 는 body 로만 전송 (URL/query 금지)
+  - `orderSubscription.supervisorChargeRevoke(SupervisorChargeRevokeParams)`: `DELETE order_subscriptions/charge` — 해지 후 해당 키로 재결제 불가
+- Commerce: V1 Mall 회원 endpoint 추가 (복수형 `users/...` 경로) — `user.userLogin`, `user.userSession`, `user.userLogout`, `user.userJoin(MallUserJoinParams)`, `user.userJoinCheck(type, pk)`, `user.uidExist(uid)`. 세션 호출은 회원 JWT 를 `Bootpay-User-JWT` 헤더로 전달 (값이 있을 때만 부착).
+- Commerce: 상품 조회 Mall API — `product.products(MallProductListParams)` (`page`/`limit` 기본 1/20, `category_id`/`sort`/`user_jwt` 지원), `product.productDetail(productId, userJwt)`.
+- Commerce: `product.create` 는 이미지가 없으면 JSON, 있으면 multipart 로 전송. multipart 이미지 필드를 `images[0]`, `images[1]` … 인덱싱으로 정정 (Rails 는 반복된 `images` 를 배열로 받지 않는다).
+- Commerce: `orderSubscription.requestIng.purchase`(중도인수) / `requestIng.transfer`(이전·승계) 추가 — `POST order_subscriptions/requests/ing/{purchase,transfer}`.
+- Commerce: 인자·요청 규약 정정
+  - `invoice.list(InvoiceListParams)` 오버로드 추가 — `limit` 기본값 24, `cs_type`/`user_id`/`product_type`/`css_at`/`cse_at` 지원. 응답은 `{ list, count }` 구조 (`{ items, total }` 아님).
+  - `invoice.notify` 의 sendTypes 선택화 — `notify(invoiceId)` 오버로드 추가.
+  - `orderCancel` approve/reject 인자명을 `orderCancellationRequestId` 로 통일 (구 이름 `orderCancelRequestHistoryId` 도 계속 동작).
+  - `orderSubscriptionAdjustment.delete` 는 대상 ID 를 query 가 아니라 body 로 전송.
+  - `order.list` 에 `searchDateFrom`/`searchDateTo` 추가 (`cssAt`/`cseAt` 는 서버 별칭으로 계속 지원).
+  - `orderSubscription.list` 에 `searchDateFrom`/`searchDateTo` 추가, 기존 `status` 파라미터 실제 전송 배선.
+  - `orderSubscriptionRequest.list` 에 `orderSubscriptionId`/`userId`/`userGroupId` 추가, `page`/`limit` 기본 1/20.
+- Commerce: 서버가 요구하는 scope 를 endpoint 별로 명시 — 상품 쓰기/그룹 한도는 `manager`, 구독 계약변경·조정항목·요청 승인·charge·mallSetting 은 `supervisor`, 나머지는 `user`. `orderSubscriptionRequest.list`/`detail` 은 `project_id` 가 있으면 `supervisor`, 없으면 `user`.
+- Commerce: `Idempotency-Key` 헤더 자동 생성(UUID) 지원 — store 조회, invoice, mall 회원/상품, requests/ing, 조정항목, charge, mallSetting, webhook 등에 부착. 각 API 의 `idempotencyKey` 인자로 직접 지정 가능. `RequestContext` 에 `idempotencyKey`/`userJwt` 필드 추가.
+- Commerce: `orderSubscriptionBill.list` parity — `page`/`limit` 기본 1/20 상시 전송, user scope + `Idempotency-Key` 부착 (`idempotencyKey` 필드로 직접 지정 가능).
+- Commerce: `requestIng.calculateTerminationFee` 로직 결함 수정 — `order_subscription_id` 와 `order_number` 를 동시에 지정하면 둘 다 전송한다 (기존에는 `order_number` 가 조용히 유실됐다).
+- Commerce: 파라미터 모델 optional 필드 추가 — `OrderSubscriptionUpdateParams` 에 `nextBillingAt`/`billingKey`/`status`/`paymentNextAt`, `OrderSubscriptionResumeParams` 에 `resumeAt`.
+- 테스트: 라이브 테스트 env 게이트 도입 — `BOOTPAY_ENV=development` 또는 로컬 base URL 오버라이드(`BOOTPAY_PG_BASE_URL`/`BOOTPAY_COMMERCE_BASE_URL`)가 없으면 라이브 테스트를 skip 하여 production 실서버 호출을 차단.
+
 ### 3.1.0
 - 인증: client_key/secret_key Basic Auth 지원 (PG + Commerce 공통).
   - 기존 application_id/private_key Bearer 방식 하위 호환 유지.

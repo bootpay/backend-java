@@ -36,4 +36,6 @@ public class ProductStatusParams {
 
     public Boolean useOptionStock;       // 옵션별 재고 사용 여부
 
+    /** 미지정시 자동 생성 (Idempotency-Key 헤더로 전송, body 에는 포함되지 않는다) */
+    public transient String idempotencyKey;
 }

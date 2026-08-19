@@ -4,6 +4,7 @@ package kr.co.bootpay.store.layer;
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUser;
+import kr.co.bootpay.store.model.request.user.MallUserJoinParams;
 import kr.co.bootpay.store.model.request.user.UserListParams;
 import kr.co.bootpay.store.service.users.SUserAuthenticateService;
 import kr.co.bootpay.store.service.users.SUserJoinService;
@@ -91,6 +92,111 @@ public class User {
      */
     public BootpayStoreResponse login(String loginId, String loginPw) throws Exception {
         return SUserLoginService.login(bootpay, loginId, loginPw);
+    }
+
+    /**
+     * 회원 로그인 (V1 Mall API)
+     * POST /v1/users/login
+     * @param loginId 로그인 ID
+     * @param password 비밀번호
+     */
+    public BootpayStoreResponse userLogin(String loginId, String password) throws Exception {
+        return SUserLoginService.userLogin(bootpay, loginId, password, null, null);
+    }
+
+    /**
+     * 회원 로그인 (V1 Mall API)
+     * @param corporateType 0: 개인, 1: 사업자 (미지정시 0 — 서버는 무시하지만 nodejs SDK 와 동일하게 전송)
+     */
+    public BootpayStoreResponse userLogin(String loginId, String password, Integer corporateType) throws Exception {
+        return SUserLoginService.userLogin(bootpay, loginId, password, corporateType, null);
+    }
+
+    /**
+     * 회원 로그인 (V1 Mall API)
+     * @param idempotencyKey 미지정시 자동 생성
+     */
+    public BootpayStoreResponse userLogin(String loginId, String password, Integer corporateType, String idempotencyKey) throws Exception {
+        return SUserLoginService.userLogin(bootpay, loginId, password, corporateType, idempotencyKey);
+    }
+
+    /**
+     * 회원 세션 조회 (V1 Mall API)
+     * GET /v1/users/session
+     * @param userJwt 로그인시 발급받은 회원 JWT
+     */
+    public BootpayStoreResponse userSession(String userJwt) throws Exception {
+        return SUserLoginService.userSession(bootpay, userJwt, null);
+    }
+
+    /**
+     * 회원 세션 조회 (V1 Mall API)
+     * @param idempotencyKey 미지정시 자동 생성
+     */
+    public BootpayStoreResponse userSession(String userJwt, String idempotencyKey) throws Exception {
+        return SUserLoginService.userSession(bootpay, userJwt, idempotencyKey);
+    }
+
+    /**
+     * 회원 로그아웃 (V1 Mall API)
+     * DELETE /v1/users/session
+     * @param userJwt 로그인시 발급받은 회원 JWT
+     */
+    public BootpayStoreResponse userLogout(String userJwt) throws Exception {
+        return SUserLoginService.userLogout(bootpay, userJwt, null);
+    }
+
+    /**
+     * 회원 로그아웃 (V1 Mall API)
+     * @param idempotencyKey 미지정시 자동 생성
+     */
+    public BootpayStoreResponse userLogout(String userJwt, String idempotencyKey) throws Exception {
+        return SUserLoginService.userLogout(bootpay, userJwt, idempotencyKey);
+    }
+
+    /**
+     * 회원가입 (V1 Mall API) — 일반 회원가입용
+     * POST /v1/users/join
+     * ⚠️ join(user) 과 같은 엔드포인트를 부르지만 용도가 다르다 (일반 회원가입 vs 외부 uid 연동 가입).
+     * @param params 회원가입 파라미터 (corporateType 미지정시 0, null 값은 전송하지 않는다)
+     */
+    public BootpayStoreResponse userJoin(MallUserJoinParams params) throws Exception {
+        return SUserJoinService.userJoin(bootpay, params);
+    }
+
+    /**
+     * 회원가입 중복 확인 (V1 Mall API) — key 를 인자로 받는 일반형
+     * GET /v1/users/join/{type}?pk={pk}
+     * @param type email-exist, id-exist, phone-exist, uid-exist, group-business-number-exist
+     * @param pk 중복 확인할 값
+     */
+    public BootpayStoreResponse userJoinCheck(String type, String pk) throws Exception {
+        return SUserJoinService.userJoinCheck(bootpay, type, pk, null);
+    }
+
+    /**
+     * 회원가입 중복 확인 (V1 Mall API)
+     * @param idempotencyKey 미지정시 자동 생성
+     */
+    public BootpayStoreResponse userJoinCheck(String type, String pk, String idempotencyKey) throws Exception {
+        return SUserJoinService.userJoinCheck(bootpay, type, pk, idempotencyKey);
+    }
+
+    /**
+     * 외부 uid(ex_uid) 중복 검사
+     * GET /v1/users/join/uid-exist?pk={uid}
+     * @param uid 중복 확인할 외부 uid
+     */
+    public BootpayStoreResponse uidExist(String uid) throws Exception {
+        return SUserJoinService.uidExist(bootpay, uid, null);
+    }
+
+    /**
+     * 외부 uid(ex_uid) 중복 검사
+     * @param idempotencyKey 미지정시 자동 생성
+     */
+    public BootpayStoreResponse uidExist(String uid, String idempotencyKey) throws Exception {
+        return SUserJoinService.uidExist(bootpay, uid, idempotencyKey);
     }
 
     /**

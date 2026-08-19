@@ -19,6 +19,7 @@ class CommerceUserTest {
 
     @BeforeAll
     static void setUp() throws Exception {
+        TestConfig.assumeCommerceLiveAllowed();
         store = TestConfig.createBootpayStoreWithToken();
     }
 

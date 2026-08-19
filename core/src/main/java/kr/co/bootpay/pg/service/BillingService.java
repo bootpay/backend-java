@@ -4,6 +4,7 @@ import kr.co.bootpay.pg.BootpayObject;
 import kr.co.bootpay.pg.model.request.Subscribe;
 import kr.co.bootpay.pg.model.request.SubscribePayload;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 public class BillingService {
@@ -37,6 +38,20 @@ public class BillingService {
         if (billingKey == null || billingKey.isEmpty()) throw new Exception("billingKey 값이 비어있습니다.");
 
         return bootpay.doGet("billing_key/" + billingKey);
+    }
+
+    // 우선순위(순차) 결제 빌링키 조회
+    // GET subscribe/sequential_billing_key/{billing_key}?widget_key={widget_key}&user_id={user_id}
+    static public HashMap<String, Object> lookupSequentialBillingKey(BootpayObject bootpay, String widgetKey, String billingKey, String userId) throws Exception {
+        validateToken(bootpay);
+        if (widgetKey == null || widgetKey.isEmpty()) throw new Exception("widgetKey 값이 비어있습니다.");
+        if (billingKey == null || billingKey.isEmpty()) throw new Exception("billingKey 값이 비어있습니다.");
+        if (userId == null || userId.isEmpty()) throw new Exception("userId 값이 비어있습니다.");
+
+        String url = "subscribe/sequential_billing_key/" + billingKey
+                + "?widget_key=" + URLEncoder.encode(widgetKey, "UTF-8")
+                + "&user_id=" + URLEncoder.encode(userId, "UTF-8");
+        return bootpay.doGet(url);
     }
 
     static public HashMap<String, Object> destroyBillingKey(BootpayObject bootpay, String billingKey) throws Exception {

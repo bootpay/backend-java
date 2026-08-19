@@ -26,6 +26,8 @@ public class BootpayStore extends BootpayStoreObject {
     public Coupon coupon;
     public Point point;
     public Cart cart;
+    public MallSetting mallSetting;
+    public Webhook webhook;
 
 
 
@@ -61,6 +63,8 @@ public class BootpayStore extends BootpayStoreObject {
         this.coupon = new Coupon(this);
         this.point = new Point(this);
         this.cart = new Cart(this);
+        this.mallSetting = new MallSetting(this);
+        this.webhook = new Webhook(this);
     }
 
     //token

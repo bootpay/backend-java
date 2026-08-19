@@ -46,6 +46,11 @@ public class TestConfig {
     // ── 환경 판별 ──────────────────────────────────────────────
     private static final String ENV = env("BOOTPAY_ENV", "production");
 
+    // 로컬 회귀 검증용 base URL 오버라이드 — 설정 시 실서버 대신 해당 URL 로 전송한다 (echo 서버 등).
+    // 미설정(빈 값)이면 기존 동작 그대로 BOOTPAY_ENV 기준 실서버를 사용한다.
+    private static final String PG_BASE_URL_OVERRIDE = env("BOOTPAY_PG_BASE_URL", "");
+    private static final String COMMERCE_BASE_URL_OVERRIDE = env("BOOTPAY_COMMERCE_BASE_URL", "");
+
     // PG 인증 방식: "new" (client_key/secret_key) 또는 "legacy" (application_id/private_key).
     // 매 실행 시 BOOTPAY_AUTH_MODE 환경변수로 토글한다.
     public static final String AUTH_MODE = env("BOOTPAY_AUTH_MODE", "new").toLowerCase();
@@ -86,18 +91,50 @@ public class TestConfig {
         return isProduction() ? env("BOOTPAY_COMMERCE_SECRET_KEY_PROD", "") : env("BOOTPAY_COMMERCE_SECRET_KEY_DEV", "");
     }
 
+    // ── 라이브 테스트 게이트 ──────────────────────────────
+    // production 실서버 호출을 막는다. BOOTPAY_ENV=development 이거나
+    // 로컬 base URL 오버라이드(echo 서버 등)가 설정된 경우에만 라이브 테스트를 실행한다.
+
+    /** TestConfig 팩토리 경유 Commerce 라이브 테스트 게이트 */
+    public static void assumeCommerceLiveAllowed() {
+        org.junit.jupiter.api.Assumptions.assumeTrue(
+                !COMMERCE_BASE_URL_OVERRIDE.isEmpty() || "development".equalsIgnoreCase(ENV),
+                "라이브 테스트 skip — BOOTPAY_ENV=development 또는 BOOTPAY_COMMERCE_BASE_URL 오버라이드가 필요합니다 (production 호출 방지)");
+    }
+
+    /** TestConfig 팩토리 경유 PG 라이브 테스트 게이트 */
+    public static void assumePgLiveAllowed() {
+        org.junit.jupiter.api.Assumptions.assumeTrue(
+                !PG_BASE_URL_OVERRIDE.isEmpty() || "development".equalsIgnoreCase(ENV),
+                "라이브 테스트 skip — BOOTPAY_ENV=development 또는 BOOTPAY_PG_BASE_URL 오버라이드가 필요합니다 (production 호출 방지)");
+    }
+
+    /** TestConfig 팩토리를 우회해 실서버로 직행하는 테스트 게이트 — 오버라이드가 적용되지 않으므로 development 에서만 허용 */
+    public static void assumeDirectLiveAllowed() {
+        org.junit.jupiter.api.Assumptions.assumeTrue(
+                "development".equalsIgnoreCase(ENV),
+                "라이브 테스트 skip — TestConfig 를 우회하는 직접 생성 테스트는 BOOTPAY_ENV=development 에서만 실행합니다 (production 호출 방지)");
+    }
+
     // ── 인스턴스 생성 헬퍼 ────────────────────────────────────
 
     /**
      * BOOTPAY_AUTH_MODE 에 따라 ck/sk(default) 또는 legacy application_id/private_key 로 PG Bootpay 인스턴스 생성.
      */
     public static Bootpay createBootpay() {
+        Bootpay bootpay;
         if ("legacy".equals(AUTH_MODE)) {
             System.out.println("[BOOTPAY_AUTH_MODE=legacy] PG: application_id/private_key (Bearer) | env=" + ENV);
-            return new Bootpay(getPgAppId(), getPgPrivateKey(), getDevMode());
+            bootpay = new Bootpay(getPgAppId(), getPgPrivateKey(), getDevMode());
+        } else {
+            System.out.println("[BOOTPAY_AUTH_MODE=new] PG: client_key/secret_key (Basic Auth) | env=" + ENV);
+            bootpay = Bootpay.withClientKey(getPgClientKey(), getPgSecretKey(), getDevMode());
         }
-        System.out.println("[BOOTPAY_AUTH_MODE=new] PG: client_key/secret_key (Basic Auth) | env=" + ENV);
-        return Bootpay.withClientKey(getPgClientKey(), getPgSecretKey(), getDevMode());
+        if (!PG_BASE_URL_OVERRIDE.isEmpty()) {
+            System.out.println("[BOOTPAY_PG_BASE_URL] override → " + PG_BASE_URL_OVERRIDE);
+            bootpay.baseUrl = PG_BASE_URL_OVERRIDE;
+        }
+        return bootpay;
     }
 
     /**
@@ -117,7 +154,12 @@ public class TestConfig {
      */
     public static BootpayStore createBootpayStore() {
         TokenPayload payload = new TokenPayload(getCommerceClientKey(), getCommerceSecretKey());
-        return new BootpayStore(payload, getDevMode());
+        BootpayStore store = new BootpayStore(payload, getDevMode());
+        if (!COMMERCE_BASE_URL_OVERRIDE.isEmpty()) {
+            System.out.println("[BOOTPAY_COMMERCE_BASE_URL] override → " + COMMERCE_BASE_URL_OVERRIDE);
+            store.baseUrl = COMMERCE_BASE_URL_OVERRIDE;
+        }
+        return store;
     }
 
     /**

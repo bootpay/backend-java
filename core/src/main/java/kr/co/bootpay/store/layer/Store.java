@@ -26,6 +26,14 @@ public class Store {
     }
 
     /**
+     * 가맹점 기본 정보를 조회합니다.
+     * @param idempotencyKey 미지정시 자동 생성 (Idempotency-Key 헤더로 전송)
+     */
+    public BootpayStoreResponse info(String idempotencyKey) throws Exception {
+        return SStoreService.info(bootpay, idempotencyKey);
+    }
+
+    /**
      * 가맹점 상세 정보를 조회합니다.
      *
      * @return BootpayStoreResponse 가맹점 상세 정보
@@ -33,5 +41,13 @@ public class Store {
      */
     public BootpayStoreResponse detail() throws Exception {
         return SStoreService.detail(bootpay);
+    }
+
+    /**
+     * 가맹점 상세 정보를 조회합니다.
+     * @param idempotencyKey 미지정시 자동 생성 (Idempotency-Key 헤더로 전송)
+     */
+    public BootpayStoreResponse detail(String idempotencyKey) throws Exception {
+        return SStoreService.detail(bootpay, idempotencyKey);
     }
 }

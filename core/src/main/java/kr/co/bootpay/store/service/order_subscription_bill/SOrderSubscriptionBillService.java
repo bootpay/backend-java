@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.context.RequestContext;
 import kr.co.bootpay.store.model.request.orderSubscriptionBill.OrderSubscriptionBillListParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SOrderSubscriptionBill;
@@ -23,37 +24,42 @@ import java.util.stream.Collectors;
 
 
 public class SOrderSubscriptionBillService {
+    /**
+     * 정기구독 빌(회차) 목록 조회
+     * GET /v1/order_subscription_bills
+     * page/limit 미지정시 각각 1 / 20 이 적용되고, user scope + Idempotency-Key 로 요청한다.
+     */
     static public BootpayStoreResponse list(BootpayStoreObject bootpay, OrderSubscriptionBillListParams params) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
         HttpClient client = HttpClientBuilder.create().build();
 
         String url = "order_subscription_bills";
-        if(params != null) {
-            List<NameValuePair> nameValuePairList = new ArrayList<>();
+        String idempotencyKey = params != null ? params.idempotencyKey : null;
+
+        List<NameValuePair> nameValuePairList = new ArrayList<>();
+        if (params != null) {
             // order_subscription_id 또는 ex_uid 지원
             if (params.orderSubscriptionId != null) nameValuePairList.add(new BasicNameValuePair("order_subscription_id", params.orderSubscriptionId));
             if (params.exUid != null) nameValuePairList.add(new BasicNameValuePair("ex_uid", params.exUid));
             if (params.externalUid != null) nameValuePairList.add(new BasicNameValuePair("external_uid", params.externalUid));
             if (params.uid != null) nameValuePairList.add(new BasicNameValuePair("uid", params.uid));
-
+        }
+        // page/limit 미지정시 각각 1 / 20 적용
+        nameValuePairList.add(new BasicNameValuePair("page", params != null && params.page != null ? params.page.toString() : "1"));
+        nameValuePairList.add(new BasicNameValuePair("limit", params != null && params.limit != null ? params.limit.toString() : "20"));
+        if (params != null) {
             if (params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
-            if (params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
-            if (params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
             if (params.status != null && !params.status.isEmpty()) {
                 String statusStr = params.status.stream()
                         .map(String::valueOf)
                         .collect(Collectors.joining(","));
                 nameValuePairList.add(new BasicNameValuePair("status", statusStr));
             }
-
-            HttpGet get = bootpay.httpGet(url, nameValuePairList);
-            HttpResponse response = client.execute(get);
-            return bootpay.responseToJsonObject(response);
-        } else {
-            HttpGet get = bootpay.httpGet(url);
-            HttpResponse response = client.execute(get);
-            return bootpay.responseToJsonObject(response);
         }
+
+        HttpGet get = bootpay.httpGet(url, nameValuePairList, userContext(idempotencyKey));
+        HttpResponse response = client.execute(get);
+        return bootpay.responseToJsonObject(response);
     }
 
 
@@ -87,5 +93,15 @@ public class SOrderSubscriptionBillService {
         // 응답 처리
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(gson, str, response.getStatusLine().getStatusCode());
+    }
+
+    /**
+     * 빌 조회 요청 컨텍스트 — user scope. Idempotency-Key 는 미지정시 매 호출마다 생성된다.
+     */
+    private static RequestContext userContext(String idempotencyKey) {
+        return RequestContext.builder()
+                .role("user")
+                .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
+                .build();
     }
 }
