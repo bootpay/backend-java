@@ -5,6 +5,8 @@ import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.layer.order_subscription.request.OrderSubscriptionRequestIng;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionListParams;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionUpdateParams;
+import kr.co.bootpay.store.model.request.orderSubscription.SupervisorChargeParams;
+import kr.co.bootpay.store.model.request.orderSubscription.SupervisorChargeRevokeParams;
 import kr.co.bootpay.store.model.request.orderSubscription.SupervisorPauseParams;
 import kr.co.bootpay.store.model.request.orderSubscription.SupervisorResumeParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
@@ -140,5 +142,27 @@ public class OrderSubscription {
      */
     public BootpayStoreResponse supervisorResume(String orderSubscriptionId, SupervisorResumeParams params) throws Exception {
         return SOrderSubscriptionService.supervisorResume(bootpay, orderSubscriptionId, params);
+    }
+
+    /**
+     * 수시결제(온디맨드) charge_key 즉시 결제 (supervisor 권한 필요)
+     * POST /v1/order_subscriptions/charge
+     * ⚠️ charge_key 는 body 로만 전송된다 (URL/query 금지 — 액세스 로그 노출 방지)
+     * @param params 결제 파라미터 (chargeKey/price 필수, idempotencyKey 미지정시 자동 생성)
+     * @return BootpayStoreResponse
+     */
+    public BootpayStoreResponse supervisorCharge(SupervisorChargeParams params) throws Exception {
+        return SOrderSubscriptionService.supervisorCharge(bootpay, params);
+    }
+
+    /**
+     * 수시결제(온디맨드) charge_key 해지 (supervisor 권한 필요)
+     * DELETE /v1/order_subscriptions/charge
+     * 해지 이후 해당 키로의 재결제는 불가능하다.
+     * @param params 해지 파라미터 (chargeKey 필수, idempotencyKey 미지정시 자동 생성)
+     * @return BootpayStoreResponse
+     */
+    public BootpayStoreResponse supervisorChargeRevoke(SupervisorChargeRevokeParams params) throws Exception {
+        return SOrderSubscriptionService.supervisorChargeRevoke(bootpay, params);
     }
 }

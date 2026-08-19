@@ -1,7 +1,6 @@
 package kr.co.bootpay.store.model.pojo;
 
-import java.util.List;
-import java.util.Map;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,9 @@ public class SMallSetting {
     public String mailOrderSalesNumber;
     public String ownerName;
     public String zip;
+    @SerializedName("addr_1")
     public String addr1;
+    @SerializedName("addr_2")
     public String addr2;
     public String privacyName;
     public String privacyEmail;
@@ -80,6 +81,15 @@ public class SMallSetting {
     public Boolean useMembershipCollectRegister;
     public Boolean membershipOnlyBusiness;
 
+    // 기업(그룹) 회원
+    public Boolean useCorporateDepartment;
+    public Integer subGroupType;
+    public Boolean useCorporateSignupApproval;
+    /** 기업 회원 허용 이메일 도메인 목록 */
+    public List<String> corporateEmailDomains;
+    public Boolean useCorporateAutoApprove;
+    public Boolean useCorporateInviteOnly;
+
     public Boolean useMemberInfoPhone;
     public Boolean useMemberInfoTel;
     public Boolean useMemberInfoEmail;
@@ -97,7 +107,14 @@ public class SMallSetting {
 
     public String orderPrefix;
     public Boolean useOrderCancel;
+    /** 취소 승인 사용 여부 (서버 필드명 오타 `use_oder_cancel_approval` 그대로 유지) */
+    @SerializedName("use_oder_cancel_approval")
     public Boolean useOrderCancelApproval;
+    /** 취소 사유 목록 */
+    public List<String> orderCancelReasons;
+    public Integer orderCancelReasonRequiredType;
+    public String orderCancelRequestMessage;
+    public String orderCancelDoneMessage;
 
     public Boolean useGeneralMembership;
     public List<String> generalMembershipDuplication;
@@ -112,16 +129,26 @@ public class SMallSetting {
     public List<Integer> socialMembershipType;
 
     public Boolean usePoint;
+    public Boolean usePointTransaction;
+    public String pointDisplayName;
+    public Double pointMinBalance;
     public List<Integer> pointNotCondition;
     public Integer pointCondition;
     public Integer pointMaxUseLimitType;
     public Double pointMaxUseLimitValue;
+    public Boolean usePointMaxRate;
+    public Double pointMaxRate;
+    public Boolean usePointMaxAmount;
+    public Double pointMaxAmount;
+    public Double pointRate;
     public Integer pointCalcType1;
     public Integer pointCalcType2;
     public Boolean usePointAdvanceDiscount;
     public Double pointAdvanceDiscountRate;
     public Boolean usePointExpire;
     public Integer pointExpireType;
+    public Integer pointIssueEventType;
+    public Integer pointIssueDelayDays;
 
     public Boolean useOpenMarket;
     public Boolean useProductApproval;
@@ -159,8 +186,12 @@ public class SMallSetting {
     public Integer withdrawalAutoYear;
 
     public Boolean useSubscriptionAggregateTransaction;
+    public Integer subscriptionMonthDay;
+    public Integer subscriptionWeekDay;
+
     public Double useLimit;
     public Double limitMonthPurchase;
+    public Double limitWeekPurchase;
     public String limitMessage;
     public Boolean useLimitPayment;
     public Boolean useLimitMessage;
@@ -169,5 +200,31 @@ public class SMallSetting {
     public String termsOfPrivacyPolicy;
     public String termsOfPrivacyCollect;
     public String termsOfPrivacyThird;
+
+    // 결제 / 노출
+    public Integer paymentTimeout;
+    public Integer productSortType;
+    public Integer mallThemeType;
+    public Integer catalogDisplayType;
+    public String catalogHeadline;
+    public String catalogBgColor;
+    public Integer catalogViewTypePc;
+    public Integer catalogViewTypeMobile;
+    public Integer catalogProductSortType;
+
+    // 장바구니 / 위시리스트
+    public Boolean useCart;
+    public Integer cartStoragePeriod;
+    public Integer cartMaxLimit;
+    public Integer cartAddAction;
+    public Boolean cartDirectPurchase;
+    public Boolean cartOptionChange;
+    public Boolean cartDiscountDisplay;
+    public Boolean useWishlist;
+    public Integer wishlistMaxLimit;
+    public Boolean cartWishlistDisplay;
+
+    public String createdAt;
+    public String updatedAt;
 }
 

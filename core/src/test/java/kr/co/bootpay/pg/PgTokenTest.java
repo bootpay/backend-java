@@ -33,6 +33,8 @@ class PgTokenTest {
     @Test
     @DisplayName("getAccessToken (legacy) - 실제 access_token 발급")
     void testGetAccessTokenLegacy() throws Exception {
+        // TestConfig 팩토리를 우회해 실서버로 직행 — base URL 오버라이드가 적용되지 않으므로 development 전용
+        TestConfig.assumeDirectLiveAllowed();
         // legacy application_id/private_key 모드는 request/token 을 호출하여 실제 토큰을 발급한다.
         Bootpay legacy = new Bootpay(TestConfig.getPgAppId(), TestConfig.getPgPrivateKey(), TestConfig.getDevMode());
         HashMap<String, Object> res = legacy.getAccessToken();

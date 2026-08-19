@@ -15,6 +15,8 @@ import kr.co.bootpay.store.model.request.ListParams;
 public class OrderSubscriptionListParams extends ListParams {
     public String sAt;
     public String eAt;
+    public String searchDateFrom;
+    public String searchDateTo;
     public Integer requestType;
 
     // 기본 ID 필드

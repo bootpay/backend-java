@@ -18,6 +18,7 @@ class CommerceTokenTest {
 
     @BeforeAll
     static void setUp() {
+        TestConfig.assumeCommerceLiveAllowed();
         store = TestConfig.createBootpayStore();
     }
 
@@ -45,6 +46,8 @@ class CommerceTokenTest {
     @Test
     @DisplayName("getAccessToken - 잘못된 키로 요청 시 처리")
     void testGetAccessTokenWithInvalidKey() throws Exception {
+        // TestConfig 팩토리를 우회해 실서버로 직행 — base URL 오버라이드가 적용되지 않으므로 development 전용
+        TestConfig.assumeDirectLiveAllowed();
         TokenPayload invalidPayload = new TokenPayload("invalid_key", "invalid_secret");
         BootpayStore invalidStore = new BootpayStore(invalidPayload, TestConfig.getDevMode());
 
