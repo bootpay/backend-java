@@ -1,6 +1,35 @@
-### 3.4.0
+### 3.3.0
 
-- Commerce: 청구서 생성 파라미터 확장 (ruby SDK `request_checkout` parity). `SInvoice` 에 다음을 추가 — 기존 필드·시그니처는 그대로다.
+PG 와 Commerce 의 코드 스타일 통일 + Commerce 청구서/인증 정합성. **기존 표면은 그대로 동작한다.**
+
+#### 통일 API (신규 표면)
+
+- 공통 타입 추가 (`kr.co.bootpay.common`)
+  - `BootpayMode` — 환경 enum (DEVELOPMENT / TEST / STAGE / PRODUCTION, 기본 PRODUCTION). 기존 `String devMode` 대체.
+  - `BootpayRole` — Commerce `BOOTPAY-ROLE` 헤더 enum (user / manager / partner / vendor / supervisor).
+  - `BootpayResponse` — PG/Commerce 공용 응답. `isSuccess()` / `getData()` / `getErrorCode()` / `getMessage()` / `asMap()`. `getData()` 는 응답 본문만 담고 `http_status` 를 제외한다.
+- 생성 방식 통일 — `Bootpay.builder()`, `BootpayCommerce.builder()`
+  - PG 는 client_key/secret_key 와 application_id/private_key 를 같은 빌더로 생성. 키가 짝을 이루지 않으면 `build()` 에서 즉시 `IllegalStateException`.
+  - Commerce 는 `TokenPayload` 래퍼 없이 `clientKey`/`secretKey` 를 직접 지정.
+  - 환경 문자열 오타로 Commerce baseUrl 이 null 로 남던 문제 해소.
+- PG 모듈 표면 추가 — `bootpay.payment` / `billing` / `auth` / `cash` / `escrow` / `user` / `wallet`. 기존 평면 메서드 31개와 **동일한 HTTP 요청**을 만든다 (테스트로 전수 대조).
+- Commerce 진입점 추가 — `BootpayCommerce`. `BootpayStore` 를 상속하지 않고 위임하므로 기존 타입 계층에 영향이 없다. `unwrap()` 으로 내부 인스턴스 접근 가능.
+  - 이름 정리: `userLogin`→`mallLogin`, `userSession`→`mallSession`, `userLogout`→`mallLogout`, `userJoin`→`mallJoin`, `userJoinCheck`→`mallJoinCheck`, `product.products`→`product.mallList`, `product.productDetail`→`product.mallDetail`.
+  - 중복 별칭 정리: `mallSetting.getMallSetting`/`updateMallSetting` 은 `detail`/`update` 하나로 노출.
+  - `subscriptionSetting` 모듈 노출 — 기존 `BootpayStore` 에는 배선 누락으로 도달할 수 없었다.
+- 토큰 발급 이름 통일 — 양쪽 모두 `issueAccessToken()` 이 `BootpayResponse` 를 반환. 기존 `getAccessToken()` 은 그대로 유지.
+
+#### Commerce 인증 정합성 (동작 변경)
+
+- `Authorization` 헤더 규칙을 기준 SDK(NodeJS) 및 Ruby / Go / Python / PHP / .NET 과 일치시켰다.
+  - **토큰이 발급되어 있으면 `Bearer {token}`**, 없으면 client_key/secret_key `Basic`, 둘 다 없으면 **헤더를 붙이지 않는다** (기존에는 항상 Basic 을 보냈고, 인증 정보가 없으면 빈 문자열을 보냈다).
+  - `RequestContext` 의 토큰이 인스턴스 토큰보다 우선한다 (`RequestContext.token` 필드가 그동안 무시되고 있었다).
+  - `authorizationHeader()` / `authorizationHeader(RequestContext)` 추가. `requestAccessToken()` 은 Basic 값 계산으로 그대로 유지된다.
+  - ⚠️ `getAccessToken()` 을 호출해 토큰을 발급받은 코드는 이제 Basic 이 아니라 Bearer 로 전송된다. 토큰 만료(30분) 시 재발급이 필요하다.
+
+#### Commerce 청구서
+
+- 청구서 생성 파라미터 확장 (ruby SDK `request_checkout` parity). `SInvoice` 에 추가 — 기존 필드·시그니처는 그대로다.
   - `user` (`SInvoiceUser`) — 구매자 정보. 가입 회원이면 `userId` 만으로 충분하고, 비회원 청구서는 `membershipType = "guest"` 와 이름·연락처를 함께 지정한다.
   - `products` (`List<SInvoiceProduct>`) — 등록된 상품을 참조해 청구한다 (`invoiceItems` 는 이름·금액을 직접 적는 기존 방식으로 그대로 유지).
     - `SInvoiceProduct`: `productId` / `productOptionId` / `duration` / `quantity` / `priceAdjustments`
@@ -8,31 +37,18 @@
     - `SInvoicePriceAdjustmentCycle`: `duration` / `adjustmentType` / `name` / `value` / `minValue` / `maxValue` (`discount_percent` · `discount_price` · `setup_fee` 상수 제공)
   - `deliveryPrice`, `useNotification`, `useAutoLogin`, `usageApiUrl`, `sdk`
   - `extra` (`SInvoiceExtra`) — `separatelyConfirmed` / `createOrderImmediately`
-- Commerce: `invoice.create` 에 `Idempotency-Key` 헤더와 user role 부착 (list/detail/notify 와 동일한 규약, ruby SDK 와 parity). `create(invoice, idempotencyKey)` 오버로드 추가.
-- Commerce: `orderSubscription.supervisorTerminate(orderSubscriptionId, SupervisorTerminateParams)` 추가 — 기존 `terminate(id[, reason])` 는 그대로 두고, 위약금·마지막 청구 환불액·최종 정산액·서비스 종료일·해지 기준일까지 지정할 수 있다.
-- Commerce: `OrderSubscriptionRequestUpdateParams` 에 정산 필드 추가 (`price` / `taxFreePrice` / `terminationFee` / `lastBillRefundPrice` / `finalFee` / `serviceEndAt`) 및 `APPROVAL_APPROVE` / `APPROVAL_REJECT` 상수. 서비스가 body 에 실어 전송하도록 배선.
-- Commerce: `SUserJoinService` 에 중복확인 key 상수 추가 (`EMAIL_EXIST` / `ID_EXIST` / `PHONE_EXIST` / `UID_EXIST` / `GROUP_BUSINESS_NUMBER_EXIST`).
-- 브랜치 정리: `main` 을 `2-x-development` 로 통합하고 `2-x-development` 를 기준 브랜치로 삼는다 (nodejs · ruby 와 동일).
+- `invoice.create` 에 `Idempotency-Key` 헤더와 user role 부착 (list/detail/notify 와 동일한 규약, ruby SDK 와 parity). `create(invoice, idempotencyKey)` 오버로드 추가.
 
-### 3.3.0
+#### 브랜치 통합 (2-x-development)
 
-PG 와 Commerce 의 코드 스타일 통일 — **기존 표면은 아무것도 바뀌지 않았고 계속 동작합니다.** 신규 표면만 추가됩니다.
+- `main` 을 `2-x-development` 로 통합하고 `2-x-development` 를 기준 브랜치로 삼는다 (nodejs · ruby 와 동일).
+- `orderSubscription.supervisorTerminate(orderSubscriptionId, SupervisorTerminateParams)` 추가 — 기존 `terminate(id[, reason])` 는 그대로 두고, 위약금·마지막 청구 환불액·최종 정산액·서비스 종료일·해지 기준일까지 지정할 수 있다.
+- `OrderSubscriptionRequestUpdateParams` 에 정산 필드 추가 (`price` / `taxFreePrice` / `terminationFee` / `lastBillRefundPrice` / `finalFee` / `serviceEndAt`) 및 `APPROVAL_APPROVE` / `APPROVAL_REJECT` 상수. 서비스가 body 에 실어 전송하도록 배선.
+- `SUserJoinService` 에 중복확인 key 상수 추가 (`EMAIL_EXIST` / `ID_EXIST` / `PHONE_EXIST` / `UID_EXIST` / `GROUP_BUSINESS_NUMBER_EXIST`).
 
-- 공통 타입 추가 (`kr.co.bootpay.common`)
-  - `BootpayMode` — 환경 enum (DEVELOPMENT / TEST / STAGE / PRODUCTION, 기본 PRODUCTION). 기존 `String devMode` 대체.
-  - `BootpayRole` — Commerce `BOOTPAY-ROLE` 헤더 enum (user / manager / partner / vendor / supervisor).
-  - `BootpayResponse` — PG 와 Commerce 공용 응답 타입. `isSuccess()` / `getData()` / `getErrorCode()` / `getMessage()` / `asMap()`. `getData()` 는 응답 본문만 담고 `http_status` 를 제외한다.
-- 생성 방식 통일 — `Bootpay.builder()`, `BootpayCommerce.builder()`
-  - PG 는 client_key/secret_key 와 application_id/private_key 를 같은 빌더로 생성. 키가 짝을 이루지 않으면 `build()` 에서 즉시 `IllegalStateException`.
-  - Commerce 는 `TokenPayload` 래퍼 없이 `clientKey`/`secretKey` 를 직접 지정.
-  - 환경 문자열 오타로 baseUrl 이 비던 문제 해소 (인식 불가 시 PRODUCTION 으로 fallback).
-- PG 모듈 표면 추가 — `bootpay.payment` / `billing` / `auth` / `cash` / `escrow` / `user` / `wallet`. Commerce 와 같은 호출 형태이며, 기존 평면 메서드 31개와 **동일한 HTTP 요청**을 만든다 (테스트로 대조 검증).
-- Commerce 진입점 추가 — `BootpayCommerce`. 기존 `BootpayStore` 를 상속하지 않고 위임하므로 기존 타입 계층에 영향이 없다. `unwrap()` 으로 내부 `BootpayStore` 접근 가능.
-  - 이름 정리: `userLogin`→`mallLogin`, `userSession`→`mallSession`, `userLogout`→`mallLogout`, `userJoin`→`mallJoin`, `userJoinCheck`→`mallJoinCheck`, `product.products`→`product.mallList`, `product.productDetail`→`product.mallDetail`.
-  - 중복 별칭 정리: `mallSetting.getMallSetting`/`updateMallSetting` 은 `detail`/`update` 하나로 노출.
-  - `subscriptionSetting` 모듈 노출 — 기존 `BootpayStore` 에는 배선되어 있지 않아 도달할 수 없었다.
-- 토큰 발급 이름 통일 — 양쪽 모두 `issueAccessToken()` 이 `BootpayResponse` 를 반환. 기존 `getAccessToken()` 은 그대로 유지.
-- 테스트: 신규 표면과 기존 표면이 같은 요청(method / path / query / body / role 헤더)을 만드는지 대조하는 동등성 테스트 추가 (`PgModuleParityTest`, `CommerceModuleParityTest`) 및 기존 표면 회귀 테스트 (`UnifiedSurfaceTest`). 네트워크 불필요.
+#### 테스트
+
+- 신규 표면과 기존 표면이 같은 요청(method / path / query / body / role 헤더)을 만드는지 대조하는 동등성 테스트 (`PgModuleParityTest`, `CommerceModuleParityTest`), 기존 표면 회귀 테스트 (`UnifiedSurfaceTest`), 인증 규칙 테스트 (`BootpayStoreObjectAuthTest`). 전부 네트워크 불필요.
 
 ### 3.2.0
 

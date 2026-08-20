@@ -3,7 +3,7 @@ package kr.co.bootpay.store.model.pojo;
 /**
  * 청구서 생성 부가 옵션 ({@code extra}).
  *
- * @since 3.4.0
+ * @since 3.3.0
  */
 public class SInvoiceExtra {
 

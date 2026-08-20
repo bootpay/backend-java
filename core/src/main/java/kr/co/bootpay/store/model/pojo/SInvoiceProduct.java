@@ -9,7 +9,7 @@ import java.util.List;
  * 참조하는 방식이다. 구독 상품이면 {@link #duration} 으로 계약 기간을,
  * {@link #priceAdjustments} 로 프로모션을 지정한다.</p>
  *
- * @since 3.4.0
+ * @since 3.3.0
  */
 public class SInvoiceProduct {
 
