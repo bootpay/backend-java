@@ -51,7 +51,7 @@ Bearer 전환은 `expired_at` 파싱 · 만료 기반 자동 재발급 · 401 �
     - `SInvoicePriceAdjustmentCycle`: `duration` / `adjustmentType` / `name` / `value` / `minValue` / `maxValue` (`discount_percent` · `discount_price` · `setup_fee` 상수 제공)
   - `deliveryPrice`, `useNotification`, `useAutoLogin`, `usageApiUrl`, `sdk`
   - `extra` (`SInvoiceExtra`) — `separatelyConfirmed` / `createOrderImmediately`
-- `invoice.create` 에 `Idempotency-Key` 헤더와 user role 부착 (list/detail/notify 와 동일한 규약, ruby SDK 와 parity). `create(invoice, idempotencyKey)` 오버로드 추가.
+- `invoice.create` 에 `Idempotency-Key` 헤더 부착 (ruby SDK 와 parity). `create(invoice, idempotencyKey)` 오버로드 추가. role 은 고정하지 않는다 — `setRole("supervisor")` 로 지정해 둔 호출자가 조용히 user 로 강등되지 않도록 인스턴스 role 을 그대로 쓰고, 지정이 없을 때만 `user` 가 기본값이다.
 
 #### 브랜치 통합 (2-x-development)
 
