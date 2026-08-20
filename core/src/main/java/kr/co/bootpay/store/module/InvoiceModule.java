@@ -56,6 +56,18 @@ public class InvoiceModule {
     }
 
     /**
+     * 청구서 생성.
+     *
+     * @param invoice        생성할 청구서
+     * @param idempotencyKey 미지정 시 자동 생성 (Idempotency-Key 헤더)
+     * @return 생성된 청구서
+     * @throws Exception 통신 실패 또는 인증 정보 누락
+     */
+    public BootpayResponse create(SInvoice invoice, String idempotencyKey) throws Exception {
+        return CommerceResponses.of(delegate.create(invoice, idempotencyKey));
+    }
+
+    /**
      * 청구서 발송.
      *
      * @param invoiceId 청구서 id

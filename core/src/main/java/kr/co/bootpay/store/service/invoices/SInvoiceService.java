@@ -28,6 +28,17 @@ import java.util.Map;
 public class SInvoiceService {
 
     static public BootpayStoreResponse create(BootpayStoreObject bootpay, SInvoice invoice) throws Exception {
+        return create(bootpay, invoice, null);
+    }
+
+    /**
+     * 청구서 생성 (POST invoices).
+     *
+     * @param invoice 청구서 정보. name 과 price 외에 user / products / deliveryPrice /
+     *                useNotification / useAutoLogin / usageApiUrl / extra 를 지정할 수 있다.
+     * @param idempotencyKey 미지정시 자동 생성 (Idempotency-Key 헤더로 전송)
+     */
+    static public BootpayStoreResponse create(BootpayStoreObject bootpay, SInvoice invoice, String idempotencyKey) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
@@ -37,7 +48,8 @@ public class SInvoiceService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPost post = bootpay.httpPost("invoices", new StringEntity(gson.toJson(invoice), "UTF-8"));
+        HttpPost post = bootpay.httpPost("invoices", new StringEntity(gson.toJson(invoice), "UTF-8"),
+                invoiceContext(idempotencyKey));
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJsonObject(response);

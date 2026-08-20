@@ -1,3 +1,19 @@
+### 3.4.0
+
+- Commerce: 청구서 생성 파라미터 확장 (ruby SDK `request_checkout` parity). `SInvoice` 에 다음을 추가 — 기존 필드·시그니처는 그대로다.
+  - `user` (`SInvoiceUser`) — 구매자 정보. 가입 회원이면 `userId` 만으로 충분하고, 비회원 청구서는 `membershipType = "guest"` 와 이름·연락처를 함께 지정한다.
+  - `products` (`List<SInvoiceProduct>`) — 등록된 상품을 참조해 청구한다 (`invoiceItems` 는 이름·금액을 직접 적는 기존 방식으로 그대로 유지).
+    - `SInvoiceProduct`: `productId` / `productOptionId` / `duration` / `quantity` / `priceAdjustments`
+    - `SInvoicePriceAdjustment`: `priceAdjustmentId` / `startAt` / `endAt` / `name` / `cycles`
+    - `SInvoicePriceAdjustmentCycle`: `duration` / `adjustmentType` / `name` / `value` / `minValue` / `maxValue` (`discount_percent` · `discount_price` · `setup_fee` 상수 제공)
+  - `deliveryPrice`, `useNotification`, `useAutoLogin`, `usageApiUrl`, `sdk`
+  - `extra` (`SInvoiceExtra`) — `separatelyConfirmed` / `createOrderImmediately`
+- Commerce: `invoice.create` 에 `Idempotency-Key` 헤더와 user role 부착 (list/detail/notify 와 동일한 규약, ruby SDK 와 parity). `create(invoice, idempotencyKey)` 오버로드 추가.
+- Commerce: `orderSubscription.supervisorTerminate(orderSubscriptionId, SupervisorTerminateParams)` 추가 — 기존 `terminate(id[, reason])` 는 그대로 두고, 위약금·마지막 청구 환불액·최종 정산액·서비스 종료일·해지 기준일까지 지정할 수 있다.
+- Commerce: `OrderSubscriptionRequestUpdateParams` 에 정산 필드 추가 (`price` / `taxFreePrice` / `terminationFee` / `lastBillRefundPrice` / `finalFee` / `serviceEndAt`) 및 `APPROVAL_APPROVE` / `APPROVAL_REJECT` 상수. 서비스가 body 에 실어 전송하도록 배선.
+- Commerce: `SUserJoinService` 에 중복확인 key 상수 추가 (`EMAIL_EXIST` / `ID_EXIST` / `PHONE_EXIST` / `UID_EXIST` / `GROUP_BUSINESS_NUMBER_EXIST`).
+- 브랜치 정리: `main` 을 `2-x-development` 로 통합하고 `2-x-development` 를 기준 브랜치로 삼는다 (nodejs · ruby 와 동일).
+
 ### 3.3.0
 
 PG 와 Commerce 의 코드 스타일 통일 — **기존 표면은 아무것도 바뀌지 않았고 계속 동작합니다.** 신규 표면만 추가됩니다.
