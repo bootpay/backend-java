@@ -34,42 +34,50 @@ public class SOrderSubscriptionService {
             throw new Exception("token 값이 비어있습니다.");
         }
         HttpClient client = HttpClientBuilder.create().build();
+        HttpGet get = listRequest(bootpay, params);
+        HttpResponse response = client.execute(get);
+        return bootpay.responseToJsonObject(response);
+    }
+
+    /**
+     * 목록 조회 요청을 구성한다 (전송하지 않는다).
+     *
+     * <p>URL·쿼리 구성만 떼어내 서버 없이 검증할 수 있게 한 것이다.</p>
+     */
+    static HttpGet listRequest(BootpayStoreObject bootpay, OrderSubscriptionListParams params) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
 
         String url = "order_subscriptions";
-        if(params != null) {
-            List<NameValuePair> nameValuePairList = new ArrayList<>();
-            if(params.sAt != null) nameValuePairList.add(new BasicNameValuePair("s_at", params.sAt));
-            if(params.eAt != null) nameValuePairList.add(new BasicNameValuePair("e_at", params.eAt));
-            if(params.searchDateFrom != null) nameValuePairList.add(new BasicNameValuePair("search_date_from", params.searchDateFrom));
-            if(params.searchDateTo != null) nameValuePairList.add(new BasicNameValuePair("search_date_to", params.searchDateTo));
+        if(params == null) return bootpay.httpGet(url);
 
-            if(params.requestType != null) nameValuePairList.add(new BasicNameValuePair("request_type", params.requestType.toString()));
-            if(params.status != null) nameValuePairList.add(new BasicNameValuePair("status", params.status.toString()));
+        List<NameValuePair> nameValuePairList = new ArrayList<>();
+        if(params.sAt != null) nameValuePairList.add(new BasicNameValuePair("s_at", params.sAt));
+        if(params.eAt != null) nameValuePairList.add(new BasicNameValuePair("e_at", params.eAt));
+        if(params.searchDateFrom != null) nameValuePairList.add(new BasicNameValuePair("search_date_from", params.searchDateFrom));
+        if(params.searchDateTo != null) nameValuePairList.add(new BasicNameValuePair("search_date_to", params.searchDateTo));
 
-            // user_group_id 또는 ex_uid 지원
-            if(params.userGroupId != null) nameValuePairList.add(new BasicNameValuePair("user_group_id", params.userGroupId));
-            if(params.userGroupExUid != null) nameValuePairList.add(new BasicNameValuePair("user_group_ex_uid", params.userGroupExUid));
-            if(params.userGroupExternalUid != null) nameValuePairList.add(new BasicNameValuePair("user_group_external_uid", params.userGroupExternalUid));
-            if(params.userGroupUid != null) nameValuePairList.add(new BasicNameValuePair("user_group_uid", params.userGroupUid));
+        if(params.requestType != null) nameValuePairList.add(new BasicNameValuePair("request_type", params.requestType.toString()));
+        if(params.status != null) nameValuePairList.add(new BasicNameValuePair("status", params.status.toString()));
 
-            // user_id 또는 ex_uid 지원
-            if(params.userId != null) nameValuePairList.add(new BasicNameValuePair("user_id", params.userId));
-            if(params.userExUid != null) nameValuePairList.add(new BasicNameValuePair("user_ex_uid", params.userExUid));
-            if(params.userExternalUid != null) nameValuePairList.add(new BasicNameValuePair("user_external_uid", params.userExternalUid));
-            if(params.userUid != null) nameValuePairList.add(new BasicNameValuePair("user_uid", params.userUid));
+        // user_group_id 또는 ex_uid 지원
+        if(params.userGroupId != null) nameValuePairList.add(new BasicNameValuePair("user_group_id", params.userGroupId));
+        if(params.userGroupExUid != null) nameValuePairList.add(new BasicNameValuePair("user_group_ex_uid", params.userGroupExUid));
+        if(params.userGroupExternalUid != null) nameValuePairList.add(new BasicNameValuePair("user_group_external_uid", params.userGroupExternalUid));
+        if(params.userGroupUid != null) nameValuePairList.add(new BasicNameValuePair("user_group_uid", params.userGroupUid));
 
-            if(params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
-            if(params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
-            if(params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
+        // user_id 또는 ex_uid 지원
+        if(params.userId != null) nameValuePairList.add(new BasicNameValuePair("user_id", params.userId));
+        if(params.userExUid != null) nameValuePairList.add(new BasicNameValuePair("user_ex_uid", params.userExUid));
+        if(params.userExternalUid != null) nameValuePairList.add(new BasicNameValuePair("user_external_uid", params.userExternalUid));
+        if(params.userUid != null) nameValuePairList.add(new BasicNameValuePair("user_uid", params.userUid));
 
-            HttpGet get = bootpay.httpGet(url, nameValuePairList);
-            HttpResponse response = client.execute(get);
-            return bootpay.responseToJsonObject(response);
-        } else {
-            HttpGet get = bootpay.httpGet(url);
-            HttpResponse response = client.execute(get);
-            return bootpay.responseToJsonObject(response);
-        }
+        if(params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
+        if(params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
+        if(params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
+
+        return bootpay.httpGet(url, nameValuePairList);
     }
 
 

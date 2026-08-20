@@ -141,6 +141,36 @@ public class SOrderSubscriptionRequestIngService {
         return bootpay.responseToJsonObject(response);
     }
 
+    /**
+     * 해지 위약금 계산 요청을 구성한다 (전송하지 않는다).
+     *
+     * <p>URL·쿼리 구성만 떼어내 서버 없이 검증할 수 있게 한 것이다.</p>
+     */
+    static HttpGet calculateTerminationFeeRequest(BootpayStoreObject bootpay, String orderSubscriptionId, String orderNumber) throws Exception {
+        if (bootpay == null || bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new IllegalArgumentException("Bootpay 토큰이 비어있습니다.");
+        }
+
+        boolean hasOrderSubscriptionId = orderSubscriptionId != null && !orderSubscriptionId.trim().isEmpty();
+        boolean hasOrderNumber = orderNumber != null && !orderNumber.trim().isEmpty();
+
+        if (!hasOrderSubscriptionId && !hasOrderNumber) {
+            throw new IllegalArgumentException("orderSubscriptionId 또는 orderNumber 중 하나는 필수입니다.");
+        }
+
+        // 둘 다 주어지면 둘 다 전송한다 (else 로 묶으면 order_number 가 조용히 유실된다)
+        StringBuilder url = new StringBuilder("order_subscriptions/requests/ing/calculate_termination_fee?");
+        if (hasOrderSubscriptionId) {
+            url.append("order_subscription_id=").append(URLEncoder.encode(orderSubscriptionId, StandardCharsets.UTF_8));
+        }
+        if (hasOrderNumber) {
+            if (hasOrderSubscriptionId) url.append("&");
+            url.append("order_number=").append(URLEncoder.encode(orderNumber, StandardCharsets.UTF_8));
+        }
+
+        return bootpay.httpGet(url.toString(), userContext(null));
+    }
+
     // 오버로드: orderNumber만 전달하는 경우
     static public BootpayStoreResponse calculateTerminationFeeByOrderNumber(BootpayStoreObject bootpay, String orderNumber) throws Exception {
         return calculateTerminationFee(bootpay, null, orderNumber);
