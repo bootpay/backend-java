@@ -89,9 +89,6 @@ public class BootpayStoreObject {
     /**
      * client_key/secret_key 로 만든 Basic 인증 값을 반환한다. 키가 없으면 빈 문자열이다.
      *
-     * <p>⚠️ 이 값을 {@code token} 으로 저장하면 안 된다. 저장하면 다음 요청부터 Basic 값이
-     * Bearer 토큰으로 오인되어 인증이 깨진다 (NodeJS SDK 에 같은 주의가 적혀 있다).</p>
-     *
      * @return "Basic {base64(client_key:secret_key)}", 키가 없으면 ""
      */
     public String requestAccessToken() {
@@ -102,45 +99,19 @@ public class BootpayStoreObject {
     }
 
     /**
-     * 요청에 실을 Authorization 값을 결정한다.
+     * Commerce 요청에 Authorization 헤더를 부착한다. client_key/secret_key 의 Basic 을 쓴다.
      *
-     * <p>기준 SDK(NodeJS) 및 Ruby / Go / Python / PHP / .NET 과 같은 규칙이다.</p>
-     * <ol>
-     *   <li>{@link RequestContext} 에 토큰이 지정되어 있으면 그 토큰으로 Bearer</li>
-     *   <li>발급받은 토큰이 있으면 그 토큰으로 Bearer</li>
-     *   <li>client_key/secret_key 가 있으면 Basic</li>
-     *   <li>아무것도 없으면 null — 헤더를 붙이지 않는다</li>
-     * </ol>
+     * <p>발급받은 토큰({@code token})은 인증에 쓰지 않는다. Go / Python / PHP / .NET 도 같은
+     * 규칙이고, Basic 은 만료가 없어 장기 실행 프로세스에서 재발급이 필요 없다.</p>
      *
-     * @param context 요청별 컨텍스트 (없으면 null)
-     * @return Authorization 헤더 값, 없으면 null
-     */
-    public String authorizationHeader(RequestContext context) {
-        if (context != null && context.getToken() != null && !context.getToken().isEmpty()) {
-            return "Bearer " + context.getToken();
-        }
-        if (this.token != null && !this.token.isEmpty()) {
-            return "Bearer " + this.token;
-        }
-        String basic = requestAccessToken();
-        return basic.isEmpty() ? null : basic;
-    }
-
-    /**
-     * @return Authorization 헤더 값, 없으면 null
-     */
-    public String authorizationHeader() {
-        return authorizationHeader(null);
-    }
-
-    /**
-     * Authorization 헤더를 부착한다. 인증 정보가 하나도 없으면 헤더 자체를 붙이지 않는다.
+     * <p>토큰 기반 Bearer 인증(기준 SDK 인 NodeJS · Ruby 의 규칙)으로의 전환은 만료 시각
+     * 파싱({@code expired_at})·자동 재발급·401 폴백을 함께 갖춘 뒤에 해야 한다. 그 준비 없이
+     * 전환하면 30분 만료 후 복구 수단 없이 401 이 나므로 이번 릴리스에서는 도입하지 않는다.</p>
+     *
+     * @param context 요청별 컨텍스트 (현재 인증에는 사용하지 않는다)
      */
     private void applyAuthHeader(HttpRequestBase request, RequestContext context) {
-        String authorization = authorizationHeader(context);
-        if (authorization != null) {
-            request.setHeader("Authorization", authorization);
-        }
+        request.setHeader("Authorization", requestAccessToken());
     }
 
     // RequestContext에 지정된 부가 헤더 부착 — Idempotency-Key, Bootpay-User-JWT는 값이 있을 때만 붙는다
