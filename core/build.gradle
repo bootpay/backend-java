@@ -3,8 +3,14 @@ plugins {
 }
 
 java {
+    // SDK는 Java 8부터 지원 (최신 JDK로 빌드 가능)
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+// Java 8 타겟 관련 경고 억제 (최신 JDK 빌드 시)
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['-Xlint:-options']
 }
 
 //version 'unspecified'

@@ -20,11 +20,28 @@ import org.apache.http.NameValuePair;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 사용자 관리 서비스
+ * <p>
+ * 모든 사용자 조회/수정/삭제 API에서 id 파라미터는 다음 중 하나를 사용할 수 있습니다:
+ * <ul>
+ *   <li>user_id: 부트페이 시스템 고유 ID (MongoDB ObjectId 형식)</li>
+ *   <li>ex_uid: 가맹점에서 설정한 외부 고유 ID</li>
+ *   <li>login_id: 로그인 ID</li>
+ * </ul>
+ * 서버에서 user_id → ex_uid → login_id 순서로 검색합니다.
+ * </p>
+ */
 public class SUserService {
 
-
-//    static public HashMap<String, Object> list(BootpayStoreObject bootpay, Optional<Integer> memberType, Optional<String> type, Optional<String> keyword, Optional<Integer> page, Optional<Integer> limit) throws Exception {
-static public BootpayStoreResponse list(BootpayStoreObject bootpay, UserListParams params) throws Exception {
+    /**
+     * 고객 목록 조회
+     *
+     * @param bootpay BootpayStoreObject 인스턴스
+     * @param params 검색 파라미터 (keyword로 이름, 전화번호, 이메일, user_id 검색 가능)
+     * @return BootpayStoreResponse 고객 목록 { list: [...], count: number }
+     */
+    static public BootpayStoreResponse list(BootpayStoreObject bootpay, UserListParams params) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
         HttpClient client = HttpClientBuilder.create().build();
@@ -48,6 +65,16 @@ static public BootpayStoreResponse list(BootpayStoreObject bootpay, UserListPara
         }
     }
 
+    /**
+     * 고객 정보 수정
+     * <p>
+     * user.userId에 user_id, ex_uid, login_id 중 하나를 사용할 수 있습니다.
+     * </p>
+     *
+     * @param bootpay BootpayStoreObject 인스턴스
+     * @param user 수정할 고객 정보 (userId 필드 필수)
+     * @return BootpayStoreResponse 수정된 고객 정보
+     */
     static public BootpayStoreResponse update(BootpayStoreObject bootpay, SUser user) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
@@ -61,6 +88,16 @@ static public BootpayStoreResponse list(BootpayStoreObject bootpay, UserListPara
         return bootpay.responseToJsonObject(response);
     }
 
+    /**
+     * 고객 상세 조회
+     * <p>
+     * userId에 user_id, ex_uid, login_id 중 하나를 사용할 수 있습니다.
+     * </p>
+     *
+     * @param bootpay BootpayStoreObject 인스턴스
+     * @param userId 고객 식별자 (user_id, ex_uid, login_id 중 하나)
+     * @return BootpayStoreResponse 고객 상세 정보
+     */
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String userId) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 
@@ -71,7 +108,16 @@ static public BootpayStoreResponse list(BootpayStoreObject bootpay, UserListPara
         return bootpay.responseToJsonObject(response);
     }
 
-    //    회원탈퇴
+    /**
+     * 회원 탈퇴
+     * <p>
+     * userId에 user_id, ex_uid, login_id 중 하나를 사용할 수 있습니다.
+     * </p>
+     *
+     * @param bootpay BootpayStoreObject 인스턴스
+     * @param userId 고객 식별자 (user_id, ex_uid, login_id 중 하나)
+     * @return BootpayStoreResponse 삭제 결과
+     */
     static public BootpayStoreResponse destroy(BootpayStoreObject bootpay, String userId) throws Exception {
         if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
 

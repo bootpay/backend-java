@@ -30,7 +30,7 @@ public class SProject {
     // 개발 연동 정보
     public String clientKey;
     public String clientOauthKey;
-    public String serverKey;
+    public String secretKey;
     public String privateKey;
     public String javascriptKey;
     public String androidKey;

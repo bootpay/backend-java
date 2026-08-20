@@ -2,7 +2,7 @@ package com.example.bootpay.store;
 
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.request.TokenPayload;
-import kr.co.bootpay.store.model.request.mallSetting.MallSettingUpdateParams;
+import kr.co.bootpay.store.model.pojo.SMallSetting;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 
 
@@ -37,7 +37,7 @@ public class MallSetting {
     // 몰 설정 조회 (supervisor scope 전용)
     public static void get() {
         try {
-            BootpayStoreResponse res = bootpayStore.asSupervisor().mallSetting.get();
+            BootpayStoreResponse res = bootpayStore.asSupervisor().mallSetting.detail();
             if(res.isSuccess()) {
                 System.out.println("mallSetting get success: " + res.getData());
             } else {
@@ -51,7 +51,7 @@ public class MallSetting {
     // 몰 설정 수정 (supervisor scope 전용, 설정한 값만 전송된다)
     public static void update() {
         try {
-            MallSettingUpdateParams params = new MallSettingUpdateParams();
+            SMallSetting params = new SMallSetting();
             params.name = "부트페이 스토어";
             params.sellerName = "부트페이";
             params.bizEmail = "help@bootpay.co.kr";

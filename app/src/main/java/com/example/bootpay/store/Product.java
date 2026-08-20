@@ -1,5 +1,7 @@
 package com.example.bootpay.store;
 
+import com.example.bootpay.Config;
+
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.TokenPayload;
@@ -16,7 +18,7 @@ public class Product {
     static BootpayStore bootpayStore;
     public static void main(String[] args) {
         try {
-            TokenPayload tokenPayload = new TokenPayload("hxS-Up--5RvT6oU6QJE0JA", "r5zxvDcQJiAP2PBQ0aJjSHQtblNmYFt6uFoEMhti_mg=");
+            TokenPayload tokenPayload = new TokenPayload(Config.Commerce.getClientKey(), Config.Commerce.getSecretKey());
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
             getToken();
             create();
@@ -53,7 +55,7 @@ public class Product {
             SProduct product = new SProduct();
             product.name = "테스트 상품";
             product.displayPrice = 1000.0;
-            product.exUid = "1234";
+            product.externalUid = "1234";
 
             BootpayStoreResponse res = bootpayStore.product.create(product, imagePaths);
             if(res.isSuccess()) {

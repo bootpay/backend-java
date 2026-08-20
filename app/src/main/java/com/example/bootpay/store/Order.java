@@ -1,5 +1,7 @@
 package com.example.bootpay.store;
 
+import com.example.bootpay.Config;
+
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.TokenPayload;
@@ -15,7 +17,7 @@ public class Order {
         try {
 //        szucYyZ9NtrmUtCu6gtUEm6aMOnhFQqCiSE9AK9I6fo=
 //        bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
-            TokenPayload tokenPayload = new TokenPayload("hxS-Up--5RvT6oU6QJE0JA", "r5zxvDcQJiAP2PBQ0aJjSHQtblNmYFt6uFoEMhti_mg=");
+            TokenPayload tokenPayload = new TokenPayload(Config.Commerce.getClientKey(), Config.Commerce.getSecretKey());
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
 //        bootpayStore = new BootpayStore("67c92fb8d01640bb9859c612", "ugaqkJ8/Yd2HHjM+W1TF6FZQPTmvx1rny5OIrMqcpTY=", "DEVELOPMENT");
             getToken();

@@ -10,17 +10,23 @@ import kr.co.bootpay.store.service.STokenService;
 import java.util.HashMap;
 
 public class BootpayStore extends BootpayStoreObject {
+    public Store store;
+    public Project project;
     public User user;
     public UserGroup userGroup;
     public Product product;
-    public Store store;
-    public MallSetting mallSetting;
     public Invoice invoice;
     public Order order;
     public OrderCancel orderCancel;
     public OrderSubscription orderSubscription;
     public OrderSubscriptionBill orderSubscriptionBill;
     public OrderSubscriptionAdjustment orderSubscriptionAdjustment;
+    public OrderSubscriptionRequest orderSubscriptionRequest;
+    public Category category;
+    public Coupon coupon;
+    public Point point;
+    public Cart cart;
+    public MallSetting mallSetting;
     public Webhook webhook;
 
 
@@ -41,17 +47,23 @@ public class BootpayStore extends BootpayStoreObject {
     }
 
     private void initModules() {
+        this.store = new Store(this);
+        this.project = new Project(this);
         this.user = new User(this);
         this.userGroup = new UserGroup(this);
         this.product = new Product(this);
-        this.store = new Store(this);
-        this.mallSetting = new MallSetting(this);
         this.invoice = new Invoice(this);
         this.order = new Order(this);
         this.orderCancel = new OrderCancel(this);
         this.orderSubscription = new OrderSubscription(this);
         this.orderSubscriptionBill = new OrderSubscriptionBill(this);
         this.orderSubscriptionAdjustment = new OrderSubscriptionAdjustment(this);
+        this.orderSubscriptionRequest = new OrderSubscriptionRequest(this);
+        this.category = new Category(this);
+        this.coupon = new Coupon(this);
+        this.point = new Point(this);
+        this.cart = new Cart(this);
+        this.mallSetting = new MallSetting(this);
         this.webhook = new Webhook(this);
     }
 

@@ -7,6 +7,10 @@ import java.util.List;
 public class OrderListParams extends ListParams {
     public String csType;
     public List<String> orderSubscriptionIds;
+    /** 검색 시작일 — 서버 정식 인자명. cssAt/cseAt 는 서버 별칭으로 계속 지원된다. */
+    public String searchDateFrom;
+    /** 검색 종료일 */
+    public String searchDateTo;
     public String cssAt;
     public String cseAt;
     public List<Integer> status;
