@@ -20,6 +20,13 @@ import java.net.URLEncoder;
 
 public class SUserJoinService {
 
+    // 중복 확인 key 목록 (서버 라우트 GET users/join/:id 의 :id 값)
+    public static final String EMAIL_EXIST = "email-exist";
+    public static final String ID_EXIST = "id-exist";
+    public static final String PHONE_EXIST = "phone-exist";
+    public static final String UID_EXIST = "uid-exist";
+    public static final String GROUP_BUSINESS_NUMBER_EXIST = "group-business-number-exist";
+
     /**
      * 회원가입
      * <p>
@@ -64,18 +71,30 @@ public class SUserJoinService {
      * @return BootpayStoreResponse { exists: boolean }
      */
     static public BootpayStoreResponse checkExist(BootpayStoreObject bootpay, String path, String pk) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-
-        String encodedPk = URLEncoder.encode(pk, "UTF-8");
-
         HttpClient client = HttpClientBuilder.create().build();
-        String url = String.format("users/join/%s?pk=%s", path, encodedPk);
-        HttpGet get = bootpay.httpGet(url);
+        HttpGet get = checkExistRequest(bootpay, path, pk);
         HttpResponse response = client.execute(get);
 
         return bootpay.responseToJsonObject(response);
+    }
+
+    /**
+     * 중복 확인 요청을 구성한다 (전송하지 않는다).
+     *
+     * <p>URL·쿼리 구성만 떼어내 서버 없이 검증할 수 있게 한 것이다.</p>
+     */
+    static HttpGet checkExistRequest(BootpayStoreObject bootpay, String path, String pk) throws Exception {
+        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
+            throw new Exception("token 값이 비어있습니다.");
+        }
+        if (path == null || path.isEmpty()) throw new Exception("path 값이 비어있습니다.");
+        if (pk == null || pk.isEmpty()) throw new Exception("pk 값이 비어있습니다.");
+
+        String encodedPk = URLEncoder.encode(pk, "UTF-8");
+
+        // URL 구조: users/join/:path?pk=:pk
+        String url = String.format("users/join/%s?pk=%s", path, encodedPk);
+        return bootpay.httpGet(url);
     }
 
     /**
