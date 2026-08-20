@@ -48,27 +48,32 @@ public class BootpayObject {
 
     public BootpayObject() {}
     public BootpayObject(String rest_application_id, String private_key) {
-        this(rest_application_id, private_key, null, null, "PRODUCTION");
+        this.application_id = rest_application_id;
+        this.private_key = private_key;
+        this.baseUrl = PRODUCTION;
     }
 
     public BootpayObject(String rest_application_id, String private_key, String devMode) {
-        this(rest_application_id, private_key, null, null, devMode);
-    }
-
-    public BootpayObject(String rest_application_id, String private_key, String client_key, String secret_key, String devMode) {
         this.application_id = rest_application_id;
         this.private_key = private_key;
+        this.baseUrl = resolveBaseUrl(devMode);
+    }
+
+    protected BootpayObject(String client_key, String secret_key, String devMode, boolean useClientKey) {
         this.client_key = client_key;
         this.secret_key = secret_key;
-        if("DEVELOPMENT".equals(devMode)) {
-            this.baseUrl = DEVELOPMENT;
+        this.baseUrl = resolveBaseUrl(devMode);
+    }
+
+    private String resolveBaseUrl(String devMode) {
+        if("DEVELOPMENT".equalsIgnoreCase(devMode)) {
+            return DEVELOPMENT;
         } else if("TEST".equalsIgnoreCase(devMode)) {
-            this.baseUrl = TEST;
+            return TEST;
         } else if("STAGE".equalsIgnoreCase(devMode)) {
-            this.baseUrl = STAGE;
-        } else {
-            this.baseUrl = PRODUCTION;
+            return STAGE;
         }
+        return PRODUCTION;
     }
 
     public void setToken(String token) {
@@ -77,6 +82,24 @@ public class BootpayObject {
 
     public String getTokenValue() {
         return "Bearer " + token;
+    }
+
+    public String getBasicAuthValue() {
+        if (this.client_key != null && !this.client_key.isEmpty() && this.secret_key != null && !this.secret_key.isEmpty()) {
+            String credentials = this.client_key + ":" + this.secret_key;
+            return "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
+        }
+        return null;
+    }
+
+    /**
+     * 호출 직전 인증 자격이 갖춰졌는지 검사한다.
+     * - legacy: getAccessToken() 후 발급된 Bearer token 이 있어야 한다.
+     * - 신규: client_key/secret_key 가 모두 세팅되어 있으면 통과 (별도 토큰 발급 불필요).
+     */
+    public boolean hasAuth() {
+        if (this.token != null && !this.token.isEmpty()) return true;
+        return getBasicAuthValue() != null;
     }
 
     // ========================================
@@ -92,24 +115,12 @@ public class BootpayObject {
     }
 
     protected void setAuthHeader(HttpRequestBase request) {
-        String authorization = getAuthorizationHeader();
-        if (authorization != null && !authorization.isEmpty()) {
-            request.setHeader("Authorization", authorization);
+        String basicAuth = getBasicAuthValue();
+        if (basicAuth != null) {
+            request.setHeader("Authorization", basicAuth);
+        } else if (this.token != null && !this.token.isEmpty()) {
+            request.setHeader("Authorization", getTokenValue());
         }
-    }
-
-    protected String getAuthorizationHeader() {
-        if (this.client_key != null && !this.client_key.isEmpty() && this.secret_key != null && !this.secret_key.isEmpty()) {
-            return "Basic " + Base64.getEncoder().encodeToString((this.client_key + ":" + this.secret_key).getBytes(StandardCharsets.UTF_8));
-        }
-
-        if (this.application_id != null && !this.application_id.isEmpty()) {
-            if (this.token != null && !this.token.isEmpty()) {
-                return getTokenValue();
-            }
-        }
-
-        return null;
     }
 
     // ========================================
@@ -269,7 +280,17 @@ public class BootpayObject {
         HashMap<String, Object>  result = new HashMap<>();
         TypeReference<List<HashMap<String, Object>>> typeRef = new TypeReference<List<HashMap<String, Object>>>() {};
         ObjectMapper mapper = new ObjectMapper();
-        List<HashMap<String, Object>> data = mapper.readValue(str, typeRef);
+        List<HashMap<String, Object>> data;
+        try {
+            data = mapper.readValue(str, typeRef);
+        } catch (com.fasterxml.jackson.databind.exc.MismatchedInputException notArray) {
+            // 서버가 객체 형태 (오류 응답 등) 로 반환한 경우 — 그대로 노출
+            TypeReference<HashMap<String, Object>> objType = new TypeReference<HashMap<String, Object>>() {};
+            HashMap<String, Object> errorBody = mapper.readValue(str, objType);
+            if (errorBody == null) errorBody = new HashMap<>();
+            errorBody.putIfAbsent("http_status", response.getStatusLine().getStatusCode());
+            return errorBody;
+        }
         if(data == null) {
             data = new ArrayList<>();
         }
@@ -284,7 +305,17 @@ public class BootpayObject {
 
         ObjectMapper mapper = new ObjectMapper();
         TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {};
-        HashMap<String, Object> result = mapper.readValue(str, typeRef);
+        HashMap<String, Object> result;
+        try {
+            result = mapper.readValue(str, typeRef);
+        } catch (com.fasterxml.jackson.databind.exc.MismatchedInputException notObject) {
+            // 서버가 배열을 직접 반환한 경우 (e.g. 일부 wallet 엔드포인트) — data 로 wrapping 하여 노출
+            TypeReference<List<HashMap<String, Object>>> listType = new TypeReference<List<HashMap<String, Object>>>() {};
+            List<HashMap<String, Object>> list = mapper.readValue(str, listType);
+            if (list == null) list = new ArrayList<>();
+            result = new HashMap<>();
+            result.put("data", list);
+        }
         if (result == null) {
             result = new HashMap<>();
         }

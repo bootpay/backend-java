@@ -5,7 +5,8 @@ public class Shipping {
     public String deliveryCorp; // 택배 회사명
     public String trackingNumber; // 송장번호
     public boolean shippingPrepayment;
-    public boolean shippingDay;
+    public int shippingDay;
+    public String receiptUrl;
     public ShippingUser user;
     public ShippingCompany company;
 

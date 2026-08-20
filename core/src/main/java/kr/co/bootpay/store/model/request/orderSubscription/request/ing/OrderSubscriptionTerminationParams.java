@@ -8,4 +8,6 @@ public class OrderSubscriptionTerminationParams {
     public Double finalFee;
     public String serviceEndAt;
     public String reason;
+    /** 미지정시 자동 생성 (Idempotency-Key 헤더로 전송, body 에는 포함되지 않는다) */
+    public transient String idempotencyKey;
 }

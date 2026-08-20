@@ -1,30 +1,39 @@
 package com.example.bootpay.store;
 
+import com.example.bootpay.Config;
+
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionListParams;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionUpdateParams;
-import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscriptionChargeParams;
-import kr.co.bootpay.store.model.request.orderSubscription.SupervisorOrderSubscriptionChargeRevokeParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.TokenPayload;
 
-import java.util.HashMap;
-import java.util.Map;
-
-
+/**
+ * 구독(OrderSubscription) API 사용 예제
+ *
+ * 모든 API에서 orderSubscriptionId 파라미터는 다음을 지원합니다:
+ * - 부트페이 ID: "687a1b2c3d4e5f6789012345" (24자리 ObjectId)
+ * - external_uid: "my_subscription_12345" (가맹점 지정 고유 ID)
+ *
+ * external_uid를 사용하면 가맹점 자체 시스템의 ID로 구독을 조회/관리할 수 있습니다.
+ */
 public class OrderSubscription {
 
     static BootpayStore bootpayStore;
     public static void main(String[] args) {
         try {
-            TokenPayload tokenPayload = new TokenPayload("hxS-Up--5RvT6oU6QJE0JA", "r5zxvDcQJiAP2PBQ0aJjSHQtblNmYFt6uFoEMhti_mg=");
+            TokenPayload tokenPayload = new TokenPayload(Config.Commerce.getClientKey(), Config.Commerce.getSecretKey());
             bootpayStore = new BootpayStore(tokenPayload, "DEVELOPMENT");
+//            TokenPayload tokenPayload = new TokenPayload("L4VKNqhkNxuo7d83-x0u_Q", "DnZD1royBjNICCatlnmi97TwzyJRSggVM22nv866i5A="); //dev
+//            bootpayStore = new BootpayStore(tokenPayload);
+
             getToken();
-            list();
+//            list();
 //            detail();
 //            update();
-//            supervisorCharge();
-//            supervisorChargeRevoke();
+//            approve();
+//            reject();
+            terminate();  // 관리자 직접 해지 (supervisor 권한 필요)
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -59,9 +68,12 @@ public class OrderSubscription {
         }
     }
 
+    /**
+     * 부트페이 ID로 구독 상세 조회
+     */
     public static void detail() {
         try {
-            String orderSubscriptionId = "67e5100c5ec892162491d108";
+            String orderSubscriptionId = "6966f2cf4cb8149d077125cd";
             BootpayStoreResponse res = bootpayStore.orderSubscription.detail(orderSubscriptionId);
             if(res.isSuccess()) {
                 System.out.println("orderSubscription detail success: " + res.getData());
@@ -72,11 +84,92 @@ public class OrderSubscription {
             e.printStackTrace();
         }
     }
+
+    /**
+     * external_uid(가맹점 고유 ID)로 구독 상세 조회
+     * 가맹점에서 지정한 external_uid로도 조회 가능합니다.
+     */
+    public static void detailByExternalUid() {
+        try {
+            // external_uid를 사용하여 조회
+            String externalUid = "my_subscription_12345";
+            BootpayStoreResponse res = bootpayStore.orderSubscription.detail(externalUid);
+            if(res.isSuccess()) {
+                System.out.println("orderSubscription detail by external_uid success: " + res.getData());
+            } else {
+                System.out.println("orderSubscription detail by external_uid false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 구독 승인 (관리자)
+     * 승인 대기 중인 구독을 승인 처리합니다.
+     */
+    public static void approve() {
+        try {
+            String orderSubscriptionId = "6965f4344cb8149d07712508";
+            // 사유 없이 승인
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.approve(orderSubscriptionId);
+            if(res.isSuccess()) {
+                System.out.println("orderSubscription approve success: " + res.getData());
+            } else {
+                System.out.println("orderSubscription approve false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 구독 승인 with 사유 (관리자)
+     * external_uid로도 승인 가능합니다.
+     */
+    public static void approveWithReason() {
+        try {
+            // external_uid 사용 예시
+            String externalUid = "my_subscription_12345";
+            String reason = "심사 완료";
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.approve(externalUid, reason);
+            if(res.isSuccess()) {
+                System.out.println("orderSubscription approve success: " + res.getData());
+            } else {
+                System.out.println("orderSubscription approve false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 구독 거절 (관리자)
+     * 거절 시 사유는 필수입니다.
+     */
+    public static void reject() {
+        try {
+            String orderSubscriptionId = "6965f4cf4cb8149d0771251d";
+            String reason = "심사 기준 미달";  // 필수
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.reject(orderSubscriptionId, reason);
+            if(res.isSuccess()) {
+                System.out.println("orderSubscription reject success: " + res.getData());
+            } else {
+                System.out.println("orderSubscription reject false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 부트페이 ID로 구독 정보 수정
+     */
     public static void update() {
         try {
             OrderSubscriptionUpdateParams params = new OrderSubscriptionUpdateParams();
-            params.orderSubscriptionId = "685b7b10b0eacea5cd974a93";
-            params.orderName = "구독계약 변경 테스트";
+            params.orderSubscriptionId = "6964abf14cb8149d077124e8";
+            params.orderName = "테스트 상품 2";
 
             BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.update(params);
             if(res.isSuccess()) {
@@ -89,52 +182,72 @@ public class OrderSubscription {
         }
     }
 
-    // 수시결제(온디맨드) charge_key 즉시 결제
-    public static void supervisorCharge() {
+    /**
+     * external_uid(가맹점 고유 ID)로 구독 정보 수정
+     * orderSubscriptionId 필드에 external_uid를 사용할 수 있습니다.
+     */
+    public static void updateByExternalUid() {
         try {
-            SupervisorOrderSubscriptionChargeParams params = new SupervisorOrderSubscriptionChargeParams();
-            params.chargeKey = "6d1f1a2b3c4d5e6f70819200";
-            params.price = 1000d;
-            params.taxFreePrice = 0d;
+            OrderSubscriptionUpdateParams params = new OrderSubscriptionUpdateParams();
+            // external_uid 사용
+            params.orderSubscriptionId = "696055674cb8149d0771249c";
+            params.orderName = "구독계약 변경 테스트 (external_uid)";
 
-            Map<String, Object> metadata = new HashMap<>();
-            metadata.put("memo", "수시결제 테스트");
-            params.metadata = metadata;
-
-            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.supervisorCharge(params);
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.update(params);
             if(res.isSuccess()) {
-                System.out.println("orderSubscription supervisorCharge success: " + res.getData());
+                System.out.println("orderSubscription update by external_uid success: " + res.getData());
             } else {
-                System.out.println("orderSubscription supervisorCharge false: " + res.getData());
+                System.out.println("orderSubscription update by external_uid false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // 수시결제(온디맨드) charge_key 해지
-    public static void supervisorChargeRevoke() {
+    /**
+     * 관리자 직접 구독 해지 (supervisor 권한 필요)
+     * - 검증 최소화, 즉시 해지 처리
+     * - 일반 사용자의 해지 요청과 달리 승인 대기 없이 바로 해지됨
+     * - 수수료 계산 없이 바로 해지 가능
+     */
+    public static void terminate() {
         try {
-            SupervisorOrderSubscriptionChargeRevokeParams params = new SupervisorOrderSubscriptionChargeRevokeParams();
-            params.chargeKey = "6d1f1a2b3c4d5e6f70819200";
+            String orderSubscriptionId = "6964abf14cb8149d077124e8";
+            String reason = "관리자 직접 해지";
 
-            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.supervisorChargeRevoke(params);
+            // supervisor 권한으로 바로 해지 처리
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.terminate(orderSubscriptionId, reason);
+
             if(res.isSuccess()) {
-                System.out.println("orderSubscription supervisorChargeRevoke success: " + res.getData());
+                System.out.println("orderSubscription terminate success: " + res.getData());
             } else {
-                System.out.println("orderSubscription supervisorChargeRevoke false: " + res.getData());
+                System.out.println("orderSubscription terminate failed: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void approve() {
+    /**
+     * external_uid로 관리자 직접 구독 해지
+     */
+    public static void terminateByExternalUid() {
+        try {
+            // external_uid 사용
+            String externalUid = "my_subscription_12345";
+            String reason = "관리자 직접 해지 (external_uid)";
 
+            BootpayStoreResponse res = bootpayStore.orderSubscription.terminate(externalUid, reason);
+
+            if(res.isSuccess()) {
+                System.out.println("orderSubscription terminate by external_uid success: " + res.getData());
+            } else {
+                System.out.println("orderSubscription terminate by external_uid failed: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void reject() {
-
-    }
 }
 

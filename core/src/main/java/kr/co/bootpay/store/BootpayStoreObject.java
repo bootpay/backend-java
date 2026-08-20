@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -22,7 +23,6 @@ import org.apache.http.entity.ContentType;
 
 import java.io.File;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 
@@ -30,7 +30,7 @@ public class BootpayStoreObject {
     private String token;
     private String role = "user"; // 기본값을 user로 설정
 //    public String secretKey;
-//    public String serverKey;
+//    public String secretKey;
 //    public String privateKey;
     public TokenPayload tokenPayload = new TokenPayload();
     public String baseUrl;
@@ -86,31 +86,22 @@ public class BootpayStoreObject {
         this.role = role;
     }
 
-    @Deprecated
     public String requestAccessToken() {
-        String encoded = basicAuthentification();
-        if(encoded == null) return "";
+        if((tokenPayload.clientKey == null || tokenPayload.clientKey.isEmpty()) && (tokenPayload.secretKey == null || tokenPayload.secretKey.isEmpty())) return "";
+        String credentials = tokenPayload.clientKey + ":" + tokenPayload.secretKey;
+        String encoded = Base64.getEncoder().encodeToString(credentials.getBytes());
         return "Basic " + encoded;
     }
 
-    // basic authenticate 값을 생성한다 (토큰으로 저장하지 않는다)
-    public String basicAuthentification() {
-        if(tokenPayload == null) return null;
-        String clientKey = tokenPayload.clientKey == null ? "" : tokenPayload.clientKey;
-        String secretKey = tokenPayload.secretKey == null ? "" : tokenPayload.secretKey;
-        if(clientKey.isEmpty() && secretKey.isEmpty()) return null;
-        String credentials = clientKey + ":" + secretKey;
-        return Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
-    }
-
-    // 토큰이 있으면 Bearer, 없으면 client key / secret key 기반의 Basic 인증을 사용한다
-    public String getAuthorizationHeader(RequestContext context) {
-        String tokenToUse = (context != null && context.getToken() != null) ? context.getToken() : this.getToken();
-        if(tokenToUse != null && !tokenToUse.isEmpty()) return "Bearer " + tokenToUse;
-
-        String encoded = basicAuthentification();
-        if(encoded == null) return null;
-        return "Basic " + encoded;
+    // RequestContext에 지정된 부가 헤더 부착 — Idempotency-Key, Bootpay-User-JWT는 값이 있을 때만 붙는다
+    private void applyContextHeaders(HttpRequestBase request, RequestContext context) {
+        if (context == null) return;
+        if (context.getIdempotencyKey() != null && !context.getIdempotencyKey().isEmpty()) {
+            request.setHeader("Idempotency-Key", context.getIdempotencyKey());
+        }
+        if (context.getUserJwt() != null && !context.getUserJwt().isEmpty()) {
+            request.setHeader("Bootpay-User-JWT", context.getUserJwt());
+        }
     }
 
     public HttpGet httpGet(String url) throws Exception {
@@ -123,20 +114,20 @@ public class BootpayStoreObject {
         get.setHeader("Accept", "application/json");
         get.setHeader("Content-Type", "application/json");
         get.setHeader("Accept-Charset", "utf-8");
-        get.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        get.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        get.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        get.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         get.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
-        
+
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
         String roleToUse = (context != null && context.getRole() != null) ? context.getRole() : this.getRole();
         if(roleToUse == null || roleToUse.isEmpty()) {
             roleToUse = "user"; // 기본값
         }
         get.setHeader("BOOTPAY-ROLE", roleToUse);
-        
-        String authorization = getAuthorizationHeader(context);
-        if(authorization != null) get.setHeader("Authorization", authorization);
-        
+
+        get.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(get, context);
+
         get.setURI(uri);
         return get;
     }
@@ -150,20 +141,20 @@ public class BootpayStoreObject {
         get.setHeader("Accept", "application/json");
         get.setHeader("Content-Type", "application/json");
         get.setHeader("Accept-Charset", "utf-8");
-        get.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        get.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        get.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        get.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         get.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
-        
+
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
         String roleToUse = (context != null && context.getRole() != null) ? context.getRole() : this.getRole();
         if(roleToUse == null || roleToUse.isEmpty()) {
             roleToUse = "user"; // 기본값
         }
         get.setHeader("BOOTPAY-ROLE", roleToUse);
-        
-        String authorization = getAuthorizationHeader(context);
-        if(authorization != null) get.setHeader("Authorization", authorization);
-        
+
+        get.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(get, context);
+
         URI uri = new URIBuilder(get.getURI()).addParameters(nameValuePairList).build();
         get.setURI(uri);
         return get;
@@ -179,8 +170,8 @@ public class BootpayStoreObject {
         post.setHeader("Accept", "application/json");
         post.setHeader("Content-Type", "application/json");
         post.setHeader("Accept-Charset", "utf-8");
-        post.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        post.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        post.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        post.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         post.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
         
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
@@ -189,10 +180,10 @@ public class BootpayStoreObject {
             roleToUse = "user"; // 기본값
         }
         post.setHeader("BOOTPAY-ROLE", roleToUse);
-        
-        String authorization = getAuthorizationHeader(context);
-        if(authorization != null) post.setHeader("Authorization", authorization);
-        
+
+        post.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(post, context);
+
         post.setEntity(entity);
         return post;
     }
@@ -207,8 +198,8 @@ public class BootpayStoreObject {
         post.setHeader("Accept", "application/json");
         post.setHeader("Content-Type", "application/json");
         post.setHeader("Accept-Charset", "utf-8");
-        post.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        post.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        post.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        post.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         post.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
         
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
@@ -218,9 +209,9 @@ public class BootpayStoreObject {
         }
         post.setHeader("BOOTPAY-ROLE", roleToUse);
         
-        String authorization = getAuthorizationHeader(context);
-        if(authorization != null) post.setHeader("Authorization", authorization);
-        
+        post.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(post, context);
+
         // 사용자 정의 헤더 추가
         if (header != null) {
             for (Map.Entry<String, String> entry : header.entrySet()) {
@@ -240,8 +231,8 @@ public class BootpayStoreObject {
         HttpPost post = new HttpPost(this.baseUrl + url);
         post.setHeader("Accept", "application/json");
         post.setHeader("Accept-Charset", "utf-8");
-        post.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        post.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        post.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        post.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         post.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
         
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
@@ -250,18 +241,20 @@ public class BootpayStoreObject {
             roleToUse = "user"; // 기본값
         }
         post.setHeader("BOOTPAY-ROLE", roleToUse);
-        
-        String authorization = getAuthorizationHeader(context);
-        if(authorization != null) post.setHeader("Authorization", authorization);
-        
+
+        post.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(post, context);
+
         // 멀티파트 엔티티 구성
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
         // 여러 파일 첨부
+        // ⚠️ Rails 는 반복된 `images` 를 배열로 받지 않는다. images[0], images[1] ... 로 인덱싱해야 한다.
         if (files != null) {
-            for (File file : files) {
-                builder.addBinaryBody("images", file, ContentType.APPLICATION_OCTET_STREAM, file.getName());
+            for (int i = 0; i < files.size(); i++) {
+                File file = files.get(i);
+                builder.addBinaryBody("images[" + i + "]", file, ContentType.APPLICATION_OCTET_STREAM, file.getName());
             }
         }
 
@@ -314,20 +307,20 @@ public class BootpayStoreObject {
         delete.setHeader("Accept", "application/json");
         delete.setHeader("Content-Type", "application/json");
         delete.setHeader("Accept-Charset", "utf-8");
-        delete.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        delete.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        delete.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        delete.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         delete.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
-        
+
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
         String roleToUse = (context != null && context.getRole() != null) ? context.getRole() : this.getRole();
         if(roleToUse == null || roleToUse.isEmpty()) {
             roleToUse = "user"; // 기본값
         }
         delete.setHeader("BOOTPAY-ROLE", roleToUse);
-        
-        String authorization = getAuthorizationHeader(context);
-        if(authorization != null) delete.setHeader("Authorization", authorization);
-        
+
+        delete.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(delete, context);
+
         return delete;
     }
 
@@ -340,20 +333,20 @@ public class BootpayStoreObject {
         delete.setHeader("Accept", "application/json");
         delete.setHeader("Content-Type", "application/json");
         delete.setHeader("Accept-Charset", "utf-8");
-        delete.setHeader("BOOTPAY-API-VERSION", Version.API_VERSION);
-        delete.setHeader("BOOTPAY-SDK-VERSION", Version.SDK_VERSION);
+        delete.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        delete.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
         delete.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
-        
+
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
         String roleToUse = (context != null && context.getRole() != null) ? context.getRole() : this.getRole();
         if(roleToUse == null || roleToUse.isEmpty()) {
             roleToUse = "user"; // 기본값
         }
         delete.setHeader("BOOTPAY-ROLE", roleToUse);
-        
-        String authorization = getAuthorizationHeader(context);
-        if(authorization != null) delete.setHeader("Authorization", authorization);
-        
+
+        delete.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(delete, context);
+
         delete.setEntity(entity);
         return delete;
     }
@@ -367,17 +360,20 @@ public class BootpayStoreObject {
         put.setHeader("Accept", "application/json");
         put.setHeader("Content-Type", "application/json");
         put.setHeader("Accept-Charset", "utf-8");
-        
+        put.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        put.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
+        put.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
+
         // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
         String roleToUse = (context != null && context.getRole() != null) ? context.getRole() : this.getRole();
         if(roleToUse == null || roleToUse.isEmpty()) {
             roleToUse = "user"; // 기본값
         }
         put.setHeader("BOOTPAY-ROLE", roleToUse);
-        
-        String authorization = getAuthorizationHeader(context);
-        if(authorization != null) put.setHeader("Authorization", authorization);
-        
+
+        put.setHeader("Authorization", requestAccessToken());
+        applyContextHeaders(put, context);
+
         put.setEntity(entity);
         return put;
     }
@@ -471,7 +467,6 @@ public class BootpayStoreObject {
             }
 
             String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-            System.out.println(str);
 
             // 빈 문자열인지 확인
             if (str == null || str.trim().isEmpty() || "null".equalsIgnoreCase(str.trim())) {

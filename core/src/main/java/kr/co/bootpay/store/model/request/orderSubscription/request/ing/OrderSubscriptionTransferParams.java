@@ -1,12 +1,17 @@
 package kr.co.bootpay.store.model.request.orderSubscription.request.ing;
 
+/**
+ * 구독 이전/승계 요청 파라미터 (POST /v1/order_subscriptions/requests/ing/transfer)
+ */
 public class OrderSubscriptionTransferParams {
     public String orderSubscriptionId;
-    public String newUserId; //승계받을 회원 id
-    public String newUsername; //승계받을 회원 이름
-    public String newUserEmail; //승계받을 회원 이메일
-    public String newUserPhone; //승계받을 회원 연락처
-    public String newUserAddress; //승계받을 회원 주소
-    public String walletId; //승계 이후 사용할 결제수단 id
+    public String newUserId;
+    public String newUsername;
+    public String newUserEmail;
+    public String newUserPhone;
+    public String newUserAddress;
+    public String walletId;
     public String reason;
+    /** 미지정시 자동 생성 (Idempotency-Key 헤더로 전송, body 에는 포함되지 않는다) */
+    public transient String idempotencyKey;
 }

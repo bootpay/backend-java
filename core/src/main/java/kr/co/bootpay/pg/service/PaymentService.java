@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class PaymentService {
     static public HashMap<String, Object> lookupOrderId(BootpayObject bootpay, String orderId) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) {
+        if (!bootpay.hasAuth()) {
             throw new Exception("token 값이 비어있습니다.");
         }
         if (orderId == null || orderId.isEmpty()) {

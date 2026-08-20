@@ -30,6 +30,28 @@ public class OrderSubscriptionRequestIng {
         );
     }
 
+    /**
+     * 중도인수 요청
+     * POST /v1/order_subscriptions/requests/ing/purchase
+     */
+    public BootpayStoreResponse purchase(OrderSubscriptionPurchaseParams params)  throws Exception {
+        return SOrderSubscriptionRequestIngService.purchase(
+                bootpay,
+                params
+        );
+    }
+
+    /**
+     * 구독 이전/승계 요청
+     * POST /v1/order_subscriptions/requests/ing/transfer
+     */
+    public BootpayStoreResponse transfer(OrderSubscriptionTransferParams params)  throws Exception {
+        return SOrderSubscriptionRequestIngService.transfer(
+                bootpay,
+                params
+        );
+    }
+
     public BootpayStoreResponse calculateTerminationFee(String orderSubscriptionId)  throws Exception {
         return SOrderSubscriptionRequestIngService.calculateTerminationFee(
                 bootpay,
@@ -60,22 +82,6 @@ public class OrderSubscriptionRequestIng {
                 params
         );
     }
-
-    public BootpayStoreResponse purchase(OrderSubscriptionPurchaseParams params)  throws Exception {
-        return SOrderSubscriptionRequestIngService.purchase(
-                bootpay,
-                params
-        );
-    }
-
-    public BootpayStoreResponse transfer(OrderSubscriptionTransferParams params)  throws Exception {
-        return SOrderSubscriptionRequestIngService.transfer(
-                bootpay,
-                params
-        );
-    }
-
-
 
 //    public BootpayStoreResponse detail(String orderSubscriptionId) throws Exception {
 //        return SOrderSubscriptionService.detail(bootpay, orderSubscriptionId);

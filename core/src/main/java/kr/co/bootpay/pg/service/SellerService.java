@@ -7,7 +7,7 @@ import java.util.HashMap;
 // 판매자 관련 서비스
 public class SellerService {
     static public HashMap<String, Object> lookupPaymentMethods(BootpayObject bootpay) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) {
+        if (!bootpay.hasAuth()) {
             throw new Exception("token 값이 비어있습니다.");
         }
 

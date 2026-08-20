@@ -3,17 +3,14 @@ package kr.co.bootpay.pg.service;
 import kr.co.bootpay.pg.BootpayObject;
 import kr.co.bootpay.pg.model.request.Subscribe;
 import kr.co.bootpay.pg.model.request.SubscribePayload;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
-import java.util.ArrayList;
+import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.List;
 
 public class BillingService {
 
     private static void validateToken(BootpayObject bootpay) throws Exception {
-        if (bootpay.token == null || bootpay.token.isEmpty()) {
+        if (!bootpay.hasAuth()) {
             throw new Exception("token 값이 비어있습니다.");
         }
     }
@@ -43,26 +40,18 @@ public class BillingService {
         return bootpay.doGet("billing_key/" + billingKey);
     }
 
-    // 우선순위 결제 빌링키 조회
-    static public HashMap<String, Object> lookupSequentialBillingKey(BootpayObject bootpay, String widgetKey, String billingKey) throws Exception {
-        return lookupSequentialBillingKey(bootpay, widgetKey, billingKey, null);
-    }
-
-    // 우선순위 결제 빌링키 조회 (user_id 로 조회 대상을 한정한다)
+    // 우선순위(순차) 결제 빌링키 조회
+    // GET subscribe/sequential_billing_key/{billing_key}?widget_key={widget_key}&user_id={user_id}
     static public HashMap<String, Object> lookupSequentialBillingKey(BootpayObject bootpay, String widgetKey, String billingKey, String userId) throws Exception {
         validateToken(bootpay);
         if (widgetKey == null || widgetKey.isEmpty()) throw new Exception("widgetKey 값이 비어있습니다.");
         if (billingKey == null || billingKey.isEmpty()) throw new Exception("billingKey 값이 비어있습니다.");
+        if (userId == null || userId.isEmpty()) throw new Exception("userId 값이 비어있습니다.");
 
-        return bootpay.doGet("subscribe/sequential_billing_key/" + billingKey, sequentialBillingKeyParams(widgetKey, userId));
-    }
-
-    // 값이 설정되지 않은 필드는 전송하지 않는다
-    static List<NameValuePair> sequentialBillingKeyParams(String widgetKey, String userId) {
-        List<NameValuePair> nameValuePairList = new ArrayList<>();
-        nameValuePairList.add(new BasicNameValuePair("widget_key", widgetKey));
-        if (userId != null && !userId.isEmpty()) nameValuePairList.add(new BasicNameValuePair("user_id", userId));
-        return nameValuePairList;
+        String url = "subscribe/sequential_billing_key/" + billingKey
+                + "?widget_key=" + URLEncoder.encode(widgetKey, "UTF-8")
+                + "&user_id=" + URLEncoder.encode(userId, "UTF-8");
+        return bootpay.doGet(url);
     }
 
     static public HashMap<String, Object> destroyBillingKey(BootpayObject bootpay, String billingKey) throws Exception {

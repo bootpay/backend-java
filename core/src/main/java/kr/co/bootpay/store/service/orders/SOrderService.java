@@ -37,6 +37,8 @@ public class SOrderService {
             List<NameValuePair> nameValuePairList = new ArrayList<>();
             if (params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
             if (params.csType != null) nameValuePairList.add(new BasicNameValuePair("cs_type", params.csType));
+            if (params.searchDateFrom != null) nameValuePairList.add(new BasicNameValuePair("search_date_from", params.searchDateFrom));
+            if (params.searchDateTo != null) nameValuePairList.add(new BasicNameValuePair("search_date_to", params.searchDateTo));
             if (params.cssAt != null) nameValuePairList.add(new BasicNameValuePair("css_at", params.cssAt));
             if (params.cseAt != null) nameValuePairList.add(new BasicNameValuePair("cse_at", params.cseAt));
             if (params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
