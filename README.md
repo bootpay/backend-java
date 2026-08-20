@@ -7,6 +7,7 @@ java언어로 작성된 어플리케이션, 프레임워크 등에서 사용가�
 * 결제 검증 및 취소, 빌링키 발급, 본인인증 등의 수행은 서버사이드에서 진행됩니다. (Java, PHP, Python, Ruby, Node.js, Go, ASP.NET 등)
 
 ## 목차 
+- [통일 API (3.3.0~)](#통일-api-330)
 - [사용하기](#사용하기)
    - [1. 토큰 발급](#1-토큰-발급)
    - [2. 결제 단건 조회](#2-결제-단건-조회)
@@ -32,6 +33,10 @@ java언어로 작성된 어플리케이션, 프레임워크 등에서 사용가�
 - [Documentation](#documentation)
 - [기술문의](#기술문의)
 - [License](#license)
+
+> **3.3.0 부터 통일 API 를 함께 제공합니다.** PG 와 Commerce 를 같은 형태(빌더 · 모듈 · 단일 응답 타입)로
+> 호출할 수 있습니다 — [통일 API (3.3.0~)](#통일-api-330) 참조. 아래 문서의 기존 사용법은 **그대로 계속
+> 동작하며**, 바뀐 것이 없습니다.
 
 
 ## Gradle로 설치하기   
@@ -68,6 +73,153 @@ BOOTPAY_COMMERCE_SECRET_KEY_DEV=...
 ```
 
 변수가 없으면 SDK 테스트용 기본값(NodeJS 기준 ck/sk)으로 fallback 합니다.
+
+## 통일 API (3.3.0~)
+
+PG 와 Commerce 는 각각 따로 자라면서 생성 방식·응답 타입·호출 표면이 서로 달라졌습니다.
+3.3.0 은 **둘을 같은 형태로 쓰는 새 표면**을 추가합니다. 기존 표면은 아무것도 바뀌지 않았고 계속 동작하므로,
+쓰던 코드는 그대로 두고 새로 짜는 코드부터 적용하면 됩니다.
+
+|  | 기존 표면 | 통일 표면 (3.3.0~) |
+|---|---|---|
+| 생성 | PG 는 static factory, Commerce 는 생성자 + `TokenPayload` | 양쪽 다 `builder()` |
+| 환경 | `String devMode` (오타 시 무시되거나 baseUrl 이 빔) | `BootpayMode` enum, 기본 `PRODUCTION` |
+| 응답 | PG 는 `HashMap`, Commerce 는 `BootpayStoreResponse` | 양쪽 다 `BootpayResponse` |
+| 호출 | PG 는 메서드 31개가 평면, Commerce 는 모듈 | 양쪽 다 모듈 |
+| role | `withRole("manager")` 문자열 | `BootpayRole` enum |
+
+### 생성
+
+```java
+import kr.co.bootpay.common.BootpayMode;
+import kr.co.bootpay.common.BootpayResponse;
+import kr.co.bootpay.common.BootpayRole;
+import kr.co.bootpay.pg.Bootpay;
+import kr.co.bootpay.store.BootpayCommerce;
+
+// PG
+Bootpay pg = Bootpay.builder()
+        .clientKey(System.getenv("BOOTPAY_PG_CLIENT_KEY_PROD"))
+        .secretKey(System.getenv("BOOTPAY_PG_SECRET_KEY_PROD"))
+        .mode(BootpayMode.PRODUCTION)
+        .build();
+
+// Commerce — 같은 형태
+BootpayCommerce commerce = BootpayCommerce.builder()
+        .clientKey(System.getenv("BOOTPAY_COMMERCE_CLIENT_KEY_PROD"))
+        .secretKey(System.getenv("BOOTPAY_COMMERCE_SECRET_KEY_PROD"))
+        .mode(BootpayMode.PRODUCTION)
+        .role(BootpayRole.USER)
+        .build();
+
+commerce.issueAccessToken();   // Commerce 는 다른 호출 전에 토큰 발급이 필요합니다
+```
+
+`application_id` / `private_key` 방식도 같은 빌더로 만들 수 있습니다.
+
+```java
+Bootpay legacy = Bootpay.builder()
+        .applicationId(applicationId)
+        .privateKey(privateKey)
+        .build();
+```
+
+키가 짝을 이루지 않으면 `build()` 가 그 자리에서 `IllegalStateException` 으로 알려줍니다.
+(기존에는 호출 시점까지 갔다가 실패했습니다.)
+
+### 호출과 응답
+
+```java
+BootpayResponse res = pg.payment.get(receiptId);
+
+if (res.isSuccess()) {
+    Map<String, Object> data = res.getData();
+    System.out.println(data.get("status_locale"));
+} else {
+    System.out.println(res.getErrorCode() + " " + res.getMessage());
+}
+
+// 기존 HashMap 기반 코드와 섞어 쓸 때
+HashMap<String, Object> raw = res.asMap();
+```
+
+`getData()` 는 응답 본문만 담습니다 (`http_status` 제외). 가공 전 원본이 필요하면 `asMap()` 을 쓰세요.
+
+### PG 모듈
+
+| 모듈 | 메서드 |
+|---|---|
+| `pg.payment` | `get` · `getByOrderId` · `confirm` · `cancel` · `link` · `methods` |
+| `pg.billing` | `issue` · `issueTransfer` · `publishTransfer` · `get` · `getByReceiptId` · `getSequential` · `destroy` · `pay` · `reserve` · `getReserve` · `cancelReserve` |
+| `pg.auth` | `request` · `confirm` · `realarm` · `certificate` |
+| `pg.cash` | `request` · `cancel` · `requestByBootpay` · `cancelByBootpay` |
+| `pg.escrow` | `shippingStart` |
+| `pg.user` | `token` |
+| `pg.wallet` | `list` · `pay` (deprecated) |
+
+기존 평면 메서드와의 대응은 아래와 같습니다. 요청 내용은 완전히 동일합니다.
+
+```java
+pg.getReceipt(receiptId)              →  pg.payment.get(receiptId)
+pg.lookupOrderId(orderId)             →  pg.payment.getByOrderId(orderId)
+pg.receiptCancel(cancel)              →  pg.payment.cancel(cancel)
+pg.requestLink(payload)               →  pg.payment.link(payload)
+pg.lookupPaymentMethods()             →  pg.payment.methods()
+pg.getBillingKey(subscribe)           →  pg.billing.issue(subscribe)
+pg.getBillingKeyTransfer(subscribe)   →  pg.billing.issueTransfer(subscribe)
+pg.publishBillingKeyTransfer(id)      →  pg.billing.publishTransfer(id)
+pg.lookupBillingKeyByKey(billingKey)  →  pg.billing.get(billingKey)
+pg.lookupBillingKey(receiptId)        →  pg.billing.getByReceiptId(receiptId)
+pg.lookupSequentialBillingKey(w,b,u)  →  pg.billing.getSequential(w, b, u)
+pg.destroyBillingKey(billingKey)      →  pg.billing.destroy(billingKey)
+pg.requestSubscribe(payload)          →  pg.billing.pay(payload)
+pg.reserveSubscribe(payload)          →  pg.billing.reserve(payload)
+pg.reserveSubscribeLookup(reserveId)  →  pg.billing.getReserve(reserveId)
+pg.reserveCancelSubscribe(reserveId)  →  pg.billing.cancelReserve(reserveId)
+pg.requestAuthentication(auth)        →  pg.auth.request(auth)
+pg.confirmAuthentication(id, otp)     →  pg.auth.confirm(id, otp)
+pg.realarmAuthentication(id)          →  pg.auth.realarm(id)
+pg.certificate(receiptId)             →  pg.auth.certificate(receiptId)
+pg.requestCashReceipt(cashReceipt)    →  pg.cash.request(cashReceipt)
+pg.requestCashReceiptCancel(cancel)   →  pg.cash.cancel(cancel)
+pg.requestCashReceiptByBootpay(cr)    →  pg.cash.requestByBootpay(cr)
+pg.requestCashReceiptCancelByBootpay  →  pg.cash.cancelByBootpay(cancel)
+pg.shippingStart(shipping)            →  pg.escrow.shippingStart(shipping)
+pg.getUserToken(userToken)            →  pg.user.token(userToken)
+pg.getAccessToken()                   →  pg.issueAccessToken()
+```
+
+### Commerce 모듈
+
+모듈 구성은 기존 `BootpayStore` 와 같고, 반환 타입만 `BootpayResponse` 로 통일됩니다.
+
+```java
+BootpayResponse res = commerce.user.list(params);
+commerce.order.detail(orderId);
+commerce.orderSubscription.requestIng.pause(params);
+```
+
+이름이 정리된 곳은 다음과 같습니다.
+
+```java
+store.user.userLogin(id, pw)          →  commerce.user.mallLogin(id, pw)
+store.user.userSession(jwt)           →  commerce.user.mallSession(jwt)
+store.user.userLogout(jwt)            →  commerce.user.mallLogout(jwt)
+store.user.userJoin(params)           →  commerce.user.mallJoin(params)
+store.user.userJoinCheck(type, pk)    →  commerce.user.mallJoinCheck(type, pk)
+store.product.products()              →  commerce.product.mallList()
+store.product.productDetail(id, jwt)  →  commerce.product.mallDetail(id, jwt)
+store.mallSetting.getMallSetting()    →  commerce.mallSetting.detail()
+store.mallSetting.updateMallSetting() →  commerce.mallSetting.update()
+store.getAccessToken()                →  commerce.issueAccessToken()
+```
+
+`commerce.subscriptionSetting` 은 기존 `BootpayStore` 에서는 배선되어 있지 않아 쓸 수 없던 모듈로,
+통일 표면에서 새로 노출됩니다.
+
+신규 표면에 아직 없는 기존 메서드가 필요하면 `commerce.unwrap()` 으로 내부
+`BootpayStore` 인스턴스를 꺼내 쓸 수 있습니다 (토큰과 role 이 공유됩니다).
+
 
 # 사용하기 
 > 권장 인증 방식은 `client_key/secret_key`입니다. 기존 `application_id/private_key` 생성자도 하위 호환을 위해 계속 동작합니다.
@@ -642,11 +794,12 @@ try {
 
 ## Documentation
 
-[부트페이 개발매뉴얼](https://developer.bootpay.co.kr/)을 참조해주세요
+- [부트페이 결제 개발문서](https://developers.bootpay.ai)
+- [부트페이 커머스 개발문서](https://commerce.bootpay.ai)
 
 ## 기술문의
 
-[부트페이 홈페이지](https://www.bootpay.co.kr) 우측 하단 채팅을 통해 기술문의 주세요!
+[부트페이 홈페이지](https://www.bootpay.ai)에서 문의해주세요!
 
 ## License
 

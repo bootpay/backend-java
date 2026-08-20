@@ -1,3 +1,23 @@
+### 3.3.0
+
+PG 와 Commerce 의 코드 스타일 통일 — **기존 표면은 아무것도 바뀌지 않았고 계속 동작합니다.** 신규 표면만 추가됩니다.
+
+- 공통 타입 추가 (`kr.co.bootpay.common`)
+  - `BootpayMode` — 환경 enum (DEVELOPMENT / TEST / STAGE / PRODUCTION, 기본 PRODUCTION). 기존 `String devMode` 대체.
+  - `BootpayRole` — Commerce `BOOTPAY-ROLE` 헤더 enum (user / manager / partner / vendor / supervisor).
+  - `BootpayResponse` — PG 와 Commerce 공용 응답 타입. `isSuccess()` / `getData()` / `getErrorCode()` / `getMessage()` / `asMap()`. `getData()` 는 응답 본문만 담고 `http_status` 를 제외한다.
+- 생성 방식 통일 — `Bootpay.builder()`, `BootpayCommerce.builder()`
+  - PG 는 client_key/secret_key 와 application_id/private_key 를 같은 빌더로 생성. 키가 짝을 이루지 않으면 `build()` 에서 즉시 `IllegalStateException`.
+  - Commerce 는 `TokenPayload` 래퍼 없이 `clientKey`/`secretKey` 를 직접 지정.
+  - 환경 문자열 오타로 baseUrl 이 비던 문제 해소 (인식 불가 시 PRODUCTION 으로 fallback).
+- PG 모듈 표면 추가 — `bootpay.payment` / `billing` / `auth` / `cash` / `escrow` / `user` / `wallet`. Commerce 와 같은 호출 형태이며, 기존 평면 메서드 31개와 **동일한 HTTP 요청**을 만든다 (테스트로 대조 검증).
+- Commerce 진입점 추가 — `BootpayCommerce`. 기존 `BootpayStore` 를 상속하지 않고 위임하므로 기존 타입 계층에 영향이 없다. `unwrap()` 으로 내부 `BootpayStore` 접근 가능.
+  - 이름 정리: `userLogin`→`mallLogin`, `userSession`→`mallSession`, `userLogout`→`mallLogout`, `userJoin`→`mallJoin`, `userJoinCheck`→`mallJoinCheck`, `product.products`→`product.mallList`, `product.productDetail`→`product.mallDetail`.
+  - 중복 별칭 정리: `mallSetting.getMallSetting`/`updateMallSetting` 은 `detail`/`update` 하나로 노출.
+  - `subscriptionSetting` 모듈 노출 — 기존 `BootpayStore` 에는 배선되어 있지 않아 도달할 수 없었다.
+- 토큰 발급 이름 통일 — 양쪽 모두 `issueAccessToken()` 이 `BootpayResponse` 를 반환. 기존 `getAccessToken()` 은 그대로 유지.
+- 테스트: 신규 표면과 기존 표면이 같은 요청(method / path / query / body / role 헤더)을 만드는지 대조하는 동등성 테스트 추가 (`PgModuleParityTest`, `CommerceModuleParityTest`) 및 기존 표면 회귀 테스트 (`UnifiedSurfaceTest`). 네트워크 불필요.
+
 ### 3.2.0
 
 NodeJS SDK 2.9.0 과 기능 동등(parity).
