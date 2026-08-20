@@ -1084,7 +1084,7 @@ class CommerceWireFormatTest {
     }
 
     // ══════════════════════════════════════════════════════════
-    // invoice.create — ruby SDK request_checkout parity (3.4.0)
+    // invoice.create — ruby SDK request_checkout parity (3.3.0)
     // ══════════════════════════════════════════════════════════
 
     @Test

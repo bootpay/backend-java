@@ -88,7 +88,7 @@ public class SInvoice {
     public List<String> selectedUsers;
 
     // ========================================
-    // 청구서 생성 파라미터 (3.4.0~, ruby SDK request_checkout parity)
+    // 청구서 생성 파라미터 (3.3.0~, ruby SDK request_checkout parity)
     // ========================================
 
     /** SDK 를 통한 생성인지 여부 */

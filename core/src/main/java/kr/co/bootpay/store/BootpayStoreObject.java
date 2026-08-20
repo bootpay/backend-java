@@ -86,11 +86,61 @@ public class BootpayStoreObject {
         this.role = role;
     }
 
+    /**
+     * client_key/secret_key 로 만든 Basic 인증 값을 반환한다. 키가 없으면 빈 문자열이다.
+     *
+     * <p>⚠️ 이 값을 {@code token} 으로 저장하면 안 된다. 저장하면 다음 요청부터 Basic 값이
+     * Bearer 토큰으로 오인되어 인증이 깨진다 (NodeJS SDK 에 같은 주의가 적혀 있다).</p>
+     *
+     * @return "Basic {base64(client_key:secret_key)}", 키가 없으면 ""
+     */
     public String requestAccessToken() {
         if((tokenPayload.clientKey == null || tokenPayload.clientKey.isEmpty()) && (tokenPayload.secretKey == null || tokenPayload.secretKey.isEmpty())) return "";
         String credentials = tokenPayload.clientKey + ":" + tokenPayload.secretKey;
         String encoded = Base64.getEncoder().encodeToString(credentials.getBytes());
         return "Basic " + encoded;
+    }
+
+    /**
+     * 요청에 실을 Authorization 값을 결정한다.
+     *
+     * <p>기준 SDK(NodeJS) 및 Ruby / Go / Python / PHP / .NET 과 같은 규칙이다.</p>
+     * <ol>
+     *   <li>{@link RequestContext} 에 토큰이 지정되어 있으면 그 토큰으로 Bearer</li>
+     *   <li>발급받은 토큰이 있으면 그 토큰으로 Bearer</li>
+     *   <li>client_key/secret_key 가 있으면 Basic</li>
+     *   <li>아무것도 없으면 null — 헤더를 붙이지 않는다</li>
+     * </ol>
+     *
+     * @param context 요청별 컨텍스트 (없으면 null)
+     * @return Authorization 헤더 값, 없으면 null
+     */
+    public String authorizationHeader(RequestContext context) {
+        if (context != null && context.getToken() != null && !context.getToken().isEmpty()) {
+            return "Bearer " + context.getToken();
+        }
+        if (this.token != null && !this.token.isEmpty()) {
+            return "Bearer " + this.token;
+        }
+        String basic = requestAccessToken();
+        return basic.isEmpty() ? null : basic;
+    }
+
+    /**
+     * @return Authorization 헤더 값, 없으면 null
+     */
+    public String authorizationHeader() {
+        return authorizationHeader(null);
+    }
+
+    /**
+     * Authorization 헤더를 부착한다. 인증 정보가 하나도 없으면 헤더 자체를 붙이지 않는다.
+     */
+    private void applyAuthHeader(HttpRequestBase request, RequestContext context) {
+        String authorization = authorizationHeader(context);
+        if (authorization != null) {
+            request.setHeader("Authorization", authorization);
+        }
     }
 
     // RequestContext에 지정된 부가 헤더 부착 — Idempotency-Key, Bootpay-User-JWT는 값이 있을 때만 붙는다
@@ -125,7 +175,7 @@ public class BootpayStoreObject {
         }
         get.setHeader("BOOTPAY-ROLE", roleToUse);
 
-        get.setHeader("Authorization", requestAccessToken());
+        applyAuthHeader(get, context);
         applyContextHeaders(get, context);
 
         get.setURI(uri);
@@ -152,7 +202,7 @@ public class BootpayStoreObject {
         }
         get.setHeader("BOOTPAY-ROLE", roleToUse);
 
-        get.setHeader("Authorization", requestAccessToken());
+        applyAuthHeader(get, context);
         applyContextHeaders(get, context);
 
         URI uri = new URIBuilder(get.getURI()).addParameters(nameValuePairList).build();
@@ -181,7 +231,7 @@ public class BootpayStoreObject {
         }
         post.setHeader("BOOTPAY-ROLE", roleToUse);
 
-        post.setHeader("Authorization", requestAccessToken());
+        applyAuthHeader(post, context);
         applyContextHeaders(post, context);
 
         post.setEntity(entity);
@@ -209,7 +259,7 @@ public class BootpayStoreObject {
         }
         post.setHeader("BOOTPAY-ROLE", roleToUse);
         
-        post.setHeader("Authorization", requestAccessToken());
+        applyAuthHeader(post, context);
         applyContextHeaders(post, context);
 
         // 사용자 정의 헤더 추가
@@ -242,7 +292,7 @@ public class BootpayStoreObject {
         }
         post.setHeader("BOOTPAY-ROLE", roleToUse);
 
-        post.setHeader("Authorization", requestAccessToken());
+        applyAuthHeader(post, context);
         applyContextHeaders(post, context);
 
         // 멀티파트 엔티티 구성
@@ -318,7 +368,7 @@ public class BootpayStoreObject {
         }
         delete.setHeader("BOOTPAY-ROLE", roleToUse);
 
-        delete.setHeader("Authorization", requestAccessToken());
+        applyAuthHeader(delete, context);
         applyContextHeaders(delete, context);
 
         return delete;
@@ -344,7 +394,7 @@ public class BootpayStoreObject {
         }
         delete.setHeader("BOOTPAY-ROLE", roleToUse);
 
-        delete.setHeader("Authorization", requestAccessToken());
+        applyAuthHeader(delete, context);
         applyContextHeaders(delete, context);
 
         delete.setEntity(entity);
@@ -371,7 +421,7 @@ public class BootpayStoreObject {
         }
         put.setHeader("BOOTPAY-ROLE", roleToUse);
 
-        put.setHeader("Authorization", requestAccessToken());
+        applyAuthHeader(put, context);
         applyContextHeaders(put, context);
 
         put.setEntity(entity);

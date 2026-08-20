@@ -6,7 +6,7 @@ package kr.co.bootpay.store.model.pojo;
  * <p>구독 상품에서 "첫 달 20% 할인, 둘째 달 100원 할인, 도입비 500원" 같은 규칙을
  * 주기 단위로 기술한다.</p>
  *
- * @since 3.4.0
+ * @since 3.3.0
  */
 public class SInvoicePriceAdjustmentCycle {
 

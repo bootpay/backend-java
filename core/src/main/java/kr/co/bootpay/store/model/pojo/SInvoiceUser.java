@@ -6,7 +6,7 @@ package kr.co.bootpay.store.model.pojo;
  * <p>이미 가입된 회원이면 {@link #userId} 만으로 충분하고, 비회원 청구서라면
  * {@link #membershipType} 을 {@code "guest"} 로 두고 이름·연락처를 함께 넘긴다.</p>
  *
- * @since 3.4.0
+ * @since 3.3.0
  */
 public class SInvoiceUser {
 

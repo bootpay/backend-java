@@ -7,7 +7,7 @@ import java.util.List;
  *
  * <p>프로모션 단위로 묶이며, 실제 할인/부과 규칙은 {@link #cycles} 에 주기별로 담는다.</p>
  *
- * @since 3.4.0
+ * @since 3.3.0
  */
 public class SInvoicePriceAdjustment {
 
