@@ -112,7 +112,8 @@ public class SUserGroupService {
         Map<String, Object> params = new HashMap<>();
         params.put("user_id", userId);
 
-        HttpPost post = bootpay.httpPost("user-groups/" + userGroupId + "/user", new StringEntity(gson.toJson(params), "UTF-8"));
+        HttpPost post = bootpay.httpPost("user-groups/" + userGroupId + "/user", new StringEntity(gson.toJson(params), "UTF-8"),
+                managerContext(null));
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJsonObject(response);
@@ -124,7 +125,7 @@ public class SUserGroupService {
         }
         HttpClient client = HttpClientBuilder.create().build();
 
-        HttpDelete delete = bootpay.httpDelete("user-groups/" + userGroupId + "/user/" + userId);
+        HttpDelete delete = bootpay.httpDelete("user-groups/" + userGroupId + "/user/" + userId, managerContext(null));
 
         HttpResponse response = client.execute(delete);
         return bootpay.responseToJsonObject(response);

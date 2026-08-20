@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.context.RequestContext;
 import kr.co.bootpay.store.model.request.category.CategoryCreateParams;
 import kr.co.bootpay.store.model.request.category.CategoryUpdateParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
@@ -56,7 +57,8 @@ public class SCategoryService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPost post = bootpay.httpPost("categories", new StringEntity(gson.toJson(params), "UTF-8"));
+        HttpPost post = bootpay.httpPost("categories", new StringEntity(gson.toJson(params), "UTF-8"),
+                supervisorContext());
         HttpResponse response = client.execute(post);
         return bootpay.responseToJsonObject(response);
     }
@@ -86,7 +88,8 @@ public class SCategoryService {
         body.filterColor = params.filterColor;
         body.filterSize = params.filterSize;
 
-        HttpPut put = bootpay.httpPut("categories/" + params.categoryId, new StringEntity(gson.toJson(body), "UTF-8"));
+        HttpPut put = bootpay.httpPut("categories/" + params.categoryId, new StringEntity(gson.toJson(body), "UTF-8"),
+                supervisorContext());
         HttpResponse response = client.execute(put);
         return bootpay.responseToJsonObject(response);
     }
@@ -100,8 +103,18 @@ public class SCategoryService {
         }
         HttpClient client = HttpClientBuilder.create().build();
 
-        HttpDelete delete = bootpay.httpDelete("categories/" + categoryId);
+        HttpDelete delete = bootpay.httpDelete("categories/" + categoryId, supervisorContext());
         HttpResponse response = client.execute(delete);
         return bootpay.responseToJsonObject(response);
+    }
+
+    /**
+     * 카테고리 쓰기(등록/수정/삭제) 요청 컨텍스트 — 서버가 supervisor scope 를 요구한다.
+     */
+    private static RequestContext supervisorContext() {
+        return RequestContext.builder()
+                .role("supervisor")
+                .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(null))
+                .build();
     }
 }
