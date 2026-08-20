@@ -27,6 +27,16 @@ PG 와 Commerce 의 코드 스타일 통일 + Commerce 청구서/인증 정합�
   - `authorizationHeader()` / `authorizationHeader(RequestContext)` 추가. `requestAccessToken()` 은 Basic 값 계산으로 그대로 유지된다.
   - ⚠️ `getAccessToken()` 을 호출해 토큰을 발급받은 코드는 이제 Basic 이 아니라 Bearer 로 전송된다. 토큰 만료(30분) 시 재발급이 필요하다.
 
+#### Commerce scope(BOOTPAY-ROLE) 정합성 (동작 변경)
+
+- supervisor / manager scope 가 필요한 11개 엔드포인트가 `BOOTPAY-ROLE: user` 로 나가고 있었다. 서버(`scope_invalid!`)가 요구하는 scope 와 맞춘다.
+  - `orderSubscription` — `approve` / `reject` / `terminate` / `supervisorPause` / `supervisorResume` / `supervisorTerminate` → **supervisor**
+  - `category` — `create` / `update` / `delete` → **supervisor**
+  - `userGroup` — `userCreate` / `userDelete` → **manager**
+- 원인은 `RequestContext` 없이 2-인자 HTTP 헬퍼를 호출한 것이다. `BootpayStoreObject.role` 기본값이 `"user"` 라 컨텍스트를 넘기지 않으면 조용히 user 로 전송된다. `SCategoryService` 에는 `supervisorContext()` 헬퍼를 신설했다.
+- 부수 효과로 해당 11개 호출에 `Idempotency-Key` 헤더가 자동 부착된다 (다른 supervisor 메서드·ruby SDK 와 동일 규약). 요청 경로·바디는 변경 없다.
+- ⚠️ 그동안 이 API 들은 supervisor 토큰으로도 scope 오류로 거절됐다. 우회하려고 role 을 직접 조작하던 코드가 있다면 제거해도 된다.
+
 #### Commerce 청구서
 
 - 청구서 생성 파라미터 확장 (ruby SDK `request_checkout` parity). `SInvoice` 에 추가 — 기존 필드·시그니처는 그대로다.

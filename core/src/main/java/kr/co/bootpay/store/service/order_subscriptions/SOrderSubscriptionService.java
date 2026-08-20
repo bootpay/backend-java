@@ -200,7 +200,8 @@ public class SOrderSubscriptionService {
             params.put("reason", reason);
         }
 
-        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/approve", new StringEntity(gson.toJson(params), "UTF-8"));
+        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/approve", new StringEntity(gson.toJson(params), "UTF-8"),
+                supervisorContext(null));
 
         HttpResponse response = client.execute(put);
         return bootpay.responseToJsonObject(response);
@@ -232,7 +233,8 @@ public class SOrderSubscriptionService {
         java.util.Map<String, String> params = new java.util.HashMap<>();
         params.put("reason", reason);
 
-        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/reject", new StringEntity(gson.toJson(params), "UTF-8"));
+        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/reject", new StringEntity(gson.toJson(params), "UTF-8"),
+                supervisorContext(null));
 
         HttpResponse response = client.execute(put);
         return bootpay.responseToJsonObject(response);
@@ -264,7 +266,8 @@ public class SOrderSubscriptionService {
             params.put("reason", reason);
         }
 
-        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/terminate", new StringEntity(gson.toJson(params), "UTF-8"));
+        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/terminate", new StringEntity(gson.toJson(params), "UTF-8"),
+                supervisorContext(null));
 
         HttpResponse response = client.execute(put);
         return bootpay.responseToJsonObject(response);
@@ -291,7 +294,8 @@ public class SOrderSubscriptionService {
                 .create();
 
         String json = (params != null) ? gson.toJson(params) : "{}";
-        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/pause", new StringEntity(json, "UTF-8"));
+        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/pause", new StringEntity(json, "UTF-8"),
+                supervisorContext(null));
 
         HttpResponse response = client.execute(put);
         return bootpay.responseToJsonObject(response);
@@ -318,7 +322,8 @@ public class SOrderSubscriptionService {
                 .create();
 
         String json = (params != null) ? gson.toJson(params) : "{}";
-        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/resume", new StringEntity(json, "UTF-8"));
+        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/resume", new StringEntity(json, "UTF-8"),
+                supervisorContext(null));
 
         HttpResponse response = client.execute(put);
         return bootpay.responseToJsonObject(response);
@@ -349,7 +354,8 @@ public class SOrderSubscriptionService {
                 .create();
 
         String json = (params != null) ? gson.toJson(params) : "{}";
-        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/terminate", new StringEntity(json, "UTF-8"));
+        HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/terminate", new StringEntity(json, "UTF-8"),
+                supervisorContext(null));
 
         HttpResponse response = client.execute(put);
         return bootpay.responseToJsonObject(response);
