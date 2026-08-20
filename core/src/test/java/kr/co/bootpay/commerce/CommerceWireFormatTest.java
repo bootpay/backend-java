@@ -1083,4 +1083,143 @@ class CommerceWireFormatTest {
         assertFalse(lastBody.contains("order_subscription_request_history_id"), "ID 는 URL 에만: " + lastBody);
     }
 
+    // ══════════════════════════════════════════════════════════
+    // invoice.create — ruby SDK request_checkout parity (3.4.0)
+    // ══════════════════════════════════════════════════════════
+
+    @Test
+    @DisplayName("invoice.create - user/products/delivery_price/use_* /usage_api_url/extra 전송, user role + Idempotency-Key")
+    void testInvoiceCreateRubyParity() throws Exception {
+        kr.co.bootpay.store.model.pojo.SInvoice invoice = new kr.co.bootpay.store.model.pojo.SInvoice();
+        invoice.name = "테스트 청구서";
+        invoice.memo = "테스트 청구서 상세 메모";
+        invoice.price = 1000.0;
+        invoice.taxFreePrice = 0.0;
+        invoice.deliveryPrice = 2500.0;
+        invoice.redirectUrl = "https://example.com";
+        invoice.requestId = "test1";
+        invoice.useNotification = true;
+        invoice.useAutoLogin = true;
+        invoice.usageApiUrl = "https://dev-api.bootapi.com/v1/billing/usage";
+        invoice.sdk = false;
+
+        kr.co.bootpay.store.model.pojo.SInvoiceUser user = new kr.co.bootpay.store.model.pojo.SInvoiceUser();
+        user.membershipType = kr.co.bootpay.store.model.pojo.SInvoiceUser.MEMBERSHIP_TYPE_GUEST;
+        user.name = "부트페이";
+        user.userId = "test123";
+        user.phone = "01095735114";
+        invoice.user = user;
+
+        kr.co.bootpay.store.model.pojo.SInvoiceProduct product = new kr.co.bootpay.store.model.pojo.SInvoiceProduct();
+        product.productId = "66fa14954eac568eab4fc2d0";
+        product.productOptionId = "68ede8c675febc5627363fb2";
+        product.duration = 24;
+        product.quantity = 1;
+        invoice.products = java.util.Collections.singletonList(product);
+
+        kr.co.bootpay.store.model.pojo.SInvoiceExtra extra = new kr.co.bootpay.store.model.pojo.SInvoiceExtra();
+        extra.separatelyConfirmed = false;
+        extra.createOrderImmediately = true;
+        invoice.extra = extra;
+
+        store.invoice.create(invoice);
+
+        assertEquals("POST", lastMethod);
+        assertEquals("/v1/invoices", lastPath);
+        assertEquals("user", lastRole);
+        assertNotNull(lastIdempotencyKey, "Idempotency-Key 자동 생성");
+
+        assertTrue(lastBody.contains("\"delivery_price\":2500"), lastBody);
+        assertTrue(lastBody.contains("\"use_notification\":true"), lastBody);
+        assertTrue(lastBody.contains("\"use_auto_login\":true"), lastBody);
+        assertTrue(lastBody.contains("\"usage_api_url\":\"https://dev-api.bootapi.com/v1/billing/usage\""), lastBody);
+        assertTrue(lastBody.contains("\"sdk\":false"), lastBody);
+
+        assertTrue(lastBody.contains("\"user\":{"), lastBody);
+        assertTrue(lastBody.contains("\"membership_type\":\"guest\""), lastBody);
+        assertTrue(lastBody.contains("\"user_id\":\"test123\""), lastBody);
+
+        assertTrue(lastBody.contains("\"products\":[{"), lastBody);
+        assertTrue(lastBody.contains("\"product_id\":\"66fa14954eac568eab4fc2d0\""), lastBody);
+        assertTrue(lastBody.contains("\"product_option_id\":\"68ede8c675febc5627363fb2\""), lastBody);
+        assertTrue(lastBody.contains("\"duration\":24"), lastBody);
+        assertTrue(lastBody.contains("\"quantity\":1"), lastBody);
+
+        assertTrue(lastBody.contains("\"extra\":{"), lastBody);
+        assertTrue(lastBody.contains("\"separately_confirmed\":false"), lastBody);
+        assertTrue(lastBody.contains("\"create_order_immediately\":true"), lastBody);
+    }
+
+    @Test
+    @DisplayName("invoice.create - price_adjustments/cycles 중첩 직렬화")
+    void testInvoiceCreatePriceAdjustments() throws Exception {
+        kr.co.bootpay.store.model.pojo.SInvoice invoice = new kr.co.bootpay.store.model.pojo.SInvoice();
+        invoice.name = "과금 청구서";
+        invoice.price = 1000.0;
+
+        kr.co.bootpay.store.model.pojo.SInvoicePriceAdjustmentCycle cycle =
+                new kr.co.bootpay.store.model.pojo.SInvoicePriceAdjustmentCycle();
+        cycle.duration = 1;
+        cycle.adjustmentType = kr.co.bootpay.store.model.pojo.SInvoicePriceAdjustmentCycle.ADJUSTMENT_TYPE_DISCOUNT_PERCENT;
+        cycle.name = "첫달 할인";
+        cycle.value = 20.0;
+        cycle.minValue = 100.0;
+        cycle.maxValue = 500.0;
+
+        kr.co.bootpay.store.model.pojo.SInvoicePriceAdjustment adjustment =
+                new kr.co.bootpay.store.model.pojo.SInvoicePriceAdjustment();
+        adjustment.priceAdjustmentId = "test1";
+        adjustment.startAt = "2025-09-20 00:00:00";
+        adjustment.endAt = "2025-12-30 23:59:59";
+        adjustment.name = "첫 구매 할인 프로모션";
+        adjustment.cycles = java.util.Collections.singletonList(cycle);
+
+        kr.co.bootpay.store.model.pojo.SInvoiceProduct product = new kr.co.bootpay.store.model.pojo.SInvoiceProduct();
+        product.productId = "66fa14954eac568eab4fc2d0";
+        product.quantity = 1;
+        product.priceAdjustments = java.util.Collections.singletonList(adjustment);
+        invoice.products = java.util.Collections.singletonList(product);
+
+        store.invoice.create(invoice);
+
+        assertEquals("POST", lastMethod);
+        assertTrue(lastBody.contains("\"price_adjustments\":[{"), lastBody);
+        assertTrue(lastBody.contains("\"price_adjustment_id\":\"test1\""), lastBody);
+        assertTrue(lastBody.contains("\"start_at\":\"2025-09-20 00:00:00\""), lastBody);
+        assertTrue(lastBody.contains("\"cycles\":[{"), lastBody);
+        assertTrue(lastBody.contains("\"adjustment_type\":\"discount_percent\""), lastBody);
+        assertTrue(lastBody.contains("\"min_value\":100"), lastBody);
+        assertTrue(lastBody.contains("\"max_value\":500"), lastBody);
+    }
+
+    @Test
+    @DisplayName("invoice.create - 미지정 필드는 전송하지 않는다 (기존 사용 패턴 회귀)")
+    void testInvoiceCreateOmitsUnsetFields() throws Exception {
+        kr.co.bootpay.store.model.pojo.SInvoice invoice = new kr.co.bootpay.store.model.pojo.SInvoice();
+        invoice.name = "테스트 청구서";
+        invoice.price = 3000.0;
+
+        store.invoice.create(invoice);
+
+        assertEquals("POST", lastMethod);
+        assertEquals("/v1/invoices", lastPath);
+        assertFalse(lastBody.contains("user"), "지정하지 않은 user 는 전송되면 안 된다: " + lastBody);
+        assertFalse(lastBody.contains("products"), "지정하지 않은 products 는 전송되면 안 된다: " + lastBody);
+        assertFalse(lastBody.contains("delivery_price"), lastBody);
+        assertFalse(lastBody.contains("sdk"), lastBody);
+    }
+
+    @Test
+    @DisplayName("invoice.create - idempotencyKey 직접 지정 가능")
+    void testInvoiceCreateExplicitIdempotencyKey() throws Exception {
+        kr.co.bootpay.store.model.pojo.SInvoice invoice = new kr.co.bootpay.store.model.pojo.SInvoice();
+        invoice.name = "테스트 청구서";
+        invoice.price = 1000.0;
+
+        store.invoice.create(invoice, "my-idem-key");
+
+        assertEquals("my-idem-key", lastIdempotencyKey);
+        assertFalse(lastBody.contains("idempotency"), "idempotencyKey 는 body 에 포함되면 안 된다: " + lastBody);
+    }
+
 }

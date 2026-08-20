@@ -87,5 +87,33 @@ public class SInvoice {
     public List<SInvoiceItem> invoiceItems;
     public List<String> selectedUsers;
 
+    // ========================================
+    // 청구서 생성 파라미터 (3.4.0~, ruby SDK request_checkout parity)
+    // ========================================
+
+    /** SDK 를 통한 생성인지 여부 */
+    public Boolean sdk;
+
+    /** 구매자 정보 — 회원이면 userId 만으로 충분하다 */
+    public SInvoiceUser user;
+
+    /** 청구할 상품 목록 — 등록된 상품을 참조한다 (invoiceItems 는 이름·금액 직접 기입 방식) */
+    public List<SInvoiceProduct> products;
+
+    /** 배송비 */
+    public Double deliveryPrice;
+
+    /** 생성과 동시에 구매자에게 안내를 발송할지 여부 */
+    public Boolean useNotification;
+
+    /** 청구서 링크 진입 시 자동 로그인 처리 여부 */
+    public Boolean useAutoLogin;
+
+    /** 사용량 기반 과금 시 사용량을 조회할 API 주소 */
+    public String usageApiUrl;
+
+    /** 부가 옵션 (결제·승인 분리, 주문 즉시 생성 등) */
+    public SInvoiceExtra extra;
+
 }
 

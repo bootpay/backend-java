@@ -39,6 +39,16 @@ public class Invoice {
     }
 
     /**
+     * 청구서 생성.
+     *
+     * @param invoice 청구서 정보
+     * @param idempotencyKey 미지정시 자동 생성 (Idempotency-Key 헤더로 전송)
+     */
+    public BootpayStoreResponse create(SInvoice invoice, String idempotencyKey) throws Exception {
+        return SInvoiceService.create(bootpay, invoice, idempotencyKey);
+    }
+
+    /**
      * 청구서 알림 재발송 — sendTypes 미전달시 서버가 빈 배열로 처리한다.
      * ⚠️ 실제 고객에게 알림이 발송되므로 테스트 호출 주의.
      */
