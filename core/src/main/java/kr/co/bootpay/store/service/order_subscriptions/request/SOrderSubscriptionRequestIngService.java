@@ -22,8 +22,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +62,17 @@ public class SOrderSubscriptionRequestIngService {
     }
 
 
+    // 중도해지 수수료 사전계산 (GET order_subscriptions/requests/ing/calculate_termination_fee)
+    // 해지 요청 전에 얼마가 나오는지 미리 보여줄 때 쓴다
     static public BootpayStoreResponse calculateTerminationFee(BootpayStoreObject bootpay, String orderSubscriptionId, String orderNumber) throws Exception {
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpGet get = calculateTerminationFeeRequest(bootpay, orderSubscriptionId, orderNumber);
+        HttpResponse response = client.execute(get);
+
+        return bootpay.responseToJsonObject(response);
+    }
+
+    static HttpGet calculateTerminationFeeRequest(BootpayStoreObject bootpay, String orderSubscriptionId, String orderNumber) throws Exception {
         // 토큰 유효성 검증
         if (bootpay == null || bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new IllegalArgumentException("Bootpay 토큰이 비어있습니다.");
@@ -78,20 +86,12 @@ public class SOrderSubscriptionRequestIngService {
             throw new IllegalArgumentException("orderSubscriptionId 또는 orderNumber 중 하나는 필수입니다.");
         }
 
-        // URL 구성
-        StringBuilder url = new StringBuilder("order_subscriptions/requests/ing/calculate_termination_fee?");
-        if (hasOrderSubscriptionId) {
-            url.append("order_subscription_id=").append(URLEncoder.encode(orderSubscriptionId, StandardCharsets.UTF_8));
-        } else {
-            url.append("order_number=").append(URLEncoder.encode(orderNumber, StandardCharsets.UTF_8));
-        }
+        // 값이 설정되지 않은 필드는 전송하지 않는다 (둘 다 있으면 둘 다 전송한다)
+        List<NameValuePair> nameValuePairList = new ArrayList<>();
+        if (hasOrderSubscriptionId) nameValuePairList.add(new BasicNameValuePair("order_subscription_id", orderSubscriptionId));
+        if (hasOrderNumber) nameValuePairList.add(new BasicNameValuePair("order_number", orderNumber));
 
-        // 요청 실행
-        HttpClient client = HttpClientBuilder.create().build();
-        HttpGet get = bootpay.httpGet(url.toString());
-        HttpResponse response = client.execute(get);
-
-        return bootpay.responseToJsonObject(response);
+        return bootpay.httpGet("order_subscriptions/requests/ing/calculate_termination_fee", nameValuePairList);
     }
 
     // 오버로드: orderNumber만 전달하는 경우

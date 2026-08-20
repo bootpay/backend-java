@@ -25,8 +25,14 @@ public class User {
         return SUserJoinService.join(bootpay, user);
     }
 
+    // key: email-exist, id-exist, phone-exist, uid-exist, group-business-number-exist
     public BootpayStoreResponse checkExist(String key, String value) throws Exception {
         return SUserJoinService.checkExist(bootpay, key, value);
+    }
+
+    // 외부 uid(ex_uid) 중복 확인 (GET users/join/uid-exist)
+    public BootpayStoreResponse uidExist(String uid) throws Exception {
+        return SUserJoinService.uidExist(bootpay, uid);
     }
 
 //    public HashMap<String, Object> idExist(String pk) throws Exception {

@@ -33,34 +33,39 @@ import java.util.UUID;
 
 
 public class SOrderSubscriptionService {
+    // 구독 목록 조회 (GET order_subscriptions)
+    // 서버는 limit 을 `params[:limit].presence || 20` 으로 받는다 (미전송시 서버 기본값 20)
     static public BootpayStoreResponse list(BootpayStoreObject bootpay, OrderSubscriptionListParams params) throws Exception {
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpGet get = listRequest(bootpay, params);
+        HttpResponse response = client.execute(get);
+        return bootpay.responseToJsonObject(response);
+    }
+
+    static HttpGet listRequest(BootpayStoreObject bootpay, OrderSubscriptionListParams params) throws Exception {
         if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
             throw new Exception("token 값이 비어있습니다.");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         String url = "order_subscriptions";
-        if(params != null) {
-            List<NameValuePair> nameValuePairList = new ArrayList<>();
-            if(params.sAt != null) nameValuePairList.add(new BasicNameValuePair("s_at", params.sAt));
-            if(params.eAt != null) nameValuePairList.add(new BasicNameValuePair("e_at", params.eAt));
+        if(params == null) return bootpay.httpGet(url);
 
-            if(params.requestType != null) nameValuePairList.add(new BasicNameValuePair("request_type", params.eAt));
-            if(params.userGroupId != null) nameValuePairList.add(new BasicNameValuePair("user_group_id", params.userGroupId));
-            if(params.userId != null) nameValuePairList.add(new BasicNameValuePair("user_id", params.userId));
+        // 값이 설정되지 않은 필드는 전송하지 않는다 (ruby의 compact 동작)
+        // ⚠️ 날짜 키는 s_at/e_at 이다. orders 의 css_at/cse_at 와 다르다.
+        List<NameValuePair> nameValuePairList = new ArrayList<>();
+        if(params.sAt != null) nameValuePairList.add(new BasicNameValuePair("s_at", params.sAt));
+        if(params.eAt != null) nameValuePairList.add(new BasicNameValuePair("e_at", params.eAt));
 
-            if(params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
-            if(params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
-            if(params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
+        if(params.requestType != null) nameValuePairList.add(new BasicNameValuePair("request_type", params.requestType.toString()));
+        if(params.status != null) nameValuePairList.add(new BasicNameValuePair("status", params.status.toString()));
+        if(params.userGroupId != null) nameValuePairList.add(new BasicNameValuePair("user_group_id", params.userGroupId));
+        if(params.userId != null) nameValuePairList.add(new BasicNameValuePair("user_id", params.userId));
 
-            HttpGet get = bootpay.httpGet(url, nameValuePairList);
-            HttpResponse response = client.execute(get);
-            return bootpay.responseToJsonObject(response);
-        } else {
-            HttpGet get = bootpay.httpGet(url);
-            HttpResponse response = client.execute(get);
-            return bootpay.responseToJsonObject(response);
-        }
+        if(params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
+        if(params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
+        if(params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
+
+        return bootpay.httpGet(url, nameValuePairList);
     }
 
 

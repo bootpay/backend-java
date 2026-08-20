@@ -24,6 +24,7 @@ public class User {
 //            idExist();
 //            phoneExist();
 //            groupBusinessNumberExist();
+//            uidExist();
 //            update();
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,6 +161,20 @@ public class User {
                 System.out.println("groupBusinessNumberExist success: " + res.getData());
             } else {
                 System.out.println("groupBusinessNumberExist false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 외부 uid(ex_uid) 중복 확인 - checkExist("uid-exist", uid)와 동일하다
+    public static void uidExist() {
+        try {
+            BootpayStoreResponse res = bootpay.user.uidExist("ex_uid_1234");
+            if (res.isSuccess()) {
+                System.out.println("uidExist success: " + res.getData());
+            } else {
+                System.out.println("uidExist false: " + res.getData());
             }
         } catch (Exception e) {
             e.printStackTrace();
