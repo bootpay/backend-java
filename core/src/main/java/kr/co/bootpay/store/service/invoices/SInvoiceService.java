@@ -49,7 +49,7 @@ public class SInvoiceService {
                 .create();
 
         HttpPost post = bootpay.httpPost("invoices", new StringEntity(gson.toJson(invoice), "UTF-8"),
-                invoiceContext(idempotencyKey));
+                invoiceCreateContext(idempotencyKey));
 
         HttpResponse response = client.execute(post);
         return bootpay.responseToJsonObject(response);
@@ -184,6 +184,18 @@ public class SInvoiceService {
     private static RequestContext invoiceContext(String idempotencyKey) {
         return RequestContext.builder()
                 .role("user")
+                .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
+                .build();
+    }
+
+    /**
+     * 청구서 생성 요청 컨텍스트 — Idempotency-Key 만 싣고 role 은 지정하지 않는다.
+     *
+     * <p>role 을 고정하면 {@code setRole("supervisor")} 로 지정해 둔 호출자가 조용히 user 로
+     * 강등된다. role 미지정 시 인스턴스 role 이 쓰이고, 그마저 없으면 "user" 가 기본값이다.</p>
+     */
+    private static RequestContext invoiceCreateContext(String idempotencyKey) {
+        return RequestContext.builder()
                 .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
                 .build();
     }
