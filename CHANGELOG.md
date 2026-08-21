@@ -19,13 +19,17 @@ PG 와 Commerce 의 코드 스타일 통일 + Commerce 청구서/인증 정합�
   - `subscriptionSetting` 모듈 노출 — 기존 `BootpayStore` 에는 배선 누락으로 도달할 수 없었다.
 - 토큰 발급 이름 통일 — 양쪽 모두 `issueAccessToken()` 이 `BootpayResponse` 를 반환. 기존 `getAccessToken()` 은 그대로 유지.
 
-#### Commerce 인증 정합성 (동작 변경)
+#### Commerce 인증 — 이번 릴리스에서는 바꾸지 않는다
 
-- `Authorization` 헤더 규칙을 기준 SDK(NodeJS) 및 Ruby / Go / Python / PHP / .NET 과 일치시켰다.
-  - **토큰이 발급되어 있으면 `Bearer {token}`**, 없으면 client_key/secret_key `Basic`, 둘 다 없으면 **헤더를 붙이지 않는다** (기존에는 항상 Basic 을 보냈고, 인증 정보가 없으면 빈 문자열을 보냈다).
-  - `RequestContext` 의 토큰이 인스턴스 토큰보다 우선한다 (`RequestContext.token` 필드가 그동안 무시되고 있었다).
-  - `authorizationHeader()` / `authorizationHeader(RequestContext)` 추가. `requestAccessToken()` 은 Basic 값 계산으로 그대로 유지된다.
-  - ⚠️ `getAccessToken()` 을 호출해 토큰을 발급받은 코드는 이제 Basic 이 아니라 Bearer 로 전송된다. 토큰 만료(30분) 시 재발급이 필요하다.
+Commerce 는 계속 client_key/secret_key 의 `Basic` 으로 인증한다. **v3.2.0 과 동일하며 기존 코드의 동작 변화가 없다.**
+
+작업 도중 기준 SDK(NodeJS · Ruby)의 "토큰이 있으면 Bearer" 규칙으로 전환했다가 되돌렸다. 이유는 다음과 같다.
+
+- 전환 근거로 삼았던 "Go / Python / PHP / .NET 도 Bearer" 가 사실이 아니었다. 넷 다 **항상 Basic** 이고 토큰 필드를 읽지 않는다. Java 가 맞춰야 할 다수파는 Basic 쪽이었다.
+- Java 는 Commerce 토큰의 만료 시각을 알 수단이 없다. 서버가 내려주는 `expired_at` 을 `STokenResponse` 가 파싱하지 않고, `expire_in` 은 PG 형식이라 Commerce 응답에서 항상 0 이다.
+- 401 폴백도 자동 재발급도 없어, 토큰 30분 만료 후 복구 수단 없이 인증이 끊긴다. 모든 Commerce 서비스가 토큰을 요구하므로 이 영향은 기존 사용자 전원에게 미쳤을 것이다.
+
+Bearer 전환은 `expired_at` 파싱 · 만료 기반 자동 재발급 · 401 시 Basic 폴백을 함께 갖춰 **다음 버전에서** 진행한다.
 
 #### Commerce scope(BOOTPAY-ROLE) 정합성 (동작 변경)
 
@@ -47,7 +51,7 @@ PG 와 Commerce 의 코드 스타일 통일 + Commerce 청구서/인증 정합�
     - `SInvoicePriceAdjustmentCycle`: `duration` / `adjustmentType` / `name` / `value` / `minValue` / `maxValue` (`discount_percent` · `discount_price` · `setup_fee` 상수 제공)
   - `deliveryPrice`, `useNotification`, `useAutoLogin`, `usageApiUrl`, `sdk`
   - `extra` (`SInvoiceExtra`) — `separatelyConfirmed` / `createOrderImmediately`
-- `invoice.create` 에 `Idempotency-Key` 헤더와 user role 부착 (list/detail/notify 와 동일한 규약, ruby SDK 와 parity). `create(invoice, idempotencyKey)` 오버로드 추가.
+- `invoice.create` 에 `Idempotency-Key` 헤더 부착 (ruby SDK 와 parity). `create(invoice, idempotencyKey)` 오버로드 추가. role 은 고정하지 않는다 — `setRole("supervisor")` 로 지정해 둔 호출자가 조용히 user 로 강등되지 않도록 인스턴스 role 을 그대로 쓰고, 지정이 없을 때만 `user` 가 기본값이다.
 
 #### 브랜치 통합 (2-x-development)
 
