@@ -526,7 +526,20 @@ public class BootpayStoreObject {
 
             ObjectMapper mapper = new ObjectMapper();
             TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {};
-            HashMap<String, Object> parsedData = mapper.readValue(str, typeRef);
+
+            // 26-08-21: 최상위가 배열인 응답(GET /v1/categories 등)도 받도록 폴백 추가.
+            // 이전에는 HashMap 파싱만 시도해 MismatchedInputException 이 나고
+            // data:null + "Cannot deserialize ... from Array value" 로 끝났다.
+            // pg 계층 BootpayObject.responseToJson 과 같은 방식이며,
+            // 원소 타입을 고정하지 않으려고 List<Object> 로 받는다.
+            Object parsedData;
+            try {
+                parsedData = mapper.readValue(str, typeRef);
+            } catch (com.fasterxml.jackson.databind.exc.MismatchedInputException notObject) {
+                TypeReference<List<Object>> listType = new TypeReference<List<Object>>() {};
+                List<Object> parsedList = mapper.readValue(str, listType);
+                parsedData = (parsedList == null) ? new ArrayList<Object>() : parsedList;
+            }
 
             // 파싱된 데이터를 data 키에 저장
             result.put("data", parsedData);
