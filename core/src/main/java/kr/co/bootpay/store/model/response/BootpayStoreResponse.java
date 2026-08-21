@@ -46,6 +46,33 @@ public class BootpayStoreResponse {
         return null;
     }
 
+    /**
+     * 26-08-21 추가 — 최상위가 배열인 응답의 데이터 반환.
+     *
+     * commerce-api 의 일부 엔드포인트(예: GET /v1/categories)는 객체가 아니라 배열을
+     * 그대로 내려준다. 그 경우 {@link #getData()} 는 null 을 반환하므로 이 메서드를 쓴다.
+     * 기존 {@link #getData()} 의 시그니처·동작은 바뀌지 않는다.
+     *
+     * @return 배열 응답이면 그 목록, 아니면 null
+     */
+    @SuppressWarnings("unchecked")
+    public List<Object> getDataList() {
+        if (data instanceof List) {
+            return (List<Object>) data;
+        }
+        return null;
+    }
+
+    // 26-08-21 추가 — 응답 본문이 배열인지 여부
+    public boolean isDataList() {
+        return data instanceof List;
+    }
+
+    // 26-08-21 추가 — 타입을 가리지 않고 원본 데이터 반환 (객체·배열 모두)
+    public Object getRawData() {
+        return data;
+    }
+
     // 에러 메시지 반환
     public String getError() {
         return error;
