@@ -1,121 +1,103 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-echo "🚀 Central Portal 배포 시작..."
-echo "========================================"
+# Maven Central (Central Portal) 배포 스크립트
+#
+# ⚠️ 자격증명은 이 파일에 넣지 않는다. gitignored 인 local.properties 에서 읽는다.
+#    (2026-08-24: 이 스크립트에 ossrhUsername/ossrhPassword 가 하드코딩된 채
+#     public 리포에 커밋돼 있었다. 값은 폐기·재발급 대상이다.)
+# ⚠️ 버전은 publish.gradle 의 PUBLISH_VERSION 에서 읽는다 (수동 동기화 금지).
 
-# 프로젝트 루트로 이동
-cd /Users/taesupyoon/bootpay/server/sdk/java
+cd "$(dirname "$0")"
 
-# 배포 설정 (publish.gradle과 동기화)
-PUBLISH_GROUP_ID="io.github.bootpay"
-PUBLISH_ARTIFACT_ID="backend"
-PUBLISH_VERSION="3.0.3"
+read_prop() {
+  # local.properties 에서 key 값을 읽는다 (없으면 빈 문자열)
+  awk -F= -v k="$1" '$1==k {sub(/^[^=]*=/,""); print; exit}' local.properties 2>/dev/null | tr -d '\r'
+}
 
-# 그룹 ID를 경로로 변환 (io.github.bootpay -> io/github/bootpay)
+read_gradle_ext() {
+  # publish.gradle 의 ext 값을 읽는다
+  awk -F"'" -v k="$1" '$0 ~ k"[[:space:]]*=" {print $2; exit}' publish.gradle
+}
+
+PUBLISH_GROUP_ID=$(read_gradle_ext PUBLISH_GROUP_ID)
+PUBLISH_ARTIFACT_ID=$(read_gradle_ext PUBLISH_ARTIFACT_ID)
+PUBLISH_VERSION=$(read_gradle_ext PUBLISH_VERSION)
 GROUP_PATH="${PUBLISH_GROUP_ID//.//}"
 
-echo "📋 배포 정보:"
-echo "   - Group ID: $PUBLISH_GROUP_ID"
-echo "   - Artifact ID: $PUBLISH_ARTIFACT_ID"
-echo "   - Version: $PUBLISH_VERSION"
+OSSRH_USERNAME=$(read_prop ossrhUsername)
+OSSRH_PASSWORD=$(read_prop ossrhPassword)
+
+if [ -z "$OSSRH_USERNAME" ] || [ -z "$OSSRH_PASSWORD" ]; then
+  echo "❌ local.properties 에 ossrhUsername / ossrhPassword 가 없습니다."
+  exit 1
+fi
+
+echo "🚀 Central Portal 배포: ${PUBLISH_GROUP_ID}:${PUBLISH_ARTIFACT_ID}:${PUBLISH_VERSION}"
 echo "========================================"
 
-echo "📦 Step 1: 기존 빌드 정리..."
+# 이미 배포된 버전이면 중단 (Maven Central 은 덮어쓸 수 없다)
+POM_URL="https://repo1.maven.org/maven2/${GROUP_PATH}/${PUBLISH_ARTIFACT_ID}/${PUBLISH_VERSION}/${PUBLISH_ARTIFACT_ID}-${PUBLISH_VERSION}.pom"
+if [ "$(curl -s -o /dev/null -w '%{http_code}' "$POM_URL")" = "200" ]; then
+  echo "❌ ${PUBLISH_VERSION} 은 이미 Maven Central 에 있습니다. 버전을 올리세요."
+  exit 1
+fi
+
+echo "📦 Step 1: 테스트"
+./gradlew :core:test --rerun-tasks
+
+echo "📦 Step 2: 기존 빌드 정리"
 rm -rf core/build/repo
 rm -f central-bundle.zip
 
-echo "📦 Step 2: 새로운 publication 생성..."
+echo "📦 Step 3: publication 생성"
 ./gradlew core:publishReleasePublicationToLocalRepoRepository
 
-echo "📦 Step 3: 번들 생성..."
-cd core/build/repo
+echo "📦 Step 4: 번들 생성"
+(cd core/build/repo && zip -r ../../../central-bundle.zip "${GROUP_PATH}/${PUBLISH_ARTIFACT_ID}/${PUBLISH_VERSION}/")
+echo "✅ $(ls -lh central-bundle.zip | awk '{print $9, $5}')"
 
-# 버전 디렉토리의 모든 파일을 번들에 포함 (jar, pom, module 및 서명/체크섬 파일)
-zip -r ../../../central-bundle.zip \
-  ${GROUP_PATH}/${PUBLISH_ARTIFACT_ID}/${PUBLISH_VERSION}/
-cd ../../../
+BEARER_TOKEN=$(printf '%s:%s' "${OSSRH_USERNAME}" "${OSSRH_PASSWORD}" | base64)
 
-echo "✅ 번들 생성 완료: $(ls -lh central-bundle.zip)"
-
-echo "🔐 Step 4: 인증 정보 설정..."
-OSSRH_USERNAME="i4oDa5"
-OSSRH_PASSWORD="uh9Wgv6DYCHET2H8M2XLDIKnP82Eigtdz"
-BEARER_TOKEN=$(echo -n "${OSSRH_USERNAME}:${OSSRH_PASSWORD}" | base64)
-
-echo "⬆️  Step 5: Central Portal에 업로드..."
-DEPLOYMENT_ID=$(curl --silent --request POST \
+echo "⬆️  Step 5: Central Portal 업로드"
+DEPLOYMENT_ID=$(curl --silent --fail --request POST \
   --header "Authorization: Bearer ${BEARER_TOKEN}" \
   --form bundle=@central-bundle.zip \
   https://central.sonatype.com/api/v1/publisher/upload)
 
 if [ -z "$DEPLOYMENT_ID" ]; then
-    echo "❌ 업로드 실패!"
-    exit 1
+  echo "❌ 업로드 실패"
+  exit 1
 fi
+echo "✅ Deployment ID: $DEPLOYMENT_ID"
 
-echo "✅ 업로드 성공!"
-echo "📋 Deployment ID: $DEPLOYMENT_ID"
+echo "⏳ Step 6: 상태 폴링 (최대 5분)"
+for _ in $(seq 1 30); do
+  STATUS_RESPONSE=$(curl --silent --request POST \
+    --header "Authorization: Bearer ${BEARER_TOKEN}" \
+    "https://central.sonatype.com/api/v1/publisher/status?id=${DEPLOYMENT_ID}")
+  STATE=$(echo "$STATUS_RESPONSE" | jq -r '.deploymentState')
+  echo "   상태: $STATE"
 
-echo "⏳ Step 6: 배포 상태 확인 중..."
-sleep 5
+  case "$STATE" in
+    VALIDATED)
+      echo "🚀 검증 완료 — 배포를 시작합니다."
+      HTTP_STATUS=$(curl --silent --output /dev/null --write-out '%{http_code}' --request POST \
+        --header "Authorization: Bearer ${BEARER_TOKEN}" \
+        "https://central.sonatype.com/api/v1/publisher/deployment/${DEPLOYMENT_ID}")
+      [ "$HTTP_STATUS" = "204" ] && echo "🎉 배포 시작됨" || echo "⚠️ 자동 배포 실패 — Central Portal 에서 수동 배포하세요 (HTTP $HTTP_STATUS)"
+      ;;
+    PUBLISHED)
+      echo "🎉 배포 완료 — Maven Central 반영까지 수 분 걸릴 수 있습니다."
+      exit 0
+      ;;
+    FAILED)
+      echo "❌ 배포 실패:"; echo "$STATUS_RESPONSE" | jq '.errors'
+      exit 1
+      ;;
+  esac
+  python3 -c 'import time; time.sleep(10)'
+done
 
-echo "📊 Step 7: 상태 조회..."
-STATUS_RESPONSE=$(curl --silent --request POST \
-  --header "Authorization: Bearer ${BEARER_TOKEN}" \
-  "https://central.sonatype.com/api/v1/publisher/status?id=${DEPLOYMENT_ID}")
-
-echo "📄 배포 상태:"
-echo "$STATUS_RESPONSE" | jq .
-
-# 상태 확인
-DEPLOYMENT_STATE=$(echo "$STATUS_RESPONSE" | jq -r '.deploymentState')
-echo ""
-echo "========================================"
-echo "🎯 현재 상태: $DEPLOYMENT_STATE"
-
-case $DEPLOYMENT_STATE in
-    "PENDING")
-        echo "⏳ 검증 대기 중입니다."
-        ;;
-    "VALIDATING")
-        echo "🔍 검증 진행 중입니다."
-        ;;
-    "VALIDATED")
-        echo "✅ 검증 완료! 수동 배포가 필요합니다."
-        echo "🚀 자동 배포를 시도합니다..."
-        
-        PUBLISH_RESPONSE=$(curl --silent --request POST \
-          --header "Authorization: Bearer ${BEARER_TOKEN}" \
-          --write-out "HTTPSTATUS:%{http_code}" \
-          "https://central.sonatype.com/api/v1/publisher/deployment/${DEPLOYMENT_ID}")
-        
-        HTTP_STATUS=$(echo $PUBLISH_RESPONSE | grep -o "HTTPSTATUS:[0-9]*" | cut -d: -f2)
-        
-        if [ "$HTTP_STATUS" -eq "204" ]; then
-            echo "🎉 배포 시작됨! Maven Central에 곧 반영됩니다."
-        else
-            echo "⚠️  수동 배포 실패. Central Portal에서 수동으로 배포하세요."
-        fi
-        ;;
-    "PUBLISHING")
-        echo "🚀 Maven Central에 배포 중입니다."
-        ;;
-    "PUBLISHED")
-        echo "🎉 배포 완료! Maven Central에서 사용 가능합니다."
-        ;;
-    "FAILED")
-        echo "❌ 배포 실패!"
-        echo "🔍 오류 내용:"
-        echo "$STATUS_RESPONSE" | jq '.errors'
-        ;;
-    *)
-        echo "❓ 알 수 없는 상태: $DEPLOYMENT_STATE"
-        ;;
-esac
-
-echo ""
-echo "========================================"
-echo "🌐 Central Portal 확인: https://central.sonatype.com/"
-echo "📋 Deployment ID: $DEPLOYMENT_ID"
-echo "🏁 스크립트 완료!" 
+echo "⏱️  5분 내에 PUBLISHED 로 끝나지 않았습니다. Central Portal 에서 확인하세요."
+echo "🌐 https://central.sonatype.com/  ·  Deployment ID: $DEPLOYMENT_ID"
