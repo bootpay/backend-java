@@ -1,3 +1,19 @@
+### 3.4.0
+
+#### 인증 계약 정렬 (Server SDK 공통)
+
+- **PG** — 완전한 `client_key`/`secret_key` 쌍이면 매 요청 `Basic` 으로, 완전한 legacy `application_id`/`private_key` 쌍이면 `request/token` 발급 뒤 `Bearer` 로 인증한다. 쌍이 하나만 지정되면 네트워크 요청 전에 거절한다.
+- **Commerce** — legacy 인증은 지원하지 않고 `client_key`/`secret_key` `Basic` 만 쓴다. 저장된 Commerce 토큰은 기존 API 호환을 위해 유지하되 일반 요청의 `Authorization` 을 `Bearer` 로 바꾸지 않는다 (v3.3.0 과 동일한 동작).
+- Commerce 서비스 109개 실행 지점을 공통 Basic 인증 경로로 통합하고, 토큰 선행 조건 101곳을 ck/sk 검증으로 정정했다.
+- `STokenResponse` 가 `expired_at` 을 파싱한다. `STokenService` 는 Basic 자격증명과 토큰 바디를 함께 보낸다 — 이전에는 바디가 `{}` 였다.
+
+#### Commerce 최상위 배열 응답 파싱 (버그 수정)
+
+- 일부 엔드포인트(`GET /v1/categories` 등)는 객체가 아니라 최상위 JSON 배열을 내려준다. `HashMap` 파싱만 시도해 `MismatchedInputException` 이 나고 `data:null` 로 끝나던 문제를 폴백으로 해소했다.
+- `BootpayStoreResponse` 에 `getDataList()` / `isDataList()` / `getRawData()` 추가. 기존 `getData()` 의 시그니처·동작은 그대로다.
+
+검증: `./gradlew :core:test --rerun-tasks` → 212 tests, 0 failures, 0 errors, 84 skipped.
+
 ### 3.3.0
 
 PG 와 Commerce 의 코드 스타일 통일 + Commerce 청구서/인증 정합성. **기존 표면은 그대로 동작한다.**
