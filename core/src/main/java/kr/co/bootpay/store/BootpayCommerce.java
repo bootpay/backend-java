@@ -39,15 +39,14 @@ import kr.co.bootpay.store.module.WebhookModule;
  *         .role(BootpayRole.USER)
  *         .build();
  *
- * bootpay.issueAccessToken();
- *
  * BootpayResponse res = bootpay.user.list(params);
  * if (res.isSuccess()) {
  *     System.out.println(res.getData());
  * }
  * }</pre>
  *
- * <p>Commerce API 는 다른 호출 전에 {@link #issueAccessToken()} 으로 토큰을 먼저 발급받아야 합니다.</p>
+ * <p>Commerce API 요청은 client_key/secret_key Basic 인증을 사용한다. {@link #issueAccessToken()}은
+ * 기존 호출 흐름과 토큰 조회 호환성을 위해 유지하지만 일반 요청의 인증 방식은 바꾸지 않는다.</p>
  *
  * <p>기존 {@link BootpayStore} 는 아무 영향 없이 그대로 사용할 수 있습니다. 이 클래스는 상속이 아니라
  * 위임으로 구현되어 있어, 기존 클래스의 동작을 어떤 방식으로도 바꾸지 않습니다.</p>
@@ -152,8 +151,8 @@ public class BootpayCommerce {
     /**
      * 액세스 토큰을 발급하고 인스턴스에 설정합니다.
      *
-     * <p>Commerce API 는 다른 호출 전에 이 메서드를 먼저 호출해야 합니다. PG 의
-     * {@code Bootpay.issueAccessToken()} 과 이름과 반환 타입이 같습니다.</p>
+     * <p>기존 토큰 조회 흐름과의 호환성을 위해 유지한다. 일반 Commerce 요청은 이미
+     * client_key/secret_key Basic 인증을 사용한다.</p>
      *
      * @return 발급 결과
      * @throws Exception 통신 실패 또는 인증 정보 누락
@@ -163,7 +162,7 @@ public class BootpayCommerce {
     }
 
     /**
-     * 발급된 토큰이 있는지 확인합니다.
+     * 발급된 토큰이 있는지 확인합니다. 일반 Commerce 요청의 인증 방식에는 영향을 주지 않습니다.
      *
      * @return 토큰 보유 여부
      */

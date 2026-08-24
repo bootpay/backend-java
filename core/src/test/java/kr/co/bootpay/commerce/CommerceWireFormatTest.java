@@ -41,6 +41,7 @@ import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,6 +65,7 @@ class CommerceWireFormatTest {
     private static volatile String lastIdempotencyKey;
     private static volatile String lastUserJwt;
     private static volatile String lastContentType;
+    private static volatile String lastAuthorization;
 
     @BeforeAll
     static void setUp() throws Exception {
@@ -73,7 +75,6 @@ class CommerceWireFormatTest {
 
         store = new BootpayStore(new TokenPayload("test_ck", "test_sk"), "PRODUCTION");
         store.baseUrl = "http://127.0.0.1:" + server.getAddress().getPort() + "/v1/";
-        store.setTokenFromAPI("test-token");
     }
 
     @AfterAll
@@ -83,7 +84,7 @@ class CommerceWireFormatTest {
 
     @BeforeEach
     void resetCapture() {
-        lastMethod = lastPath = lastQuery = lastBody = lastRole = lastIdempotencyKey = lastUserJwt = lastContentType = null;
+        lastMethod = lastPath = lastQuery = lastBody = lastRole = lastIdempotencyKey = lastUserJwt = lastContentType = lastAuthorization = null;
     }
 
     private static void capture(HttpExchange exchange) throws java.io.IOException {
@@ -94,6 +95,7 @@ class CommerceWireFormatTest {
         lastIdempotencyKey = exchange.getRequestHeaders().getFirst("Idempotency-Key");
         lastUserJwt = exchange.getRequestHeaders().getFirst("Bootpay-User-JWT");
         lastContentType = exchange.getRequestHeaders().getFirst("Content-Type");
+        lastAuthorization = exchange.getRequestHeaders().getFirst("Authorization");
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try (InputStream in = exchange.getRequestBody()) {
@@ -103,12 +105,43 @@ class CommerceWireFormatTest {
         }
         lastBody = new String(buffer.toByteArray(), StandardCharsets.UTF_8);
 
-        byte[] response = "{\"ok\":true}".getBytes(StandardCharsets.UTF_8);
+        String responseBody = "/v1/request/token".equals(lastPath)
+                ? "{\"access_token\":\"issued-token\"}"
+                : "{\"ok\":true}";
+        byte[] response = responseBody.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type", "application/json");
         exchange.sendResponseHeaders(200, response.length);
         try (OutputStream out = exchange.getResponseBody()) {
             out.write(response);
         }
+    }
+
+    @Test
+    @DisplayName("getAccessToken - Basic 헤더와 client_key/secret_key 본문을 함께 전송")
+    void testGetAccessTokenWireFormat() throws Exception {
+        store.getAccessToken();
+
+        String expectedBasic = "Basic " + Base64.getEncoder()
+                .encodeToString("test_ck:test_sk".getBytes(StandardCharsets.UTF_8));
+        assertAll(
+                () -> assertEquals("POST", lastMethod),
+                () -> assertEquals("/v1/request/token", lastPath),
+                () -> assertEquals(expectedBasic, lastAuthorization),
+                () -> assertTrue(lastBody.contains("\"client_key\":\"test_ck\""), lastBody),
+                () -> assertTrue(lastBody.contains("\"secret_key\":\"test_sk\""), lastBody),
+                () -> assertEquals("issued-token", store.getCurrentToken())
+        );
+    }
+
+    @Test
+    @DisplayName("저장된 Commerce 토큰은 일반 요청 인증 방식을 바꾸지 않는다")
+    void testStoredTokenDoesNotReplaceBasicAuthorization() throws Exception {
+        store.setTokenFromAPI("issued-token");
+        store.store.info();
+
+        String expectedBasic = "Basic " + Base64.getEncoder()
+                .encodeToString("test_ck:test_sk".getBytes(StandardCharsets.UTF_8));
+        assertEquals(expectedBasic, lastAuthorization);
     }
 
     // ══════════════════════════════════════════════════════════

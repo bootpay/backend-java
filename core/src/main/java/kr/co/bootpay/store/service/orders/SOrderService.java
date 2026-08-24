@@ -8,11 +8,9 @@ import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.request.order.OrderListParams;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.NameValuePair;
 
@@ -26,11 +24,7 @@ import java.util.stream.Collectors;
 public class SOrderService {
     static public BootpayStoreResponse list(BootpayStoreObject bootpay, OrderListParams params) throws Exception {
 
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         String url = "orders";
         if(params != null) {
@@ -63,32 +57,26 @@ public class SOrderService {
             }
 
             HttpGet get = bootpay.httpGet(url, nameValuePairList);
-            HttpResponse response = client.execute(get);
+            HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         } else {
             HttpGet get = bootpay.httpGet(url);
-            HttpResponse response = client.execute(get);
+            HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         }
     }
 
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String orderId) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         HttpGet get = bootpay.httpGet("orders/" + orderId);
 
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 
     static public BootpayStoreResponse month(BootpayStoreObject bootpay, String userGroupId, String searchDate) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if (userGroupId == null || userGroupId.isEmpty()) {
             throw new Exception("user_group_id 값이 비어있습니다.");
         }
@@ -96,9 +84,7 @@ public class SOrderService {
             throw new Exception("search_date 값이 비어있습니다.");
         }
 
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
 
         List<NameValuePair> nameValuePairList = new ArrayList<>();
@@ -111,7 +97,7 @@ public class SOrderService {
 
 
         HttpGet get = bootpay.httpGet("orders/month", nameValuePairList);
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 }

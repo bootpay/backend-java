@@ -67,6 +67,34 @@ class LegacyCompatibilityTest {
     }
 
     @Test
+    @DisplayName("partial PG credential pairs fail before an authentication request")
+    void partialCredentialPairsFailBeforeNetwork() {
+        Bootpay clientOnly = new Bootpay();
+        clientOnly.client_key = "client";
+        Bootpay secretOnly = new Bootpay();
+        secretOnly.secret_key = "secret";
+        Bootpay applicationOnly = new Bootpay();
+        applicationOnly.application_id = "application";
+        Bootpay privateOnly = new Bootpay();
+        privateOnly.private_key = "private";
+
+        assertAll(
+                () -> assertThrows(Exception.class, clientOnly::getAccessToken),
+                () -> assertThrows(Exception.class, secretOnly::getAccessToken),
+                () -> assertThrows(Exception.class, applicationOnly::getAccessToken),
+                () -> assertThrows(Exception.class, privateOnly::getAccessToken)
+        );
+    }
+
+    @Test
+    @DisplayName("legacy PG requests require an issued Bearer token before dispatch")
+    void legacyRequestWithoutTokenFailsBeforeNetwork() {
+        Bootpay legacy = new Bootpay("legacy_application_id", "legacy_private_key", "PRODUCTION");
+
+        assertThrows(IllegalStateException.class, () -> legacy.doGet("receipt/test"));
+    }
+
+    @Test
     @DisplayName("access_token이 문자열이 아니면 token을 설정하지 않아야 한다")
     void nonStringAccessTokenDoesNotOverwriteToken() throws Exception {
         TestBootpay bootpay = new TestBootpay() {

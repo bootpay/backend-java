@@ -7,6 +7,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,11 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Commerce 인증 헤더 규칙 검증.
+ * Commerce Basic-only 인증의 v3.3.0 회귀 기록.
  *
- * <p>기준 SDK(NodeJS) 및 Ruby / Go / Python / PHP / .NET 과 동일하게
- * <b>토큰이 있으면 Bearer, 없으면 client_key/secret_key Basic, 둘 다 없으면 헤더 미부착</b> 이다.</p>
+ * @deprecated 3.4.0부터 {@link BootpayStoreObjectAuthorizationContractTest}가 현재 Basic-only
+ * 계약을 검증한다. 이 클래스는 v3.3.0의 회귀 기록이며 실행하지 않는다.
  */
+@Deprecated
+@Disabled("Deprecated v3.3.0 Basic-only authorization contract; replaced by BootpayStoreObjectAuthorizationContractTest")
 @DisplayName("Commerce API - 인증 헤더")
 class BootpayStoreObjectAuthTest {
 

@@ -3,9 +3,7 @@ package kr.co.bootpay.store.service.projects;
 import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 public class SProjectService {
 
@@ -17,14 +15,10 @@ public class SProjectService {
      * @return BootpayStoreResponse 프로젝트 정보 (project_id, name, status 등)
      */
     static public BootpayStoreResponse me(BootpayStoreObject bootpay) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         HttpGet get = bootpay.httpGet("projects/me");
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 }

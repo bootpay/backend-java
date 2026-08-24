@@ -4,9 +4,7 @@ import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.context.RequestContext;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 public class SStoreService {
 
@@ -25,14 +23,10 @@ public class SStoreService {
      * @param idempotencyKey 미지정시 자동 생성 (Idempotency-Key 헤더로 전송)
      */
     static public BootpayStoreResponse info(BootpayStoreObject bootpay, String idempotencyKey) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         HttpGet get = bootpay.httpGet("store", storeContext(idempotencyKey));
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -51,14 +45,10 @@ public class SStoreService {
      * @param idempotencyKey 미지정시 자동 생성 (Idempotency-Key 헤더로 전송)
      */
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String idempotencyKey) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         HttpGet get = bootpay.httpGet("store/detail", storeContext(idempotencyKey));
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 

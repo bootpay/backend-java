@@ -10,6 +10,7 @@ import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -20,6 +21,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.File;
 import java.net.URI;
@@ -63,6 +65,11 @@ public class BootpayStoreObject {
         this.token = token;
     }
 
+    /**
+     * @deprecated Commerce requests use client_key/secret_key Basic authentication. This method
+     *             remains for source compatibility and does not control request authorization.
+     */
+    @Deprecated
     public String getTokenValue() {
         return "Bearer " + token;
     }
@@ -92,26 +99,50 @@ public class BootpayStoreObject {
      * @return "Basic {base64(client_key:secret_key)}", 키가 없으면 ""
      */
     public String requestAccessToken() {
-        if((tokenPayload.clientKey == null || tokenPayload.clientKey.isEmpty()) && (tokenPayload.secretKey == null || tokenPayload.secretKey.isEmpty())) return "";
+        boolean hasClientKey = tokenPayload.clientKey != null && !tokenPayload.clientKey.isEmpty();
+        boolean hasSecretKey = tokenPayload.secretKey != null && !tokenPayload.secretKey.isEmpty();
+        if (!hasClientKey && !hasSecretKey) return "";
+        if (!hasClientKey) throw new IllegalStateException("clientKey 값이 비어있습니다. clientKey 와 secretKey 는 함께 지정해야 합니다.");
+        if (!hasSecretKey) throw new IllegalStateException("secretKey 값이 비어있습니다. clientKey 와 secretKey 는 함께 지정해야 합니다.");
         String credentials = tokenPayload.clientKey + ":" + tokenPayload.secretKey;
         String encoded = Base64.getEncoder().encodeToString(credentials.getBytes());
         return "Basic " + encoded;
     }
 
-    /**
-     * Commerce 요청에 Authorization 헤더를 부착한다. client_key/secret_key 의 Basic 을 쓴다.
-     *
-     * <p>발급받은 토큰({@code token})은 인증에 쓰지 않는다. Go / Python / PHP / .NET 도 같은
-     * 규칙이고, Basic 은 만료가 없어 장기 실행 프로세스에서 재발급이 필요 없다.</p>
-     *
-     * <p>토큰 기반 Bearer 인증(기준 SDK 인 NodeJS · Ruby 의 규칙)으로의 전환은 만료 시각
-     * 파싱({@code expired_at})·자동 재발급·401 폴백을 함께 갖춘 뒤에 해야 한다. 그 준비 없이
-     * 전환하면 30분 만료 후 복구 수단 없이 401 이 나므로 이번 릴리스에서는 도입하지 않는다.</p>
-     *
-     * @param context 요청별 컨텍스트 (현재 인증에는 사용하지 않는다)
-     */
+    /** Validates the only supported Commerce credential pair before a request is sent. */
+    public void requireCommerceCredentials() {
+        boolean hasClientKey = tokenPayload.clientKey != null && !tokenPayload.clientKey.isEmpty();
+        boolean hasSecretKey = tokenPayload.secretKey != null && !tokenPayload.secretKey.isEmpty();
+        if (!hasClientKey && !hasSecretKey) {
+            throw new IllegalStateException("Commerce API에는 clientKey와 secretKey가 필요합니다.");
+        }
+        if (!hasClientKey) throw new IllegalStateException("clientKey 값이 비어있습니다. clientKey 와 secretKey 는 함께 지정해야 합니다.");
+        if (!hasSecretKey) throw new IllegalStateException("secretKey 값이 비어있습니다. clientKey 와 secretKey 는 함께 지정해야 합니다.");
+    }
+
+    /** Commerce requests always use client_key/secret_key Basic authentication. */
+    public String authorizationHeader(RequestContext context) {
+        String basic = requestAccessToken();
+        return basic.isEmpty() ? null : basic;
+    }
+
+    /** @return instance-level Authorization header, or null when no credentials are set. */
+    public String authorizationHeader() {
+        return authorizationHeader(null);
+    }
+
     private void applyAuthHeader(HttpRequestBase request, RequestContext context) {
-        request.setHeader("Authorization", requestAccessToken());
+        String authorization = authorizationHeader(context);
+        if (authorization != null) {
+            request.setHeader("Authorization", authorization);
+        }
+    }
+
+    /** Executes a Commerce request after its Basic-only authorization header is attached. */
+    public HttpResponse execute(HttpRequestBase request) throws Exception {
+        requireCommerceCredentials();
+        HttpClient client = HttpClientBuilder.create().build();
+        return client.execute(request);
     }
 
     // RequestContext에 지정된 부가 헤더 부착 — Idempotency-Key, Bootpay-User-JWT는 값이 있을 때만 붙는다

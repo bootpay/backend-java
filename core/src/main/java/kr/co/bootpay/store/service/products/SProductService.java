@@ -12,13 +12,11 @@ import kr.co.bootpay.store.model.request.product.MallProductListParams;
 import kr.co.bootpay.store.model.request.product.ProductListParams;
 import kr.co.bootpay.store.model.request.product.ProductStatusParams;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.NameValuePair;
 
@@ -40,8 +38,7 @@ public class SProductService {
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse create(BootpayStoreObject bootpay, SProduct product, List<URL> imagePaths, String idempotencyKey) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         // Gson을 사용하여 Product 객체를 JSON 문자열로 변환
         Gson gson = new GsonBuilder()
@@ -51,7 +48,7 @@ public class SProductService {
         // 이미지가 없으면 JSON 으로 전송
         if (imagePaths == null || imagePaths.isEmpty()) {
             HttpPost post = bootpay.httpPost("products", new StringEntity(gson.toJson(product), "UTF-8"), managerContext(idempotencyKey));
-            HttpResponse response = client.execute(post);
+            HttpResponse response = bootpay.execute(post);
             return bootpay.responseToJsonObject(response);
         }
 
@@ -82,7 +79,7 @@ public class SProductService {
 
         // 파일 업로드 요청 (여러 파일)
         HttpPost post = bootpay.httpPostMultipart("products", fileList, params, managerContext(idempotencyKey));
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -95,8 +92,7 @@ public class SProductService {
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse update(BootpayStoreObject bootpay, SProduct product, String idempotencyKey) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
 
         // Gson을 사용하여 Product 객체를 JSON 문자열로 변환
@@ -105,17 +101,13 @@ public class SProductService {
                 .create();
 
         HttpPut put = bootpay.httpPut("products/" + product.productId, new StringEntity(gson.toJson(product), "UTF-8"), managerContext(idempotencyKey));
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 
 
     static public BootpayStoreResponse list(BootpayStoreObject bootpay, ProductListParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         String url = "products";
         if(params != null) {
@@ -130,31 +122,29 @@ public class SProductService {
             if (params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
 
             HttpGet get = bootpay.httpGet(url, nameValuePairList);
-            HttpResponse response = client.execute(get);
+            HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         } else {
             HttpGet get = bootpay.httpGet(url);
-            HttpResponse response = client.execute(get);
+            HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         }
     }
 
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String productId) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         HttpGet get = bootpay.httpGet("products/" + productId);
 
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //        return responseJson(new Gson(), str, response.getStatusLine().getStatusCode());
     }
 
     static public BootpayStoreResponse status(BootpayStoreObject bootpay, ProductStatusParams params) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        bootpay.requireCommerceCredentials();
         if(params == null || params.productId == null || params.productId.isEmpty()) throw new Exception("params에 product_id 값이 비어있습니다.");
-        HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -162,7 +152,7 @@ public class SProductService {
 
         HttpPut put = bootpay.httpPut("products/" + params.productId + "/status", new StringEntity(gson.toJson(params), "UTF-8"),
                 managerContext(params.idempotencyKey));
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -175,13 +165,10 @@ public class SProductService {
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse delete(BootpayStoreObject bootpay, String productId, String idempotencyKey) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
         HttpDelete delete = bootpay.httpDelete("products/" + productId, managerContext(idempotencyKey));
 
-        HttpResponse response = client.execute(delete);
+        HttpResponse response = bootpay.execute(delete);
         return bootpay.responseToJsonObject(response);
 
     }
@@ -193,11 +180,7 @@ public class SProductService {
      * ⚠️ keyword 는 서버가 읽지 않는다 (하위호환용 인자).
      */
     static public BootpayStoreResponse products(BootpayStoreObject bootpay, MallProductListParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         String userJwt = params != null ? params.userJwt : null;
         String idempotencyKey = params != null ? params.idempotencyKey : null;
@@ -217,7 +200,7 @@ public class SProductService {
         }
 
         HttpGet get = bootpay.httpGet("products", nameValuePairList, mallContext(userJwt, idempotencyKey));
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -228,12 +211,11 @@ public class SProductService {
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse productDetail(BootpayStoreObject bootpay, String productId, String userJwt, String idempotencyKey) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         HttpGet get = bootpay.httpGet("products/" + productId, mallContext(userJwt, idempotencyKey));
 
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 

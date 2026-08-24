@@ -7,15 +7,13 @@ import java.util.HashMap;
 
 public class TokenService {
     static public HashMap<String, Object> getAccessToken(BootpayObject bootpay) throws Exception {
+        bootpay.validateCredentialPairs();
         boolean hasClientKey = bootpay.client_key != null && !bootpay.client_key.isEmpty();
         boolean hasSecretKey = bootpay.secret_key != null && !bootpay.secret_key.isEmpty();
 
         // client_key/secret_key 인증은 매 요청에 Basic Auth 헤더가 자동 부착된다.
         // request/token 호출이 불필요하므로 합성 응답을 즉시 반환한다.
         if (hasClientKey) {
-            if (!hasSecretKey) {
-                throw new Exception("secret_key 값이 비어있습니다.");
-            }
             bootpay.token = null;
             HashMap<String, Object> result = new HashMap<>();
             result.put("access_token", "");

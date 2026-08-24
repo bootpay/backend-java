@@ -8,12 +8,10 @@ import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.request.user.UserListParams;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.NameValuePair;
 
@@ -42,9 +40,7 @@ public class SUserService {
      * @return BootpayStoreResponse 고객 목록 { list: [...], count: number }
      */
     static public BootpayStoreResponse list(BootpayStoreObject bootpay, UserListParams params) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         String url = "users";
         if(params != null) {
@@ -56,11 +52,11 @@ public class SUserService {
             if(params.type != null) nameValuePairList.add(new BasicNameValuePair("type", params.type));
 
             HttpGet get = bootpay.httpGet(url, nameValuePairList);
-            HttpResponse response = client.execute(get);
+            HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         } else {
             HttpGet get = bootpay.httpGet(url);
-            HttpResponse response = client.execute(get);
+            HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         }
     }
@@ -76,15 +72,13 @@ public class SUserService {
      * @return BootpayStoreResponse 수정된 고객 정보
      */
     static public BootpayStoreResponse update(BootpayStoreObject bootpay, SUser user) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
         HttpPut put = bootpay.httpPut("users/" + user.userId, new StringEntity(gson.toJson(user), "UTF-8"));
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -99,12 +93,10 @@ public class SUserService {
      * @return BootpayStoreResponse 고객 상세 정보
      */
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String userId) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         HttpGet get = bootpay.httpGet("users/" + userId);
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -119,12 +111,10 @@ public class SUserService {
      * @return BootpayStoreResponse 삭제 결과
      */
     static public BootpayStoreResponse destroy(BootpayStoreObject bootpay, String userId) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         HttpDelete delete = bootpay.httpDelete("users/" + userId);
-        HttpResponse response = client.execute(delete);
+        HttpResponse response = bootpay.execute(delete);
         return bootpay.responseToJsonObject(response);
     }
 

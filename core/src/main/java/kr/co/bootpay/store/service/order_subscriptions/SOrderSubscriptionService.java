@@ -15,12 +15,10 @@ import kr.co.bootpay.store.model.request.orderSubscription.SupervisorResumeParam
 import kr.co.bootpay.store.model.request.orderSubscription.SupervisorTerminateParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.NameValuePair;
 
@@ -30,12 +28,9 @@ import java.util.List;
 
 public class SOrderSubscriptionService {
     static public BootpayStoreResponse list(BootpayStoreObject bootpay, OrderSubscriptionListParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
         HttpGet get = listRequest(bootpay, params);
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -45,9 +40,7 @@ public class SOrderSubscriptionService {
      * <p>URL·쿼리 구성만 떼어내 서버 없이 검증할 수 있게 한 것이다.</p>
      */
     static HttpGet listRequest(BootpayStoreObject bootpay, OrderSubscriptionListParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
 
         String url = "order_subscriptions";
         if(params == null) return bootpay.httpGet(url);
@@ -82,28 +75,22 @@ public class SOrderSubscriptionService {
 
 
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String orderSubscriptionId) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         HttpGet get = bootpay.httpGet("order_subscriptions/" + orderSubscriptionId);
 
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 
     static public BootpayStoreResponse update(BootpayStoreObject bootpay, OrderSubscriptionUpdateParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if(params == null) {
             throw new Exception("params 값이 비어있습니다");
         }
         if(params.orderSubscriptionId == null || params.orderSubscriptionId.isEmpty()) {
             throw new Exception("order_subscription_id 값이 비어있습니다");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -111,7 +98,7 @@ public class SOrderSubscriptionService {
         HttpPut put = bootpay.httpPut("order_subscriptions/" + params.orderSubscriptionId, new StringEntity(gson.toJson(params), "UTF-8"),
                 supervisorContext(params.idempotencyKey));
 
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -121,13 +108,10 @@ public class SOrderSubscriptionService {
      * ⚠️ charge_key 는 body 로만 전송한다 (URL/query 금지 — 액세스 로그 노출 방지)
      */
     static public BootpayStoreResponse supervisorCharge(BootpayStoreObject bootpay, SupervisorChargeParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if(params == null || params.chargeKey == null || params.chargeKey.isEmpty()) {
             throw new Exception("charge_key 값이 비어있습니다");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -136,7 +120,7 @@ public class SOrderSubscriptionService {
         HttpPost post = bootpay.httpPost("order_subscriptions/charge", new StringEntity(gson.toJson(params), "UTF-8"),
                 supervisorContext(params.idempotencyKey));
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -146,13 +130,10 @@ public class SOrderSubscriptionService {
      * 해지 이후 해당 키로의 재결제는 불가능하다. charge_key 는 body 로만 전송한다.
      */
     static public BootpayStoreResponse supervisorChargeRevoke(BootpayStoreObject bootpay, SupervisorChargeRevokeParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if(params == null || params.chargeKey == null || params.chargeKey.isEmpty()) {
             throw new Exception("charge_key 값이 비어있습니다");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -161,7 +142,7 @@ public class SOrderSubscriptionService {
         HttpDeleteWithBody delete = bootpay.httpDeleteWithBody("order_subscriptions/charge", new StringEntity(gson.toJson(params), "UTF-8"),
                 supervisorContext(params.idempotencyKey));
 
-        HttpResponse response = client.execute(delete);
+        HttpResponse response = bootpay.execute(delete);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -183,13 +164,10 @@ public class SOrderSubscriptionService {
      * @return BootpayStoreResponse
      */
     static public BootpayStoreResponse approve(BootpayStoreObject bootpay, String orderSubscriptionId, String reason) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if(orderSubscriptionId == null || orderSubscriptionId.isEmpty()) {
             throw new Exception("order_subscription_id 값이 비어있습니다");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -203,7 +181,7 @@ public class SOrderSubscriptionService {
         HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/approve", new StringEntity(gson.toJson(params), "UTF-8"),
                 supervisorContext(null));
 
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -215,16 +193,13 @@ public class SOrderSubscriptionService {
      * @return BootpayStoreResponse
      */
     static public BootpayStoreResponse reject(BootpayStoreObject bootpay, String orderSubscriptionId, String reason) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if(orderSubscriptionId == null || orderSubscriptionId.isEmpty()) {
             throw new Exception("order_subscription_id 값이 비어있습니다");
         }
         if(reason == null || reason.isEmpty()) {
             throw new Exception("reason 값이 비어있습니다 (거절 사유 필수)");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -236,7 +211,7 @@ public class SOrderSubscriptionService {
         HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/reject", new StringEntity(gson.toJson(params), "UTF-8"),
                 supervisorContext(null));
 
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -249,13 +224,10 @@ public class SOrderSubscriptionService {
      * @return BootpayStoreResponse
      */
     static public BootpayStoreResponse terminate(BootpayStoreObject bootpay, String orderSubscriptionId, String reason) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if(orderSubscriptionId == null || orderSubscriptionId.isEmpty()) {
             throw new Exception("order_subscription_id 값이 비어있습니다");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -269,7 +241,7 @@ public class SOrderSubscriptionService {
         HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/terminate", new StringEntity(gson.toJson(params), "UTF-8"),
                 supervisorContext(null));
 
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -281,13 +253,10 @@ public class SOrderSubscriptionService {
      * @return BootpayStoreResponse
      */
     static public BootpayStoreResponse supervisorPause(BootpayStoreObject bootpay, String orderSubscriptionId, SupervisorPauseParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if(orderSubscriptionId == null || orderSubscriptionId.isEmpty()) {
             throw new Exception("order_subscription_id 값이 비어있습니다");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -297,7 +266,7 @@ public class SOrderSubscriptionService {
         HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/pause", new StringEntity(json, "UTF-8"),
                 supervisorContext(null));
 
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -309,13 +278,10 @@ public class SOrderSubscriptionService {
      * @return BootpayStoreResponse
      */
     static public BootpayStoreResponse supervisorResume(BootpayStoreObject bootpay, String orderSubscriptionId, SupervisorResumeParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if(orderSubscriptionId == null || orderSubscriptionId.isEmpty()) {
             throw new Exception("order_subscription_id 값이 비어있습니다");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -325,7 +291,7 @@ public class SOrderSubscriptionService {
         HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/resume", new StringEntity(json, "UTF-8"),
                 supervisorContext(null));
 
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -341,13 +307,10 @@ public class SOrderSubscriptionService {
      * @return BootpayStoreResponse
      */
     static public BootpayStoreResponse supervisorTerminate(BootpayStoreObject bootpay, String orderSubscriptionId, SupervisorTerminateParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if(orderSubscriptionId == null || orderSubscriptionId.isEmpty()) {
             throw new Exception("order_subscription_id 값이 비어있습니다");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -357,7 +320,7 @@ public class SOrderSubscriptionService {
         HttpPut put = bootpay.httpPut("order_subscriptions/" + orderSubscriptionId + "/terminate", new StringEntity(json, "UTF-8"),
                 supervisorContext(null));
 
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 

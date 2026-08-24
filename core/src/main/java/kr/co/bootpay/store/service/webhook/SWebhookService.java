@@ -7,10 +7,8 @@ import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.context.RequestContext;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +23,7 @@ public class SWebhookService {
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse sendTest(BootpayStoreObject bootpay, Integer headerContentType, String idempotencyKey) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -43,7 +40,7 @@ public class SWebhookService {
 
         HttpPost post = bootpay.httpPost("webhook/test", new StringEntity(gson.toJson(params), "UTF-8"), context);
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 }

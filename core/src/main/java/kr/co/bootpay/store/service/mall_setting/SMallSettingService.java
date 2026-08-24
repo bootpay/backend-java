@@ -8,11 +8,9 @@ import kr.co.bootpay.store.context.RequestContext;
 import kr.co.bootpay.store.model.pojo.SMallSetting;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 public class SMallSettingService {
 
@@ -22,12 +20,11 @@ public class SMallSettingService {
      * supervisor scope 토큰 전용
      */
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String idempotencyKey) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         HttpGet get = bootpay.httpGet("mall-setting", supervisorContext(idempotencyKey));
 
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -38,9 +35,8 @@ public class SMallSettingService {
      * 요청 바디는 flatten 형식이며 전달된 값(non-null)만 서버로 전송된다.
      */
     static public BootpayStoreResponse update(BootpayStoreObject bootpay, SMallSetting setting, String idempotencyKey) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        bootpay.requireCommerceCredentials();
         if (setting == null) throw new Exception("setting 값이 비어있습니다.");
-        HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -48,7 +44,7 @@ public class SMallSettingService {
 
         HttpPut put = bootpay.httpPut("mall-setting", new StringEntity(gson.toJson(setting), "UTF-8"), supervisorContext(idempotencyKey));
 
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 
