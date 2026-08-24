@@ -7,12 +7,10 @@ import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.context.RequestContext;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,9 +26,7 @@ public class SUserLoginService {
     }
 
     static public BootpayStoreResponse token(BootpayStoreObject bootpay, String userId, String corporateType, String membershipType, RequestContext context) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
@@ -46,7 +42,7 @@ public class SUserLoginService {
 
         HttpPost post = bootpay.httpPost("users/login/token", new StringEntity(gson.toJson(params), "UTF-8"), context);
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -56,9 +52,7 @@ public class SUserLoginService {
     }
 
     static public BootpayStoreResponse login(BootpayStoreObject bootpay, String loginId, String loginPw, RequestContext context) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
@@ -70,7 +64,7 @@ public class SUserLoginService {
 
         HttpPost post = bootpay.httpPost("users/login", new StringEntity(gson.toJson(params), "UTF-8"), context);
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -82,9 +76,7 @@ public class SUserLoginService {
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse userLogin(BootpayStoreObject bootpay, String loginId, String password, Integer corporateType, String idempotencyKey) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
@@ -96,7 +88,7 @@ public class SUserLoginService {
 
         HttpPost post = bootpay.httpPost("users/login", new StringEntity(gson.toJson(params), "UTF-8"), mallContext(null, idempotencyKey));
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -107,13 +99,11 @@ public class SUserLoginService {
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse userSession(BootpayStoreObject bootpay, String userJwt, String idempotencyKey) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         HttpGet get = bootpay.httpGet("users/session", mallContext(userJwt, idempotencyKey));
 
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -124,13 +114,11 @@ public class SUserLoginService {
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse userLogout(BootpayStoreObject bootpay, String userJwt, String idempotencyKey) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         HttpDelete delete = bootpay.httpDelete("users/session", mallContext(userJwt, idempotencyKey));
 
-        HttpResponse response = client.execute(delete);
+        HttpResponse response = bootpay.execute(delete);
         return bootpay.responseToJsonObject(response);
     }
 

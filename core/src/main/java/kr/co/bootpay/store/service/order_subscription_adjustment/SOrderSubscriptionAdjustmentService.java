@@ -13,13 +13,11 @@ import kr.co.bootpay.store.model.request.orderSubscriptionBill.OrderSubscription
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
@@ -31,8 +29,7 @@ public class SOrderSubscriptionAdjustmentService {
 
 
     static public BootpayStoreResponse create(BootpayStoreObject bootpay, String orderSubscriptionId, SOrderSubscriptionAdjustment adjustment) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         // Gson을 사용하여 Product 객체를 JSON 문자열로 변환
         Gson gson = new GsonBuilder()
@@ -42,13 +39,12 @@ public class SOrderSubscriptionAdjustmentService {
         HttpPost post = bootpay.httpPost("order_subscriptions/" + orderSubscriptionId + "/adjustments", new StringEntity(gson.toJson(adjustment), "UTF-8"),
                 supervisorContext(null));
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 
     static public BootpayStoreResponse update(BootpayStoreObject bootpay, OrderSubscriptionAdjustmentUpdateParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         // Gson을 사용하여 Product 객체를 JSON 문자열로 변환
         Gson gson = new GsonBuilder()
@@ -57,7 +53,7 @@ public class SOrderSubscriptionAdjustmentService {
 
         HttpPut put = bootpay.httpPut("order_subscriptions/" + params.orderSubscriptionId + "/adjustments", new StringEntity(gson.toJson(params), "UTF-8"),
                 supervisorContext(null));
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -67,16 +63,13 @@ public class SOrderSubscriptionAdjustmentService {
      * ⚠️ 대상 ID 는 query 가 아니라 body 로 보낸다.
      */
     static public BootpayStoreResponse delete(BootpayStoreObject bootpay, String orderSubscriptionId, String orderSubscriptionAdjustmentId) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         String body = "{\"order_subscription_adjustment_id\":\"" + orderSubscriptionAdjustmentId + "\"}";
         HttpDeleteWithBody delete = bootpay.httpDeleteWithBody("order_subscriptions/" + orderSubscriptionId + "/adjustments",
                 new StringEntity(body, "UTF-8"), supervisorContext(null));
 
-        HttpResponse response = client.execute(delete);
+        HttpResponse response = bootpay.execute(delete);
         return bootpay.responseToJsonObject(response);
     }
 

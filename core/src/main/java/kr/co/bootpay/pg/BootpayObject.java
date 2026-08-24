@@ -102,6 +102,40 @@ public class BootpayObject {
         return getBasicAuthValue() != null;
     }
 
+    /**
+     * Validates the two supported PG credential pairs without making a network request.
+     * client_key/secret_key takes precedence when both valid pairs are present.
+     */
+    public void validateCredentialPairs() {
+        boolean hasClientKey = this.client_key != null && !this.client_key.isEmpty();
+        boolean hasSecretKey = this.secret_key != null && !this.secret_key.isEmpty();
+        boolean hasApplicationId = this.application_id != null && !this.application_id.isEmpty();
+        boolean hasPrivateKey = this.private_key != null && !this.private_key.isEmpty();
+
+        if (hasClientKey != hasSecretKey) {
+            throw new IllegalStateException(hasClientKey
+                    ? "secret_key 값이 비어있습니다. client_key와 secret_key는 함께 지정해야 합니다."
+                    : "client_key 값이 비어있습니다. client_key와 secret_key는 함께 지정해야 합니다.");
+        }
+        if (hasApplicationId != hasPrivateKey) {
+            throw new IllegalStateException(hasApplicationId
+                    ? "private_key 값이 비어있습니다. application_id와 private_key는 함께 지정해야 합니다."
+                    : "application_id 값이 비어있습니다. application_id와 private_key는 함께 지정해야 합니다.");
+        }
+    }
+
+    /** Validates that a normal PG API request has one usable authentication mode. */
+    public void requireAuthentication() {
+        validateCredentialPairs();
+        if (getBasicAuthValue() != null) return;
+        if (this.application_id != null && !this.application_id.isEmpty()
+                && this.token != null && !this.token.isEmpty()) return;
+        if (this.application_id != null && !this.application_id.isEmpty()) {
+            throw new IllegalStateException("legacy application_id/private_key 인증은 getAccessToken()으로 토큰을 먼저 발급해야 합니다.");
+        }
+        throw new IllegalStateException("인증 정보가 없습니다. client_key/secret_key 또는 application_id/private_key를 지정하세요.");
+    }
+
     // ========================================
     // 공통 헤더 설정 메서드 (내부용)
     // ========================================
@@ -133,6 +167,7 @@ public class BootpayObject {
      * @return 응답 데이터 (http_status 포함)
      */
     public HashMap<String, Object> doGet(String url) throws Exception {
+        requireAuthentication();
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet get = httpGet(url);
         setCommonHeaders(get);
@@ -145,6 +180,7 @@ public class BootpayObject {
      * GET 요청을 실행 (쿼리 파라미터 포함)
      */
     public HashMap<String, Object> doGet(String url, List<NameValuePair> params) throws Exception {
+        requireAuthentication();
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet get = httpGet(url, params);
         setAuthHeader(get);
@@ -159,6 +195,7 @@ public class BootpayObject {
      * @return 응답 데이터 (http_status 포함)
      */
     public HashMap<String, Object> doPost(String url, Object payload) throws Exception {
+        requireAuthentication();
         HttpClient client = HttpClientBuilder.create().build();
         StringEntity entity = new StringEntity(gson.toJson(payload), "UTF-8");
         HttpPost post = httpPost(url, entity);
@@ -182,6 +219,7 @@ public class BootpayObject {
      * PUT 요청을 실행하고 결과를 HashMap으로 반환
      */
     public HashMap<String, Object> doPut(String url, Object payload) throws Exception {
+        requireAuthentication();
         HttpClient client = HttpClientBuilder.create().build();
         StringEntity entity = new StringEntity(gson.toJson(payload), "UTF-8");
         HttpPut put = httpPut(url, entity);
@@ -195,6 +233,7 @@ public class BootpayObject {
      * DELETE 요청을 실행하고 결과를 HashMap으로 반환
      */
     public HashMap<String, Object> doDelete(String url) throws Exception {
+        requireAuthentication();
         HttpClient client = HttpClientBuilder.create().build();
         HttpDelete delete = httpDelete(url);
         setAuthHeader(delete);
@@ -206,6 +245,7 @@ public class BootpayObject {
      * DELETE 요청 (본문 포함)
      */
     public HashMap<String, Object> doDeleteWithBody(String url, Object payload) throws Exception {
+        requireAuthentication();
         HttpClient client = HttpClientBuilder.create().build();
         StringEntity entity = new StringEntity(gson.toJson(payload), "UTF-8");
         HttpDeleteWithBody delete = httpDeleteWithBody(url, entity);
@@ -218,6 +258,7 @@ public class BootpayObject {
      * 배열 응답을 위한 GET 요청
      */
     public HashMap<String, Object> doGetArray(String url) throws Exception {
+        requireAuthentication();
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet get = httpGet(url);
         setCommonHeaders(get);

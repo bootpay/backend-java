@@ -10,11 +10,9 @@ import kr.co.bootpay.store.model.request.user.MallUserJoinParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SUser;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.net.URLEncoder;
 
@@ -39,16 +37,14 @@ public class SUserJoinService {
      * @return BootpayStoreResponse 가입된 사용자 정보
      */
     static public BootpayStoreResponse join(BootpayStoreObject bootpay, SUser user) throws Exception {
-        if(bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
-
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
         HttpPost post = bootpay.httpPost("users/join", new StringEntity(gson.toJson(user), "UTF-8"));
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -71,9 +67,8 @@ public class SUserJoinService {
      * @return BootpayStoreResponse { exists: boolean }
      */
     static public BootpayStoreResponse checkExist(BootpayStoreObject bootpay, String path, String pk) throws Exception {
-        HttpClient client = HttpClientBuilder.create().build();
         HttpGet get = checkExistRequest(bootpay, path, pk);
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
 
         return bootpay.responseToJsonObject(response);
     }
@@ -84,9 +79,7 @@ public class SUserJoinService {
      * <p>URL·쿼리 구성만 떼어내 서버 없이 검증할 수 있게 한 것이다.</p>
      */
     static HttpGet checkExistRequest(BootpayStoreObject bootpay, String path, String pk) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if (path == null || path.isEmpty()) throw new Exception("path 값이 비어있습니다.");
         if (pk == null || pk.isEmpty()) throw new Exception("pk 값이 비어있습니다.");
 
@@ -106,10 +99,8 @@ public class SUserJoinService {
      * @param params 회원가입 파라미터 (corporate_type 미지정시 0, 나머지 null 값은 전송하지 않는다)
      */
     static public BootpayStoreResponse userJoin(BootpayStoreObject bootpay, MallUserJoinParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        bootpay.requireCommerceCredentials();
         if (params == null) throw new Exception("params 값이 비어있습니다.");
-
-        HttpClient client = HttpClientBuilder.create().build();
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
@@ -122,7 +113,7 @@ public class SUserJoinService {
         HttpPost post = bootpay.httpPost("users/join", new StringEntity(gson.toJson(body), "UTF-8"),
                 mallContext(params.idempotencyKey));
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -136,14 +127,12 @@ public class SUserJoinService {
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse userJoinCheck(BootpayStoreObject bootpay, String type, String pk, String idempotencyKey) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        bootpay.requireCommerceCredentials();
 
         String encodedPk = URLEncoder.encode(pk, "UTF-8");
-
-        HttpClient client = HttpClientBuilder.create().build();
         String url = String.format("users/join/%s?pk=%s", type, encodedPk);
         HttpGet get = bootpay.httpGet(url, mallContext(idempotencyKey));
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
 
         return bootpay.responseToJsonObject(response);
     }
@@ -156,17 +145,15 @@ public class SUserJoinService {
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse uidExist(BootpayStoreObject bootpay, String uid, String idempotencyKey) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) throw new Exception("token 값이 비어있습니다.");
+        bootpay.requireCommerceCredentials();
 
         String encodedUid = URLEncoder.encode(uid, "UTF-8");
-
-        HttpClient client = HttpClientBuilder.create().build();
         String url = "users/join/uid-exist?pk=" + encodedUid;
         HttpGet get = bootpay.httpGet(url, RequestContext.builder()
                 .role("user")
                 .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
                 .build());
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
 
         return bootpay.responseToJsonObject(response);
     }

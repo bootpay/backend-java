@@ -14,9 +14,7 @@ public class SOrderSubscriptionRequestIngServiceTest {
     private static final String SECRET_KEY = "test_secret_key";
 
     private BootpayStoreObject bootpay() {
-        BootpayStoreObject bootpay = new BootpayStoreObject(new TokenPayload(CLIENT_KEY, SECRET_KEY), "PRODUCTION");
-        bootpay.setTokenFromAPI("test_token");
-        return bootpay;
+        return new BootpayStoreObject(new TokenPayload(CLIENT_KEY, SECRET_KEY), "PRODUCTION");
     }
 
     @Test
@@ -52,10 +50,12 @@ public class SOrderSubscriptionRequestIngServiceTest {
     }
 
     @Test
-    public void 토큰이_없으면_예외를_발생시킨다() {
+    public void ck_sk만으로_토큰없이_기본인증을_구성한다() throws Exception {
         BootpayStoreObject bootpay = new BootpayStoreObject(new TokenPayload(CLIENT_KEY, SECRET_KEY), "PRODUCTION");
+        HttpGet request = SOrderSubscriptionRequestIngService
+                .calculateTerminationFeeRequest(bootpay, "order_subscription_id_value", null);
 
-        assertThrows(IllegalArgumentException.class,
-                () -> SOrderSubscriptionRequestIngService.calculateTerminationFeeRequest(bootpay, "order_subscription_id_value", null));
+        assertEquals("Basic dGVzdF9jbGllbnRfa2V5OnRlc3Rfc2VjcmV0X2tleQ==",
+                request.getFirstHeader("Authorization").getValue());
     }
 }

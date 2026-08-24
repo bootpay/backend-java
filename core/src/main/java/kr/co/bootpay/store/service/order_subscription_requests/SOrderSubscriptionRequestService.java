@@ -10,11 +10,9 @@ import kr.co.bootpay.store.model.request.orderSubscriptionRequest.OrderSubscript
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
@@ -23,10 +21,7 @@ import java.util.List;
 public class SOrderSubscriptionRequestService {
 
     static public BootpayStoreResponse list(BootpayStoreObject bootpay, OrderSubscriptionRequestListParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         String url = "order-subscription-requests";
         String projectId = params != null ? params.projectId : null;
@@ -49,44 +44,38 @@ public class SOrderSubscriptionRequestService {
         }
 
         HttpGet get = bootpay.httpGet(url, nameValuePairList, requestContext(projectId, idempotencyKey));
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String orderSubscriptionRequestHistoryId, String projectId) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if (orderSubscriptionRequestHistoryId == null || orderSubscriptionRequestHistoryId.isEmpty()) {
             throw new Exception("orderSubscriptionRequestHistoryId 값이 비어있습니다.");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         String url = "order-subscription-requests/" + orderSubscriptionRequestHistoryId;
         if (projectId != null && !projectId.isEmpty()) {
             List<NameValuePair> nameValuePairList = new ArrayList<>();
             nameValuePairList.add(new BasicNameValuePair("project_id", projectId));
             HttpGet get = bootpay.httpGet(url, nameValuePairList, requestContext(projectId, null));
-            HttpResponse response = client.execute(get);
+            HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         } else {
             HttpGet get = bootpay.httpGet(url, requestContext(null, null));
-            HttpResponse response = client.execute(get);
+            HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         }
     }
 
     static public BootpayStoreResponse update(BootpayStoreObject bootpay, OrderSubscriptionRequestUpdateParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if (params == null) {
             throw new Exception("params 값이 비어있습니다.");
         }
         if (params.orderSubscriptionRequestHistoryId == null || params.orderSubscriptionRequestHistoryId.isEmpty()) {
             throw new Exception("orderSubscriptionRequestHistoryId 값이 비어있습니다.");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -107,7 +96,7 @@ public class SOrderSubscriptionRequestService {
                 "order-subscription-requests/" + params.orderSubscriptionRequestHistoryId,
                 new StringEntity(gson.toJson(body), "UTF-8"),
                 supervisorContext(params.idempotencyKey));
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 

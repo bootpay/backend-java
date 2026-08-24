@@ -9,49 +9,38 @@ import kr.co.bootpay.store.model.request.category.CategoryCreateParams;
 import kr.co.bootpay.store.model.request.category.CategoryUpdateParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 public class SCategoryService {
 
     static public BootpayStoreResponse list(BootpayStoreObject bootpay) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         HttpGet get = bootpay.httpGet("categories");
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String categoryId) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if (categoryId == null || categoryId.isEmpty()) {
             throw new Exception("categoryId 값이 비어있습니다.");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         HttpGet get = bootpay.httpGet("categories/" + categoryId);
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 
     static public BootpayStoreResponse create(BootpayStoreObject bootpay, CategoryCreateParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if (params == null) {
             throw new Exception("params 값이 비어있습니다.");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -59,21 +48,18 @@ public class SCategoryService {
 
         HttpPost post = bootpay.httpPost("categories", new StringEntity(gson.toJson(params), "UTF-8"),
                 supervisorContext());
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 
     static public BootpayStoreResponse update(BootpayStoreObject bootpay, CategoryUpdateParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if (params == null) {
             throw new Exception("params 값이 비어있습니다.");
         }
         if (params.categoryId == null || params.categoryId.isEmpty()) {
             throw new Exception("categoryId 값이 비어있습니다.");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -90,21 +76,18 @@ public class SCategoryService {
 
         HttpPut put = bootpay.httpPut("categories/" + params.categoryId, new StringEntity(gson.toJson(body), "UTF-8"),
                 supervisorContext());
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 
     static public BootpayStoreResponse delete(BootpayStoreObject bootpay, String categoryId) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
         if (categoryId == null || categoryId.isEmpty()) {
             throw new Exception("categoryId 값이 비어있습니다.");
         }
-        HttpClient client = HttpClientBuilder.create().build();
 
         HttpDelete delete = bootpay.httpDelete("categories/" + categoryId, supervisorContext());
-        HttpResponse response = client.execute(delete);
+        HttpResponse response = bootpay.execute(delete);
         return bootpay.responseToJsonObject(response);
     }
 

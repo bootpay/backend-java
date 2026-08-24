@@ -3,6 +3,8 @@ package kr.co.bootpay.store.service;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.co.bootpay.store.BootpayStoreObject;
@@ -24,27 +26,17 @@ public class STokenService {
         if(bootpay.tokenPayload == null) {
             throw new Exception("tokenPayload 값이 비어있습니다.");
         }
-        boolean clientKeyEmpty = bootpay.tokenPayload.clientKey == null || bootpay.tokenPayload.clientKey.isEmpty();
-        boolean secretKeyEmpty = bootpay.tokenPayload.secretKey == null || bootpay.tokenPayload.secretKey.isEmpty();
-        boolean privateKeyEmpty = bootpay.tokenPayload.privateKey == null || bootpay.tokenPayload.privateKey.isEmpty();
-
+        bootpay.requireCommerceCredentials();
         SToken token = new SToken();
-        if(clientKeyEmpty || secretKeyEmpty) {
-            if(secretKeyEmpty && privateKeyEmpty) {
-                if(clientKeyEmpty) throw new Exception("clientKey 값이 비어있습니다.");
-                else throw new Exception("secretKey 값이 비어있습니다.");
-            }
-            if(secretKeyEmpty) throw new Exception("secretKey 값이 비어있습니다.");
-            if(privateKeyEmpty) throw new Exception("privateKey 값이 비어있습니다.");
-            token.secretKey = bootpay.tokenPayload.secretKey;
-            token.privateKey = bootpay.tokenPayload.privateKey;
-        }
         bootpay.setTokenFromAPI(null);
 
         HttpClient client = HttpClientBuilder.create().build();
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
+
+        token.clientKey = bootpay.tokenPayload.clientKey;
+        token.secretKey = bootpay.tokenPayload.secretKey;
 
         HttpPost post = bootpay.httpPost("request/token", new StringEntity(gson.toJson(token), "UTF-8"));
         HttpResponse response = client.execute(post);
@@ -58,7 +50,19 @@ public class STokenService {
             return new BootpayStoreResponse(httpStatus, httpStatus >= 200 && httpStatus < 300, null, null);
         }
 
-        STokenResponse res = new Gson().fromJson(body, STokenResponse.class);
+        JsonElement parsed;
+        try {
+            parsed = JsonParser.parseString(body);
+        } catch (RuntimeException e) {
+            return new BootpayStoreResponse(httpStatus, false, null,
+                    "Commerce token response is not valid JSON: " + body);
+        }
+        if (!parsed.isJsonObject()) {
+            return new BootpayStoreResponse(httpStatus, false, null,
+                    "Commerce token response must be a JSON object: " + body);
+        }
+
+        STokenResponse res = new Gson().fromJson(parsed, STokenResponse.class);
         if (res != null && res.access_token != null && !res.access_token.isEmpty()) {
             bootpay.setTokenFromAPI(res.access_token);
         }

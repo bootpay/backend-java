@@ -604,8 +604,8 @@ bootpay.clearRole();
 
 ## 우선순위 규칙
 
-1. **RequestContext의 role/token**: 가장 높은 우선순위
-2. **BootpayStore의 role/token**: RequestContext가 없을 때 사용
+1. **RequestContext의 role**: 가장 높은 우선순위
+2. **BootpayStore의 role**: RequestContext가 없을 때 사용
 3. **기본값**: role이 설정되지 않은 경우 "user"
 
 ## 주의사항
@@ -616,7 +616,7 @@ bootpay.clearRole();
 
 3. **Thread Safety**: 현재 구현은 thread-safe하지 않습니다. 멀티스레드 환경에서는 각 스레드별로 별도의 `BootpayStore` 인스턴스를 사용하거나, role 설정을 API 호출 직전에 수행해야 합니다.
 
-4. **Token 관리**: RequestContext의 token은 "Bearer " 접두사 없이 전달되며, SDK에서 자동으로 추가합니다.
+4. **Commerce 인증**: Commerce API는 `client_key`/`secret_key` Basic 인증만 사용합니다. RequestContext 또는 저장된 token은 일반 요청의 Authorization 헤더를 바꾸지 않습니다.
 
 5. **응답 객체 사용**: 모든 API는 `BootpayStoreResponse` 객체를 반환하므로 안전한 타입 캐스팅과 에러 처리가 가능합니다.
 
@@ -671,4 +671,4 @@ BootpayStoreResponse result = bootpay.user.login("partner", "password", context)
 - 기존의 `bootpay.role = "admin"` 방식은 더 이상 지원하지 않습니다. 반드시 메서드 체이닝이나 RequestContext를 사용해야 합니다.
 - API 호출시 role을 명시하지 않으면 기본값 "user"로 호출됩니다.
 - 지원되는 role: user, manager, partner, vendor, supervisor
-- 모든 API는 `BootpayStoreResponse` 객체를 반환하므로 안전한 타입 캐스팅과 에러 처리가 가능합니다. 
+- 모든 API는 `BootpayStoreResponse` 객체를 반환하므로 안전한 타입 캐스팅과 에러 처리가 가능합니다.

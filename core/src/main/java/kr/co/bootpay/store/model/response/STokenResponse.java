@@ -4,4 +4,3 @@ public class STokenResponse {
     public String access_token;
     public long expire_in;
 }
-

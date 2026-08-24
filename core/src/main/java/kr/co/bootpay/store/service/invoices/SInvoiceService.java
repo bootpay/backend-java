@@ -10,11 +10,9 @@ import kr.co.bootpay.store.model.pojo.SInvoice;
 import kr.co.bootpay.store.model.request.ListParams;
 import kr.co.bootpay.store.model.request.invoice.InvoiceListParams;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.NameValuePair;
 
@@ -39,10 +37,7 @@ public class SInvoiceService {
      * @param idempotencyKey 미지정시 자동 생성 (Idempotency-Key 헤더로 전송)
      */
     static public BootpayStoreResponse create(BootpayStoreObject bootpay, SInvoice invoice, String idempotencyKey) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -51,7 +46,7 @@ public class SInvoiceService {
         HttpPost post = bootpay.httpPost("invoices", new StringEntity(gson.toJson(invoice), "UTF-8"),
                 invoiceCreateContext(idempotencyKey));
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
 //        String str = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 //
@@ -61,16 +56,13 @@ public class SInvoiceService {
     // 청구서 목록 조회 (GET invoices)
     // InvoiceListParams를 넘기면 cs_type / user_id / product_type / css_at / cse_at 필터도 함께 전송한다
     static public BootpayStoreResponse list(BootpayStoreObject bootpay, ListParams params) throws Exception {
-        HttpClient client = HttpClientBuilder.create().build();
         HttpGet get = listRequest(bootpay, params);
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 
     static HttpGet listRequest(BootpayStoreObject bootpay, ListParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
+        bootpay.requireCommerceCredentials();
 
         String url = "invoices";
         if (params == null) return bootpay.httpGet(url);
@@ -101,10 +93,7 @@ public class SInvoiceService {
      * limit 미지정시 서버 기본값과 동일한 24 를 보낸다.
      */
     static public BootpayStoreResponse list(BootpayStoreObject bootpay, InvoiceListParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         String idempotencyKey = params != null ? params.idempotencyKey : null;
 
@@ -121,7 +110,7 @@ public class SInvoiceService {
         }
 
         HttpGet get = bootpay.httpGet("invoices", nameValuePairList, invoiceContext(idempotencyKey));
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -137,10 +126,7 @@ public class SInvoiceService {
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse notify(BootpayStoreObject bootpay, String invoiceId, List<Integer> sendTypes, String idempotencyKey) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -153,7 +139,7 @@ public class SInvoiceService {
         HttpPost post = bootpay.httpPost("invoices/" + invoiceId + "/notify" , new StringEntity(gson.toJson(invoice), "UTF-8"),
                 invoiceContext(idempotencyKey));
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -167,14 +153,11 @@ public class SInvoiceService {
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String invoiceId, String idempotencyKey) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         HttpGet get = bootpay.httpGet("invoices/" + invoiceId, invoiceContext(idempotencyKey));
 
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
 

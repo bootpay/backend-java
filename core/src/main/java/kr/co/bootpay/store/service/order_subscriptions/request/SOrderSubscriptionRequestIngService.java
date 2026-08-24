@@ -15,12 +15,10 @@ import kr.co.bootpay.store.model.request.orderSubscription.request.ing.OrderSubs
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.net.URLEncoder;
@@ -31,10 +29,7 @@ import java.util.List;
 
 public class SOrderSubscriptionRequestIngService {
     static public BootpayStoreResponse pause(BootpayStoreObject bootpay, OrderSubscriptionPauseParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         // Gson을 사용하여 Product 객체를 JSON 문자열로 변환
         Gson gson = new GsonBuilder()
@@ -44,15 +39,12 @@ public class SOrderSubscriptionRequestIngService {
         HttpPost post = bootpay.httpPost("order_subscriptions/requests/ing/pause", new StringEntity(gson.toJson(params), "UTF-8"),
                 userContext(params != null ? params.idempotencyKey : null));
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 
     static public BootpayStoreResponse resume(BootpayStoreObject bootpay, OrderSubscriptionResumeParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         // Gson을 사용하여 Product 객체를 JSON 문자열로 변환
         Gson gson = new GsonBuilder()
@@ -62,7 +54,7 @@ public class SOrderSubscriptionRequestIngService {
         HttpPut put = bootpay.httpPut("order_subscriptions/requests/ing/resume", new StringEntity(gson.toJson(params), "UTF-8"),
                 userContext(params != null ? params.idempotencyKey : null));
 
-        HttpResponse response = client.execute(put);
+        HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -71,10 +63,7 @@ public class SOrderSubscriptionRequestIngService {
      * POST /v1/order_subscriptions/requests/ing/purchase
      */
     static public BootpayStoreResponse purchase(BootpayStoreObject bootpay, OrderSubscriptionPurchaseParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -83,7 +72,7 @@ public class SOrderSubscriptionRequestIngService {
         HttpPost post = bootpay.httpPost("order_subscriptions/requests/ing/purchase", new StringEntity(gson.toJson(params), "UTF-8"),
                 userContext(params != null ? params.idempotencyKey : null));
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -92,10 +81,7 @@ public class SOrderSubscriptionRequestIngService {
      * POST /v1/order_subscriptions/requests/ing/transfer
      */
     static public BootpayStoreResponse transfer(BootpayStoreObject bootpay, OrderSubscriptionTransferParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -104,16 +90,14 @@ public class SOrderSubscriptionRequestIngService {
         HttpPost post = bootpay.httpPost("order_subscriptions/requests/ing/transfer", new StringEntity(gson.toJson(params), "UTF-8"),
                 userContext(params != null ? params.idempotencyKey : null));
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 
 
     static public BootpayStoreResponse calculateTerminationFee(BootpayStoreObject bootpay, String orderSubscriptionId, String orderNumber) throws Exception {
-        // 토큰 유효성 검증
-        if (bootpay == null || bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new IllegalArgumentException("Bootpay 토큰이 비어있습니다.");
-        }
+        if (bootpay == null) throw new IllegalArgumentException("Bootpay 인스턴스가 비어있습니다.");
+        bootpay.requireCommerceCredentials();
 
         // orderSubscriptionId 또는 orderNumber 중 하나는 필수
         boolean hasOrderSubscriptionId = orderSubscriptionId != null && !orderSubscriptionId.trim().isEmpty();
@@ -134,9 +118,8 @@ public class SOrderSubscriptionRequestIngService {
         }
 
         // 요청 실행
-        HttpClient client = HttpClientBuilder.create().build();
         HttpGet get = bootpay.httpGet(url.toString(), userContext(null));
-        HttpResponse response = client.execute(get);
+        HttpResponse response = bootpay.execute(get);
 
         return bootpay.responseToJsonObject(response);
     }
@@ -147,9 +130,8 @@ public class SOrderSubscriptionRequestIngService {
      * <p>URL·쿼리 구성만 떼어내 서버 없이 검증할 수 있게 한 것이다.</p>
      */
     static HttpGet calculateTerminationFeeRequest(BootpayStoreObject bootpay, String orderSubscriptionId, String orderNumber) throws Exception {
-        if (bootpay == null || bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new IllegalArgumentException("Bootpay 토큰이 비어있습니다.");
-        }
+        if (bootpay == null) throw new IllegalArgumentException("Bootpay 인스턴스가 비어있습니다.");
+        bootpay.requireCommerceCredentials();
 
         boolean hasOrderSubscriptionId = orderSubscriptionId != null && !orderSubscriptionId.trim().isEmpty();
         boolean hasOrderNumber = orderNumber != null && !orderNumber.trim().isEmpty();
@@ -183,10 +165,7 @@ public class SOrderSubscriptionRequestIngService {
 
 
     static public BootpayStoreResponse termination(BootpayStoreObject bootpay, OrderSubscriptionTerminationParams params) throws Exception {
-        if (bootpay.getToken() == null || bootpay.getToken().isEmpty()) {
-            throw new Exception("token 값이 비어있습니다.");
-        }
-        HttpClient client = HttpClientBuilder.create().build();
+        bootpay.requireCommerceCredentials();
 
         // Gson을 사용하여 Product 객체를 JSON 문자열로 변환
         Gson gson = new GsonBuilder()
@@ -196,7 +175,7 @@ public class SOrderSubscriptionRequestIngService {
         HttpPost post = bootpay.httpPost("order_subscriptions/requests/ing/termination", new StringEntity(gson.toJson(params), "UTF-8"),
                 userContext(params != null ? params.idempotencyKey : null));
 
-        HttpResponse response = client.execute(post);
+        HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
 
@@ -226,7 +205,7 @@ public class SOrderSubscriptionRequestIngService {
 //        HttpGet get = bootpay.httpGet("seller/payment/method" );
 //
 //        get.setHeader("Authorization", bootpay.getTokenValue());
-//        HttpResponse response = client.execute(get);
+//        HttpResponse response = bootpay.execute(get);
 //        return bootpay.responseToJsonObject(response);
 //    }
 
