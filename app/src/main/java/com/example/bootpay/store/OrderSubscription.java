@@ -183,6 +183,29 @@ public class OrderSubscription {
     }
 
     /**
+     * 구독 가격(회차 기준금액) 변경
+     * - 결제예정(READY) 회차의 청구액이 즉시 다시 계산되고, 이후 회차도 이 금액으로 만들어진다.
+     * - 이미 결제된 회차는 그대로다. 0 이하는 받지 않는다.
+     * - 특정 회차만 가감하려면 OrderSubscriptionAdjustment.create 를 쓴다.
+     */
+    public static void updatePrice() {
+        try {
+            OrderSubscriptionUpdateParams params = new OrderSubscriptionUpdateParams();
+            params.orderSubscriptionId = "6964abf14cb8149d077124e8";
+            params.price = 12000.0;
+
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.update(params);
+            if(res.isSuccess()) {
+                System.out.println("orderSubscription update price success: " + res.getData());
+            } else {
+                System.out.println("orderSubscription update price false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * external_uid(가맹점 고유 ID)로 구독 정보 수정
      * orderSubscriptionId 필드에 external_uid를 사용할 수 있습니다.
      */

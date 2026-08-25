@@ -54,6 +54,13 @@ public class OrderSubscription {
 
     /**
      * 구독 내용 변경
+     *
+     * <p>바뀐 값만 채우면 된다 (나머지는 서버가 그대로 유지한다).</p>
+     *
+     * <p>{@code price} 는 회차별 결제 금액의 <b>기준금액</b>이다. 바꾸면 결제예정(READY) 회차의 청구액이
+     * 즉시 다시 계산되고, 이후 회차도 이 금액으로 만들어진다. 이미 결제된 회차는 그대로다. 0 이하는 받지 않는다.
+     * 특정 회차만 가감하려면 {@code orderSubscriptionAdjustment.create} 를 쓴다.</p>
+     *
      * @param params 변경할 내용 (orderSubscriptionId는 부트페이 ID 또는 external_uid 사용 가능)
      * @return BootpayStoreResponse
      */

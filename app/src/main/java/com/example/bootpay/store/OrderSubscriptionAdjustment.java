@@ -63,6 +63,53 @@ public class OrderSubscriptionAdjustment {
         }
     }
 
+    /**
+     * 회차 범위로 조정항목 추가 (3~7회차 각각 한 건씩, 총 5건)
+     */
+    public static void createRange() {
+        try {
+            String orderSubscriptionId = "6964abf14cb8149d077124e8";
+            SOrderSubscriptionAdjustment adjustment = new SOrderSubscriptionAdjustment();
+            adjustment.name = "3~7회차 할인";
+            adjustment.price = -1000.0;
+            adjustment.durationFrom = 3;
+            adjustment.durationTo = 7;
+
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscriptionAdjustment.create(orderSubscriptionId, adjustment);
+            if(res.isSuccess()) {
+                System.out.println("orderSubscriptionAdjustment createRange success: " + res.getData());
+            } else {
+                System.out.println("orderSubscriptionAdjustment createRange false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 시작 회차부터 계약 끝까지 조정항목 추가 (레코드는 1건, durationTo 는 무시된다)
+     * - 총회차가 무제한인 계약은 60회차까지가 상한이다.
+     */
+    public static void createUnlimited() {
+        try {
+            String orderSubscriptionId = "6964abf14cb8149d077124e8";
+            SOrderSubscriptionAdjustment adjustment = new SOrderSubscriptionAdjustment();
+            adjustment.name = "3회차부터 추가비용";
+            adjustment.price = 500.0;
+            adjustment.durationFrom = 3;
+            adjustment.isUnlimited = true;
+
+            BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscriptionAdjustment.create(orderSubscriptionId, adjustment);
+            if(res.isSuccess()) {
+                System.out.println("orderSubscriptionAdjustment createUnlimited success: " + res.getData());
+            } else {
+                System.out.println("orderSubscriptionAdjustment createUnlimited false: " + res.getData());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void update() {
         try {
             OrderSubscriptionAdjustmentUpdateParams params = new OrderSubscriptionAdjustmentUpdateParams();
