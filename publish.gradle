@@ -3,7 +3,9 @@ ext {
     PUBLISH_VERSION = '3.4.0'
     PUBLISH_ARTIFACT_ID = 'backend'
     PUBLISH_DESCRIPTION = 'Bootpay Backend Library'
-    PUBLISH_URL = 'https://github.com/bootpay/android'
+    // 26-08-24: 'bootpay/android' 로 잘못 박혀 있었다 — 배포된 POM 의 <url> 이
+    //   Android SDK 리포를 가리켜 Maven Central 방문자가 엉뚱한 곳으로 갔다.
+    PUBLISH_URL = 'https://github.com/bootpay/backend-java'
     PUBLISH_LICENSE_NAME = 'MIT License'
     PUBLISH_LICENSE_URL =
             'https://github.com/bootpay/backend-java/blob/main/LICENSE'
