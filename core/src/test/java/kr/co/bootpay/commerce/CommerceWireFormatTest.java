@@ -1255,4 +1255,85 @@ class CommerceWireFormatTest {
         assertFalse(lastBody.contains("idempotency"), "idempotencyKey 는 body 에 포함되면 안 된다: " + lastBody);
     }
 
+    // ══════════════════════════════════════════════════════════
+    // 구독 가격 변경 · 범위 회차조정 (ruby SDK parity)
+    // ══════════════════════════════════════════════════════════
+
+    @Test
+    @DisplayName("orderSubscription.update - price 는 회차 기준금액으로 body 전송")
+    void testOrderSubscriptionUpdatePrice() throws Exception {
+        OrderSubscriptionUpdateParams params = new OrderSubscriptionUpdateParams();
+        params.orderSubscriptionId = "OS_1";
+        params.price = 12000.0;
+        store.orderSubscription.update(params);
+
+        assertEquals("PUT", lastMethod);
+        assertEquals("/v1/order_subscriptions/OS_1", lastPath);
+        assertEquals("supervisor", lastRole);
+        assertTrue(lastBody.contains("\"price\":12000"), lastBody);
+    }
+
+    @Test
+    @DisplayName("orderSubscription.update - price 미지정시 전송하지 않는다")
+    void testOrderSubscriptionUpdateOmitsUnsetPrice() throws Exception {
+        OrderSubscriptionUpdateParams params = new OrderSubscriptionUpdateParams();
+        params.orderSubscriptionId = "OS_1";
+        params.orderName = "변경구독";
+        store.orderSubscription.update(params);
+
+        assertFalse(lastBody.contains("price"), "지정하지 않은 price 는 전송되면 안 된다: " + lastBody);
+    }
+
+    @Test
+    @DisplayName("adjustment.create - duration 단건 지정시 범위 필드는 전송하지 않는다")
+    void testAdjustmentCreateSingleDuration() throws Exception {
+        SOrderSubscriptionAdjustment adjustment = new SOrderSubscriptionAdjustment("5회차 할인", -1000.0);
+        adjustment.duration = 5;
+        store.orderSubscriptionAdjustment.create("OS_1", adjustment);
+
+        assertTrue(lastBody.contains("\"duration\":5"), lastBody);
+        assertFalse(lastBody.contains("duration_from"), lastBody);
+        assertFalse(lastBody.contains("duration_to"), lastBody);
+        assertFalse(lastBody.contains("is_unlimited"), lastBody);
+    }
+
+    @Test
+    @DisplayName("adjustment.create - duration_from/duration_to 범위 지정 전송")
+    void testAdjustmentCreateDurationRange() throws Exception {
+        SOrderSubscriptionAdjustment adjustment = new SOrderSubscriptionAdjustment("3~7회차 할인", -1000.0);
+        adjustment.durationFrom = 3;
+        adjustment.durationTo = 7;
+        store.orderSubscriptionAdjustment.create("OS_1", adjustment);
+
+        assertEquals("POST", lastMethod);
+        assertEquals("/v1/order_subscriptions/OS_1/adjustments", lastPath);
+        assertEquals("supervisor", lastRole);
+        assertNotNull(lastIdempotencyKey);
+        assertTrue(lastBody.contains("\"duration_from\":3"), lastBody);
+        assertTrue(lastBody.contains("\"duration_to\":7"), lastBody);
+        assertFalse(lastBody.contains("is_unlimited"), lastBody);
+    }
+
+    @Test
+    @DisplayName("adjustment.create - is_unlimited 로 시작회차부터 계약 끝까지 지정")
+    void testAdjustmentCreateUnlimitedRange() throws Exception {
+        SOrderSubscriptionAdjustment adjustment = new SOrderSubscriptionAdjustment("3회차부터 추가금", 500.0, 0.0);
+        adjustment.durationFrom = 3;
+        adjustment.isUnlimited = true;
+        store.orderSubscriptionAdjustment.create("OS_1", adjustment);
+
+        assertTrue(lastBody.contains("\"duration_from\":3"), lastBody);
+        assertTrue(lastBody.contains("\"is_unlimited\":true"), lastBody);
+        assertFalse(lastBody.contains("duration_to"), "duration_to 는 지정하지 않으면 전송하지 않는다: " + lastBody);
+    }
+
+    @Test
+    @DisplayName("adjustment.create - 회차 미지정시 duration 1 로 전송 (ruby SDK 기본값)")
+    void testAdjustmentCreateDefaultsDurationToOne() throws Exception {
+        SOrderSubscriptionAdjustment adjustment = new SOrderSubscriptionAdjustment("할인", -1000.0);
+        store.orderSubscriptionAdjustment.create("OS_1", adjustment);
+
+        assertTrue(lastBody.contains("\"duration\":1"), lastBody);
+    }
+
 }

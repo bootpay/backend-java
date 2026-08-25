@@ -83,6 +83,16 @@ public class SOrderSubscriptionService {
         return bootpay.responseToJsonObject(response);
     }
 
+    /**
+     * 구독 계약 내용 변경 (supervisor 전용)
+     * PUT /v1/order_subscriptions/{order_subscription_id}
+     *
+     * <p>바뀐 값만 채우면 된다 (나머지는 서버가 그대로 유지한다).</p>
+     *
+     * <p>{@code price} 는 회차별 결제 금액의 <b>기준금액</b>이다. 바꾸면 결제예정(READY) 회차의 청구액이
+     * 즉시 다시 계산되고, 이후 회차도 이 금액으로 만들어진다. 이미 결제된 회차는 그대로다. 0 이하는 받지 않는다.
+     * 특정 회차만 가감하려면 조정항목({@code orderSubscriptionAdjustment.create})을 쓴다.</p>
+     */
     static public BootpayStoreResponse update(BootpayStoreObject bootpay, OrderSubscriptionUpdateParams params) throws Exception {
         bootpay.requireCommerceCredentials();
         if(params == null) {
