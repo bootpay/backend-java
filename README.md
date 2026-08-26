@@ -220,6 +220,46 @@ store.getAccessToken()                →  commerce.issueAccessToken()
 신규 표면에 아직 없는 기존 메서드가 필요하면 `commerce.unwrap()` 으로 내부
 `BootpayStore` 인스턴스를 꺼내 쓸 수 있습니다 (토큰과 role 이 공유됩니다).
 
+#### 구독 가격(기준금액) 변경
+
+`price` 는 회차별 결제 금액의 기준금액입니다. 변경하면 결제예정(READY) 회차의 청구액이 즉시 다시 계산되고,
+이후 회차도 이 금액으로 생성됩니다. 이미 결제된 회차는 그대로이며, 0 이하는 받지 않습니다.
+
+```java
+OrderSubscriptionUpdateParams params = new OrderSubscriptionUpdateParams();
+params.orderSubscriptionId = "ORDER_SUBSCRIPTION_ID";
+params.price = 19900.0;
+commerce.orderSubscription.update(params);
+```
+
+#### 회차별 가감산 조정
+
+특정 회차만 금액을 가감하려면 조정항목을 사용합니다. 회차 지정 방법은 3가지입니다.
+
+```java
+// 5회차 한 건만
+SOrderSubscriptionAdjustment one = new SOrderSubscriptionAdjustment("5회차 할인", -1000.0);
+one.duration = 5;
+commerce.orderSubscriptionAdjustment.create("ORDER_SUBSCRIPTION_ID", one);
+
+// 3~7회차 각각 한 건씩 (총 5건)
+SOrderSubscriptionAdjustment range = new SOrderSubscriptionAdjustment("3~7회차 할인", -1000.0);
+range.durationFrom = 3;
+range.durationTo   = 7;
+commerce.orderSubscriptionAdjustment.create("ORDER_SUBSCRIPTION_ID", range);
+
+// 3회차부터 계약 끝까지 (레코드 1건, durationTo 는 무시)
+SOrderSubscriptionAdjustment unlimited = new SOrderSubscriptionAdjustment("3회차 이후 상시 할인", -1000.0);
+unlimited.durationFrom = 3;
+unlimited.isUnlimited  = true;
+commerce.orderSubscriptionAdjustment.create("ORDER_SUBSCRIPTION_ID", unlimited);
+```
+
+> 상한은 계약 총회차이며, 총회차가 무제한인 계약은 60회차까지입니다. 이미 결제가 끝난 회차는 거절되며,
+> 범위 중 한 회차라도 최종 금액이 음수면 전부 거절됩니다 (부분 반영 없음).
+>
+> `type` 을 지정하지 않으면 서버가 자동으로 판정합니다 (`price > 0` → 추가금액, 아니면 회차별 할인).
+
 
 # 사용하기 
 > 권장 인증 방식은 `client_key/secret_key`입니다. 기존 `application_id/private_key` 생성자도 하위 호환을 위해 계속 동작합니다.

@@ -3,6 +3,7 @@ package kr.co.bootpay.store.service.order_subscription_adjustment;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import kr.co.bootpay.http.HttpDeleteWithBody;
 import kr.co.bootpay.store.BootpayStoreObject;
@@ -55,6 +56,10 @@ public class SOrderSubscriptionAdjustmentService {
         JsonObject payload = adjustment == null ? new JsonObject() : gson.toJsonTree(adjustment).getAsJsonObject();
         // 회차 미지정시 1회차 (기준 SDK 기본값). 범위(duration_from) 지정시 duration 은 서버가 무시한다.
         if(!payload.has("duration") || payload.get("duration").getAsInt() == 0) payload.addProperty("duration", 1);
+        // type 은 primitive int 라 미지정시 0 이 그대로 실린다. 서버는 `params[:type].present?` 로 판정하는데
+        // Ruby 에서 0 은 present? 가 true 라, 0 을 보내면 자동 판정(price>0 → SETUP_PRICE, 아니면 PERIOD_DISCOUNT)이
+        // 막히고 정의되지 않은 유형 0 으로 저장된다 (유효값은 1·2·3·4·5·10·11). 미지정이면 바디에서 뺀다.
+        if(payload.has("type") && payload.get("type").getAsInt() == 0) payload.remove("type");
 
         HttpPost post = bootpay.httpPost("order_subscriptions/" + orderSubscriptionId + "/adjustments", new StringEntity(payload.toString(), "UTF-8"),
                 supervisorContext(null));
@@ -71,7 +76,20 @@ public class SOrderSubscriptionAdjustmentService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPut put = bootpay.httpPut("order_subscriptions/" + params.orderSubscriptionId + "/adjustments", new StringEntity(gson.toJson(params), "UTF-8"),
+        JsonObject payload = gson.toJsonTree(params).getAsJsonObject();
+        // adjustments 안의 type 도 primitive int 라 미지정시 0 이 실린다. 서버는
+        // `adj_params[:type].presence || previous_types[name]` 로 미전송 시 기존 유형을 승계하는데,
+        // Ruby 에서 0 은 present? 가 true 라 그 승계가 막히고 정의되지 않은 유형 0 으로 교체된다
+        // (상품 유래 t:4 같은 유형이 유실돼 has_period_benefit 판정이 깨진다).
+        if(payload.has("adjustments") && payload.get("adjustments").isJsonArray()) {
+            for(JsonElement element : payload.getAsJsonArray("adjustments")) {
+                if(!element.isJsonObject()) continue;
+                JsonObject adjustment = element.getAsJsonObject();
+                if(adjustment.has("type") && adjustment.get("type").getAsInt() == 0) adjustment.remove("type");
+            }
+        }
+
+        HttpPut put = bootpay.httpPut("order_subscriptions/" + params.orderSubscriptionId + "/adjustments", new StringEntity(payload.toString(), "UTF-8"),
                 supervisorContext(null));
         HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);

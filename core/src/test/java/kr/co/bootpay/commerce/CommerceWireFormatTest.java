@@ -23,6 +23,7 @@ import kr.co.bootpay.store.model.request.orderSubscriptionAdjustment.OrderSubscr
 import kr.co.bootpay.store.model.request.orderSubscriptionRequest.OrderSubscriptionRequestListParams;
 import kr.co.bootpay.store.model.request.orderSubscriptionRequest.OrderSubscriptionRequestUpdateParams;
 import kr.co.bootpay.store.model.request.product.MallProductListParams;
+import kr.co.bootpay.store.model.request.product.ProductListParams;
 import kr.co.bootpay.store.model.request.user.MallUserJoinParams;
 import kr.co.bootpay.store.model.request.user.UserListParams;
 import kr.co.bootpay.store.model.request.userGroup.UserGroupAggregateTransactionParams;
@@ -611,6 +612,28 @@ class CommerceWireFormatTest {
     // ══════════════════════════════════════════════════════════
     // product — Mall 조회 파라미터·JWT / productDetail
     // ══════════════════════════════════════════════════════════
+
+    @Test
+    @DisplayName("product.list - 서버가 읽는 category_id/ex_uid/sort 를 전송한다")
+    void testProductListSendsServerReadFilters() throws Exception {
+        ProductListParams params = new ProductListParams();
+        params.page = 1;
+        params.limit = 10;
+        params.keyword = "coffee";
+        params.categoryId = "CAT1";
+        params.exUid = "EX-1";
+        params.sort = "-price";
+        store.product.list(params);
+
+        assertEquals("GET", lastMethod);
+        assertEquals("/v1/products", lastPath);
+        assertTrue(lastQuery.contains("category_id=CAT1"), lastQuery);
+        assertTrue(lastQuery.contains("ex_uid=EX-1"), lastQuery);
+        assertTrue(lastQuery.contains("sort=-price"), lastQuery);
+        assertTrue(lastQuery.contains("keyword=coffee"), lastQuery);
+        assertTrue(lastQuery.contains("page=1"), lastQuery);
+        assertTrue(lastQuery.contains("limit=10"), lastQuery);
+    }
 
     @Test
     @DisplayName("product.products - category_id/sort 쿼리 + Bootpay-User-JWT 헤더")
@@ -1449,6 +1472,57 @@ class CommerceWireFormatTest {
         store.user.list(legacy);
 
         assertTrue(lastQuery.contains("membership_type=2"), "memberType 은 membership_type 으로 매핑된다: " + lastQuery);
+    }
+
+    @Test
+    @DisplayName("adjustment.create - type 미지정시 전송하지 않는다 (서버 자동 판정에 맡긴다)")
+    void testAdjustmentCreateOmitsUnsetType() throws Exception {
+        SOrderSubscriptionAdjustment adjustment = new SOrderSubscriptionAdjustment("할인", -1000.0);
+        store.orderSubscriptionAdjustment.create("OS_1", adjustment);
+
+        // primitive int 기본값 0 이 실리면 서버가 자동 판정 대신 정의되지 않은 유형 0 으로 저장한다
+        assertFalse(lastBody.contains("type"), "지정하지 않은 type 은 전송되면 안 된다: " + lastBody);
+    }
+
+    @Test
+    @DisplayName("adjustment.update - adjustments 배열의 type 미지정시 전송하지 않는다 (기존 유형 승계)")
+    void testAdjustmentUpdateOmitsUnsetTypeInArray() throws Exception {
+        OrderSubscriptionAdjustmentUpdateParams params = new OrderSubscriptionAdjustmentUpdateParams();
+        params.orderSubscriptionId = "OS_1";
+        params.duration = 3;
+        params.adjustments = new ArrayList<>();
+        params.adjustments.add(new SOrderSubscriptionAdjustment("주기 추가비용", 5000.0));
+        store.orderSubscriptionAdjustment.update(params);
+
+        assertEquals("PUT", lastMethod);
+        assertEquals("/v1/order_subscriptions/OS_1/adjustments", lastPath);
+        // 서버는 type 미전송일 때만 기존 유형을 승계한다 (0 은 Ruby 에서 present? 라 승계를 막는다)
+        assertFalse(lastBody.contains("\"type\""), "지정하지 않은 type 은 전송되면 안 된다: " + lastBody);
+    }
+
+    @Test
+    @DisplayName("adjustment.update - adjustments 배열의 type 을 명시하면 그대로 전송한다")
+    void testAdjustmentUpdateSendsExplicitTypeInArray() throws Exception {
+        OrderSubscriptionAdjustmentUpdateParams params = new OrderSubscriptionAdjustmentUpdateParams();
+        params.orderSubscriptionId = "OS_1";
+        params.duration = 3;
+        params.adjustments = new ArrayList<>();
+        SOrderSubscriptionAdjustment adjustment = new SOrderSubscriptionAdjustment("주기 추가비용", 5000.0);
+        adjustment.type = 4;
+        params.adjustments.add(adjustment);
+        store.orderSubscriptionAdjustment.update(params);
+
+        assertTrue(lastBody.contains("\"type\":4"), lastBody);
+    }
+
+    @Test
+    @DisplayName("adjustment.create - type 을 명시하면 그대로 전송한다")
+    void testAdjustmentCreateSendsExplicitType() throws Exception {
+        SOrderSubscriptionAdjustment adjustment = new SOrderSubscriptionAdjustment("추가금", 500.0);
+        adjustment.type = 2; // SETUP_PRICE
+        store.orderSubscriptionAdjustment.create("OS_1", adjustment);
+
+        assertTrue(lastBody.contains("\"type\":2"), lastBody);
     }
 
 }

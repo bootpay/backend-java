@@ -112,12 +112,17 @@ public class SProductService {
         String url = "products";
         if(params != null) {
             List<NameValuePair> nameValuePairList = new ArrayList<>();
+            // 서버가 읽는 값
+            if (params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
+            if (params.categoryId != null) nameValuePairList.add(new BasicNameValuePair("category_id", params.categoryId));
+            if (params.exUid != null) nameValuePairList.add(new BasicNameValuePair("ex_uid", params.exUid));
+            if (params.sort != null) nameValuePairList.add(new BasicNameValuePair("sort", params.sort));
+            // 아래 4개는 서버가 읽지 않는다 — 기존 호출을 깨지 않으려고 전송만 유지한다
             if (params.type != null) nameValuePairList.add(new BasicNameValuePair("type", params.type.toString()));
             if (params.periodType != null) nameValuePairList.add(new BasicNameValuePair("period_type", params.periodType));
             if (params.sAt != null) nameValuePairList.add(new BasicNameValuePair("s_at", params.sAt));
             if (params.eAt != null) nameValuePairList.add(new BasicNameValuePair("e_at", params.eAt));
             if (params.categoryCode != null) nameValuePairList.add(new BasicNameValuePair("category_code", params.categoryCode));
-            if (params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
             if (params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
             if (params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
 
