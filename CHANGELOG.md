@@ -1,5 +1,20 @@
 ### 3.5.0
 
+#### `product.list` 의 조회 필터를 서버 실제 계약에 맞춤
+
+서버(`v1/products_controller#index`)가 읽는 것은 **page · limit · keyword · category_id · ex_uid · sort** 뿐인데,
+``product.list()`` 은 정작 그중 `category_id` · `ex_uid` · `sort` 를 **보내지 않고**, 서버가 읽지 않는
+`type` · `period_type` · `s_at` · `e_at` · `category_code` 만 보내고 있었다.
+필터가 걸린 줄 알았는데 전체 목록이 돌아오는, `member_type` → `membership_type` 과 같은 조용한 실패였다.
+
+- ``ProductListParams`` 에 **`categoryId` / `exUid` / `sort`** 추가 — 서버가 읽는 값이라 이제 실제로 필터가 걸린다.
+- 서버가 읽지 않는 `type` / `period_type` / `s_at` / `e_at` / `category_code` 는 **전송은 그대로 유지**하되(기존 호출 보호) 무시된다는 경고를 문서에 달았다.
+  `type` 은 서버의 상품 타입 필터가 문자열(`subscription`/`discount`/`normal`)이라 이 숫자 필드와 값 체계 자체가 다르다.
+- `MallProductListParams` 의 `categoryId` / `exUid` / `sort` 는 `ProductListParams` 로 올렸다 — 상속으로 그대로 접근되므로 기존 코드는 바뀌지 않는다.
+- ⚠️ `keyword` 는 **26-08-26 서버 변경부터** 실제로 적용된다 (그 이전 배포본에서는 무시된다).
+  같은 라운드에서 `GET /v1/products` 의 `sort` 가 항상 무시되던 서버 버그도 함께 고쳤다 — SDK 쪽 변경은 없다.
+
+
 #### 누락 파라미터 보강 (ruby SDK parity)
 
 서버가 이미 읽고 있었지만 SDK 가 보내지 않아 쓸 수 없던 값들을 채웠다. 기존 호출의 동작은 그대로다.
@@ -19,6 +34,19 @@
   - `durationFrom = 3, isUnlimited = true` → 3회차부터 계약 끝까지 (레코드는 1건, `durationTo` 는 무시)
   - 상한은 계약 총회차이며, 총회차가 무제한인 계약은 60회차까지다. 이미 결제가 끝난 회차는 거절되고, 범위 중 한 회차라도 최종 금액이 음수면 전부 거절된다 (부분 반영 없음).
 - `orderSubscriptionAdjustment.create` 는 회차 미지정시 `duration` 을 `1` 로 보낸다 (기준 SDK 기본값). 이전에는 primitive 기본값 `0` 이 그대로 전송됐다. `duration` 을 직접 지정한 호출(음수 `-1` 포함)의 동작은 그대로다.
+
+#### `adjustment.create` 의 조정 유형 자동 판정 복구 (동작 변경)
+
+`SOrderSubscriptionAdjustment.type` 이 primitive `int` 라 **미지정시에도 `"type":0` 이 항상 전송되고 있었다.** 서버는 `params[:type].present?` 로 판정하는데 Ruby 에서 `0.present?` 는 `true` 라, java SDK 사용자는 문서에 적힌 자동 판정(`price>0` → SETUP_PRICE, 아니면 PERIOD_DISCOUNT)을 한 번도 받지 못했고 정의되지 않은 유형 `0` 으로 저장돼 왔다 (유효값은 `1`·`2`·`3`·`4`·`5`·`10`·`11`).
+
+`type` 을 지정하지 않으면 바디에서 뺀다. **`type` 을 직접 지정한 호출의 동작은 그대로다.**
+
+⚠️ 그동안 type 미지정으로 만든 조정항목은 유형 `0` 으로 남아 있다. 이 릴리스 이후 새로 만드는 항목만 올바른 유형을 받는다.
+
+`orderSubscriptionAdjustment.update` (PUT) 의 `adjustments` 배열도 같은 결함이 있어 함께 고쳤다. 서버는
+`adj_params[:type].presence || previous_types[name]` 로 **type 미전송일 때만 기존 유형을 승계**하는데,
+배열 원소마다 `"type":0` 이 실려 그 승계가 막히고 있었다 — 상품에서 온 `t:4`(주기 추가비용) 같은 유형이
+회차 조정을 교체할 때마다 유실돼 `has_period_benefit` 판정이 깨졌다. 배열 원소의 `type` 도 0 이면 전송하지 않는다.
 
 ### 3.4.0
 
