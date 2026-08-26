@@ -254,6 +254,7 @@ public class User {
     public static void list() {
         UserListParams params = new UserListParams();
         params.type = "user";
+//        params.membershipType = 1; // 회원등급 필터 (서버 정식 키는 membership_type 이다)
         params.keyword = "홍길동"; //type에 따라 지원하는 검색어가 다르다
 
         try {

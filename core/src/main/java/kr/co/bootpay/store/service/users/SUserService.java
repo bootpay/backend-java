@@ -48,7 +48,9 @@ public class SUserService {
             if(params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
             if(params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
             if(params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
-            if(params.memberType != null) nameValuePairList.add(new BasicNameValuePair("member_type", params.memberType.toString()));
+            // 서버가 읽는 이름은 membership_type — memberType 은 하위호환 별칭으로 같은 키에 실어 보낸다.
+            Integer membershipType = params.membershipType != null ? params.membershipType : params.memberType;
+            if(membershipType != null) nameValuePairList.add(new BasicNameValuePair("membership_type", membershipType.toString()));
             if(params.type != null) nameValuePairList.add(new BasicNameValuePair("type", params.type));
 
             HttpGet get = bootpay.httpGet(url, nameValuePairList);

@@ -29,6 +29,10 @@ public class OrderSubscriptionUpdateParams {
      * 특정 회차만 가감하려면 {@code orderSubscriptionAdjustment.create} 를 쓴다.</p>
      */
     public Double price;
+    /**
+     * 변경 사유. 구독 변경이력(SUBSCRIPTION_ACTION_UPDATE)에 남는다.
+     */
+    public String memo;
     /** 미지정시 자동 생성 (Idempotency-Key 헤더로 전송, body 에는 포함되지 않는다) */
     public transient String idempotencyKey;
 }

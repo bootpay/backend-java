@@ -23,6 +23,8 @@ public class OrderSubscriptionListParams extends ListParams {
     public String userGroupId;
     public Integer status;
     public String userId;
+    /** 주문번호로 구독을 역조회한다 (서버 #index 의 order_number). */
+    public String orderNumber;
 
     // ex_uid 지원 필드 (user)
     public String userExUid;

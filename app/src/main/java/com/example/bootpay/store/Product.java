@@ -104,6 +104,7 @@ public class Product {
 
     public static void detail() {
         try {
+            // 회원 컨텍스트로 조회하려면 user_jwt 를 함께 넘긴다: detail(productId, userJwt)
             BootpayStoreResponse res = bootpayStore.product.detail("67e4b4425ec892162491d0ec");
             if(res.isSuccess()) {
                 System.out.println("product detail success: " + res.getData());

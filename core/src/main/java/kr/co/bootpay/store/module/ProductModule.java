@@ -51,6 +51,31 @@ public class ProductModule {
     }
 
     /**
+     * 상품 상세 조회 (관리자).
+     *
+     * @param productId 상품 id
+     * @param userJwt   회원 JWT (비회원이면 null)
+     * @return 상품 정보
+     * @throws Exception 통신 실패 또는 인증 정보 누락
+     */
+    public BootpayResponse detail(String productId, String userJwt) throws Exception {
+        return CommerceResponses.of(delegate.detail(productId, userJwt));
+    }
+
+    /**
+     * 상품 상세 조회 (관리자).
+     *
+     * @param productId      상품 id
+     * @param userJwt        회원 JWT (비회원이면 null)
+     * @param idempotencyKey 미지정 시 자동 생성 (Idempotency-Key 헤더)
+     * @return 상품 정보
+     * @throws Exception 통신 실패 또는 인증 정보 누락
+     */
+    public BootpayResponse detail(String productId, String userJwt, String idempotencyKey) throws Exception {
+        return CommerceResponses.of(delegate.detail(productId, userJwt, idempotencyKey));
+    }
+
+    /**
      * 상품 목록 조회 (쇼핑몰 프론트).
      *
      * @return 상품 목록
