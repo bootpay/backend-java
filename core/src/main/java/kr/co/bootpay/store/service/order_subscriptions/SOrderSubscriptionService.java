@@ -66,6 +66,8 @@ public class SOrderSubscriptionService {
         if(params.userExternalUid != null) nameValuePairList.add(new BasicNameValuePair("user_external_uid", params.userExternalUid));
         if(params.userUid != null) nameValuePairList.add(new BasicNameValuePair("user_uid", params.userUid));
 
+        if(params.orderNumber != null) nameValuePairList.add(new BasicNameValuePair("order_number", params.orderNumber));
+
         if(params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
         if(params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
         if(params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));

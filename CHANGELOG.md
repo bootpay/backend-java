@@ -1,5 +1,15 @@
 ### 3.5.0
 
+#### 누락 파라미터 보강 (ruby SDK parity)
+
+서버가 이미 읽고 있었지만 SDK 가 보내지 않아 쓸 수 없던 값들을 채웠다. 기존 호출의 동작은 그대로다.
+
+- `orderSubscription.list` 에 `orderNumber` 추가 — 주문번호(`order_number`)로 구독을 역조회한다.
+- `orderSubscription.update` 에 `memo` 추가 — 구독 변경이력(`SUBSCRIPTION_ACTION_UPDATE`)에 남길 변경 사유다.
+- `product.products` (`MallProductListParams`) 에 `exUid` 추가 — 외부 UID(`ex_uid`)로 상품을 찾는다.
+- `product.detail` 에 `userJwt` / `idempotencyKey` 오버로드 추가 — `Bootpay-User-JWT` 를 보내지 않아 회원 컨텍스트 조회가 안 되던 문제를 해소했다. 이제 `product.productDetail` 과 동작이 같다. 인자 하나짜리 `detail(productId)` 는 그대로다.
+- `user.list` 의 회원등급 필터 키 정정 — 서버가 읽는 이름은 `membership_type` 인데 `member_type` 을 보내고 있어 필터가 조용히 무시됐다(에러 없이 전체 목록이 반환됨). `UserListParams.membershipType` 을 추가하고, 기존 `memberType` 은 `@Deprecated` 별칭으로 남겨 같은 키에 실어 보낸다.
+
 #### 구독 가격 변경 · 범위로 회차조정 (ruby SDK parity)
 
 - `orderSubscription.update` 에 `price` 추가 — 회차별 결제 금액의 **기준금액**이다. 바꾸면 결제예정(READY) 회차의 청구액이 즉시 다시 계산되고 이후 회차도 이 금액으로 만들어진다. 이미 결제된 회차는 그대로다. 0 이하는 받지 않는다. 특정 회차만 가감하려면 조정항목을 쓴다.

@@ -56,6 +56,7 @@ public class OrderSubscription {
         try {
             OrderSubscriptionListParams params = new OrderSubscriptionListParams();
             params.sAt = "2025-05-20";
+//            params.orderNumber = "25112705501124352134"; // 주문번호로 구독 역조회
 
             BootpayStoreResponse res = bootpayStore.orderSubscription.list(params);
             if(res.isSuccess()) {
@@ -193,6 +194,7 @@ public class OrderSubscription {
             OrderSubscriptionUpdateParams params = new OrderSubscriptionUpdateParams();
             params.orderSubscriptionId = "6964abf14cb8149d077124e8";
             params.price = 12000.0;
+            params.memo = "고객 요청으로 금액 변경"; // 변경이력에 남길 사유 (선택)
 
             BootpayStoreResponse res = bootpayStore.asSupervisor().orderSubscription.update(params);
             if(res.isSuccess()) {

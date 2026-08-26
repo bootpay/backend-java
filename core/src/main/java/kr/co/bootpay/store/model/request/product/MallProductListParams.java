@@ -9,6 +9,8 @@ package kr.co.bootpay.store.model.request.product;
  */
 public class MallProductListParams extends ProductListParams {
     public String categoryId;
+    /** 가맹점이 지정한 상품 외부 고유 ID (서버 #index 의 ex_uid). */
+    public String exUid;
     public String sort;
     /** 회원 JWT (Bootpay-User-JWT 헤더로 전송, body/query 에는 포함되지 않는다) */
     public transient String userJwt;

@@ -132,9 +132,23 @@ public class SProductService {
     }
 
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String productId) throws Exception {
+        return detail(bootpay, productId, null, null);
+    }
+
+    /**
+     * 상품 상세 조회
+     * GET /v1/products/{product_id}
+     *
+     * <p>{@code productDetail} 과 uri·동작이 같다. 기존 사용자가 있어 남겨두지만 신규 코드는
+     * {@code productDetail} 을 쓸 것.</p>
+     *
+     * @param userJwt 회원 JWT (선택 — 값이 있을 때만 Bootpay-User-JWT 헤더로 전송)
+     * @param idempotencyKey 미지정시 자동 생성
+     */
+    static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String productId, String userJwt, String idempotencyKey) throws Exception {
         bootpay.requireCommerceCredentials();
 
-        HttpGet get = bootpay.httpGet("products/" + productId);
+        HttpGet get = bootpay.httpGet("products/" + productId, mallContext(userJwt, idempotencyKey));
 
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
@@ -190,6 +204,7 @@ public class SProductService {
         nameValuePairList.add(new BasicNameValuePair("limit", params != null && params.limit != null ? params.limit.toString() : "20"));
         if (params != null) {
             if (params.categoryId != null) nameValuePairList.add(new BasicNameValuePair("category_id", params.categoryId));
+            if (params.exUid != null) nameValuePairList.add(new BasicNameValuePair("ex_uid", params.exUid));
             if (params.sort != null) nameValuePairList.add(new BasicNameValuePair("sort", params.sort));
             if (params.keyword != null) nameValuePairList.add(new BasicNameValuePair("keyword", params.keyword));
             if (params.type != null) nameValuePairList.add(new BasicNameValuePair("type", params.type.toString()));

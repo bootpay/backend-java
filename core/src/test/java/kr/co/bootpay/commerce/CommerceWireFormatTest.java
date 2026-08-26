@@ -24,6 +24,7 @@ import kr.co.bootpay.store.model.request.orderSubscriptionRequest.OrderSubscript
 import kr.co.bootpay.store.model.request.orderSubscriptionRequest.OrderSubscriptionRequestUpdateParams;
 import kr.co.bootpay.store.model.request.product.MallProductListParams;
 import kr.co.bootpay.store.model.request.user.MallUserJoinParams;
+import kr.co.bootpay.store.model.request.user.UserListParams;
 import kr.co.bootpay.store.model.request.userGroup.UserGroupAggregateTransactionParams;
 import kr.co.bootpay.store.model.request.userGroup.UserGroupLimitParams;
 import org.junit.jupiter.api.AfterAll;
@@ -1334,6 +1335,120 @@ class CommerceWireFormatTest {
         store.orderSubscriptionAdjustment.create("OS_1", adjustment);
 
         assertTrue(lastBody.contains("\"duration\":1"), lastBody);
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // 누락 파라미터 보강 (변경분) — 서버가 읽고 있었으나 SDK 가 안 보내던 값들
+    // ══════════════════════════════════════════════════════════
+
+    @Test
+    @DisplayName("order.list - order_subscription_ids 는 콤마로 join, subscription_billing_type 전송")
+    void testOrderListSubscriptionFilters() throws Exception {
+        OrderListParams params = new OrderListParams();
+        params.orderSubscriptionIds = java.util.Arrays.asList("OS1", "OS2");
+        params.subscriptionBillingType = OrderListParams.SUBSCRIPTION_BILLING_TYPE_GROUP;
+        store.order.list(params);
+
+        assertEquals("GET", lastMethod);
+        assertEquals("/v1/orders", lastPath);
+        assertTrue(lastQuery.contains("order_subscription_ids=OS1%2COS2") || lastQuery.contains("order_subscription_ids=OS1,OS2"), lastQuery);
+        assertTrue(lastQuery.contains("subscription_billing_type=2"), lastQuery);
+    }
+
+    @Test
+    @DisplayName("order.list - 비어있는 status/payment_status 는 전송하지 않는다")
+    void testOrderListOmitsEmptyStatusFilters() throws Exception {
+        OrderListParams params = new OrderListParams();
+        params.status = new ArrayList<>();
+        params.paymentStatus = new ArrayList<>();
+        params.orderSubscriptionIds = new ArrayList<>();
+        store.order.list(params);
+
+        assertFalse(lastQuery != null && lastQuery.contains("status="), "빈 status 는 전송하지 않는다: " + lastQuery);
+        assertFalse(lastQuery != null && lastQuery.contains("order_subscription_ids="), "빈 목록은 전송하지 않는다: " + lastQuery);
+    }
+
+    @Test
+    @DisplayName("orderSubscription.list - order_number 로 주문번호 역조회")
+    void testOrderSubscriptionListOrderNumber() throws Exception {
+        OrderSubscriptionListParams params = new OrderSubscriptionListParams();
+        params.orderNumber = "ORD-20260826-001";
+        store.orderSubscription.list(params);
+
+        assertEquals("GET", lastMethod);
+        assertEquals("/v1/order_subscriptions", lastPath);
+        assertTrue(lastQuery.contains("order_number=ORD-20260826-001"), lastQuery);
+    }
+
+    @Test
+    @DisplayName("orderSubscription.update - memo 를 변경사유로 전송")
+    void testOrderSubscriptionUpdateMemo() throws Exception {
+        OrderSubscriptionUpdateParams params = new OrderSubscriptionUpdateParams();
+        params.orderSubscriptionId = "OS_1";
+        params.price = 12000.0;
+        params.memo = "고객 요청 금액 변경";
+        store.orderSubscription.update(params);
+
+        assertEquals("PUT", lastMethod);
+        assertEquals("/v1/order_subscriptions/OS_1", lastPath);
+        assertEquals("supervisor", lastRole);
+        assertTrue(lastBody.contains("\"memo\":\"고객 요청 금액 변경\""), lastBody);
+    }
+
+    @Test
+    @DisplayName("orderSubscription.update - memo 미지정시 전송하지 않는다")
+    void testOrderSubscriptionUpdateOmitsUnsetMemo() throws Exception {
+        OrderSubscriptionUpdateParams params = new OrderSubscriptionUpdateParams();
+        params.orderSubscriptionId = "OS_1";
+        params.orderName = "변경구독";
+        store.orderSubscription.update(params);
+
+        assertFalse(lastBody.contains("memo"), "지정하지 않은 memo 는 전송되면 안 된다: " + lastBody);
+    }
+
+    @Test
+    @DisplayName("product.products - ex_uid 로 외부 UID 조회")
+    void testMallProductsExUid() throws Exception {
+        MallProductListParams params = new MallProductListParams();
+        params.exUid = "EXT-1";
+        store.product.products(params);
+
+        assertEquals("GET", lastMethod);
+        assertEquals("/v1/products", lastPath);
+        assertTrue(lastQuery.contains("ex_uid=EXT-1"), lastQuery);
+    }
+
+    @Test
+    @DisplayName("product.detail - user_jwt 지정시 Bootpay-User-JWT 헤더 전송 (productDetail 과 동일 동작)")
+    void testProductDetailLookupWithJwt() throws Exception {
+        store.product.detail("P1", "jwt-lookup");
+
+        assertEquals("GET", lastMethod);
+        assertEquals("/v1/products/P1", lastPath);
+        assertEquals("jwt-lookup", lastUserJwt);
+        assertNotNull(lastIdempotencyKey);
+
+        store.product.detail("P1");
+        assertNull(lastUserJwt, "JWT 미지정시 헤더가 붙으면 안 됩니다");
+    }
+
+    @Test
+    @DisplayName("user.list - 회원등급 필터는 membership_type 으로 전송, memberType 은 별칭")
+    void testUserListMembershipType() throws Exception {
+        UserListParams params = new UserListParams();
+        params.membershipType = 1;
+        store.user.list(params);
+
+        assertEquals("GET", lastMethod);
+        assertEquals("/v1/users", lastPath);
+        assertTrue(lastQuery.contains("membership_type=1"), lastQuery);
+        assertFalse(lastQuery.contains("member_type=1"), "서버가 읽지 않는 키는 전송하지 않는다: " + lastQuery);
+
+        UserListParams legacy = new UserListParams();
+        legacy.memberType = 2;
+        store.user.list(legacy);
+
+        assertTrue(lastQuery.contains("membership_type=2"), "memberType 은 membership_type 으로 매핑된다: " + lastQuery);
     }
 
 }

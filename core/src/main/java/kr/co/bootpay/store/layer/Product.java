@@ -88,6 +88,23 @@ public class Product {
     }
 
     /**
+     * 상품 상세 조회
+     * GET /v1/products/{product_id} — {@code productDetail} 과 동작이 같다.
+     * @param userJwt 회원 JWT (선택)
+     */
+    public BootpayStoreResponse detail(String productId, String userJwt) throws Exception {
+        return SProductService.detail(bootpay, productId, userJwt, null);
+    }
+
+    /**
+     * 상품 상세 조회
+     * @param idempotencyKey 미지정시 자동 생성
+     */
+    public BootpayStoreResponse detail(String productId, String userJwt, String idempotencyKey) throws Exception {
+        return SProductService.detail(bootpay, productId, userJwt, idempotencyKey);
+    }
+
+    /**
      * 상품 상세 조회 (V1 Mall API)
      * GET /v1/products/{product_id}
      * @param userJwt 회원 JWT (선택)

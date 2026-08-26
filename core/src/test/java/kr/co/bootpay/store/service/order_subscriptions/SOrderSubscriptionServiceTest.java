@@ -65,6 +65,16 @@ public class SOrderSubscriptionServiceTest {
     }
 
     @Test
+    public void 주문번호로_구독을_역조회한다() throws Exception {
+        OrderSubscriptionListParams params = new OrderSubscriptionListParams();
+        params.orderNumber = "ORD-20260826-001";
+
+        String query = SOrderSubscriptionService.listRequest(bootpay(), params).getURI().getQuery();
+
+        assertEquals("order_number=ORD-20260826-001", query);
+    }
+
+    @Test
     public void ck_sk만으로_토큰없이_기본인증을_구성한다() throws Exception {
         BootpayStoreObject bootpay = new BootpayStoreObject(new TokenPayload(CLIENT_KEY, SECRET_KEY), "PRODUCTION");
         HttpGet request = SOrderSubscriptionService.listRequest(bootpay, new OrderSubscriptionListParams());
