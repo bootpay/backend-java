@@ -4,6 +4,13 @@ import kr.co.bootpay.common.BootpayMode;
 import kr.co.bootpay.common.BootpayResponse;
 import kr.co.bootpay.common.BootpayRole;
 import kr.co.bootpay.store.model.request.TokenPayload;
+import kr.co.bootpay.store.module.AlimtalkMessageModule;
+import kr.co.bootpay.store.module.AlimtalkOfficialModule;
+import kr.co.bootpay.store.module.AlimtalkOptoutModule;
+import kr.co.bootpay.store.module.AlimtalkSendModule;
+import kr.co.bootpay.store.module.AlimtalkSenderModule;
+import kr.co.bootpay.store.module.AlimtalkTemplateModule;
+import kr.co.bootpay.store.module.AlimtalkWebhookModule;
 import kr.co.bootpay.store.module.CartModule;
 import kr.co.bootpay.store.module.CategoryModule;
 import kr.co.bootpay.store.module.CommerceResponses;
@@ -114,6 +121,27 @@ public class BootpayCommerce {
     /** 웹훅. */
     public final WebhookModule webhook;
 
+    /** 알림톡 발송. */
+    public final AlimtalkSendModule alimtalkSend;
+
+    /** 알림톡 발신프로필(카카오채널). */
+    public final AlimtalkSenderModule alimtalkSender;
+
+    /** 알림톡 자체 템플릿. */
+    public final AlimtalkTemplateModule alimtalkTemplate;
+
+    /** 알림톡 공식 템플릿 카탈로그. */
+    public final AlimtalkOfficialModule alimtalkOfficial;
+
+    /** 알림톡 발송내역·집계. */
+    public final AlimtalkMessageModule alimtalkMessage;
+
+    /** 알림톡 수신거부. */
+    public final AlimtalkOptoutModule alimtalkOptout;
+
+    /** 알림톡 웹훅 (주문·구독 웹훅과 별개). */
+    public final AlimtalkWebhookModule alimtalkWebhook;
+
     BootpayCommerce(String clientKey, String secretKey, BootpayMode mode, BootpayRole role) {
         this.delegate = new BootpayStore(new TokenPayload(clientKey, secretKey), mode.value());
         this.delegate.setRole(role.value());
@@ -137,6 +165,13 @@ public class BootpayCommerce {
         this.cart = new CartModule(delegate);
         this.mallSetting = new MallSettingModule(delegate);
         this.webhook = new WebhookModule(delegate);
+        this.alimtalkSend = new AlimtalkSendModule(delegate);
+        this.alimtalkSender = new AlimtalkSenderModule(delegate);
+        this.alimtalkTemplate = new AlimtalkTemplateModule(delegate);
+        this.alimtalkOfficial = new AlimtalkOfficialModule(delegate);
+        this.alimtalkMessage = new AlimtalkMessageModule(delegate);
+        this.alimtalkOptout = new AlimtalkOptoutModule(delegate);
+        this.alimtalkWebhook = new AlimtalkWebhookModule(delegate);
     }
 
     /**

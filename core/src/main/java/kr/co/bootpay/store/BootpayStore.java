@@ -28,6 +28,13 @@ public class BootpayStore extends BootpayStoreObject {
     public Cart cart;
     public MallSetting mallSetting;
     public Webhook webhook;
+    public AlimtalkSend alimtalkSend;
+    public AlimtalkSender alimtalkSender;
+    public AlimtalkTemplate alimtalkTemplate;
+    public AlimtalkOfficial alimtalkOfficial;
+    public AlimtalkMessage alimtalkMessage;
+    public AlimtalkOptout alimtalkOptout;
+    public AlimtalkWebhook alimtalkWebhook;
 
 
 
@@ -65,6 +72,13 @@ public class BootpayStore extends BootpayStoreObject {
         this.cart = new Cart(this);
         this.mallSetting = new MallSetting(this);
         this.webhook = new Webhook(this);
+        this.alimtalkSend = new AlimtalkSend(this);
+        this.alimtalkSender = new AlimtalkSender(this);
+        this.alimtalkTemplate = new AlimtalkTemplate(this);
+        this.alimtalkOfficial = new AlimtalkOfficial(this);
+        this.alimtalkMessage = new AlimtalkMessage(this);
+        this.alimtalkOptout = new AlimtalkOptout(this);
+        this.alimtalkWebhook = new AlimtalkWebhook(this);
     }
 
     //token

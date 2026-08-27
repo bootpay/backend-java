@@ -11,6 +11,7 @@ import kr.co.bootpay.store.model.pojo.SMallSetting;
 import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.request.ListParams;
 import kr.co.bootpay.store.model.request.TokenPayload;
+import kr.co.bootpay.store.model.request.alimtalk.AlimtalkSendParams;
 import kr.co.bootpay.store.model.request.order.OrderListParams;
 import kr.co.bootpay.store.model.request.product.ProductListParams;
 import kr.co.bootpay.store.model.request.user.UserListParams;
@@ -228,6 +229,53 @@ class CommerceModuleParityTest {
     }
 
     @Test
+    @DisplayName("알림톡 계열 — 신규 모듈 표면이 기존 표면과 같은 요청을 만든다")
+    void alimtalkModulesMatchLegacy() throws Exception {
+        assertSameRequest("alimtalkSend.send",
+                () -> legacy.alimtalkSend.send(sendParams()),
+                () -> modern.alimtalkSend.send(sendParams()));
+        assertSameRequest("alimtalkSend.cancel",
+                () -> legacy.alimtalkSend.cancel("RCP_1"),
+                () -> modern.alimtalkSend.cancel("RCP_1"));
+
+        assertSameRequest("alimtalkSender.categories",
+                () -> legacy.alimtalkSender.categories(),
+                () -> modern.alimtalkSender.categories());
+        assertSameRequest("alimtalkSender.detail",
+                () -> legacy.alimtalkSender.detail("KSP_1", true),
+                () -> modern.alimtalkSender.detail("KSP_1", true));
+
+        assertSameRequest("alimtalkTemplate.list",
+                () -> legacy.alimtalkTemplate.list(),
+                () -> modern.alimtalkTemplate.list());
+        assertSameRequest("alimtalkTemplate.inspect",
+                () -> legacy.alimtalkTemplate.inspect("TPL_1"),
+                () -> modern.alimtalkTemplate.inspect("TPL_1"));
+        assertSameRequest("alimtalkTemplate.export",
+                () -> legacy.alimtalkTemplate.export(),
+                () -> modern.alimtalkTemplate.export());
+
+        assertSameRequest("alimtalkOfficial.recommend",
+                () -> legacy.alimtalkOfficial.recommend("주문이 완료되었습니다"),
+                () -> modern.alimtalkOfficial.recommend("주문이 완료되었습니다"));
+
+        assertSameRequest("alimtalkMessage.stats",
+                () -> legacy.alimtalkMessage.stats("2026-08-01", "2026-08-27"),
+                () -> modern.alimtalkMessage.stats("2026-08-01", "2026-08-27"));
+
+        assertSameRequest("alimtalkOptout.check",
+                () -> legacy.alimtalkOptout.check("01012345678"),
+                () -> modern.alimtalkOptout.check("01012345678"));
+
+        assertSameRequest("alimtalkWebhook.detail",
+                () -> legacy.alimtalkWebhook.detail(),
+                () -> modern.alimtalkWebhook.detail());
+        assertSameRequest("alimtalkWebhook.deliveries",
+                () -> legacy.alimtalkWebhook.deliveries(),
+                () -> modern.alimtalkWebhook.deliveries());
+    }
+
+    @Test
     @DisplayName("subscriptionSetting — 기존 BootpayStore 에서 도달할 수 없던 모듈")
     void subscriptionSettingIsReachable() throws Exception {
         BootpayResponse res = modern.subscriptionSetting.list(new ListParams());
@@ -266,6 +314,13 @@ class CommerceModuleParityTest {
         assertEquals(before.isSuccess(), after.isSuccess());
         assertEquals(before.getData().get("ok"), after.get("ok"));
         assertTrue(after.asMap().containsKey("data"), "asMap() 은 기존 응답 구조를 그대로 노출해야 한다");
+    }
+
+    private static AlimtalkSendParams sendParams() {
+        AlimtalkSendParams params = new AlimtalkSendParams();
+        params.templateCode = "TPL_1";
+        params.to = "01012345678";
+        return params;
     }
 
     private static SUser user() {

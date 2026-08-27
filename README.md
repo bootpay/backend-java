@@ -217,6 +217,47 @@ store.getAccessToken()                →  commerce.issueAccessToken()
 `commerce.subscriptionSetting` 은 기존 `BootpayStore` 에서는 배선되어 있지 않아 쓸 수 없던 모듈로,
 통일 표면에서 새로 노출됩니다.
 
+#### 알림톡 (3.6.0~)
+
+`/v1/alimtalk/*` 35종을 모듈 7개로 제공합니다. `BootpayStore` 와 `BootpayCommerce` 양쪽에 같은 이름으로 있습니다.
+
+| 모듈 | 메서드 |
+| --- | --- |
+| `alimtalkSend` | `send` · `sendBulk` · `cancel` |
+| `alimtalkSender` | `categories` · `otp` · `create` · `list` · `detail` · `release` · `variableExamples` |
+| `alimtalkTemplate` | `list` · `create` · `detail` · `update` · `delete` · `register` · `inspect` · `export` · `image` · `highlightImage` |
+| `alimtalkOfficial` | `list` · `recommend` · `detail` |
+| `alimtalkMessage` | `list` · `stats` · `detail` |
+| `alimtalkOptout` | `list` · `create` · `check` · `release` |
+| `alimtalkWebhook` | `detail` · `update` · `test` · `rotateSecret` · `deliveries` |
+
+> ⚠️ **샌드박스가 없습니다.** `alimtalkSend.send` / `sendBulk` 는 실제로 카카오톡이 나가고 과금됩니다.
+> `alimtalkSender.otp` 는 문자를 실제 발송하고, `alimtalkSender.create` 는 카카오에 발신프로필을 실제 등록합니다.
+> `alimtalkTemplate.create` 는 `register` 를 명시적으로 `false` 로 주지 않으면 생성 즉시 대행사·카카오에 등록됩니다.
+
+```java
+Map<String, Object> variables = new HashMap<>();
+variables.put("user_name", "홍길동");
+
+AlimtalkSendParams params = new AlimtalkSendParams();
+params.templateCode = "TEMPLATE_CODE";
+params.to = "01000000000";
+params.variables = variables;
+params.refId = "order-20260827-0001"; // 멱등 키 — 같은 값으로 재요청하면 기존 접수를 그대로 돌려줍니다
+params.fallback = false;              // 미지정(null)이면 프로젝트 기본값, false 는 명시적으로 끕니다
+
+BootpayResponse res = commerce.alimtalkSend.send(params);
+```
+
+`Bootpay-Role` 은 인스턴스 설정과 무관하게 항상 `user` 로 나가고, 알림톡 요청에는 `Idempotency-Key` 를 붙이지
+않습니다 (서버가 읽지 않으며, 멱등은 `refId` 로만 성립합니다).
+
+알림톡 웹훅은 주문·구독 웹훅(`webhook.sendTest`)과 **완전히 별개**입니다. 알림톡 이벤트를 기존 주문 웹훅 URL 로
+태우면 그 수신 서버가 모르는 payload 를 받아 기존 연동이 깨지므로 수신 URL 을 따로 둡니다.
+
+`alimtalkTemplate.export` 는 SDK 기본 `format` 이 `json` 입니다. `csv` 를 주면 파싱 없이
+`{ body, content_type }` 원문을 담아 돌려줍니다.
+
 신규 표면에 아직 없는 기존 메서드가 필요하면 `commerce.unwrap()` 으로 내부
 `BootpayStore` 인스턴스를 꺼내 쓸 수 있습니다 (토큰과 role 이 공유됩니다).
 

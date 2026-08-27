@@ -212,6 +212,39 @@ public class BootpayStoreObject {
         return get;
     }
 
+    /**
+     * JSON 이 아닌 본문(CSV 등)을 받는 GET 요청을 만든다.
+     *
+     * <p>{@code Accept} 를 {@code *}{@code /}{@code *} 로 두고 {@code Content-Type} 을 붙이지 않는 것 외에는
+     * {@link #httpGet(String, List, RequestContext)} 과 같다. 응답은 {@link #responseToRawObject(HttpResponse)}
+     * 로 파싱 없이 받는다.</p>
+     */
+    public HttpGet httpGetRaw(String url, List<NameValuePair> nameValuePairList, RequestContext context) throws Exception {
+        HttpGet get = new HttpGet(this.baseUrl + url);
+        get.setHeader("Accept", "*/*");
+        get.setHeader("Accept-Charset", "utf-8");
+        get.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        get.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
+        get.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
+
+        // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
+        String roleToUse = (context != null && context.getRole() != null) ? context.getRole() : this.getRole();
+        if(roleToUse == null || roleToUse.isEmpty()) {
+            roleToUse = "user"; // 기본값
+        }
+        get.setHeader("BOOTPAY-ROLE", roleToUse);
+
+        applyAuthHeader(get, context);
+        applyContextHeaders(get, context);
+
+        URIBuilder builder = new URIBuilder(get.getURI());
+        if (nameValuePairList != null && !nameValuePairList.isEmpty()) {
+            builder.addParameters(nameValuePairList);
+        }
+        get.setURI(builder.build());
+        return get;
+    }
+
     public HttpPost httpPost(String url, StringEntity entity) {
         return httpPost(url, entity, (RequestContext) null);
     }
@@ -318,6 +351,55 @@ public class BootpayStoreObject {
         }
 
         // 엔티티 설정
+        post.setEntity(builder.build());
+        return post;
+    }
+
+    public HttpPost httpPostMultipartFile(String url, String fieldName, File file, HashMap<String, String> params) throws Exception {
+        return httpPostMultipartFile(url, fieldName, file, params, null);
+    }
+
+    /**
+     * 파일 한 개를 지정한 필드명으로 올리는 multipart/form-data 요청을 만든다.
+     *
+     * <p>{@link #httpPostMultipart(String, List, HashMap, RequestContext)} 은 필드명이
+     * {@code images[i]} 로 고정돼 있어 단일 필드({@code image} 등)를 요구하는 엔드포인트에는 쓸 수 없다.
+     * 기존 메서드는 그대로 두고 별도 경로로 둔다.</p>
+     *
+     * <p>⚠️ {@code Content-Type} 을 직접 지정하지 않는다 — 지정하면 boundary 가 사라져 본문이 깨진다.</p>
+     */
+    public HttpPost httpPostMultipartFile(String url, String fieldName, File file, HashMap<String, String> params, RequestContext context) throws Exception {
+        HttpPost post = new HttpPost(this.baseUrl + url);
+        post.setHeader("Accept", "application/json");
+        post.setHeader("Accept-Charset", "utf-8");
+        post.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
+        post.setHeader("BOOTPAY-SDK-VERSION", Version.COMMERCE_SDK_VERSION);
+        post.setHeader("BOOTPAY-SDK-TYPE", Version.SDK_TYPE);
+
+        // RequestContext가 있으면 우선 사용, 없으면 기본 값 사용
+        String roleToUse = (context != null && context.getRole() != null) ? context.getRole() : this.getRole();
+        if(roleToUse == null || roleToUse.isEmpty()) {
+            roleToUse = "user"; // 기본값
+        }
+        post.setHeader("BOOTPAY-ROLE", roleToUse);
+
+        applyAuthHeader(post, context);
+        applyContextHeaders(post, context);
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+        if (file != null) {
+            builder.addBinaryBody(fieldName, file, ContentType.APPLICATION_OCTET_STREAM, file.getName());
+        }
+
+        if (params != null) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                if (entry.getValue() == null) continue;
+                builder.addTextBody(entry.getKey(), entry.getValue(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+            }
+        }
+
         post.setEntity(builder.build());
         return post;
     }
@@ -485,6 +567,35 @@ public class BootpayStoreObject {
         String error = (String) result.get("error");
         
         return new BootpayStoreResponse(httpStatus, success, data, error);
+    }
+
+    /**
+     * 응답 본문을 파싱하지 않고 원문 그대로 담아 돌려준다.
+     *
+     * <p>{@link #responseToJsonObject(HttpResponse)} 는 본문을 무조건 JSON 으로 읽으므로, CSV 를 돌려주는
+     * 엔드포인트(알림톡 템플릿 내보내기 {@code format=csv})에서는 파싱 실패가 error 로 흘러
+     * <b>성공한 요청이 통신 실패처럼 보고</b>된다. 그래서 원문 경로를 따로 둔다.</p>
+     *
+     * <p>성공 시 {@code getData()} 는 {@code { body: "<원문 문자열>", content_type: "..." }} 다.</p>
+     */
+    public BootpayStoreResponse responseToRawObject(HttpResponse response) throws Exception {
+        int statusCode = response.getStatusLine().getStatusCode();
+        boolean success = statusCode >= 200 && statusCode < 300;
+
+        HashMap<String, Object> data = new HashMap<>();
+        String error = null;
+        try {
+            String body = response.getEntity() == null
+                    ? ""
+                    : IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+            data.put("body", body == null ? "" : body);
+            org.apache.http.Header contentType = response.getFirstHeader("Content-Type");
+            data.put("content_type", contentType == null ? "" : contentType.getValue());
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+
+        return new BootpayStoreResponse(statusCode, success, data, error);
     }
 
 //    public BootpayStoreResponse responseToJsonArrayObject(HttpResponse response) throws Exception {
