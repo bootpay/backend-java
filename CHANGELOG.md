@@ -1,3 +1,57 @@
+### 3.6.0
+
+#### 알림톡 v1 API 35종 추가 (ruby SDK parity)
+
+카카오 알림톡을 SDK 에서 바로 쓸 수 있도록 `/v1/alimtalk/*` 35개 엔드포인트를 모두 붙였다.
+기존 `BootpayStore` 와 통일 표면 `BootpayCommerce` 양쪽에 같은 이름의 모듈 7개로 노출된다.
+
+| 모듈 | 메서드 |
+| --- | --- |
+| `alimtalkSend` | `send` · `sendBulk` · `cancel` |
+| `alimtalkSender` | `categories` · `otp` · `create` · `list` · `detail` · `release` · `variableExamples` |
+| `alimtalkTemplate` | `list` · `create` · `detail` · `update` · `delete` · `register` · `inspect` · `export` · `image` · `highlightImage` |
+| `alimtalkOfficial` | `list` · `recommend` · `detail` |
+| `alimtalkMessage` | `list` · `stats` · `detail` |
+| `alimtalkOptout` | `list` · `create` · `check` · `release` |
+| `alimtalkWebhook` | `detail` · `update` · `test` · `rotateSecret` · `deliveries` |
+
+⚠️ **발송 계열은 샌드박스가 없다.** `alimtalkSend.send` / `sendBulk` 는 실제로 카카오톡이 나가고 과금되며,
+`alimtalkSender.otp` 는 채널 관리자폰으로 문자를 실제 발송하고, `alimtalkSender.create` 는 카카오에
+발신프로필을 실제 등록한다. `alimtalkTemplate.create` 는 `register` 를 **명시적으로 `false` 로 주지 않으면
+생성 즉시 대행사·카카오에 등록**된다 (되돌리려면 삭제해야 한다).
+
+동작상 놓치기 쉬운 지점은 다음과 같다.
+
+- **`Bootpay-Role` 은 항상 `user`** — 알림톡 스코프 키가 전부 `user:alimtalk_*` 라, 인스턴스를
+  `asSupervisor()` / `asManager()` 로 두어도 알림톡 요청만은 `user` 로 나간다.
+- **`Idempotency-Key` 를 싣지 않는다** — 알림톡 API 는 이 헤더를 읽지 않는다. 멱등은 발송의 `refId` 로만 성립한다.
+  invoice/product 처럼 무조건 붙이면 서버가 주지 않는 보장을 주는 것처럼 보이므로 일부러 뺐다.
+- **`AlimtalkSendParams.fallback` 은 미지정(`null`)과 `false` 가 다르다** — `null` 이면 프로젝트 기본값을 따르고,
+  `false` 는 명시적으로 끈다. 그래서 `Boolean` 이며 `false` 는 그대로 바디에 실린다.
+- **`alimtalkOfficial.list` 의 `keyword` 는 `q` 로 전송한다** — 서버가 `q` 를 먼저 보고 없을 때만 `keyword` 를 보므로
+  정본 키로 보낸다.
+- **`alimtalkTemplate.update` 는 부분 수정이 아니다** — 보내지 않은 필드는 `null` 로 덮어써지므로 항상 전체 필드를 보낸다.
+  `storageImageUrl` 을 빈 문자열로 보내면 이미지 삭제로 처리되어 벤더에도 전달되므로, 빈 값도 그대로 전송한다.
+- **`alimtalkTemplate.export` 의 기본 `format` 은 `json`** — 서버 기본은 `csv` 지만 csv 본문은 JSON 이 아니라서
+  공용 응답 파싱을 통과하지 못한다. 그대로 두면 **성공한 요청이 "통신이 실패하였습니다" 로 보고**된다.
+  `format = "csv"` 를 주면 파싱 없이 `{ body, content_type }` 원문을 담아 돌려준다.
+- **알림톡 웹훅은 주문·구독 웹훅과 완전히 별개다** — `webhook.sendTest` 는 주문 웹훅용이고,
+  `alimtalkWebhook.test` 는 알림톡 전용 URL 로 나간다. 알림톡 이벤트를 기존 주문 웹훅 URL 로 태우면
+  그 수신 서버가 모르는 payload 를 받아 기존 연동이 깨진다.
+
+`AlimtalkTemplateParams.attrs` 는 서버가 새로 받기 시작한 필드를 SDK 수정 없이 실어 보내는 탈출구다
+(ruby SDK 의 `**attrs`). 이름 변환 없이 그대로 전송되며 같은 이름이 정식 필드에도 있으면 `attrs` 값이 이긴다.
+
+#### 전송 계층 보강 (기존 경로는 그대로)
+
+알림톡이 요구하는 두 가지 전송 형태를 기존 메서드를 건드리지 않고 별도 경로로 추가했다.
+
+- `BootpayStoreObject.httpGetRaw` / `responseToRawObject` — JSON 이 아닌 본문(CSV 등)을 파싱하지 않고
+  `{ body, content_type }` 으로 받는다. `Accept` 는 `*/*` 다.
+- `BootpayStoreObject.httpPostMultipartFile` — 파일 한 개를 지정한 필드명으로 올린다.
+  기존 `httpPostMultipart` 는 필드명이 `images[i]` 로 고정돼 있어 단일 `image` 필드를 요구하는
+  알림톡 이미지 업로드에 쓸 수 없었다. 기존 메서드의 동작은 그대로다.
+
 ### 3.5.0
 
 #### `product.list` 의 조회 필터를 서버 실제 계약에 맞춤

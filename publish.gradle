@@ -1,6 +1,6 @@
 ext {
     PUBLISH_GROUP_ID = 'io.github.bootpay'
-    PUBLISH_VERSION = '3.5.0'
+    PUBLISH_VERSION = '3.6.0'
     PUBLISH_ARTIFACT_ID = 'backend'
     PUBLISH_DESCRIPTION = 'Bootpay Backend Library'
     // 26-08-24: 'bootpay/android' 로 잘못 박혀 있었다 — 배포된 POM 의 <url> 이
