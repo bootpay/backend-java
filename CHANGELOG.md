@@ -1,5 +1,14 @@
 ### 3.6.0
 
+#### (별건) 현금영수증 `pg` 선택값 전환 (ruby SDK parity)
+
+`cash.request` / `requestCashReceipt` 의 `pg` 를 필수에서 선택값으로 바꿨다. 지정하지 않으면 바디에서 아예 빠지고,
+서버가 해당 상점에 설정된 기본 PG사로 발행한다. 지금까지는 SDK 가 먼저 `"pg 값을 입력해주세요."` 예외를 던져
+기본 PG사로 발행하는 경로 자체를 쓸 수 없었다.
+
+`pg` 를 넘기던 기존 호출은 그대로 동작하고, `orderName` · `orderId` · `identityNo` · `cashReceiptType` 의
+필수 검증도 그대로다. 결제건 발행(`cash.requestByBootpay`)은 원래부터 `pg` 가 선택값이라 변경 없다.
+
 #### 알림톡 v1 API 35종 추가 (ruby SDK parity)
 
 카카오 알림톡을 SDK 에서 바로 쓸 수 있도록 `/v1/alimtalk/*` 35개 엔드포인트를 모두 붙였다.

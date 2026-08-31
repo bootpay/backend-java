@@ -819,9 +819,11 @@ try {
 
 ## 9-3. (별건) 현금영수증 발행
 부트페이 결제와 상관없이 금액, 상품명, 현금영수증 발행정보 등을 보내 현금영수증을 발행하는 API 입니다
+
+`pg` 는 선택값입니다. 지정하지 않으면 기본 PG사로 발행됩니다.
 ```java 
 CashReceipt cashReceipt = new CashReceipt();
-cashReceipt.pg = "토스";
+cashReceipt.pg = "토스"; // 선택값, 생략시 기본 PG사로 발행
 cashReceipt.price = 1000;
 cashReceipt.orderName = "테스트";
 cashReceipt.cashReceiptType = "소득공제";
