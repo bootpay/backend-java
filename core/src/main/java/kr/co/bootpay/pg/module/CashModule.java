@@ -27,7 +27,7 @@ public class CashModule {
     /**
      * 현금영수증 단독 발행 (결제 건과 무관하게 직접 발행).
      *
-     * @param cashReceipt 발행 요청 정보
+     * @param cashReceipt 발행 요청 정보 (pg 는 선택값이며, 생략하면 기본 PG사로 발행된다)
      * @return 발행 결과
      * @throws Exception 통신 실패 또는 인증 정보 누락
      */

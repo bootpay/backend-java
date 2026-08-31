@@ -37,10 +37,10 @@ public class CashService {
     }
 
     // 현금 영수증 발행하기 (별건)
+    // pg 값을 생략하면 기본 PG사로 발행된다
     static public HashMap<String, Object> requestCashReceipt(BootpayObject bootpay, CashReceipt cashReceipt) throws Exception {
         validateToken(bootpay);
         if (cashReceipt == null) throw new Exception("cashReceipt 모델이 비어있습니다. 데이터를 채워주세요");
-        if (cashReceipt.pg == null || cashReceipt.pg.isEmpty()) throw new Exception("pg 값을 입력해주세요.");
         if (cashReceipt.orderName == null || cashReceipt.orderName.isEmpty()) throw new Exception("orderName 값을 입력해주세요.");
         if (cashReceipt.orderId == null || cashReceipt.orderId.isEmpty()) throw new Exception("orderId 값을 입력해주세요.");
         if (cashReceipt.identityNo == null || cashReceipt.identityNo.isEmpty()) throw new Exception("identityNo 값을 입력해주세요.");

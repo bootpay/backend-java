@@ -22,7 +22,7 @@ public class CashReceipt {
     public String phone;
 
     /* 별건 요청 파라미터 */
-    public String pg;
+    public String pg; // 선택값, 미지정시 기본 PG사로 발행
     public User user;
 
 }
