@@ -1,7 +1,7 @@
 package kr.co.bootpay.store.model.request.alimtalk;
 
 /**
- * 자체 알림톡 템플릿 목록 조회 파라미터 (GET /v1/alimtalk/templates)
+ * 자체 알림톡 템플릿 목록 조회 파라미터 (GET /alimtalk/templates)
  *
  * <p>⚠️ 페이지네이션이 없다 — 필터에 걸린 템플릿을 한 번에 모두 돌려준다.</p>
  */

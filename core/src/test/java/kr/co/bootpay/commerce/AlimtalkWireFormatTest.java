@@ -70,6 +70,8 @@ class AlimtalkWireFormatTest {
 
         store = new BootpayStore(new TokenPayload("test_ck", "test_sk"), "PRODUCTION");
         store.baseUrl = "http://127.0.0.1:" + server.getAddress().getPort() + "/v1/";
+        // 알림톡은 메시지 API 가 받는다 — 경로에 /v1 이 없다
+        store.setMessageApiUrl("http://127.0.0.1:" + server.getAddress().getPort() + "/");
         // 알림톡은 인스턴스 role 과 무관하게 항상 user 로 나가야 한다 — 일부러 다른 값으로 둔다
         store.setRole("supervisor");
     }
@@ -102,7 +104,7 @@ class AlimtalkWireFormatTest {
         lastBody = new String(buffer.toByteArray(), StandardCharsets.UTF_8);
 
         // 템플릿 내보내기 format=csv 는 서버가 CSV 원문을 돌려준다 (JSON 이 아니다)
-        boolean csv = "/v1/alimtalk/templates/export".equals(lastPath)
+        boolean csv = "/alimtalk/templates/export".equals(lastPath)
                 && lastQuery != null && lastQuery.contains("format=csv");
 
         byte[] response = (csv ? "code,name\nTPL_1,주문완료\n" : "{\"ok\":true}").getBytes(StandardCharsets.UTF_8);
@@ -135,6 +137,39 @@ class AlimtalkWireFormatTest {
     }
 
     // ══════════════════════════════════════════════════════════
+    // 호스트 분기 — alimtalk/* 는 메시지 API, 그 외는 기존 /v1
+    // ══════════════════════════════════════════════════════════
+
+    @Test
+    @DisplayName("환경별 알림톡 기본 주소는 메시지 API 호스트다 (dev-m · stage-m · message)")
+    void testMessageBaseUrlByMode() {
+        BootpayStore dev = new BootpayStore(new TokenPayload("ck", "sk"), "DEVELOPMENT");
+        BootpayStore stage = new BootpayStore(new TokenPayload("ck", "sk"), "STAGE");
+        BootpayStore prod = new BootpayStore(new TokenPayload("ck", "sk"), "PRODUCTION");
+
+        assertAll(
+                () -> assertEquals("https://dev-m.bootapi.com/", dev.messageBaseUrl),
+                () -> assertEquals("https://stage-m.bootapi.com/", stage.messageBaseUrl),
+                () -> assertEquals("https://message.bootapi.com/", prod.messageBaseUrl),
+                () -> assertEquals("https://message.bootapi.com/alimtalk/messages", prod.resolveUrl("alimtalk/messages")),
+                () -> assertEquals("https://message.bootapi.com/alimtalk/senders", prod.resolveUrl("/alimtalk/senders")),
+                () -> assertEquals("https://api.bootapi.com/v1/users", prod.resolveUrl("users")),
+                () -> assertEquals("https://dev-m.bootapi.com/alimtalk/send", dev.httpPost("alimtalk/send", null).getURI().toString()),
+                () -> assertEquals("https://dev-api.bootapi.com/v1/orders", dev.httpPost("orders", null).getURI().toString())
+        );
+    }
+
+    @Test
+    @DisplayName("알림톡 요청은 /v1 없이 메시지 API 로, 그 외 요청은 기존 /v1 로 나간다")
+    void testAlimtalkRoutedToMessageHost() throws Exception {
+        store.alimtalkSender.list();
+        assertEquals("/alimtalk/senders", lastPath);
+
+        store.execute(store.httpGet("users"));
+        assertEquals("/v1/users", lastPath);
+    }
+
+    // ══════════════════════════════════════════════════════════
     // 발송 — /alimtalk/send
     // ══════════════════════════════════════════════════════════
 
@@ -157,7 +192,7 @@ class AlimtalkWireFormatTest {
 
         assertAll(
                 () -> assertEquals("POST", lastMethod),
-                () -> assertEquals("/v1/alimtalk/send", lastPath),
+                () -> assertEquals("/alimtalk/send", lastPath),
                 () -> assertNull(lastQuery),
                 () -> assertTrue(lastBody.contains("\"template_code\":\"TPL_1\""), lastBody),
                 () -> assertTrue(lastBody.contains("\"to\":\"01012345678\""), lastBody),
@@ -204,7 +239,7 @@ class AlimtalkWireFormatTest {
 
         assertAll(
                 () -> assertEquals("POST", lastMethod),
-                () -> assertEquals("/v1/alimtalk/send/bulk", lastPath),
+                () -> assertEquals("/alimtalk/send/bulk", lastPath),
                 () -> assertTrue(lastBody.contains("\"recipients\":["), lastBody),
                 () -> assertTrue(lastBody.contains("\"to\":\"01012345678\""), lastBody),
                 () -> assertTrue(lastBody.contains("\"ref_id\":\"bulk-0001\""), lastBody),
@@ -219,7 +254,7 @@ class AlimtalkWireFormatTest {
         store.alimtalkSend.cancel("RCP_1");
 
         assertEquals("DELETE", lastMethod);
-        assertEquals("/v1/alimtalk/send/RCP_1", lastPath);
+        assertEquals("/alimtalk/send/RCP_1", lastPath);
         assertEquals("user", lastRole);
     }
 
@@ -233,7 +268,7 @@ class AlimtalkWireFormatTest {
         store.alimtalkSender.categories();
 
         assertEquals("GET", lastMethod);
-        assertEquals("/v1/alimtalk/categories", lastPath);
+        assertEquals("/alimtalk/categories", lastPath);
         assertNull(lastQuery);
     }
 
@@ -243,7 +278,7 @@ class AlimtalkWireFormatTest {
         store.alimtalkSender.otp("@bootpay", "01012345678");
 
         assertEquals("POST", lastMethod);
-        assertEquals("/v1/alimtalk/senders/otp", lastPath);
+        assertEquals("/alimtalk/senders/otp", lastPath);
         assertTrue(lastBody.contains("\"yellow_id\":\"@bootpay\""), lastBody);
         assertTrue(lastBody.contains("\"phone\":\"01012345678\""), lastBody);
     }
@@ -260,7 +295,7 @@ class AlimtalkWireFormatTest {
 
         assertAll(
                 () -> assertEquals("POST", lastMethod),
-                () -> assertEquals("/v1/alimtalk/senders", lastPath),
+                () -> assertEquals("/alimtalk/senders", lastPath),
                 () -> assertTrue(lastBody.contains("\"otp\":\"123456\""), lastBody),
                 () -> assertTrue(lastBody.contains("\"yellow_id\":\"@bootpay\""), lastBody),
                 () -> assertTrue(lastBody.contains("\"category_code\":\"001001\""), lastBody)
@@ -272,7 +307,7 @@ class AlimtalkWireFormatTest {
     void testSenderDetail() throws Exception {
         store.alimtalkSender.detail("KSP_1");
         assertEquals("GET", lastMethod);
-        assertEquals("/v1/alimtalk/senders/KSP_1", lastPath);
+        assertEquals("/alimtalk/senders/KSP_1", lastPath);
         assertNull(lastQuery, "sync 미지정이면 query 를 붙이지 않는다");
 
         store.alimtalkSender.detail("KSP_1", true);
@@ -285,7 +320,7 @@ class AlimtalkWireFormatTest {
         store.alimtalkSender.release("KSP_1");
 
         assertEquals("DELETE", lastMethod);
-        assertEquals("/v1/alimtalk/senders/KSP_1", lastPath);
+        assertEquals("/alimtalk/senders/KSP_1", lastPath);
     }
 
     @Test
@@ -296,7 +331,7 @@ class AlimtalkWireFormatTest {
         store.alimtalkSender.variableExamples("KSP_1", examples);
 
         assertEquals("PUT", lastMethod);
-        assertEquals("/v1/alimtalk/senders/KSP_1/variable_examples", lastPath);
+        assertEquals("/alimtalk/senders/KSP_1/variable_examples", lastPath);
         assertEquals("{\"examples\":{\"user_name\":\"홍길동\"}}", lastBody);
     }
 
@@ -314,7 +349,7 @@ class AlimtalkWireFormatTest {
         store.alimtalkTemplate.list(params);
 
         assertEquals("GET", lastMethod);
-        assertEquals("/v1/alimtalk/templates", lastPath);
+        assertEquals("/alimtalk/templates", lastPath);
         assertTrue(lastQuery.contains("ins=3"), lastQuery);
         assertTrue(lastQuery.contains("sort=latest"), lastQuery);
     }
@@ -342,7 +377,7 @@ class AlimtalkWireFormatTest {
 
         assertAll(
                 () -> assertEquals("POST", lastMethod),
-                () -> assertEquals("/v1/alimtalk/templates", lastPath),
+                () -> assertEquals("/alimtalk/templates", lastPath),
                 () -> assertTrue(lastBody.contains("\"ksp_id\":\"KSP_1\""), lastBody),
                 () -> assertTrue(lastBody.contains("\"register\":false"), "register=false 는 그대로 전송: " + lastBody),
                 () -> assertTrue(lastBody.contains("\"msg_type\":\"BA\""), lastBody),
@@ -391,7 +426,7 @@ class AlimtalkWireFormatTest {
 
         assertAll(
                 () -> assertEquals("PUT", lastMethod),
-                () -> assertEquals("/v1/alimtalk/templates/TPL_DOC_1", lastPath),
+                () -> assertEquals("/alimtalk/templates/TPL_DOC_1", lastPath),
                 () -> assertTrue(lastBody.contains("\"storage_image_url\":\"\""), "빈 값은 이미지 삭제 신호다: " + lastBody),
                 () -> assertFalse(lastBody.contains("ksp_id"), lastBody),
                 () -> assertFalse(lastBody.contains("register"), lastBody)
@@ -402,7 +437,7 @@ class AlimtalkWireFormatTest {
     @DisplayName("template.detail - GET alimtalk/templates/{id}, sync 는 지정시에만 query 전송")
     void testTemplateDetail() throws Exception {
         store.alimtalkTemplate.detail("TPL_DOC_1");
-        assertEquals("/v1/alimtalk/templates/TPL_DOC_1", lastPath);
+        assertEquals("/alimtalk/templates/TPL_DOC_1", lastPath);
         assertNull(lastQuery);
 
         store.alimtalkTemplate.detail("TPL_DOC_1", false);
@@ -414,16 +449,16 @@ class AlimtalkWireFormatTest {
     void testTemplateLifecycle() throws Exception {
         store.alimtalkTemplate.delete("TPL_DOC_1");
         assertEquals("DELETE", lastMethod);
-        assertEquals("/v1/alimtalk/templates/TPL_DOC_1", lastPath);
+        assertEquals("/alimtalk/templates/TPL_DOC_1", lastPath);
 
         store.alimtalkTemplate.register("TPL_DOC_1");
         assertEquals("POST", lastMethod);
-        assertEquals("/v1/alimtalk/templates/TPL_DOC_1/register", lastPath);
+        assertEquals("/alimtalk/templates/TPL_DOC_1/register", lastPath);
         assertEquals("{}", lastBody);
 
         store.alimtalkTemplate.inspect("TPL_DOC_1");
         assertEquals("POST", lastMethod);
-        assertEquals("/v1/alimtalk/templates/TPL_DOC_1/inspect", lastPath);
+        assertEquals("/alimtalk/templates/TPL_DOC_1/inspect", lastPath);
         assertEquals("{}", lastBody);
     }
 
@@ -433,7 +468,7 @@ class AlimtalkWireFormatTest {
         BootpayStoreResponse res = store.alimtalkTemplate.export();
 
         assertEquals("GET", lastMethod);
-        assertEquals("/v1/alimtalk/templates/export", lastPath);
+        assertEquals("/alimtalk/templates/export", lastPath);
         assertEquals("format=json", lastQuery);
         assertTrue(res.isSuccess());
         assertEquals(Boolean.TRUE, res.getData().get("ok"));
@@ -450,7 +485,7 @@ class AlimtalkWireFormatTest {
 
         assertAll(
                 () -> assertEquals("GET", lastMethod),
-                () -> assertEquals("/v1/alimtalk/templates/export", lastPath),
+                () -> assertEquals("/alimtalk/templates/export", lastPath),
                 () -> assertTrue(lastQuery.contains("format=csv"), lastQuery),
                 () -> assertTrue(lastQuery.contains("scope=private"), lastQuery),
                 () -> assertTrue(lastQuery.contains("include_content=true"), lastQuery),
@@ -475,7 +510,7 @@ class AlimtalkWireFormatTest {
 
         assertAll(
                 () -> assertEquals("POST", lastMethod),
-                () -> assertEquals("/v1/alimtalk/templates/image", lastPath),
+                () -> assertEquals("/alimtalk/templates/image", lastPath),
                 () -> assertTrue(lastContentType.startsWith("multipart/form-data"), lastContentType),
                 () -> assertTrue(lastContentType.contains("boundary="), "boundary 가 사라지면 본문이 깨진다: " + lastContentType),
                 () -> assertTrue(lastBody.contains("name=\"image\""), lastBody),
@@ -497,7 +532,7 @@ class AlimtalkWireFormatTest {
         store.alimtalkTemplate.highlightImage(image);
 
         assertEquals("POST", lastMethod);
-        assertEquals("/v1/alimtalk/templates/highlight_image", lastPath);
+        assertEquals("/alimtalk/templates/highlight_image", lastPath);
         assertTrue(lastBody.contains("name=\"image\""), lastBody);
         assertFalse(lastBody.contains("name=\"replace_url\""), "replace_url 미지정시 붙이지 않는다: " + lastBody);
     }
@@ -518,7 +553,7 @@ class AlimtalkWireFormatTest {
 
         assertAll(
                 () -> assertEquals("GET", lastMethod),
-                () -> assertEquals("/v1/alimtalk/official", lastPath),
+                () -> assertEquals("/alimtalk/official", lastPath),
                 () -> assertTrue(lastQuery.contains("q=order"), lastQuery),
                 () -> assertFalse(lastQuery.contains("keyword="), "정본 키는 q 다: " + lastQuery),
                 () -> assertTrue(lastQuery.contains("msg_type=BA"), lastQuery),
@@ -536,7 +571,7 @@ class AlimtalkWireFormatTest {
         store.alimtalkOfficial.recommend(params);
 
         assertEquals("POST", lastMethod);
-        assertEquals("/v1/alimtalk/official/recommend", lastPath);
+        assertEquals("/alimtalk/official/recommend", lastPath);
         assertTrue(lastBody.contains("\"text\":\"주문이 완료되었습니다\""), lastBody);
         assertTrue(lastBody.contains("\"limit\":3"), lastBody);
     }
@@ -545,7 +580,7 @@ class AlimtalkWireFormatTest {
     @DisplayName("official.detail - GET alimtalk/official/{code}, ksp_id 는 지정시에만 전송")
     void testOfficialDetail() throws Exception {
         store.alimtalkOfficial.detail("OFFICIAL_1");
-        assertEquals("/v1/alimtalk/official/OFFICIAL_1", lastPath);
+        assertEquals("/alimtalk/official/OFFICIAL_1", lastPath);
         assertNull(lastQuery);
 
         store.alimtalkOfficial.detail("OFFICIAL_1", "KSP_1");
@@ -572,7 +607,7 @@ class AlimtalkWireFormatTest {
 
         assertAll(
                 () -> assertEquals("GET", lastMethod),
-                () -> assertEquals("/v1/alimtalk/messages", lastPath),
+                () -> assertEquals("/alimtalk/messages", lastPath),
                 () -> assertTrue(lastQuery.contains("template_code=TPL_1"), lastQuery),
                 () -> assertTrue(lastQuery.contains("status=success"), lastQuery),
                 () -> assertTrue(lastQuery.contains("ref_id=order-0001"), lastQuery),
@@ -590,7 +625,7 @@ class AlimtalkWireFormatTest {
         store.alimtalkMessage.stats("2026-08-01", "2026-08-27");
 
         assertEquals("GET", lastMethod);
-        assertEquals("/v1/alimtalk/messages/stats", lastPath);
+        assertEquals("/alimtalk/messages/stats", lastPath);
         assertTrue(lastQuery.contains("s_at=2026-08-01"), lastQuery);
         assertTrue(lastQuery.contains("e_at=2026-08-27"), lastQuery);
     }
@@ -601,7 +636,7 @@ class AlimtalkWireFormatTest {
         store.alimtalkMessage.detail("RCP_1");
 
         assertEquals("GET", lastMethod);
-        assertEquals("/v1/alimtalk/messages/RCP_1", lastPath);
+        assertEquals("/alimtalk/messages/RCP_1", lastPath);
         assertNull(lastQuery);
     }
 
@@ -618,7 +653,7 @@ class AlimtalkWireFormatTest {
         store.alimtalkOptout.list(params);
 
         assertEquals("GET", lastMethod);
-        assertEquals("/v1/alimtalk/optouts", lastPath);
+        assertEquals("/alimtalk/optouts", lastPath);
         assertTrue(lastQuery.contains("phone=0101234"), lastQuery);
         assertTrue(lastQuery.contains("page=2"), lastQuery);
     }
@@ -629,7 +664,7 @@ class AlimtalkWireFormatTest {
         store.alimtalkOptout.create("01012345678", "고객 요청");
 
         assertEquals("POST", lastMethod);
-        assertEquals("/v1/alimtalk/optouts", lastPath);
+        assertEquals("/alimtalk/optouts", lastPath);
         assertTrue(lastBody.contains("\"phone\":\"01012345678\""), lastBody);
         assertTrue(lastBody.contains("\"reason\":\"고객 요청\""), lastBody);
     }
@@ -639,7 +674,7 @@ class AlimtalkWireFormatTest {
     void testOptoutCheck() throws Exception {
         store.alimtalkOptout.check("01012345678");
         assertEquals("POST", lastMethod);
-        assertEquals("/v1/alimtalk/optouts/check", lastPath);
+        assertEquals("/alimtalk/optouts/check", lastPath);
         assertEquals("{\"phone\":\"01012345678\"}", lastBody);
 
         store.alimtalkOptout.check(Arrays.asList("01012345678", "01011112222"));
@@ -652,7 +687,7 @@ class AlimtalkWireFormatTest {
         store.alimtalkOptout.release("01012345678");
 
         assertEquals("DELETE", lastMethod);
-        assertEquals("/v1/alimtalk/optouts/01012345678", lastPath);
+        assertEquals("/alimtalk/optouts/01012345678", lastPath);
     }
 
     // ══════════════════════════════════════════════════════════
@@ -664,7 +699,7 @@ class AlimtalkWireFormatTest {
     void testAlimtalkWebhookIsSeparateFromOrderWebhook() throws Exception {
         store.alimtalkWebhook.test();
         assertEquals("POST", lastMethod);
-        assertEquals("/v1/alimtalk/webhook/test", lastPath);
+        assertEquals("/alimtalk/webhook/test", lastPath);
         assertEquals("{}", lastBody);
 
         store.webhook.sendTest();
@@ -676,11 +711,11 @@ class AlimtalkWireFormatTest {
     void testAlimtalkWebhookDetailAndRotate() throws Exception {
         store.alimtalkWebhook.detail();
         assertEquals("GET", lastMethod);
-        assertEquals("/v1/alimtalk/webhook", lastPath);
+        assertEquals("/alimtalk/webhook", lastPath);
 
         store.alimtalkWebhook.rotateSecret();
         assertEquals("POST", lastMethod);
-        assertEquals("/v1/alimtalk/webhook/secret", lastPath);
+        assertEquals("/alimtalk/webhook/secret", lastPath);
         assertEquals("{}", lastBody);
     }
 
@@ -695,7 +730,7 @@ class AlimtalkWireFormatTest {
 
         assertAll(
                 () -> assertEquals("PUT", lastMethod),
-                () -> assertEquals("/v1/alimtalk/webhook", lastPath),
+                () -> assertEquals("/alimtalk/webhook", lastPath),
                 () -> assertTrue(lastBody.contains("\"url\":\"https://example.com/hooks/alimtalk\""), lastBody),
                 () -> assertTrue(lastBody.contains("\"events\":[301,302,310]"), lastBody),
                 () -> assertTrue(lastBody.contains("\"enabled\":true"), lastBody)
@@ -721,7 +756,7 @@ class AlimtalkWireFormatTest {
         store.alimtalkWebhook.deliveries(params);
 
         assertEquals("GET", lastMethod);
-        assertEquals("/v1/alimtalk/webhook/deliveries", lastPath);
+        assertEquals("/alimtalk/webhook/deliveries", lastPath);
         assertTrue(lastQuery.contains("page=3"), lastQuery);
         assertTrue(lastQuery.contains("limit=50"), lastQuery);
     }
@@ -747,7 +782,7 @@ class AlimtalkWireFormatTest {
         variables.put("user_name", "홍길동");
         store.alimtalkSend.send("TPL_1", "01012345678", variables);
 
-        assertEquals("/v1/alimtalk/send", lastPath);
+        assertEquals("/alimtalk/send", lastPath);
         assertTrue(lastBody.contains("\"user_name\":\"홍길동\""), lastBody);
     }
 }

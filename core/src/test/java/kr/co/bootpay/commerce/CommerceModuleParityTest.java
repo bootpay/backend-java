@@ -54,9 +54,12 @@ class CommerceModuleParityTest {
         server.start();
 
         String baseUrl = "http://127.0.0.1:" + server.getAddress().getPort() + "/v1/";
+        // 알림톡(alimtalk/*)은 메시지 API 호스트로 나간다 — 경로에 /v1 이 없다
+        String messageBaseUrl = "http://127.0.0.1:" + server.getAddress().getPort() + "/";
 
         legacy = new BootpayStore(new TokenPayload("test_ck", "test_sk"), "PRODUCTION");
         legacy.baseUrl = baseUrl;
+        legacy.messageBaseUrl = messageBaseUrl;
         legacy.setTokenFromAPI("test_token");
 
         modern = BootpayCommerce.builder()
@@ -65,6 +68,7 @@ class CommerceModuleParityTest {
                 .mode(BootpayMode.PRODUCTION)
                 .build();
         modern.unwrap().baseUrl = baseUrl;
+        modern.unwrap().messageBaseUrl = messageBaseUrl;
         modern.unwrap().setTokenFromAPI("test_token");
     }
 

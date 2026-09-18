@@ -1,7 +1,7 @@
 package kr.co.bootpay.store.model.request.alimtalk;
 
 /**
- * 자체 알림톡 템플릿 생성 파라미터 (POST /v1/alimtalk/templates)
+ * 자체 알림톡 템플릿 생성 파라미터 (POST /alimtalk/templates)
  *
  * <p>⚠️ {@code register} 를 명시적으로 {@code false} 로 주지 않으면 <b>생성 즉시 대행사·카카오에 실제 등록</b>된다
  * (되돌리려면 삭제해야 한다). {@code register = false} 로 초안만 만들고 내용을 확인한 뒤

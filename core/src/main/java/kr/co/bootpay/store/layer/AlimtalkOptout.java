@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * 알림톡 수신거부 모듈 (가맹점 CRM 수신거부 동기화용)
- * /v1/alimtalk/optouts 계열
+ * /alimtalk/optouts 계열
  *
  * <p>발송 판정과 <b>같은 기준</b>으로 다룬다 — 부트페이 전역(global) + 내 프로젝트.
  * ⚠️ 전역 건은 <b>조회는 되지만 해제할 수 없다</b>({@code releasable: false}).</p>

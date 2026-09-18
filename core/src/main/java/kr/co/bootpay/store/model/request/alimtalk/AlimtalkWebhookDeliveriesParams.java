@@ -1,7 +1,7 @@
 package kr.co.bootpay.store.model.request.alimtalk;
 
 /**
- * 알림톡 웹훅 전송 이력 조회 파라미터 (GET /v1/alimtalk/webhook/deliveries)
+ * 알림톡 웹훅 전송 이력 조회 파라미터 (GET /alimtalk/webhook/deliveries)
  */
 public class AlimtalkWebhookDeliveriesParams {
     public Integer page;

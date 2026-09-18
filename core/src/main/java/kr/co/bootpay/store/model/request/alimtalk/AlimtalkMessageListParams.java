@@ -1,7 +1,7 @@
 package kr.co.bootpay.store.model.request.alimtalk;
 
 /**
- * 알림톡 발송내역 목록 조회 파라미터 (GET /v1/alimtalk/messages)
+ * 알림톡 발송내역 목록 조회 파라미터 (GET /alimtalk/messages)
  *
  * <p><b>유료</b> 알림톡만 조회된다 (무료 커머스 알림톡은 포함되지 않는다).
  * 상태는 벤더 결과 동기화로 확정되므로 접수 직후에는 {@code requested} 로 보인다.</p>

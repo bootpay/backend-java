@@ -1,7 +1,7 @@
 package kr.co.bootpay.store.model.request.alimtalk;
 
 /**
- * 부트페이 공식 알림톡 템플릿 검색 파라미터 (GET /v1/alimtalk/official)
+ * 부트페이 공식 알림톡 템플릿 검색 파라미터 (GET /alimtalk/official)
  *
  * <p>{@code keyword} 는 본문·이름·분류를 부분일치(대소문자 무시)로 훑는다.
  * 서버는 {@code q} 를 먼저 보고 없으면 {@code keyword} 를 보므로, SDK 는 정본 키인 {@code q} 로 보낸다.</p>

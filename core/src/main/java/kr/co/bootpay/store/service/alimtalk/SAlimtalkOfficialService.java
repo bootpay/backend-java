@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 부트페이 공식 알림톡 템플릿 카탈로그 — /v1/alimtalk/official 계열
+ * 부트페이 공식 알림톡 템플릿 카탈로그 — /alimtalk/official 계열
  *
  * <p>부트페이가 미리 카카오 승인을 받아 둔 템플릿이라, 그룹키가 등록된 채널이면 <b>검수 없이 즉시 발송</b>된다.
  * {@code alimtalkSender.create} 로 채널을 등록하면 그룹 등록이 함께 끝나므로 따로 채택할 것이 없다.</p>
@@ -28,7 +28,7 @@ public class SAlimtalkOfficialService {
 
     /**
      * 공식 템플릿 검색
-     * GET /v1/alimtalk/official
+     * GET /alimtalk/official
      *
      * <p>{@code keyword} 는 본문·이름·분류를 부분일치(대소문자 무시)로 훑으며, 서버가 먼저 보는 정본 키인
      * {@code q} 로 전송된다.</p>
@@ -56,7 +56,7 @@ public class SAlimtalkOfficialService {
 
     /**
      * 보내려는 문구로 공식 템플릿 추천
-     * POST /v1/alimtalk/official/recommend
+     * POST /alimtalk/official/recommend
      *
      * <p>유사도 {@code score}(0~1) 내림차순으로 돌려준다.</p>
      */
@@ -80,7 +80,7 @@ public class SAlimtalkOfficialService {
 
     /**
      * 공식 템플릿 상세 조회
-     * GET /v1/alimtalk/official/{code}
+     * GET /alimtalk/official/{code}
      *
      * <p>{@code code} 는 서버 채번 코드(슬래시를 포함하지 않는다). 없거나 미노출이면 404(3015).</p>
      */

@@ -7,7 +7,7 @@ import kr.co.bootpay.store.service.alimtalk.SAlimtalkMessageService;
 
 /**
  * 알림톡 발송내역·집계 모듈
- * GET /v1/alimtalk/messages 계열
+ * GET /alimtalk/messages 계열
  *
  * <p><b>유료</b> 알림톡만 조회된다 (무료 커머스 알림톡은 포함되지 않는다).</p>
  */

@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * 알림톡 발신프로필(카카오채널) 모듈
- * GET /v1/alimtalk/categories · /senders 계열
+ * GET /alimtalk/categories · /senders 계열
  *
  * <p>카테고리 조회 → OTP 발송 → 발신프로필 등록 → 목록/상세 → 연동 해지 순으로 쓴다.</p>
  * <p>⚠️ {@link #otp} 는 채널 관리자 휴대폰으로 <b>문자를 실제 발송</b>하고,
