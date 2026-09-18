@@ -3,7 +3,7 @@ package kr.co.bootpay.store.model.request.alimtalk;
 import java.util.Map;
 
 /**
- * 알림톡 단건 발송 파라미터 (POST /v1/alimtalk/send)
+ * 알림톡 단건 발송 파라미터 (POST /alimtalk/send)
  *
  * <p>⚠️ <b>실제로 카카오톡이 발송되고 과금된다. 샌드박스가 없다.</b></p>
  */

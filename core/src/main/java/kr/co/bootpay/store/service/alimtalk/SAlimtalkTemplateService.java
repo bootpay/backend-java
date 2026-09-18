@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 가맹점 자체 알림톡 템플릿 CRUD·등록·검수 — /v1/alimtalk/templates 계열
+ * 가맹점 자체 알림톡 템플릿 CRUD·등록·검수 — /alimtalk/templates 계열
  *
  * <p>흐름: (초안 생성 → 확인 → 대행사 등록) → 검수 요청 → 승인(APR) → 발송 가능.
  * {@code create(register = false)} 로 초안만 만들고, 내용을 확인한 뒤 {@link #register} 로 올리는 것을 권장한다.</p>
@@ -38,7 +38,7 @@ public class SAlimtalkTemplateService {
 
     /**
      * 자체 템플릿 목록 조회
-     * GET /v1/alimtalk/templates
+     * GET /alimtalk/templates
      *
      * <p>⚠️ 페이지네이션이 없다 — 필터에 걸린 템플릿을 한 번에 모두 돌려준다.</p>
      */
@@ -59,7 +59,7 @@ public class SAlimtalkTemplateService {
 
     /**
      * 자체 템플릿 생성
-     * POST /v1/alimtalk/templates
+     * POST /alimtalk/templates
      *
      * <p>⚠️ {@code register} 를 false 로 주지 않으면 대행사·카카오에 <b>실제 등록</b>된다 (되돌리려면 삭제해야 한다).</p>
      *
@@ -88,7 +88,7 @@ public class SAlimtalkTemplateService {
 
     /**
      * 자체 템플릿 상세 조회
-     * GET /v1/alimtalk/templates/{template_id}
+     * GET /alimtalk/templates/{template_id}
      *
      * <p>{@code templateId} 는 문서 id 이고, ObjectId 형식이 아니면 <b>템플릿 코드</b>로 해석한다.</p>
      * <p>⚠️ {@code sync} 는 서버 기본값이 <b>true</b> 라 조회만 해도 벤더 상태 동기화가 일어난다.
@@ -108,7 +108,7 @@ public class SAlimtalkTemplateService {
 
     /**
      * 자체 템플릿 수정
-     * PUT /v1/alimtalk/templates/{template_id}
+     * PUT /alimtalk/templates/{template_id}
      *
      * <p>⚠️ <b>부분 수정이 아니다.</b> 보내지 않은 필드는 null 로 덮어써지므로 항상 전체 필드를 보낸다.</p>
      * <p>⚠️ 등록된 템플릿을 수정하면 벤더에도 수정 요청이 나간다. 수정 가능 상태는
@@ -131,7 +131,7 @@ public class SAlimtalkTemplateService {
 
     /**
      * 자체 템플릿 삭제
-     * DELETE /v1/alimtalk/templates/{template_id}
+     * DELETE /alimtalk/templates/{template_id}
      *
      * <p>초안(등록 전)은 대행사 거부와 무관하게 로컬에서 삭제된다.</p>
      * <p>⚠️ 등록분은 <b>대행사 삭제가 성공해야</b> 삭제된다 — 승인(APR) 템플릿은 카카오가 거부하므로
@@ -148,7 +148,7 @@ public class SAlimtalkTemplateService {
 
     /**
      * 초안을 대행사에 등록
-     * POST /v1/alimtalk/templates/{template_id}/register
+     * POST /alimtalk/templates/{template_id}/register
      *
      * <p>⚠️ 대행사·카카오에 실제 등록된다. 등록 전(초안) 상태에서만 호출할 수 있다.</p>
      */
@@ -164,7 +164,7 @@ public class SAlimtalkTemplateService {
 
     /**
      * 검수 요청
-     * POST /v1/alimtalk/templates/{template_id}/inspect
+     * POST /alimtalk/templates/{template_id}/inspect
      *
      * <p>⚠️ <b>카카오에 검수를 요청하며 취소할 수 없다.</b></p>
      * <p>대행사 등록이 끝난 대기(R) + REG(등록) 상태에서만 호출할 수 있다 — 초안은 먼저 {@link #register} 를 부른다.
@@ -182,7 +182,7 @@ public class SAlimtalkTemplateService {
 
     /**
      * 템플릿 목록 내보내기
-     * GET /v1/alimtalk/templates/export
+     * GET /alimtalk/templates/export
      *
      * <p>⚠️ SDK 기본 {@code format} 을 <b>json 으로 둔다</b> — 서버 기본은 csv 지만, csv 본문은 JSON 이 아니라서
      * 공용 응답 파싱을 통과하지 못한다. {@code csv} 를 주면 파싱 없이 원문 문자열
@@ -216,7 +216,7 @@ public class SAlimtalkTemplateService {
 
     /**
      * 이미지형 템플릿의 원본 이미지 업로드
-     * POST /v1/alimtalk/templates/image
+     * POST /alimtalk/templates/image
      *
      * <p>돌려받은 {@code image_url} 을 템플릿 생성/수정의 {@code storageImageUrl} 로 넘긴다.</p>
      * <p>규격을 업로드 <b>전에</b> 서버가 검사한다 — jpg/png · 500KB 이하 · 가로 500px 이상 · 2:1.</p>
@@ -228,7 +228,7 @@ public class SAlimtalkTemplateService {
 
     /**
      * 아이템리스트형의 하이라이트 썸네일 업로드
-     * POST /v1/alimtalk/templates/highlight_image
+     * POST /alimtalk/templates/highlight_image
      *
      * <p>⚠️ 본문 이미지와 <b>규격이 다르다</b> — jpg/png · 500KB 이하 · 가로 <b>108px</b> 이상 · <b>1:1</b>.
      * 본문 이미지 엔드포인트로 올리면 거부된다.</p>

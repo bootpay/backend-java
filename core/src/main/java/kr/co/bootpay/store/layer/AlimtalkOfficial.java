@@ -8,7 +8,7 @@ import kr.co.bootpay.store.service.alimtalk.SAlimtalkOfficialService;
 
 /**
  * 부트페이 공식 알림톡 템플릿 카탈로그 모듈
- * /v1/alimtalk/official 계열
+ * /alimtalk/official 계열
  *
  * <p>부트페이가 미리 카카오 승인을 받아 둔 템플릿이라, 그룹키가 등록된 채널이면 <b>검수 없이 즉시 발송</b>된다.
  * {@code alimtalkSender.create} 로 채널을 등록하면 그룹 등록이 함께 끝나므로 따로 채택할 것이 없다.</p>

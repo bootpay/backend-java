@@ -8,7 +8,7 @@ import kr.co.bootpay.store.service.alimtalk.SAlimtalkWebhookService;
 
 /**
  * 알림톡 발송결과·검수결과 웹훅 설정 모듈
- * /v1/alimtalk/webhook 계열
+ * /alimtalk/webhook 계열
  *
  * <p>⚠️ <b>주문·구독 통합 웹훅({@code webhook.sendTest})과 완전히 별개다.</b>
  * 알림톡 이벤트를 기존 주문 웹훅 URL 로 태우면 그 수신 서버가 모르는 payload 를 받아 기존 연동이 깨진다.</p>

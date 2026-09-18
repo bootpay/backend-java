@@ -14,7 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 알림톡 발송 — POST /v1/alimtalk/send · /send/bulk · DELETE /send/{receipt_id}
+ * 알림톡 발송 — POST /alimtalk/send · /send/bulk · DELETE /send/{receipt_id}
  *
  * <p>⚠️ <b>실제로 카카오톡이 발송되고 과금된다. 샌드박스가 없다.</b></p>
  *
@@ -34,7 +34,7 @@ public class SAlimtalkSendService {
 
     /**
      * 단건 발송
-     * POST /v1/alimtalk/send
+     * POST /alimtalk/send
      *
      * <p>응답: {@code { receipt_id, ref_id, to, status }} — 접수 직후 {@code status} 는 {@code requested}</p>
      */
@@ -65,7 +65,7 @@ public class SAlimtalkSendService {
 
     /**
      * 벌크 발송 — 1요청 = N수신자
-     * POST /v1/alimtalk/send/bulk
+     * POST /alimtalk/send/bulk
      *
      * <p>응답: {@code { count, requested, skipped, rejected, receipts: [...] }}</p>
      */
@@ -93,7 +93,7 @@ public class SAlimtalkSendService {
 
     /**
      * 예약 발송 취소
-     * DELETE /v1/alimtalk/send/{receipt_id}
+     * DELETE /alimtalk/send/{receipt_id}
      *
      * <p>접수(READY) 상태의 예약 건만 취소할 수 있다 — 이미 전송에 들어갔으면 3023 이다.</p>
      */

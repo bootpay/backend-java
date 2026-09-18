@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 알림톡 수신거부 — /v1/alimtalk/optouts 계열 (가맹점 CRM 수신거부 동기화용)
+ * 알림톡 수신거부 — /alimtalk/optouts 계열 (가맹점 CRM 수신거부 동기화용)
  *
  * <p>발송 판정과 <b>같은 기준</b>으로 다룬다 — 부트페이 전역(global) + 내 프로젝트.</p>
  * <p>⚠️ 전역 건은 <b>조회는 되지만 해제할 수 없다</b>({@code releasable: false}).
@@ -27,7 +27,7 @@ public class SAlimtalkOptoutService {
 
     /**
      * 수신거부 목록 조회
-     * GET /v1/alimtalk/optouts
+     * GET /alimtalk/optouts
      *
      * <p>{@code phone} 은 숫자만 남겨 <b>부분일치</b>로 찾는다 (정확 매칭이 아니다). 50건 단위로 페이징된다.</p>
      * <p>응답: {@code { list: [{ id, phone, scope, global, releasable, source, reason, opted_out_at, created_at }], count, page }}</p>
@@ -48,7 +48,7 @@ public class SAlimtalkOptoutService {
 
     /**
      * 수신거부 등록
-     * POST /v1/alimtalk/optouts
+     * POST /alimtalk/optouts
      *
      * <p>내 프로젝트 스코프로 등록된다({@code source: api}). 같은 번호를 다시 등록해도 멱등이다.</p>
      */
@@ -70,7 +70,7 @@ public class SAlimtalkOptoutService {
 
     /**
      * 발송 전 수신거부 사전 확인
-     * POST /v1/alimtalk/optouts/check
+     * POST /alimtalk/optouts/check
      *
      * <p>발송 판정과 <b>같은 축</b>으로 대조하므로, 벌크에서 {@code skipped} 로 낭비될 건을 미리 뺄 수 있다.
      * 단건({@code phone})·다건({@code phones}) 모두 받는다.</p>
@@ -94,7 +94,7 @@ public class SAlimtalkOptoutService {
 
     /**
      * 수신거부 해제
-     * DELETE /v1/alimtalk/optouts/{phone}
+     * DELETE /alimtalk/optouts/{phone}
      *
      * <p>내 프로젝트 스코프 건만 해제되며 멱등이다 (없어도 성공).</p>
      * <p>⚠️ 전역 차단은 해제되지 않고 {@code global_blocked: true} 로 알려 준다 —

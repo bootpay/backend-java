@@ -5,7 +5,7 @@ import kr.co.bootpay.store.model.pojo.SAlimtalkRecipient;
 import java.util.List;
 
 /**
- * 알림톡 벌크 발송 파라미터 (POST /v1/alimtalk/send/bulk) — 1요청 = N수신자
+ * 알림톡 벌크 발송 파라미터 (POST /alimtalk/send/bulk) — 1요청 = N수신자
  *
  * <p>⚠️ 수신자 수만큼 실제 발송되고 과금된다.</p>
  * <ul>

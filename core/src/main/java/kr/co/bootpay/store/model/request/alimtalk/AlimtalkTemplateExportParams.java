@@ -1,7 +1,7 @@
 package kr.co.bootpay.store.model.request.alimtalk;
 
 /**
- * 알림톡 템플릿 내보내기 파라미터 (GET /v1/alimtalk/templates/export)
+ * 알림톡 템플릿 내보내기 파라미터 (GET /alimtalk/templates/export)
  *
  * <p>⚠️ SDK 기본 {@code format} 은 <b>json</b> 이다 — 서버 기본은 csv 지만 csv 본문은 JSON 이 아니라서
  * 공용 파싱 경로를 통과하지 못한다. {@code csv} 를 주면 파싱 없이 원문 문자열

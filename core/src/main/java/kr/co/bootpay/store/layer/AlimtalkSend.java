@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * 알림톡 발송 모듈
- * POST /v1/alimtalk/send · /send/bulk · DELETE /send/{receipt_id}
+ * POST /alimtalk/send · /send/bulk · DELETE /send/{receipt_id}
  *
  * <p>⚠️ <b>실제로 카카오톡이 발송되고 과금된다. 샌드박스가 없다.</b></p>
  */

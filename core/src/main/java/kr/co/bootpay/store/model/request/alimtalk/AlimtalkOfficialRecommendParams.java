@@ -1,7 +1,7 @@
 package kr.co.bootpay.store.model.request.alimtalk;
 
 /**
- * 공식 템플릿 추천 파라미터 (POST /v1/alimtalk/official/recommend)
+ * 공식 템플릿 추천 파라미터 (POST /alimtalk/official/recommend)
  *
  * <p>보내려는 문구와 유사한 공식 템플릿을 {@code score}(0~1) 내림차순으로 돌려준다.</p>
  */

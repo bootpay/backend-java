@@ -50,6 +50,8 @@ public class TestConfig {
     // 미설정(빈 값)이면 기존 동작 그대로 BOOTPAY_ENV 기준 실서버를 사용한다.
     private static final String PG_BASE_URL_OVERRIDE = env("BOOTPAY_PG_BASE_URL", "");
     private static final String COMMERCE_BASE_URL_OVERRIDE = env("BOOTPAY_COMMERCE_BASE_URL", "");
+    // 알림톡(alimtalk/*)은 메시지 API 가 받는다 — 경로에 /v1 이 없다
+    private static final String COMMERCE_MESSAGE_BASE_URL_OVERRIDE = env("BOOTPAY_COMMERCE_MESSAGE_BASE_URL", "");
 
     // PG 인증 방식: "new" (client_key/secret_key) 또는 "legacy" (application_id/private_key).
     // 매 실행 시 BOOTPAY_AUTH_MODE 환경변수로 토글한다.
@@ -158,6 +160,10 @@ public class TestConfig {
         if (!COMMERCE_BASE_URL_OVERRIDE.isEmpty()) {
             System.out.println("[BOOTPAY_COMMERCE_BASE_URL] override → " + COMMERCE_BASE_URL_OVERRIDE);
             store.baseUrl = COMMERCE_BASE_URL_OVERRIDE;
+        }
+        if (!COMMERCE_MESSAGE_BASE_URL_OVERRIDE.isEmpty()) {
+            System.out.println("[BOOTPAY_COMMERCE_MESSAGE_BASE_URL] override → " + COMMERCE_MESSAGE_BASE_URL_OVERRIDE);
+            store.setMessageApiUrl(COMMERCE_MESSAGE_BASE_URL_OVERRIDE);
         }
         return store;
     }

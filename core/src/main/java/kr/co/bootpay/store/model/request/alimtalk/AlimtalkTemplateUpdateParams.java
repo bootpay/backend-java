@@ -1,7 +1,7 @@
 package kr.co.bootpay.store.model.request.alimtalk;
 
 /**
- * 자체 알림톡 템플릿 수정 파라미터 (PUT /v1/alimtalk/templates/{template_id})
+ * 자체 알림톡 템플릿 수정 파라미터 (PUT /alimtalk/templates/{template_id})
  *
  * <p>⚠️ <b>부분 수정이 아니다.</b> 보내지 않은 필드는 null 로 덮어써지므로 항상 전체 필드를 보낸다.</p>
  * <p>⚠️ 등록된 템플릿을 수정하면 벤더에도 수정 요청이 나간다. 수정 가능 상태는

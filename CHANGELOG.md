@@ -1,5 +1,19 @@
 ### 3.6.0
 
+#### 알림톡 API 를 메시지 호스트로 전환 (ruby SDK parity)
+
+`alimtalk/*` 경로는 이제 커머스 API(`api.bootapi.com/v1`)가 아니라 메시지 API 가 받는다 (경로에 `/v1` 없음).
+경로·파라미터·응답은 그대로이고 호스트만 다르다. 옛 주소(`/v1/alimtalk/*`)는 410 으로 응답한다.
+
+| 환경 | 알림톡 기본 주소 |
+|---|---|
+| development | `https://dev-m.bootapi.com/` |
+| stage | `https://stage-m.bootapi.com/` |
+| production | `https://message.bootapi.com/` |
+
+`BootpayStoreObject.resolveUrl` 이 경로로 호스트를 가르므로 알림톡 모듈의 호출 방식은 바뀌지 않는다.
+주소를 바꿔야 하면 `setMessageApiUrl(url)` (또는 `messageBaseUrl` 필드)을 쓴다. 그 외 API 는 기존 `baseUrl` 그대로다.
+
 #### (별건) 현금영수증 `pg` 선택값 전환 (ruby SDK parity)
 
 `cash.request` / `requestCashReceipt` 의 `pg` 를 필수에서 선택값으로 바꿨다. 지정하지 않으면 바디에서 아예 빠지고,

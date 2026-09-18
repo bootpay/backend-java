@@ -42,23 +42,61 @@ public class BootpayStoreObject {
     public final String STAGE = "https://stage-api.bootapi.com/v1/";
     public final String PRODUCTION = "https://api.bootapi.com/v1/";
 
+    /**
+     * 알림톡 API 전용 기본 주소 — 메시지 API 가 직접 받는다 (경로에 /v1 없음).
+     *
+     * <p>26-09-18 부터 {@code alimtalk/*} 경로는 커머스 API(api.bootapi.com/v1)가 아니라
+     * 메시지 API(message.bootapi.com)가 받는다. 경로·파라미터·응답은 그대로이고 호스트만 다르다 —
+     * 그래서 알림톡 서비스는 고치지 않고 {@link #resolveUrl(String)} 에서 주소만 가른다.
+     * 옛 주소(/v1/alimtalk/*)는 410 으로 응답한다.</p>
+     */
+    public String messageBaseUrl;
+
+    public final String MESSAGE_DEVELOPMENT = "https://dev-m.bootapi.com/";
+    public final String MESSAGE_STAGE = "https://stage-m.bootapi.com/";
+    public final String MESSAGE_PRODUCTION = "https://message.bootapi.com/";
+
     public BootpayStoreObject() {}
     public BootpayStoreObject(TokenPayload tokenPayload) {
         this.tokenPayload = tokenPayload;
         this.baseUrl = PRODUCTION;
+        this.messageBaseUrl = MESSAGE_PRODUCTION;
     }
 
     public BootpayStoreObject(TokenPayload tokenPayload, String devMode) {
         this.tokenPayload = tokenPayload;
         if("DEVELOPMENT".equalsIgnoreCase(devMode)) {
             this.baseUrl = DEVELOPMENT;
+            this.messageBaseUrl = MESSAGE_DEVELOPMENT;
         } else if("TEST".equalsIgnoreCase(devMode)) {
             this.baseUrl = TEST;
+            this.messageBaseUrl = MESSAGE_DEVELOPMENT; // 메시지 API 는 test 호스트가 없다 — development 를 쓴다
         } else if("STAGE".equalsIgnoreCase(devMode)) {
             this.baseUrl = STAGE;
+            this.messageBaseUrl = MESSAGE_STAGE;
         } else if("PRODUCTION".equalsIgnoreCase(devMode)) {
             this.baseUrl = PRODUCTION;
+            this.messageBaseUrl = MESSAGE_PRODUCTION;
         }
+    }
+
+    /** 알림톡(메시지 API) URL 을 변경한다. */
+    public void setMessageApiUrl(String url) {
+        this.messageBaseUrl = url;
+    }
+
+    /**
+     * 요청 경로에 맞는 전체 URL — {@code alimtalk/*} 는 메시지 API, 그 외는 기존 {@link #baseUrl}.
+     *
+     * <p>{@link #messageBaseUrl} 이 비어 있으면(빈 생성자 등) {@link #baseUrl} 을 그대로 쓴다.</p>
+     */
+    public String resolveUrl(String url) {
+        String path = url == null ? "" : url;
+        String normalized = path.startsWith("/") ? path.substring(1) : path;
+        if (normalized.startsWith("alimtalk") && messageBaseUrl != null && !messageBaseUrl.isEmpty()) {
+            return messageBaseUrl + normalized;
+        }
+        return this.baseUrl + path;
     }
 
     public void setToken(String token) {
@@ -161,7 +199,7 @@ public class BootpayStoreObject {
     }
 
     public HttpGet httpGet(String url, RequestContext context) throws Exception {
-        HttpGet get = new HttpGet(this.baseUrl + url);
+        HttpGet get = new HttpGet(resolveUrl(url));
         URI uri = new URIBuilder(get.getURI()).build();
         get.setHeader("Accept", "application/json");
         get.setHeader("Content-Type", "application/json");
@@ -189,7 +227,7 @@ public class BootpayStoreObject {
     }
 
     public HttpGet httpGet(String url, List<NameValuePair> nameValuePairList, RequestContext context) throws Exception {
-        HttpGet get = new HttpGet(this.baseUrl +url);
+        HttpGet get = new HttpGet(resolveUrl(url));
         get.setHeader("Accept", "application/json");
         get.setHeader("Content-Type", "application/json");
         get.setHeader("Accept-Charset", "utf-8");
@@ -220,7 +258,7 @@ public class BootpayStoreObject {
      * 로 파싱 없이 받는다.</p>
      */
     public HttpGet httpGetRaw(String url, List<NameValuePair> nameValuePairList, RequestContext context) throws Exception {
-        HttpGet get = new HttpGet(this.baseUrl + url);
+        HttpGet get = new HttpGet(resolveUrl(url));
         get.setHeader("Accept", "*/*");
         get.setHeader("Accept-Charset", "utf-8");
         get.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
@@ -250,7 +288,7 @@ public class BootpayStoreObject {
     }
 
     public HttpPost httpPost(String url, StringEntity entity, RequestContext context) {
-        HttpPost post = new HttpPost(this.baseUrl + url);
+        HttpPost post = new HttpPost(resolveUrl(url));
 
         post.setHeader("Accept", "application/json");
         post.setHeader("Content-Type", "application/json");
@@ -278,7 +316,7 @@ public class BootpayStoreObject {
     }
 
     public HttpPost httpPost(String url, StringEntity entity, Map<String, String> header, RequestContext context) {
-        HttpPost post = new HttpPost(this.baseUrl + url);
+        HttpPost post = new HttpPost(resolveUrl(url));
 
         post.setHeader("Accept", "application/json");
         post.setHeader("Content-Type", "application/json");
@@ -313,7 +351,7 @@ public class BootpayStoreObject {
     }
 
     public HttpPost httpPostMultipart(String url, List<File> files, HashMap<String, String> params, RequestContext context) throws Exception {
-        HttpPost post = new HttpPost(this.baseUrl + url);
+        HttpPost post = new HttpPost(resolveUrl(url));
         post.setHeader("Accept", "application/json");
         post.setHeader("Accept-Charset", "utf-8");
         post.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
@@ -369,7 +407,7 @@ public class BootpayStoreObject {
      * <p>⚠️ {@code Content-Type} 을 직접 지정하지 않는다 — 지정하면 boundary 가 사라져 본문이 깨진다.</p>
      */
     public HttpPost httpPostMultipartFile(String url, String fieldName, File file, HashMap<String, String> params, RequestContext context) throws Exception {
-        HttpPost post = new HttpPost(this.baseUrl + url);
+        HttpPost post = new HttpPost(resolveUrl(url));
         post.setHeader("Accept", "application/json");
         post.setHeader("Accept-Charset", "utf-8");
         post.setHeader("BOOTPAY-API-VERSION", Version.COMMERCE_API_VERSION);
@@ -437,7 +475,7 @@ public class BootpayStoreObject {
     }
 
     public HttpDelete httpDelete(String url, RequestContext context) {
-        HttpDelete delete = new HttpDelete(this.baseUrl + url);
+        HttpDelete delete = new HttpDelete(resolveUrl(url));
         delete.setHeader("Accept", "application/json");
         delete.setHeader("Content-Type", "application/json");
         delete.setHeader("Accept-Charset", "utf-8");
@@ -463,7 +501,7 @@ public class BootpayStoreObject {
     }
 
     public HttpDeleteWithBody httpDeleteWithBody(String url, StringEntity entity, RequestContext context) {
-        HttpDeleteWithBody delete = new HttpDeleteWithBody(this.baseUrl + url);
+        HttpDeleteWithBody delete = new HttpDeleteWithBody(resolveUrl(url));
         delete.setHeader("Accept", "application/json");
         delete.setHeader("Content-Type", "application/json");
         delete.setHeader("Accept-Charset", "utf-8");
@@ -490,7 +528,7 @@ public class BootpayStoreObject {
     }
 
     public HttpPut httpPut(String url, StringEntity entity, RequestContext context) {
-        HttpPut put = new HttpPut(this.baseUrl + url);
+        HttpPut put = new HttpPut(resolveUrl(url));
         put.setHeader("Accept", "application/json");
         put.setHeader("Content-Type", "application/json");
         put.setHeader("Accept-Charset", "utf-8");

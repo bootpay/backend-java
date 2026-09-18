@@ -12,7 +12,7 @@ import java.io.File;
 
 /**
  * 가맹점 자체 알림톡 템플릿 모듈
- * /v1/alimtalk/templates 계열
+ * /alimtalk/templates 계열
  *
  * <p>흐름: (초안 생성 → 확인 → 대행사 등록) → 검수 요청 → 승인(APR) → 발송 가능.</p>
  * <p>⚠️ {@code register} 를 명시적으로 false 로 주지 않으면 <b>생성 즉시 대행사·카카오에 실제 등록</b>된다.</p>

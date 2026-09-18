@@ -3,7 +3,7 @@ package kr.co.bootpay.store.model.request.alimtalk;
 import java.util.List;
 
 /**
- * 알림톡 웹훅 설정 저장 파라미터 (PUT /v1/alimtalk/webhook)
+ * 알림톡 웹훅 설정 저장 파라미터 (PUT /alimtalk/webhook)
  *
  * <p>⚠️ <b>주문·구독 통합 웹훅과 완전히 별개다.</b> 알림톡 이벤트를 기존 주문 웹훅 URL 로 태우면 그 수신 서버가
  * 모르는 payload 를 받아 기존 연동이 깨진다. 그래서 수신 URL 을 따로 둔다
