@@ -13,6 +13,8 @@ import java.util.List;
  *   <li>개별 수신자의 실패는 건별 {@code rejected} 로 표시되고 나머지는 정상 발송된다.</li>
  *   <li>수신거부 번호는 {@code skipped} 이며 <b>과금되지 않고 발송 기록도 만들지 않는다</b>.</li>
  *   <li>{@code fallback} 은 요청 단위로 한 번만 판정한다 — 발신번호가 없으면 요청 전체가 3030 으로 거부된다.</li>
+ *   <li>{@code webhookUrl} 도 요청 단위 하나다 — 이 요청으로 나간 모든 수신자 건의 결과 웹훅이 그 주소로 간다.
+ *       형식이 틀리면(https 아님·2,000자 초과) 요청 전체가 3028 로 거부된다.</li>
  * </ul>
  */
 public class AlimtalkSendBulkParams {
@@ -24,4 +26,13 @@ public class AlimtalkSendBulkParams {
     public String reservedAt;
     public String senderKey;
     public String userId;
+    /**
+     * 이 요청으로 나간 모든 수신자 건의 결과 웹훅을 받을 주소 — 요청 단위 하나다.
+     *
+     * <p>형식이 틀리면(https 아님·2,000자 초과) 요청 전체가 3028 로 거부된다.
+     * 자세한 동작은 {@link AlimtalkSendParams#webhookUrl} 참고.</p>
+     *
+     * @since 3.6.0
+     */
+    public String webhookUrl;
 }

@@ -102,6 +102,8 @@ public class Alimtalk {
             params.variables = variables;
             params.refId = "order-20260827-0001"; // 멱등 키
             params.fallback = false;              // 미지정(null)이면 프로젝트 기본값을 따른다
+            // 이 건의 결과 웹훅을 받을 주소 — 주면 프로젝트 웹훅 설정 대신 이 주소로만 간다 (https 만, 2,000자 이하)
+            params.webhookUrl = "https://example.com/hooks/alimtalk";
 
             BootpayStoreResponse res = bootpayStore.alimtalkSend.send(params);
             if(res.isSuccess()) {
@@ -125,6 +127,8 @@ public class Alimtalk {
             AlimtalkSendBulkParams params = new AlimtalkSendBulkParams();
             params.templateCode = "TEMPLATE_CODE";
             params.recipients = recipients;
+            // 요청 단위 하나 — 이 요청으로 나간 모든 수신자 건의 결과 웹훅이 이 주소로 간다
+            params.webhookUrl = "https://example.com/hooks/alimtalk";
 
             BootpayStoreResponse res = bootpayStore.alimtalkSend.sendBulk(params);
             if(res.isSuccess()) {

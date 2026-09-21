@@ -245,9 +245,18 @@ params.to = "01000000000";
 params.variables = variables;
 params.refId = "order-20260827-0001"; // 멱등 키 — 같은 값으로 재요청하면 기존 접수를 그대로 돌려줍니다
 params.fallback = false;              // 미지정(null)이면 프로젝트 기본값, false 는 명시적으로 끕니다
+params.webhookUrl = "https://example.com/hooks/alimtalk"; // 이 건의 결과 웹훅을 받을 주소
 
 BootpayResponse res = commerce.alimtalkSend.send(params);
 ```
+
+`webhookUrl` 을 주면 그 요청의 결과 웹훅(발송 성공·실패·문자 대체발송·예약취소)이 **그 주소로만** 가고
+프로젝트 웹훅 설정은 쓰이지 않습니다. `https` 만 허용하며 2,000자를 넘으면 3028 로 거부됩니다. 서명은
+프로젝트 시크릿으로 하므로 시크릿만 필요하면 `alimtalkWebhook.rotateSecret()` 으로 설정 없이 발급받을 수 있습니다.
+`sendBulk` 에서는 요청 단위 하나라 그 요청으로 나간 모든 수신자 건의 웹훅이 같은 주소로 가고, 형식이 틀리면
+요청 전체가 3028 로 거부됩니다.
+
+> ⚠️ 같은 `refId` 로 이미 접수·성공한 건을 다시 요청하면 기존 접수가 그대로 돌아오므로 새 `webhookUrl` 은 무시됩니다.
 
 `Bootpay-Role` 은 인스턴스 설정과 무관하게 항상 `user` 로 나가고, 알림톡 요청에는 `Idempotency-Key` 를 붙이지
 않습니다 (서버가 읽지 않으며, 멱등은 `refId` 로만 성립합니다).

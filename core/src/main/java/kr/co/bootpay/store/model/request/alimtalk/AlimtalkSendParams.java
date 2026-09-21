@@ -32,4 +32,16 @@ public class AlimtalkSendParams {
     /** 채널 지정 (공개키). 미지정시 프로젝트 연동 채널로 해석하며, 연동 채널이 둘 이상일 때만 필수다 */
     public String senderKey;
     public String userId;
+    /**
+     * 이 건의 결과 웹훅을 받을 주소.
+     *
+     * <p>주면 발송 성공·실패·문자 대체발송·예약취소 웹훅이 <b>이 주소로만</b> 간다(프로젝트 웹훅 설정은 쓰이지 않는다).
+     * https 만 허용하며 2,000자를 넘으면 3028 로 거부된다. 서명은 프로젝트 시크릿으로 하고,
+     * 시크릿만 필요하면 {@code alimtalkWebhook.rotateSecret()} 으로 설정 없이 발급받을 수 있다.</p>
+     *
+     * <p>⚠️ 같은 {@code refId} 로 이미 접수·성공한 건을 다시 요청하면 기존 접수가 그대로 돌아와 새 주소는 무시된다.</p>
+     *
+     * @since 3.6.0
+     */
+    public String webhookUrl;
 }
