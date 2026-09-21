@@ -174,7 +174,7 @@ class AlimtalkWireFormatTest {
     // ══════════════════════════════════════════════════════════
 
     @Test
-    @DisplayName("send - POST alimtalk/send, variables/ref_id/reserved_at/sender_key/user_id 전송")
+    @DisplayName("send - POST alimtalk/send, variables/ref_id/reserved_at/sender_key/user_id/webhook_url 전송")
     void testSend() throws Exception {
         Map<String, Object> variables = new LinkedHashMap<>();
         variables.put("company_name", "부트페이몰");
@@ -188,6 +188,7 @@ class AlimtalkWireFormatTest {
         params.reservedAt = "2026-08-28T10:00:00+09:00";
         params.senderKey = "SENDER_KEY";
         params.userId = "USER_1";
+        params.webhookUrl = "https://example.com/hooks/alimtalk";
         store.alimtalkSend.send(params);
 
         assertAll(
@@ -201,6 +202,7 @@ class AlimtalkWireFormatTest {
                 () -> assertTrue(lastBody.contains("\"reserved_at\":\"2026-08-28T10:00:00+09:00\""), lastBody),
                 () -> assertTrue(lastBody.contains("\"sender_key\":\"SENDER_KEY\""), lastBody),
                 () -> assertTrue(lastBody.contains("\"user_id\":\"USER_1\""), lastBody),
+                () -> assertTrue(lastBody.contains("\"webhook_url\":\"https://example.com/hooks/alimtalk\""), lastBody),
                 () -> assertEquals("user", lastRole)
         );
     }
@@ -223,6 +225,17 @@ class AlimtalkWireFormatTest {
     }
 
     @Test
+    @DisplayName("send - webhook_url 은 미지정이면 바디에서 빠진다 (프로젝트 웹훅 설정을 따른다)")
+    void testSendWebhookUrlOmittedWhenUnspecified() throws Exception {
+        AlimtalkSendParams params = new AlimtalkSendParams();
+        params.templateCode = "TPL_1";
+        params.to = "01012345678";
+        store.alimtalkSend.send(params);
+
+        assertFalse(lastBody.contains("webhook_url"), "미지정이면 전송하지 않는다: " + lastBody);
+    }
+
+    @Test
     @DisplayName("sendBulk - POST alimtalk/send/bulk, recipients 는 to/ref_id/variables 로 직렬화")
     void testSendBulk() throws Exception {
         Map<String, Object> variables = new LinkedHashMap<>();
@@ -235,6 +248,7 @@ class AlimtalkWireFormatTest {
         params.templateCode = "TPL_1";
         params.recipients = recipients;
         params.fallback = true;
+        params.webhookUrl = "https://example.com/hooks/alimtalk";
         store.alimtalkSend.sendBulk(params);
 
         assertAll(
@@ -244,7 +258,9 @@ class AlimtalkWireFormatTest {
                 () -> assertTrue(lastBody.contains("\"to\":\"01012345678\""), lastBody),
                 () -> assertTrue(lastBody.contains("\"ref_id\":\"bulk-0001\""), lastBody),
                 () -> assertTrue(lastBody.contains("\"user_name\":\"홍길동\""), lastBody),
-                () -> assertTrue(lastBody.contains("\"fallback\":true"), lastBody)
+                () -> assertTrue(lastBody.contains("\"fallback\":true"), lastBody),
+                // 요청 단위 하나 — 이 요청으로 나간 모든 수신자 건의 결과 웹훅이 그 주소로 간다
+                () -> assertTrue(lastBody.contains("\"webhook_url\":\"https://example.com/hooks/alimtalk\""), lastBody)
         );
     }
 

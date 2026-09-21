@@ -28,6 +28,9 @@ import java.util.Map;
  *       발송 페이로드에 자리가 없어 카카오가 등록된 템플릿 문구 그대로 렌더한다.</li>
  *   <li><b>채널</b>: {@code sender_key}(공개키)로 지정한다. 생략하면 프로젝트 연동 채널로 해석하며,
  *       연동 채널이 둘 이상일 때만 필수다 ({@code ksp_id} 는 내부 문서 id 라 발송 API 에 쓰지 않는다).</li>
+ *   <li><b>웹훅 주소</b>: {@code webhook_url} 을 주면 그 요청의 결과 웹훅이 <b>그 주소로만</b> 간다
+ *       (프로젝트 웹훅 설정은 쓰이지 않는다). https 만 허용하며 2,000자를 넘으면 3028 로 거부된다.
+ *       ⚠️ 같은 {@code ref_id} 로 이미 접수·성공한 건은 기존 접수가 그대로 돌아와 새 주소가 무시된다.</li>
  * </ul>
  */
 public class SAlimtalkSendService {
@@ -56,6 +59,7 @@ public class SAlimtalkSendService {
         SAlimtalkSupport.put(body, "reserved_at", params.reservedAt);
         SAlimtalkSupport.put(body, "sender_key", params.senderKey);
         SAlimtalkSupport.put(body, "user_id", params.userId);
+        SAlimtalkSupport.put(body, "webhook_url", params.webhookUrl);
 
         HttpPost post = bootpay.httpPost("alimtalk/send",
                 new StringEntity(gson.toJson(body), "UTF-8"), SAlimtalkSupport.context());
@@ -84,6 +88,7 @@ public class SAlimtalkSendService {
         SAlimtalkSupport.put(body, "reserved_at", params.reservedAt);
         SAlimtalkSupport.put(body, "sender_key", params.senderKey);
         SAlimtalkSupport.put(body, "user_id", params.userId);
+        SAlimtalkSupport.put(body, "webhook_url", params.webhookUrl);
 
         HttpPost post = bootpay.httpPost("alimtalk/send/bulk",
                 new StringEntity(gson.toJson(body), "UTF-8"), SAlimtalkSupport.context());
