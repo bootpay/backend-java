@@ -17,9 +17,9 @@ public class CashService {
     // 현금 영수증 발행하기 (부트페이 결제건)
     static public HashMap<String, Object> requestCashReceiptByBootpay(BootpayObject bootpay, CashReceipt cashReceipt) throws Exception {
         validateToken(bootpay);
+        // username·phone·cancel_username·cancel_message 는 선택값이다 (API 스펙·nodejs parity) — 필수 검사하지 않는다
+        if (cashReceipt == null) throw new Exception("cashReceipt 모델이 비어있습니다. 데이터를 채워주세요");
         if (cashReceipt.receiptId == null || cashReceipt.receiptId.isEmpty()) throw new Exception("receiptId 값을 입력해주세요.");
-        if (cashReceipt.username == null || cashReceipt.username.isEmpty()) throw new Exception("username 값을 입력해주세요.");
-        if (cashReceipt.phone == null || cashReceipt.phone.isEmpty()) throw new Exception("phone 값을 입력해주세요.");
         if (cashReceipt.identityNo == null || cashReceipt.identityNo.isEmpty()) throw new Exception("identityNo 값을 입력해주세요.");
         if (cashReceipt.cashReceiptType == null || cashReceipt.cashReceiptType.isEmpty()) throw new Exception("cashReceiptType 값을 입력해주세요.");
 
@@ -30,8 +30,6 @@ public class CashService {
     static public HashMap<String, Object> requestCashReceiptCancelByBootpay(BootpayObject bootpay, Cancel cancel) throws Exception {
         validateToken(bootpay);
         if (cancel == null || cancel.receiptId == null || cancel.receiptId.isEmpty()) throw new Exception("receiptId 값이 비어있습니다.");
-        if (cancel.cancelUsername == null || cancel.cancelUsername.isEmpty()) throw new Exception("cancelUsername 값이 비어있습니다.");
-        if (cancel.cancelMessage == null || cancel.cancelMessage.isEmpty()) throw new Exception("cancelMessage 값이 비어있습니다.");
 
         return bootpay.doDeleteWithBody("request/receipt/cash/cancel/" + cancel.receiptId, cancel);
     }
@@ -53,8 +51,6 @@ public class CashService {
     static public HashMap<String, Object> requestCashReceiptCancel(BootpayObject bootpay, Cancel cancel) throws Exception {
         validateToken(bootpay);
         if (cancel == null || cancel.receiptId == null || cancel.receiptId.isEmpty()) throw new Exception("receiptId 값이 비어있습니다.");
-        if (cancel.cancelUsername == null || cancel.cancelUsername.isEmpty()) throw new Exception("cancelUsername 값이 비어있습니다.");
-        if (cancel.cancelMessage == null || cancel.cancelMessage.isEmpty()) throw new Exception("cancelMessage 값이 비어있습니다.");
 
         return bootpay.doDeleteWithBody("request/cash/receipt/" + cancel.receiptId, cancel);
     }
