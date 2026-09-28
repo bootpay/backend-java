@@ -280,4 +280,34 @@ class UnifiedSurfaceTest {
             assertNotNull(commerce.unwrap());
         }
     }
+
+    @Nested
+    @DisplayName("배열 응답")
+    class ArrayResponse {
+        @Test
+        @DisplayName("Commerce 배열 응답 - getData 는 비고 getDataList 로 목록을 꺼낸다")
+        void commerceArrayResponse() {
+            java.util.List<Object> list = java.util.Arrays.<Object>asList("a", "b");
+            BootpayResponse res = kr.co.bootpay.store.module.CommerceResponses.of(
+                    new kr.co.bootpay.store.model.response.BootpayStoreResponse(200, true, list, null));
+
+            assertTrue(res.isSuccess());
+            assertTrue(res.isDataList());
+            assertEquals(list, res.getDataList());
+            assertTrue(res.getData().isEmpty());
+        }
+
+        @Test
+        @DisplayName("객체 응답 - getDataList 는 null")
+        void objectResponse() {
+            HashMap<String, Object> body = new HashMap<>();
+            body.put("id", "1");
+            BootpayResponse res = kr.co.bootpay.store.module.CommerceResponses.of(
+                    new kr.co.bootpay.store.model.response.BootpayStoreResponse(200, true, body, null));
+
+            assertFalse(res.isDataList());
+            assertNull(res.getDataList());
+            assertEquals("1", res.getString("id"));
+        }
+    }
 }

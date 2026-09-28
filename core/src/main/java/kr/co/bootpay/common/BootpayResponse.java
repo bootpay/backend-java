@@ -3,6 +3,7 @@ package kr.co.bootpay.common;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -130,6 +131,26 @@ public class BootpayResponse {
      */
     public Map<String, Object> getData() {
         return data;
+    }
+
+    /**
+     * 최상위가 배열인 응답의 목록을 반환합니다 (예: Commerce 카테고리 목록, 알림톡 발신프로필 카테고리).
+     *
+     * <p>{@link #getData()} 는 맵이라 배열 응답이면 비어 있습니다. 이때 목록은 이 메서드로 꺼냅니다.</p>
+     *
+     * @return 배열 응답이면 그 목록, 아니면 null
+     */
+    @SuppressWarnings("unchecked")
+    public List<Object> getDataList() {
+        Object value = raw.get("data");
+        return value instanceof List ? (List<Object>) value : null;
+    }
+
+    /**
+     * @return 응답 본문이 배열이면 true
+     */
+    public boolean isDataList() {
+        return raw.get("data") instanceof List;
     }
 
     /**

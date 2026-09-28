@@ -137,6 +137,30 @@ class PgWireFormatTest {
         assertThrows(Exception.class, () -> bootpay.requestCashReceipt(noCashReceiptType));
     }
 
+    @Test
+    @DisplayName("현금영수증 - 선택값(username·phone·cancel_username·cancel_message) 없이도 요청이 나간다")
+    void testCashReceiptOptionalFieldsNotRequired() throws Exception {
+        CashReceipt onReceipt = new CashReceipt();
+        onReceipt.receiptId = "receipt_1";
+        onReceipt.identityNo = "01012345678";
+        onReceipt.cashReceiptType = "소득공제";
+        bootpay.requestCashReceiptByBootpay(onReceipt);
+        assertEquals("POST", lastMethod);
+        assertEquals("/v2/request/receipt/cash/publish", lastPath);
+
+        kr.co.bootpay.pg.model.request.Cancel cancel = new kr.co.bootpay.pg.model.request.Cancel();
+        cancel.receiptId = "receipt_1";
+        bootpay.requestCashReceiptCancelByBootpay(cancel);
+        assertEquals("DELETE", lastMethod);
+        assertEquals("/v2/request/receipt/cash/cancel/receipt_1", lastPath);
+
+        bootpay.requestCashReceiptCancel(cancel);
+        assertEquals("DELETE", lastMethod);
+        assertEquals("/v2/request/cash/receipt/receipt_1", lastPath);
+
+        assertThrows(Exception.class, () -> bootpay.requestCashReceiptByBootpay(null));
+    }
+
     private static CashReceipt cashReceiptWithoutPg() {
         CashReceipt cashReceipt = new CashReceipt();
         cashReceipt.orderName = "테스트 별건 현금영수증";

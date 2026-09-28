@@ -1,4 +1,6 @@
-### 3.6.0
+### Unreleased
+
+> 메시지 API(message.bootapi.com) 실서버 배포에 맞춰 릴리스한다.
 
 #### 알림톡 발송에 `webhookUrl` 추가 (ruby SDK parity)
 
@@ -24,6 +26,19 @@
 
 `BootpayStoreObject.resolveUrl` 이 경로로 호스트를 가르므로 알림톡 모듈의 호출 방식은 바뀌지 않는다.
 주소를 바꿔야 하면 `setMessageApiUrl(url)` (또는 `messageBaseUrl` 필드)을 쓴다. 그 외 API 는 기존 `baseUrl` 그대로다.
+
+#### 현금영수증 선택값을 필수로 막던 검사 제거
+
+`cash.requestByBootpay`(결제건 발행)가 `username` · `phone` 이 비면, `cash.cancel` · `cash.cancelByBootpay` 가
+`cancelUsername` · `cancelMessage` 가 비면 요청 전에 예외를 던졌다. 네 값 모두 API 스펙상 선택값이고 NodeJS 는
+검사하지 않는다 (앞의 둘은 3.0.4 `667f912` 에서 들어온 회귀). 필수 검사를 걷어냈다 — 값을 넘기던 호출은 그대로 동작한다.
+
+#### `BootpayResponse.getDataList()` 추가 — 배열 응답
+
+통일 응답 `BootpayResponse` 의 `getData()` 는 맵이라, 최상위가 배열인 응답(카테고리 목록, `alimtalkSender.categories()` 등)에서
+비어 있었다. `getDataList()` · `isDataList()` 로 목록을 꺼낸다. 기존 `getData()` 의 동작은 바뀌지 않는다.
+
+### 3.6.0
 
 #### (별건) 현금영수증 `pg` 선택값 전환 (ruby SDK parity)
 
