@@ -12,8 +12,10 @@ import kr.co.bootpay.store.model.pojo.SUser;
 import kr.co.bootpay.store.model.request.ListParams;
 import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.request.alimtalk.AlimtalkSendParams;
+import kr.co.bootpay.store.model.request.inquiry.InquiryCreateParams;
 import kr.co.bootpay.store.model.request.order.OrderListParams;
 import kr.co.bootpay.store.model.request.product.ProductListParams;
+import kr.co.bootpay.store.model.request.productQna.ProductQnaCreateParams;
 import kr.co.bootpay.store.model.request.user.UserListParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.commons.io.IOUtils;
@@ -233,6 +235,51 @@ class CommerceModuleParityTest {
     }
 
     @Test
+    @DisplayName("게시판 계열 — faq / notice / inquiry / productQna / productReview")
+    void boardModulesMatchLegacy() throws Exception {
+        assertSameRequest("faq.list", () -> legacy.faq.list(), () -> modern.faq.list());
+        assertSameRequest("faq.detail",
+                () -> legacy.faq.detail("FAQ_1", true),
+                () -> modern.faq.detail("FAQ_1", true));
+        assertSameRequest("faq.delete",
+                () -> legacy.faq.delete("FAQ_1"),
+                () -> modern.faq.delete("FAQ_1"));
+
+        assertSameRequest("notice.list", () -> legacy.notice.list(), () -> modern.notice.list());
+        assertSameRequest("notice.detail",
+                () -> legacy.notice.detail("NOTICE_1"),
+                () -> modern.notice.detail("NOTICE_1"));
+
+        assertSameRequest("inquiry.list", () -> legacy.inquiry.list(), () -> modern.inquiry.list());
+        assertSameRequest("inquiry.create",
+                () -> legacy.inquiry.create(inquiryParams()),
+                () -> modern.inquiry.create(inquiryParams()));
+        assertSameRequest("inquiry.answer",
+                () -> legacy.inquiry.answer("INQ_1", "답변입니다"),
+                () -> modern.inquiry.answer("INQ_1", "답변입니다"));
+
+        assertSameRequest("productQna.list",
+                () -> legacy.productQna.list("PRODUCT_1"),
+                () -> modern.productQna.list("PRODUCT_1"));
+        assertSameRequest("productQna.create",
+                () -> legacy.productQna.create(productQnaParams()),
+                () -> modern.productQna.create(productQnaParams()));
+        assertSameRequest("productQna.delete",
+                () -> legacy.productQna.delete("QNA_1"),
+                () -> modern.productQna.delete("QNA_1"));
+
+        assertSameRequest("productReview.list",
+                () -> legacy.productReview.list(),
+                () -> modern.productReview.list());
+        assertSameRequest("productReview.detail",
+                () -> legacy.productReview.detail("REVIEW_1"),
+                () -> modern.productReview.detail("REVIEW_1"));
+        assertSameRequest("productReview.reply",
+                () -> legacy.productReview.reply("REVIEW_1", "소중한 후기 감사합니다"),
+                () -> modern.productReview.reply("REVIEW_1", "소중한 후기 감사합니다"));
+    }
+
+    @Test
     @DisplayName("알림톡 계열 — 신규 모듈 표면이 기존 표면과 같은 요청을 만든다")
     void alimtalkModulesMatchLegacy() throws Exception {
         assertSameRequest("alimtalkSend.send",
@@ -324,6 +371,20 @@ class CommerceModuleParityTest {
         AlimtalkSendParams params = new AlimtalkSendParams();
         params.templateCode = "TPL_1";
         params.to = "01012345678";
+        return params;
+    }
+
+    private static InquiryCreateParams inquiryParams() {
+        InquiryCreateParams params = new InquiryCreateParams();
+        params.content = "언제 배송되나요?";
+        params.loginId = "buyer01";
+        return params;
+    }
+
+    private static ProductQnaCreateParams productQnaParams() {
+        ProductQnaCreateParams params = new ProductQnaCreateParams();
+        params.productId = "PRODUCT_1";
+        params.content = "재입고 예정이 있나요?";
         return params;
     }
 
