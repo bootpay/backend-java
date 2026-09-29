@@ -2,6 +2,31 @@
 
 > 메시지 API(message.bootapi.com) 실서버 배포에 맞춰 릴리스한다.
 
+#### 커머스 게시판 API 28종 추가 — FAQ · 공지사항 · 1:1 문의 · 상품문의 · 상품평 (ruby SDK parity)
+
+ruby SDK 의 `faq` · `notice` · `inquiry` · `product_qna` · `product_review` 컨선을 모듈 5개로 옮겼다.
+`BootpayStore` 와 `BootpayCommerce` 양쪽에 같은 이름(`faq` · `notice` · `inquiry` · `productQna` ·
+`productReview`)으로 붙는다.
+
+| 모듈 | 경로 | 메서드 |
+| --- | --- | --- |
+| `faq` | `/v1/faqs` | `list` · `detail` · `create` · `update` · `delete` |
+| `notice` | `/v1/notices` | `list` · `detail` · `create` · `update` · `delete` |
+| `inquiry` | `/v1/inquiries` | `list` · `detail` · `create` · `update` · `delete` · `answer` |
+| `productQna` | `/v1/product-qnas` | `list` · `detail` · `create` · `update` · `delete` · `answer` |
+| `productReview` | `/v1/reviews` | `list` · `detail` · `create` · `update` · `delete` · `reply` |
+
+`Bootpay-Role` 은 인스턴스 설정이 아니라 파라미터의 `supervisor` 값으로 정해진다 (등록·수정·삭제·답변은 항상
+`supervisor`, 작성·수정은 항상 `user`). 회원은 `userId` · `loginId` · `userJwt`(→ `Bootpay-User-JWT` 헤더)
+중 하나로 지정하고, 목록의 `page` / `limit` 기본값은 ruby SDK 와 같은 1 / 20 이다. 모든 요청에
+`Idempotency-Key` 를 붙이고 미지정이면 호출마다 생성한다.
+
+> `images` 와 `inquiry.update` 의 `title` 은 **보낸 값으로 통째로 덮어쓴다** — 빈 목록은 "이미지 전부 삭제",
+> `""` 는 "제목 삭제" 를 뜻하므로 그대로 전송한다. 유지하려면 `null` 로 둔다.
+
+`productQna.delete` 의 `guestPassword` 는 URL 쿼리가 아니라 본문으로 나가고, `inquiry.delete` ·
+`productReview.delete` 의 식별 값은 쿼리로 나간다 (ruby SDK 와 같다).
+
 #### 알림톡 발송에 `webhookUrl` 추가 (ruby SDK parity)
 
 `alimtalkSend.send` / `sendBulk` 에 건별(벌크는 요청별) 결과 웹훅 주소를 지정하는 `webhookUrl` 을 추가했다.

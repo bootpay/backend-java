@@ -270,6 +270,45 @@ BootpayResponse res = commerce.alimtalkSend.send(params);
 신규 표면에 아직 없는 기존 메서드가 필요하면 `commerce.unwrap()` 으로 내부
 `BootpayStore` 인스턴스를 꺼내 쓸 수 있습니다 (토큰과 role 이 공유됩니다).
 
+#### 커머스 게시판 — FAQ · 공지사항 · 1:1 문의 · 상품문의 · 상품평 (3.7.0~)
+
+몰 게시판 API 28종을 모듈 5개로 제공합니다. `BootpayStore` 와 `BootpayCommerce` 양쪽에 같은 이름으로 있습니다.
+
+| 모듈 | 경로 | 메서드 |
+| --- | --- | --- |
+| `faq` | `/v1/faqs` | `list` · `detail` · `create` · `update` · `delete` |
+| `notice` | `/v1/notices` | `list` · `detail` · `create` · `update` · `delete` |
+| `inquiry` | `/v1/inquiries` | `list` · `detail` · `create` · `update` · `delete` · `answer` |
+| `productQna` | `/v1/product-qnas` | `list` · `detail` · `create` · `update` · `delete` · `answer` |
+| `productReview` | `/v1/reviews` | `list` · `detail` · `create` · `update` · `delete` · `reply` |
+
+`Bootpay-Role` 은 인스턴스 설정이 아니라 **파라미터의 `supervisor` 값**으로 정해집니다 — `true` 면 `supervisor`,
+아니면 `user` 로 나갑니다. 등록·수정·삭제·답변처럼 운영자 전용인 메서드는 항상 `supervisor` 로, 작성·수정처럼
+회원 전용인 메서드는 항상 `user` 로 나갑니다. 회원은 `userId`(회원 `_id` 또는 외부 회원 ID) · `loginId` ·
+`userJwt`(→ `Bootpay-User-JWT` 헤더) 중 하나로 지정합니다. 모든 요청에 `Idempotency-Key` 가 붙고, 미지정이면
+호출마다 새로 만들어집니다.
+
+```java
+// 고객 모드 — page 1 / limit 20 이 기본값입니다
+BootpayResponse res = commerce.faq.list();
+
+// 운영자 모드 — view: "all" 이면 비공개 글까지 조회됩니다
+NoticeListParams params = new NoticeListParams();
+params.view = "all";
+params.supervisor = true;
+commerce.notice.list(params);
+
+// 답변·답글은 없으면 만들고 있으면 내용을 바꿉니다 (supervisor 전용)
+commerce.inquiry.answer(inquiryId, "2~3 영업일 내에 발송됩니다.");
+commerce.productReview.reply(reviewId, "소중한 후기 감사합니다.");
+```
+
+> `images` 는 보내면 목록 **전체를 교체**합니다 (빈 목록이면 모두 삭제). 마찬가지로 `inquiry.update` 의
+> `title` 에 `""` 를 보내면 제목이 지워집니다 — 값을 그대로 유지하려면 해당 필드를 `null` 로 두세요.
+
+상품문의 삭제의 `guestPassword` 는 URL 쿼리가 아니라 **본문**으로 전송됩니다.
+상품 상세의 공개 상품평 목록(`GET /v1/products/{product_id}/reviews`)은 `productReview.list` 와 다른 경로입니다.
+
 #### 구독 가격(기준금액) 변경
 
 `price` 는 회차별 결제 금액의 기준금액입니다. 변경하면 결제예정(READY) 회차의 청구액이 즉시 다시 계산되고,
