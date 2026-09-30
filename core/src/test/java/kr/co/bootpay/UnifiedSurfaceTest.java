@@ -186,6 +186,7 @@ class UnifiedSurfaceTest {
             assertFalse(res.getData().containsKey("http_status"));
             assertEquals(200, res.asMap().get("http_status"));
             assertNull(res.getErrorCode());
+            assertNull(res.getErrorCodeString());
         }
 
         @Test
@@ -201,7 +202,24 @@ class UnifiedSurfaceTest {
             assertFalse(res.isSuccess());
             assertTrue(res.isFailed());
             assertEquals(Integer.valueOf(-401), res.getErrorCode());
+            assertEquals("-401", res.getErrorCodeString());
             assertEquals("인증 실패", res.getMessage());
+        }
+
+        @Test
+        @DisplayName("문자열 에러 코드(알림톡)는 getErrorCodeString 으로 읽힌다")
+        void mapsStringErrorCode() {
+            HashMap<String, Object> body = new HashMap<>();
+            body.put("error_code", "TEMPLATE_NOT_FOUND");
+            body.put("message", "알림톡 템플릿을 찾을 수 없습니다.");
+            BootpayResponse res = kr.co.bootpay.store.module.CommerceResponses.of(
+                    new kr.co.bootpay.store.model.response.BootpayStoreResponse(404, false, body, null));
+
+            assertTrue(res.isFailed());
+            assertNull(res.getErrorCode());
+            assertEquals("TEMPLATE_NOT_FOUND", res.getErrorCodeString());
+            assertEquals("알림톡 템플릿을 찾을 수 없습니다.", res.getMessage());
+            assertTrue(res.toString().contains("errorCode=TEMPLATE_NOT_FOUND"));
         }
 
         @Test
