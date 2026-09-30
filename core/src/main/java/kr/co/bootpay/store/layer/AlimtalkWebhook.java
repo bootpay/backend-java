@@ -25,7 +25,7 @@ public class AlimtalkWebhook {
         return SAlimtalkWebhookService.detail(bootpay);
     }
 
-    /** 웹훅 설정 저장 — url 은 https 만 허용한다 */
+    /** 웹훅 설정 저장 — url 은 https 만 허용하고, retryCount 는 1~25 만 받는다 (기본 10) */
     public BootpayStoreResponse update(AlimtalkWebhookUpdateParams params) throws Exception {
         return SAlimtalkWebhookService.update(bootpay, params);
     }

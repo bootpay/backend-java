@@ -162,6 +162,7 @@ public class Alimtalk {
             params.url = "https://example.com/hooks/alimtalk";
             params.events = Arrays.asList(301, 302, 310, 311);
             params.enabled = true;
+            params.retryCount = 15;               // 건별 재시도 횟수 (1~25, 기본 10) — 미지정이면 기존 값을 유지한다
 
             BootpayStoreResponse res = bootpayStore.alimtalkWebhook.update(params);
             if(res.isSuccess()) {
