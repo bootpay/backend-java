@@ -22,4 +22,12 @@ public class AlimtalkWebhookUpdateParams {
      */
     public List<Integer> events;
     public Boolean enabled;
+    /**
+     * 건별 재시도 횟수 (1~25, 기본 10). 범위 밖이면 11304 로 거부된다.
+     *
+     * <p>미지정(null)이면 바디에서 빠져 기존 값을 그대로 유지한다.</p>
+     *
+     * @since 3.7.0
+     */
+    public Integer retryCount;
 }

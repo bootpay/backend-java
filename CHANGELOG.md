@@ -1,5 +1,10 @@
 ### 3.7.0
 
+#### 알림톡 웹훅 설정에 `retryCount` 추가 (ruby SDK parity)
+
+`alimtalkWebhook.update` 에 건별 재시도 횟수를 정하는 `retryCount` 를 추가했다. `1`~`25` 만 받고 기본값은
+`10`, 범위 밖이면 11304 로 거부된다. 미지정(`null`)이면 바디에서 빠져 기존 값을 그대로 유지한다.
+
 #### 커머스 게시판 API 28종 추가 — FAQ · 공지사항 · 1:1 문의 · 상품문의 · 상품평 (ruby SDK parity)
 
 ruby SDK 의 `faq` · `notice` · `inquiry` · `product_qna` · `product_review` 컨선을 모듈 5개로 옮겼다.

@@ -45,7 +45,7 @@ public class AlimtalkWebhookModule {
     /**
      * 웹훅 설정 저장.
      *
-     * @param params url · events · enabled
+     * @param params url · events · enabled · retryCount
      * @return 저장 결과
      * @throws Exception 통신 실패 또는 인증 정보 누락
      */

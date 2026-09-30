@@ -265,6 +265,19 @@ BootpayResponse res = commerce.alimtalkSend.send(params);
 알림톡 웹훅은 주문·구독 웹훅(`webhook.sendTest`)과 **완전히 별개**입니다. 알림톡 이벤트를 기존 주문 웹훅 URL 로
 태우면 그 수신 서버가 모르는 payload 를 받아 기존 연동이 깨지므로 수신 URL 을 따로 둡니다.
 
+`alimtalkWebhook.update` 의 `retryCount` 로 건별 재시도 횟수를 정합니다. `1`~`25` 만 받고 기본값은 `10`,
+범위 밖이면 11304 로 거부됩니다. 미지정(`null`)이면 바디에서 빠져 기존 값을 그대로 유지합니다.
+
+```java
+AlimtalkWebhookUpdateParams params = new AlimtalkWebhookUpdateParams();
+params.url = "https://example.com/hooks/alimtalk";
+params.events = Arrays.asList(301, 302, 310, 311);
+params.enabled = true;
+params.retryCount = 15; // 건별 재시도 횟수 (1~25, 기본 10)
+
+BootpayResponse res = commerce.alimtalkWebhook.update(params);
+```
+
 `alimtalkTemplate.export` 는 SDK 기본 `format` 이 `json` 입니다. `csv` 를 주면 파싱 없이
 `{ body, content_type }` 원문을 담아 돌려줍니다.
 

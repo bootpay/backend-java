@@ -50,6 +50,8 @@ public class SAlimtalkWebhookService {
      * PUT /alimtalk/webhook
      *
      * <p>{@code url} 은 <b>https 만</b> 허용한다 (아니면 3028). 최초 저장 시 서명 시크릿이 자동 발급된다.</p>
+     * <p>{@code retry_count} 는 건별 재시도 횟수로 1~25 만 받는다 (기본 10, 범위 밖이면 11304).
+     * 생략하면 기존 값을 유지한다.</p>
      */
     static public BootpayStoreResponse update(BootpayStoreObject bootpay, AlimtalkWebhookUpdateParams params) throws Exception {
         bootpay.requireCommerceCredentials();
@@ -61,6 +63,7 @@ public class SAlimtalkWebhookService {
             SAlimtalkSupport.put(body, "url", params.url);
             SAlimtalkSupport.put(body, "events", params.events);
             SAlimtalkSupport.put(body, "enabled", params.enabled);
+            SAlimtalkSupport.put(body, "retry_count", params.retryCount);
         }
 
         HttpPut put = bootpay.httpPut("alimtalk/webhook",

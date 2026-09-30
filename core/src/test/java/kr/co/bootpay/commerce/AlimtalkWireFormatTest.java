@@ -736,12 +736,13 @@ class AlimtalkWireFormatTest {
     }
 
     @Test
-    @DisplayName("alimtalkWebhook.update - PUT alimtalk/webhook, url/events/enabled 전송")
+    @DisplayName("alimtalkWebhook.update - PUT alimtalk/webhook, url/events/enabled/retry_count 전송")
     void testAlimtalkWebhookUpdate() throws Exception {
         AlimtalkWebhookUpdateParams params = new AlimtalkWebhookUpdateParams();
         params.url = "https://example.com/hooks/alimtalk";
         params.events = Arrays.asList(301, 302, 310);
         params.enabled = true;
+        params.retryCount = 15;
         store.alimtalkWebhook.update(params);
 
         assertAll(
@@ -749,7 +750,8 @@ class AlimtalkWireFormatTest {
                 () -> assertEquals("/alimtalk/webhook", lastPath),
                 () -> assertTrue(lastBody.contains("\"url\":\"https://example.com/hooks/alimtalk\""), lastBody),
                 () -> assertTrue(lastBody.contains("\"events\":[301,302,310]"), lastBody),
-                () -> assertTrue(lastBody.contains("\"enabled\":true"), lastBody)
+                () -> assertTrue(lastBody.contains("\"enabled\":true"), lastBody),
+                () -> assertTrue(lastBody.contains("\"retry_count\":15"), lastBody)
         );
     }
 
@@ -761,6 +763,26 @@ class AlimtalkWireFormatTest {
         store.alimtalkWebhook.update(params);
 
         assertEquals("{\"enabled\":false}", lastBody);
+    }
+
+    @Test
+    @DisplayName("alimtalkWebhook.update - retry_count 는 미지정이면 바디에서 빠진다 (기존 값 유지)")
+    void testAlimtalkWebhookUpdateRetryCountOmittedWhenUnspecified() throws Exception {
+        AlimtalkWebhookUpdateParams params = new AlimtalkWebhookUpdateParams();
+        params.url = "https://example.com/hooks/alimtalk";
+        store.alimtalkWebhook.update(params);
+
+        assertFalse(lastBody.contains("retry_count"), "미지정이면 전송하지 않는다: " + lastBody);
+    }
+
+    @Test
+    @DisplayName("alimtalkWebhook.update - retry_count 만 줘도 그대로 전송한다")
+    void testAlimtalkWebhookUpdateRetryCountOnly() throws Exception {
+        AlimtalkWebhookUpdateParams params = new AlimtalkWebhookUpdateParams();
+        params.retryCount = 1;
+        store.alimtalkWebhook.update(params);
+
+        assertEquals("{\"retry_count\":1}", lastBody);
     }
 
     @Test
