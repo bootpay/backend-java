@@ -15,8 +15,11 @@ import kr.co.bootpay.store.module.CartModule;
 import kr.co.bootpay.store.module.CategoryModule;
 import kr.co.bootpay.store.module.CommerceResponses;
 import kr.co.bootpay.store.module.CouponModule;
+import kr.co.bootpay.store.module.FaqModule;
+import kr.co.bootpay.store.module.InquiryModule;
 import kr.co.bootpay.store.module.InvoiceModule;
 import kr.co.bootpay.store.module.MallSettingModule;
+import kr.co.bootpay.store.module.NoticeModule;
 import kr.co.bootpay.store.module.OrderCancelModule;
 import kr.co.bootpay.store.module.OrderModule;
 import kr.co.bootpay.store.module.OrderSubscriptionAdjustmentModule;
@@ -25,6 +28,8 @@ import kr.co.bootpay.store.module.OrderSubscriptionModule;
 import kr.co.bootpay.store.module.OrderSubscriptionRequestModule;
 import kr.co.bootpay.store.module.PointModule;
 import kr.co.bootpay.store.module.ProductModule;
+import kr.co.bootpay.store.module.ProductQnaModule;
+import kr.co.bootpay.store.module.ProductReviewModule;
 import kr.co.bootpay.store.module.ProjectModule;
 import kr.co.bootpay.store.module.StoreModule;
 import kr.co.bootpay.store.module.SubscriptionSettingModule;
@@ -118,6 +123,21 @@ public class BootpayCommerce {
     /** 몰 설정. */
     public final MallSettingModule mallSetting;
 
+    /** FAQ. */
+    public final FaqModule faq;
+
+    /** 공지사항. */
+    public final NoticeModule notice;
+
+    /** 1:1 문의. */
+    public final InquiryModule inquiry;
+
+    /** 상품문의. */
+    public final ProductQnaModule productQna;
+
+    /** 상품평. */
+    public final ProductReviewModule productReview;
+
     /** 웹훅. */
     public final WebhookModule webhook;
 
@@ -164,6 +184,11 @@ public class BootpayCommerce {
         this.point = new PointModule(delegate);
         this.cart = new CartModule(delegate);
         this.mallSetting = new MallSettingModule(delegate);
+        this.faq = new FaqModule(delegate);
+        this.notice = new NoticeModule(delegate);
+        this.inquiry = new InquiryModule(delegate);
+        this.productQna = new ProductQnaModule(delegate);
+        this.productReview = new ProductReviewModule(delegate);
         this.webhook = new WebhookModule(delegate);
         this.alimtalkSend = new AlimtalkSendModule(delegate);
         this.alimtalkSender = new AlimtalkSenderModule(delegate);
