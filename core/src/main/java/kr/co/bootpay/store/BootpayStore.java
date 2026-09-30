@@ -27,6 +27,11 @@ public class BootpayStore extends BootpayStoreObject {
     public Point point;
     public Cart cart;
     public MallSetting mallSetting;
+    public Faq faq;
+    public Notice notice;
+    public Inquiry inquiry;
+    public ProductQna productQna;
+    public ProductReview productReview;
     public Webhook webhook;
     public AlimtalkSend alimtalkSend;
     public AlimtalkSender alimtalkSender;
@@ -71,6 +76,11 @@ public class BootpayStore extends BootpayStoreObject {
         this.point = new Point(this);
         this.cart = new Cart(this);
         this.mallSetting = new MallSetting(this);
+        this.faq = new Faq(this);
+        this.notice = new Notice(this);
+        this.inquiry = new Inquiry(this);
+        this.productQna = new ProductQna(this);
+        this.productReview = new ProductReview(this);
         this.webhook = new Webhook(this);
         this.alimtalkSend = new AlimtalkSend(this);
         this.alimtalkSender = new AlimtalkSender(this);
