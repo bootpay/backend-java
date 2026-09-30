@@ -19,7 +19,7 @@ import java.util.Map;
  *     Map<String, Object> data = res.getData();
  *     System.out.println(data.get("status_locale"));
  * } else {
- *     System.out.println(res.getErrorCode() + " " + res.getMessage());
+ *     System.out.println(res.getErrorCodeString() + " " + res.getMessage());
  * }
  * }</pre>
  *
@@ -174,10 +174,30 @@ public class BootpayResponse {
     }
 
     /**
-     * @return 에러 코드, 성공했거나 서버가 코드를 주지 않았으면 null
+     * 숫자 에러 코드를 반환합니다.
+     *
+     * <p>⚠️ 알림톡처럼 {@code "TEMPLATE_NOT_FOUND"} 같은 문자열 코드를 주는 API 에서는 정수로 바꿀 수 없어
+     * null 입니다. 코드를 가리지 않고 읽으려면 {@link #getErrorCodeString()} 을 씁니다.</p>
+     *
+     * @return 에러 코드, 성공했거나 서버가 코드를 주지 않았거나 숫자가 아니면 null
      */
     public Integer getErrorCode() {
         return errorCode;
+    }
+
+    /**
+     * 서버가 준 에러 코드를 형식 그대로 문자열로 반환합니다.
+     *
+     * <p>숫자 코드({@code -401})는 {@code "-401"} 로, 문자열 코드({@code "TEMPLATE_NOT_FOUND"})는 그대로 돌려줍니다.</p>
+     *
+     * @return 에러 코드 문자열, 성공했거나 서버가 코드를 주지 않았으면 null
+     * @since 3.7.0
+     */
+    public String getErrorCodeString() {
+        if (success) return null;
+        Object value = data.get("error_code");
+        if (value == null) value = raw.get("error_code");
+        return toString(value);
     }
 
     /**
@@ -199,7 +219,7 @@ public class BootpayResponse {
     @Override
     public String toString() {
         return "BootpayResponse{success=" + success
-                + ", errorCode=" + errorCode
+                + ", errorCode=" + (errorCode != null ? errorCode : getErrorCodeString())
                 + ", message='" + message + '\''
                 + ", data=" + data
                 + '}';

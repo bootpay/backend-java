@@ -1,6 +1,4 @@
-### Unreleased
-
-> 메시지 API(message.bootapi.com) 실서버 배포에 맞춰 릴리스한다.
+### 3.7.0
 
 #### 알림톡 발송에 `webhookUrl` 추가 (ruby SDK parity)
 
@@ -37,6 +35,12 @@
 
 통일 응답 `BootpayResponse` 의 `getData()` 는 맵이라, 최상위가 배열인 응답(카테고리 목록, `alimtalkSender.categories()` 등)에서
 비어 있었다. `getDataList()` · `isDataList()` 로 목록을 꺼낸다. 기존 `getData()` 의 동작은 바뀌지 않는다.
+
+#### `BootpayResponse.getErrorCodeString()` 추가 — 문자열 에러 코드
+
+`getErrorCode()` 는 `Integer` 라 알림톡처럼 `"TEMPLATE_NOT_FOUND"` 같은 문자열 코드를 주는 API 에서 `null` 이었다.
+`getErrorCodeString()` 은 서버가 준 코드를 형식 그대로 돌려준다 (숫자는 `"-401"`). `toString()` 도 숫자가 아니면 이 값을 보여준다.
+`getErrorCode()` 의 반환형·동작은 바뀌지 않는다.
 
 ### 3.6.0
 

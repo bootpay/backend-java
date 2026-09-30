@@ -136,7 +136,8 @@ if (res.isSuccess()) {
     Map<String, Object> data = res.getData();
     System.out.println(data.get("status_locale"));
 } else {
-    System.out.println(res.getErrorCode() + " " + res.getMessage());
+    // 에러 코드는 숫자(-401)일 수도, 문자열("TEMPLATE_NOT_FOUND" — 알림톡)일 수도 있다
+    System.out.println(res.getErrorCodeString() + " " + res.getMessage());
 }
 
 // 기존 HashMap 기반 코드와 섞어 쓸 때
