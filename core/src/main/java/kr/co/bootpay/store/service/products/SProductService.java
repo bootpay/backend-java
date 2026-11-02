@@ -34,7 +34,7 @@ public class SProductService {
      * 상품 생성
      * POST /v1/products
      * imagePaths 가 있으면 multipart/form-data (images[0], images[1] ... 인덱싱), 없으면 JSON 으로 보낸다.
-     * 서버가 manager scope 를 요구한다.
+     * Bootpay-Role 은 항상 user 로 보낸다 (서버 스코프는 user:product_create 뿐).
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse create(BootpayStoreObject bootpay, SProduct product, List<URL> imagePaths, String idempotencyKey) throws Exception {
@@ -47,7 +47,7 @@ public class SProductService {
 
         // 이미지가 없으면 JSON 으로 전송
         if (imagePaths == null || imagePaths.isEmpty()) {
-            HttpPost post = bootpay.httpPost("products", new StringEntity(gson.toJson(product), "UTF-8"), managerContext(idempotencyKey));
+            HttpPost post = bootpay.httpPost("products", new StringEntity(gson.toJson(product), "UTF-8"), writeContext(idempotencyKey));
             HttpResponse response = bootpay.execute(post);
             return bootpay.responseToJsonObject(response);
         }
@@ -78,7 +78,7 @@ public class SProductService {
         }
 
         // 파일 업로드 요청 (여러 파일)
-        HttpPost post = bootpay.httpPostMultipart("products", fileList, params, managerContext(idempotencyKey));
+        HttpPost post = bootpay.httpPostMultipart("products", fileList, params, writeContext(idempotencyKey));
         HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }
@@ -88,7 +88,7 @@ public class SProductService {
     }
 
     /**
-     * 상품 수정 — 서버가 manager scope 를 요구한다.
+     * 상품 수정 — Bootpay-Role 은 항상 user 로 보낸다 (서버 스코프는 user:product_update 뿐).
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse update(BootpayStoreObject bootpay, SProduct product, String idempotencyKey) throws Exception {
@@ -100,7 +100,7 @@ public class SProductService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPut put = bootpay.httpPut("products/" + product.productId, new StringEntity(gson.toJson(product), "UTF-8"), managerContext(idempotencyKey));
+        HttpPut put = bootpay.httpPut("products/" + product.productId, new StringEntity(gson.toJson(product), "UTF-8"), writeContext(idempotencyKey));
         HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
@@ -170,7 +170,7 @@ public class SProductService {
                 .create();
 
         HttpPut put = bootpay.httpPut("products/" + params.productId + "/status", new StringEntity(gson.toJson(params), "UTF-8"),
-                managerContext(params.idempotencyKey));
+                writeContext(params.idempotencyKey));
         HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
@@ -180,12 +180,12 @@ public class SProductService {
     }
 
     /**
-     * 상품 삭제 — 서버가 manager scope 를 요구한다.
+     * 상품 삭제 — Bootpay-Role 은 항상 user 로 보낸다 (서버 스코프는 user:product_delete 뿐).
      * @param idempotencyKey 미지정시 자동 생성
      */
     static public BootpayStoreResponse delete(BootpayStoreObject bootpay, String productId, String idempotencyKey) throws Exception {
         bootpay.requireCommerceCredentials();
-        HttpDelete delete = bootpay.httpDelete("products/" + productId, managerContext(idempotencyKey));
+        HttpDelete delete = bootpay.httpDelete("products/" + productId, writeContext(idempotencyKey));
 
         HttpResponse response = bootpay.execute(delete);
         return bootpay.responseToJsonObject(response);
@@ -240,12 +240,14 @@ public class SProductService {
     }
 
     /**
-     * 상품 쓰기(등록/수정/삭제/상태변경) 요청 컨텍스트 — 서버가 manager scope 를 요구한다.
+     * 상품 쓰기(등록/수정/삭제/상태변경) 요청 컨텍스트 — Bootpay-Role 은 인스턴스 role 과 무관하게 항상 user.
+     * 서버 스코프는 user:product_create/update/delete/status 뿐이라 manager 로 보내면
+     * manager:product_* 를 찾다 401 API_ROLE_NOT_SUPPORT(-50) 로 막힌다.
      * Idempotency-Key 는 미지정시 매 호출마다 생성된다.
      */
-    private static RequestContext managerContext(String idempotencyKey) {
+    private static RequestContext writeContext(String idempotencyKey) {
         return RequestContext.builder()
-                .role("manager")
+                .role("user")
                 .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
                 .build();
     }
