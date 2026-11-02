@@ -24,6 +24,7 @@ import kr.co.bootpay.store.model.request.orderSubscriptionRequest.OrderSubscript
 import kr.co.bootpay.store.model.request.orderSubscriptionRequest.OrderSubscriptionRequestUpdateParams;
 import kr.co.bootpay.store.model.request.product.MallProductListParams;
 import kr.co.bootpay.store.model.request.product.ProductListParams;
+import kr.co.bootpay.store.model.request.product.ProductStatusParams;
 import kr.co.bootpay.store.model.request.user.MallUserJoinParams;
 import kr.co.bootpay.store.model.request.user.UserListParams;
 import kr.co.bootpay.store.model.request.userGroup.UserGroupAggregateTransactionParams;
@@ -382,7 +383,7 @@ class CommerceWireFormatTest {
     }
 
     // ══════════════════════════════════════════════════════════
-    // product — Mall 조회 + 쓰기 manager scope + multipart 인덱싱
+    // product — Mall 조회 + 쓰기 user scope + multipart 인덱싱
     // ══════════════════════════════════════════════════════════
 
     @Test
@@ -398,7 +399,7 @@ class CommerceWireFormatTest {
     }
 
     @Test
-    @DisplayName("product.create - 이미지 없으면 JSON 전송, manager role")
+    @DisplayName("product.create - 이미지 없으면 JSON 전송, user role")
     void testProductCreateJsonWithoutImages() throws Exception {
         SProduct product = new SProduct();
         product.name = "테스트상품";
@@ -406,7 +407,7 @@ class CommerceWireFormatTest {
 
         assertEquals("POST", lastMethod);
         assertEquals("/v1/products", lastPath);
-        assertEquals("manager", lastRole);
+        assertEquals("user", lastRole);
         assertNotNull(lastIdempotencyKey);
         assertTrue(lastContentType.startsWith("application/json"), lastContentType);
         assertTrue(lastBody.contains("\"name\":\"테스트상품\""), lastBody);
@@ -433,12 +434,78 @@ class CommerceWireFormatTest {
 
         assertEquals("POST", lastMethod);
         assertEquals("/v1/products", lastPath);
-        assertEquals("manager", lastRole);
+        assertEquals("user", lastRole);
         assertTrue(lastContentType.startsWith("multipart/form-data"), lastContentType);
         assertTrue(lastContentType.contains("boundary="), "boundary 유실 금지: " + lastContentType);
         assertTrue(lastBody.contains("name=\"images[0]\""), "images[0] 인덱싱: " + lastBody);
         assertTrue(lastBody.contains("name=\"images[1]\""), "images[1] 인덱싱: " + lastBody);
         assertFalse(lastBody.contains("name=\"images\"" + "\r"), "인덱스 없는 images 필드 금지");
+    }
+
+    @Test
+    @DisplayName("product.update - PUT /v1/products/{id}, user role + Idempotency-Key")
+    void testProductUpdateUserRole() throws Exception {
+        SProduct product = new SProduct();
+        product.productId = "PRD1";
+        product.name = "수정상품";
+        store.product.update(product);
+
+        assertEquals("PUT", lastMethod);
+        assertEquals("/v1/products/PRD1", lastPath);
+        assertEquals("user", lastRole);
+        assertNotNull(lastIdempotencyKey);
+    }
+
+    @Test
+    @DisplayName("product.delete - DELETE /v1/products/{id}, user role + Idempotency-Key")
+    void testProductDeleteUserRole() throws Exception {
+        store.product.delete("PRD1");
+
+        assertEquals("DELETE", lastMethod);
+        assertEquals("/v1/products/PRD1", lastPath);
+        assertEquals("user", lastRole);
+        assertNotNull(lastIdempotencyKey);
+    }
+
+    @Test
+    @DisplayName("product.status - PUT /v1/products/{id}/status, user role + Idempotency-Key")
+    void testProductStatusUserRole() throws Exception {
+        ProductStatusParams params = new ProductStatusParams();
+        params.productId = "PRD1";
+        params.statusSale = true;
+        store.product.status(params);
+
+        assertEquals("PUT", lastMethod);
+        assertEquals("/v1/products/PRD1/status", lastPath);
+        assertEquals("user", lastRole);
+        assertNotNull(lastIdempotencyKey);
+        assertTrue(lastBody.contains("\"status_sale\":true"), lastBody);
+    }
+
+    @Test
+    @DisplayName("product 쓰기는 인스턴스 role 이 manager 여도 항상 BOOTPAY-ROLE: user (서버 스코프 user:product_*)")
+    void testProductWriteIgnoresInstanceRole() throws Exception {
+        BootpayStore managerStore = new BootpayStore(new TokenPayload("test_ck", "test_sk"), "PRODUCTION");
+        managerStore.baseUrl = store.baseUrl;
+        managerStore.setRole("manager");
+
+        SProduct product = new SProduct();
+        product.productId = "PRD1";
+        product.name = "상품";
+
+        managerStore.product.create(product);
+        assertEquals("user", lastRole, "create");
+
+        managerStore.product.update(product);
+        assertEquals("user", lastRole, "update");
+
+        ProductStatusParams params = new ProductStatusParams();
+        params.productId = "PRD1";
+        managerStore.product.status(params);
+        assertEquals("user", lastRole, "status");
+
+        managerStore.product.delete("PRD1");
+        assertEquals("user", lastRole, "delete");
     }
 
     // ══════════════════════════════════════════════════════════

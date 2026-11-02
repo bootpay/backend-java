@@ -1,5 +1,11 @@
 ### 3.7.0
 
+#### 상품 등록·수정·삭제·상태변경 `BOOTPAY-ROLE` manager → user (ruby SDK parity)
+
+`product.create` · `update` · `delete` · `status` 가 `BOOTPAY-ROLE: manager` 로 나가던 것을 `user` 로 바꿨다.
+서버 스코프는 `user:product_create/update/delete/status` 만 있어 manager 로 보내면 `manager:product_*` 를
+찾다 401 `API_ROLE_NOT_SUPPORT(-50)` 로 막혔다. 인스턴스 role 과 무관하게 항상 `user` 로 보낸다.
+
 #### 알림톡 웹훅 설정에 `retryCount` 추가 (ruby SDK parity)
 
 `alimtalkWebhook.update` 에 건별 재시도 횟수를 정하는 `retryCount` 를 추가했다. `1`~`25` 만 받고 기본값은
