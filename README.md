@@ -323,6 +323,92 @@ commerce.productReview.reply(reviewId, "소중한 후기 감사합니다.");
 상품문의 삭제의 `guestPassword` 는 URL 쿼리가 아니라 **본문**으로 전송됩니다.
 상품 상세의 공개 상품평 목록(`GET /v1/products/{product_id}/reviews`)은 `productReview.list` 와 다른 경로입니다.
 
+#### 뱅크알람 입금대기 (3.8.0~)
+
+가맹점 서버가 아직 입금되지 않은 주문을 등록하면, 판매자 폰의 입금 알림 중 **금액 · 입금자명**이 맞는 것을
+뱅크알람이 그 주문에 연결해 입금을 확인하고 입금 웹훅으로 알립니다. `BootpayStore` 와 `BootpayCommerce` 양쪽에
+`deposit` 모듈로 제공되며, 전부 인스턴스 role 과 무관하게 `BOOTPAY-ROLE: supervisor` 로 요청합니다.
+
+```java
+// 판매자 입금 계좌 목록 — 첫 계좌가 대표 계좌(primary: true)
+BootpayResponse accounts = commerce.deposit.accounts();
+
+// 웹훅 서명 비밀값 발급 — 원문은 이 응답에서만 받고, 다시 부르면 바뀝니다
+BootpayResponse secret = commerce.deposit.webhookSecret();
+
+// 입금대기 등록 — 같은 merchantOrderId 로 같은 금액·입금자명·계좌를 다시 보내면 기존 주문을 돌려줍니다
+// (하나라도 다르면 18110 BANK_DEPOSIT_MERCHANT_ID_CONFLICT)
+DepositCreateParams params = new DepositCreateParams();
+params.merchantOrderId = "ORDER_1234";
+params.price = 15000;
+params.depositor = "홍길동";             // 은행 입금 알림과 맞춰 볼 이름
+params.buyerName = "홍길동";             // 미지정시 입금자명
+params.buyerEmail = "buyer@example.com"; // 주면 입금 안내 · 확인 메일 (무료)
+params.accountId = "ACCOUNT_ID";          // 미지정시 대표 계좌
+params.webhookUrl = "https://example.com/hooks/deposit"; // 비밀값을 먼저 발급받아야 합니다(18131)
+
+// 구매자 알림톡 (유료) — buyerPhone 필수, link 는 https
+DepositNotifyParams notify = new DepositNotifyParams();
+notify.depositGuide = true;
+notify.depositPaid = true;
+notify.link = "https://example.com/orders/ORDER_1234";
+params.buyerPhone = "01000000000";
+params.notify = notify;
+
+commerce.deposit.create(params);
+
+// 조회 · 취소 — 가맹점 주문번호 또는 부트페이 주문번호
+commerce.deposit.detail("ORDER_1234"); // status: awaiting · paid · expired · cancelled
+commerce.deposit.cancel("ORDER_1234"); // 이미 닫힌 주문은 그대로 돌려줍니다
+```
+
+`create` 는 `params.idempotencyKey`, `webhookSecret(key)` · `cancel(id, key)` 는 선택 인자로
+`Idempotency-Key` 를 지정할 수 있습니다. 미지정하면 호출마다 새 UUID를 사용합니다. 선택값이 `null` 이면
+본문에서 빠지고, 알림 설정의 명시적 `false` 는 그대로 전송됩니다.
+
+> 입금 웹훅은 `X-Bootpay-Signature: sha256=HMAC_SHA256(secret, "{X-Bootpay-Timestamp}.{raw_body}")` 로
+> 서명됩니다. 이벤트 코드는 `SConstant.BANK_DEPOSIT_WEBHOOK_EVENT_*` 상수(400~407)를 참고하세요.
+
+전체 실행 예제는 [`app/src/main/java/com/example/bootpay/store/Deposit.java`](./app/src/main/java/com/example/bootpay/store/Deposit.java)를
+참고해주세요.
+
+#### 입점사 지급 요청 (3.8.0~)
+
+가맹점 지정 금액(`manual`) 정산 방식의 쇼핑몰이 입점사와 지급액을 정해 지급 원장에 등록합니다.
+실제 송금은 별도 배치가 처리하며, 세 API 모두 인스턴스 role 과 무관하게 `BOOTPAY-ROLE: supervisor` 로 요청합니다.
+
+```java
+// 지급 요청 — 같은 merchantPayoutId 로 다시 보내면 처음 만든 항목을 그대로 돌려줍니다
+PayoutCreateParams create = new PayoutCreateParams();
+create.subSellerId = "SUB_SELLER_ID";
+create.amount = 150000L;
+create.merchantPayoutId = "PAYOUT_20261112_001";
+create.orderNumber = "ORDER_1234";       // 선택
+create.payoutDate = "2026-11-20";        // 선택, YYYY-MM-DD (미지정시 오늘)
+commerce.payout.create(create);
+
+// 조회 — merchant_payout_id 또는 지급 항목 id
+commerce.payout.detail("PAYOUT_20261112_001");
+
+// 목록 — 최근 생성 순, 응답은 항목 배열입니다(전체 개수 없음)
+PayoutListParams list = new PayoutListParams();
+list.status = CommercePayout.Status.READY;
+list.subSellerId = "SUB_SELLER_ID";
+list.from = "2026-11-01";
+list.to = "2026-11-30";
+list.page = 1;
+list.limit = 20;
+commerce.payout.list(list);
+```
+
+`create.idempotencyKey` · `list.idempotencyKey` · `detail(id, idempotencyKey)` 로 `Idempotency-Key` 를
+직접 지정할 수 있고, 미지정하면 호출마다 새 UUID를 사용합니다. 선택값은 `null` 이면 본문·쿼리에서 빠지며,
+목록의 `page` · `limit` 기본값은 SDK가 주입하지 않고 서버에 맡깁니다. 상태는 `READY` · `HELD` · `SENDING` ·
+`REQUESTED` · `PROCESSING` · `SUCCEEDED` · `FAILED` · `CANCELLED` · `UNKNOWN` · `VOID` 입니다.
+
+전체 실행 예제는 [`app/src/main/java/com/example/bootpay/store/Payout.java`](./app/src/main/java/com/example/bootpay/store/Payout.java)를
+참고해주세요. `create()` 는 실제 지급 원장을 만들므로 기본 실행에서 제외되어 있습니다.
+
 #### 구독 가격(기준금액) 변경
 
 `price` 는 회차별 결제 금액의 기준금액입니다. 변경하면 결제예정(READY) 회차의 청구액이 즉시 다시 계산되고,

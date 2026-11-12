@@ -29,6 +29,8 @@ public class BootpayStore extends BootpayStoreObject {
     public MallSetting mallSetting;
     public Faq faq;
     public Notice notice;
+    public Deposit deposit;
+    public Payout payout;
     public Inquiry inquiry;
     public ProductQna productQna;
     public ProductReview productReview;
@@ -78,6 +80,8 @@ public class BootpayStore extends BootpayStoreObject {
         this.mallSetting = new MallSetting(this);
         this.faq = new Faq(this);
         this.notice = new Notice(this);
+        this.deposit = new Deposit(this);
+        this.payout = new Payout(this);
         this.inquiry = new Inquiry(this);
         this.productQna = new ProductQna(this);
         this.productReview = new ProductReview(this);

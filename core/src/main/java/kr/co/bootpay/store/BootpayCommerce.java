@@ -15,6 +15,7 @@ import kr.co.bootpay.store.module.CartModule;
 import kr.co.bootpay.store.module.CategoryModule;
 import kr.co.bootpay.store.module.CommerceResponses;
 import kr.co.bootpay.store.module.CouponModule;
+import kr.co.bootpay.store.module.DepositModule;
 import kr.co.bootpay.store.module.FaqModule;
 import kr.co.bootpay.store.module.InquiryModule;
 import kr.co.bootpay.store.module.InvoiceModule;
@@ -27,6 +28,7 @@ import kr.co.bootpay.store.module.OrderSubscriptionBillModule;
 import kr.co.bootpay.store.module.OrderSubscriptionModule;
 import kr.co.bootpay.store.module.OrderSubscriptionRequestModule;
 import kr.co.bootpay.store.module.PointModule;
+import kr.co.bootpay.store.module.PayoutModule;
 import kr.co.bootpay.store.module.ProductModule;
 import kr.co.bootpay.store.module.ProductQnaModule;
 import kr.co.bootpay.store.module.ProductReviewModule;
@@ -129,6 +131,12 @@ public class BootpayCommerce {
     /** 공지사항. */
     public final NoticeModule notice;
 
+    /** 뱅크알람 입금대기. */
+    public final DepositModule deposit;
+
+    /** 입점사 지급 요청. */
+    public final PayoutModule payout;
+
     /** 1:1 문의. */
     public final InquiryModule inquiry;
 
@@ -186,6 +194,8 @@ public class BootpayCommerce {
         this.mallSetting = new MallSettingModule(delegate);
         this.faq = new FaqModule(delegate);
         this.notice = new NoticeModule(delegate);
+        this.deposit = new DepositModule(delegate);
+        this.payout = new PayoutModule(delegate);
         this.inquiry = new InquiryModule(delegate);
         this.productQna = new ProductQnaModule(delegate);
         this.productReview = new ProductReviewModule(delegate);

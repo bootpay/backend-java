@@ -142,4 +142,14 @@ public class SConstant {
     public static final int BILLING_STATUS_CANCELLED = 10;
     public static final int BILLING_STATUS_TERMINATED = 20;
 
+    // 뱅크알람 입금 웹훅 이벤트
+    public static final int BANK_DEPOSIT_WEBHOOK_EVENT_RECEIVED = 400;
+    public static final int BANK_DEPOSIT_WEBHOOK_EVENT_MATCHED = 401;
+    public static final int BANK_DEPOSIT_WEBHOOK_EVENT_AMBIGUOUS = 402;
+    public static final int BANK_DEPOSIT_WEBHOOK_EVENT_UNMATCHED = 403;
+    public static final int BANK_DEPOSIT_WEBHOOK_EVENT_CONFIRMED_MANUALLY = 404;
+    public static final int BANK_DEPOSIT_WEBHOOK_EVENT_EXPIRED = 405;
+    public static final int BANK_DEPOSIT_WEBHOOK_EVENT_CANCELLED = 406;
+    public static final int BANK_DEPOSIT_WEBHOOK_EVENT_REVERTED = 407;
+
 }

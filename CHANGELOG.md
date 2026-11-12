@@ -1,4 +1,40 @@
-### 3.7.0
+### 3.8.0
+
+#### 뱅크알람 입금대기 API 5종 — `deposit` (NodeJS 2.15.0 parity)
+
+가맹점 서버가 아직 입금되지 않은 주문을 등록하면, 판매자 폰의 입금 알림 중 금액·입금자명이 맞는 것을
+뱅크알람이 그 주문에 연결해 입금을 확인하고 입금 웹훅으로 알린다. `BootpayStore` 와 `BootpayCommerce` 양쪽에
+`deposit` 모듈로 노출된다.
+
+- `accounts()` — `GET /v1/sdk/deposits/accounts`. 판매자 입금 계좌 목록(첫 계좌가 대표, `primary: true`).
+- `webhookSecret()` — `POST /v1/sdk/deposits/webhook_secret`. 웹훅 서명 비밀값을 새로 발급한다.
+  원문은 이 응답에서만 오고, 부를 때마다 바뀐다.
+- `create(params)` — `POST /v1/sdk/deposits`. `merchantOrderId` · `price` · `depositor` 필수,
+  `orderName` · `memo` · `buyerName` · `buyerPhone` · `buyerEmail` · `accountId` · `webhookUrl` ·
+  `notify`(구매자 알림톡, 유료) 선택. 같은 `merchantOrderId` 로 금액·입금자명·계좌가 같은 재호출은 기존 주문을 돌려주고, 하나라도 다르면 `18110` 으로 거절된다.
+- `detail(id)` / `cancel(id)` — `GET` · `DELETE /v1/sdk/deposits/{id}`. id 는 가맹점 주문번호 또는
+  부트페이 주문번호이며 경로 구분자가 섞일 수 있어 URL 인코딩한다.
+- 전부 supervisor scope(`order_deposit_*`)라 인스턴스 role 과 무관하게 `BOOTPAY-ROLE: supervisor` 로 나간다.
+  `create` · `webhookSecret` · `cancel` 의 `Idempotency-Key` 는 직접 지정할 수 있고, 미지정이면 호출마다 생성한다.
+- 응답 모델 `CommerceDeposit` · `DepositAccountsResponse` · `DepositWebhookSecretResponse` 와 웹훅 이벤트 상수
+  `SConstant.BANK_DEPOSIT_WEBHOOK_EVENT_*`(400~407)를 추가했다.
+- 와이어 테스트가 5개 경로·동사, supervisor role, 멱등 키, null 제외와 명시적 `false` 보존,
+  주문번호 경로 인코딩을 고정한다.
+
+#### 입점사 지급 요청 API 3종 — `payout` (NodeJS 2.15.0 parity)
+
+가맹점 지정 금액(`manual`) 정산 방식의 쇼핑몰이 입점사와 지급액을 정해 지급 원장에 등록한다.
+`BootpayStore` 와 `BootpayCommerce` 양쪽에 `payout` 모듈로 노출된다.
+
+- `create(params)` — `POST /v1/sdk/payouts`. `subSellerId` · `amount` · `merchantPayoutId` 필수,
+  `orderNumber` · `payoutDate`(YYYY-MM-DD) 선택. 같은 `merchantPayoutId` 재호출은 처음 항목을 돌려준다.
+- `detail(id)` — `GET /v1/sdk/payouts/{id}`. id 는 `merchant_payout_id` 또는 지급 항목 id 이며 한 경로 구간으로 URL 인코딩한다.
+- `list(params)` — `GET /v1/sdk/payouts`. `status` · `subSellerId` · `from` · `to` · `page` · `limit` 필터.
+  응답은 전체 개수 없는 항목 배열이며 미지정 page/limit 은 서버 기본값을 사용한다.
+- 전부 supervisor scope(`payout_*`)라 인스턴스 role 과 무관하게 `BOOTPAY-ROLE: supervisor` 로 나간다.
+  `Idempotency-Key` 는 명시할 수 있고 미지정 시 호출마다 자동 생성한다.
+- 응답 모델 `CommercePayout` 과 문자열 상태 enum, 요청 모델 `PayoutCreateParams` · `PayoutListParams` 를 추가했다.
+- 메모리 mock 와이어 테스트가 세 경로의 동사·role·멱등 키·null 생략·경로/쿼리 인코딩과 bare array 역직렬화를 고정한다.
 
 #### 상품 등록·수정·삭제·상태변경 `BOOTPAY-ROLE` manager → user (ruby SDK parity)
 
@@ -10,6 +46,8 @@
 
 `alimtalkWebhook.update` 에 건별 재시도 횟수를 정하는 `retryCount` 를 추가했다. `1`~`25` 만 받고 기본값은
 `10`, 범위 밖이면 11304 로 거부된다. 미지정(`null`)이면 바디에서 빠져 기존 값을 그대로 유지한다.
+
+### 3.7.0
 
 #### 커머스 게시판 API 28종 추가 — FAQ · 공지사항 · 1:1 문의 · 상품문의 · 상품평 (ruby SDK parity)
 
