@@ -1,3 +1,9 @@
+### Unreleased
+
+#### Java 8 호환 수정
+
+`calculateTerminationFee` 의 `URLEncoder.encode(String, Charset)` — Java 10+ API — 를 Java 8 API(`URLEncoder.encode(String, "UTF-8")`)로 바꿨다. Java 8 런타임에서 `NoSuchMethodError` 가 날 수 있었다.
+
 ### 3.8.1
 
 #### 청구서 생성 `BOOTPAY-ROLE` 을 user 로 고정 (nodejs `40b5d45` parity)

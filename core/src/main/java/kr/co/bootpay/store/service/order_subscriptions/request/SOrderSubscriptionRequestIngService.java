@@ -22,7 +22,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,11 +109,11 @@ public class SOrderSubscriptionRequestIngService {
         // URL 구성 — 둘 다 주어지면 둘 다 전송한다 (else 로 묶으면 order_number 가 조용히 유실된다)
         StringBuilder url = new StringBuilder("order_subscriptions/requests/ing/calculate_termination_fee?");
         if (hasOrderSubscriptionId) {
-            url.append("order_subscription_id=").append(URLEncoder.encode(orderSubscriptionId, StandardCharsets.UTF_8));
+            url.append("order_subscription_id=").append(URLEncoder.encode(orderSubscriptionId, "UTF-8"));
         }
         if (hasOrderNumber) {
             if (hasOrderSubscriptionId) url.append("&");
-            url.append("order_number=").append(URLEncoder.encode(orderNumber, StandardCharsets.UTF_8));
+            url.append("order_number=").append(URLEncoder.encode(orderNumber, "UTF-8"));
         }
 
         // 요청 실행
@@ -143,11 +142,11 @@ public class SOrderSubscriptionRequestIngService {
         // 둘 다 주어지면 둘 다 전송한다 (else 로 묶으면 order_number 가 조용히 유실된다)
         StringBuilder url = new StringBuilder("order_subscriptions/requests/ing/calculate_termination_fee?");
         if (hasOrderSubscriptionId) {
-            url.append("order_subscription_id=").append(URLEncoder.encode(orderSubscriptionId, StandardCharsets.UTF_8));
+            url.append("order_subscription_id=").append(URLEncoder.encode(orderSubscriptionId, "UTF-8"));
         }
         if (hasOrderNumber) {
             if (hasOrderSubscriptionId) url.append("&");
-            url.append("order_number=").append(URLEncoder.encode(orderNumber, StandardCharsets.UTF_8));
+            url.append("order_number=").append(URLEncoder.encode(orderNumber, "UTF-8"));
         }
 
         return bootpay.httpGet(url.toString(), userContext(null));
