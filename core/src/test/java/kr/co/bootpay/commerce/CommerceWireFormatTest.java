@@ -1275,6 +1275,26 @@ class CommerceWireFormatTest {
     }
 
     @Test
+    @DisplayName("invoice.create - 인스턴스 role 이 manager·supervisor 여도 user 로 보낸다 (서버 스코프 user:invoice_create 뿐)")
+    void testInvoiceCreateForcesUserRole() throws Exception {
+        kr.co.bootpay.store.model.pojo.SInvoice invoice = new kr.co.bootpay.store.model.pojo.SInvoice();
+        invoice.name = "청구서";
+        invoice.price = 1000.0;
+        for (String role : new String[]{"manager", "supervisor"}) {
+            store.setRole(role);
+            store.invoice.create(invoice);
+            assertEquals("POST", lastMethod);
+            assertEquals("/v1/invoices", lastPath);
+            assertEquals("user", lastRole, role + " 인스턴스에서도 user");
+            assertNotNull(lastIdempotencyKey);
+            assertEquals(role, store.getRole(), "인스턴스 role 은 바뀌지 않는다");
+        }
+        store.invoice.create(invoice, "idem-invoice");
+        assertEquals("idem-invoice", lastIdempotencyKey);
+        store.setRole("user");
+    }
+
+    @Test
     @DisplayName("invoice.create - price_adjustments/cycles 중첩 직렬화")
     void testInvoiceCreatePriceAdjustments() throws Exception {
         kr.co.bootpay.store.model.pojo.SInvoice invoice = new kr.co.bootpay.store.model.pojo.SInvoice();

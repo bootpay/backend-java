@@ -172,13 +172,15 @@ public class SInvoiceService {
     }
 
     /**
-     * 청구서 생성 요청 컨텍스트 — Idempotency-Key 만 싣고 role 은 지정하지 않는다.
+     * 청구서 생성 요청 컨텍스트 — 인스턴스 role 과 무관하게 BOOTPAY-ROLE: user + Idempotency-Key.
      *
-     * <p>role 을 고정하면 {@code setRole("supervisor")} 로 지정해 둔 호출자가 조용히 user 로
-     * 강등된다. role 미지정 시 인스턴스 role 이 쓰이고, 그마저 없으면 "user" 가 기본값이다.</p>
+     * <p>26-11-13: 서버 스코프는 {@code user:invoice_create} 뿐이다. 종전에는 "supervisor 호출자가 강등된다"며
+     * role 을 비워 인스턴스 role 을 따랐는데, dev 실측으로 manager·supervisor 는 둘 다
+     * 401 API_ROLE_NOT_SUPPORT 였다 (user 만 스코프 통과). 그래서 list·detail·notify 와 같이 user 로 고정한다.</p>
      */
     private static RequestContext invoiceCreateContext(String idempotencyKey) {
         return RequestContext.builder()
+                .role("user")
                 .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
                 .build();
     }
