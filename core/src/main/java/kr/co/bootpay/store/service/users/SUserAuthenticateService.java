@@ -11,16 +11,13 @@ import java.net.URLEncoder;
 public class SUserAuthenticateService {
 
     /**
-     * Registers an individual user by creating an SUser object and sending the registration request to Bootpay.
-     * The method handles both success and error scenarios.
+     * 본인인증(가입 인증 대기) 데이터 조회
+     *
+     * @deprecated userAuthenticate 를 쓴다 (같은 엔드포인트 GET /v1/users/authenticate/{id}). 호환용으로 남겨 두며 userAuthenticate 로 위임한다.
      */
+    @Deprecated
     static public BootpayStoreResponse authenticationData(BootpayStoreObject bootpay, String standId) throws Exception {
-        bootpay.requireCommerceCredentials();
-        // URL 구조: users/join/:path?pk=:pk
-        String url = String.format("users/authenticate/%s", standId);
-        HttpGet get = bootpay.httpGet(url);
-        HttpResponse response = bootpay.execute(get);
-        return bootpay.responseToJsonObject(response);
+        return userAuthenticate(bootpay, standId, null, null);
     }
 
     /**

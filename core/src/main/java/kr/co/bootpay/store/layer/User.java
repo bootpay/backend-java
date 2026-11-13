@@ -80,7 +80,9 @@ public class User {
     /**
      * 본인인증 데이터 조회
      * @param standId 인증 ID
+     * @deprecated {@link #userAuthenticate(String)} 를 쓴다 (같은 엔드포인트).
      */
+    @Deprecated
     public BootpayStoreResponse authenticationData(String standId) throws Exception {
         return SUserAuthenticateService.authenticationData(bootpay, standId);
     }

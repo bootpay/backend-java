@@ -80,7 +80,9 @@ public class UserModule {
      * @param standId 인증 기준 id
      * @return 인증 데이터
      * @throws Exception 통신 실패 또는 인증 정보 누락
+     * @deprecated {@link #userAuthenticate(String)} 를 쓴다 (같은 엔드포인트).
      */
+    @Deprecated
     public BootpayResponse authenticationData(String standId) throws Exception {
         return CommerceResponses.of(delegate.authenticationData(standId));
     }
