@@ -13,7 +13,7 @@ public static final String CURRENT_ENV = "production";
 
 ### Gradle로 실행
 ```bash
-cd /Users/taesupyoon/bootpay/server/sdk/java
+cd <java-sdk 저장소 루트>
 
 # 빌드
 ./gradlew build
