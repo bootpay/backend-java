@@ -9,6 +9,8 @@ import kr.co.bootpay.store.model.pojo.SProduct;
 import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.request.invoice.InvoiceListParams;
 import kr.co.bootpay.store.model.request.order.OrderListParams;
+import kr.co.bootpay.store.model.request.order.OrderPurchaseUpdateItem;
+import kr.co.bootpay.store.model.request.order.OrderPurchasesUpdateParams;
 import kr.co.bootpay.store.model.request.order.cancel.OrderCancelActionParams;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionListParams;
 import kr.co.bootpay.store.model.request.orderSubscription.OrderSubscriptionUpdateParams;
@@ -504,6 +506,41 @@ class CommerceWireFormatTest {
         assertEquals("user", lastRole);
         assertNotNull(lastIdempotencyKey);
         assertTrue(lastBody.contains("\"status_sale\":true"), lastBody);
+    }
+
+    @Test
+    @DisplayName("order.purchases - GET /v1/orders/{orderNumber}/purchases, user role + Idempotency-Key")
+    void testOrderPurchasesUserRole() throws Exception {
+        store.order.purchases("ORD-1");
+
+        assertEquals("GET", lastMethod);
+        assertEquals("/v1/orders/ORD-1/purchases", lastPath);
+        assertEquals("user", lastRole);
+        assertNotNull(lastIdempotencyKey);
+    }
+
+    @Test
+    @DisplayName("order.updatePurchases - PUT /v1/orders/{orderNumber}/purchases, user role, orderNumber·key 는 body 제외")
+    void testOrderUpdatePurchasesUserRole() throws Exception {
+        OrderPurchaseUpdateItem item = new OrderPurchaseUpdateItem();
+        item.orderPurchaseNumber = "P1";
+        item.status = 4;
+
+        OrderPurchasesUpdateParams params = new OrderPurchasesUpdateParams();
+        params.orderNumber = "ORD-1";
+        params.purchases = new ArrayList<>();
+        params.purchases.add(item);
+        store.order.updatePurchases(params);
+
+        assertEquals("PUT", lastMethod);
+        assertEquals("/v1/orders/ORD-1/purchases", lastPath);
+        assertEquals("user", lastRole);
+        assertNotNull(lastIdempotencyKey);
+        assertTrue(lastBody.contains("\"purchases\""), lastBody);
+        assertTrue(lastBody.contains("\"order_purchase_number\":\"P1\""), lastBody);
+        assertTrue(lastBody.contains("\"status\":4"), lastBody);
+        assertFalse(lastBody.contains("order_number\""), lastBody.replace("order_purchase_number", ""));
+        assertFalse(lastBody.contains("idempotency"), lastBody);
     }
 
     @Test

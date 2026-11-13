@@ -14,6 +14,8 @@ import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.request.alimtalk.AlimtalkSendParams;
 import kr.co.bootpay.store.model.request.inquiry.InquiryCreateParams;
 import kr.co.bootpay.store.model.request.order.OrderListParams;
+import kr.co.bootpay.store.model.request.order.OrderPurchaseUpdateItem;
+import kr.co.bootpay.store.model.request.order.OrderPurchasesUpdateParams;
 import kr.co.bootpay.store.model.request.product.ProductListParams;
 import kr.co.bootpay.store.model.request.productQna.ProductQnaCreateParams;
 import kr.co.bootpay.store.model.request.user.UserListParams;
@@ -108,6 +110,17 @@ class CommerceModuleParityTest {
         return new String[]{lastMethod, lastPath, lastQuery, lastBody, lastRole};
     }
 
+    private static OrderPurchasesUpdateParams purchasesParams() {
+        OrderPurchaseUpdateItem item = new OrderPurchaseUpdateItem();
+        item.orderPurchaseNumber = "purchase_1";
+        item.status = 4;
+        OrderPurchasesUpdateParams params = new OrderPurchasesUpdateParams();
+        params.orderNumber = "order_1";
+        params.purchases = new java.util.ArrayList<>();
+        params.purchases.add(item);
+        return params;
+    }
+
     private static void assertSameRequest(String label, Call legacyCall, Call modernCall) throws Exception {
         String[] before = record(legacyCall);
         String[] after = record(modernCall);
@@ -193,6 +206,12 @@ class CommerceModuleParityTest {
         assertSameRequest("order.detail",
                 () -> legacy.order.detail("order_1"),
                 () -> modern.order.detail("order_1"));
+        assertSameRequest("order.purchases",
+                () -> legacy.order.purchases("order_1"),
+                () -> modern.order.purchases("order_1"));
+        assertSameRequest("order.updatePurchases",
+                () -> legacy.order.updatePurchases(purchasesParams()),
+                () -> modern.order.updatePurchases(purchasesParams()));
 
         assertSameRequest("category.list", () -> legacy.category.list(), () -> modern.category.list());
         assertSameRequest("category.detail",

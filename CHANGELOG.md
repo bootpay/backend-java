@@ -1,5 +1,11 @@
 ### Unreleased
 
+#### 주문 발송 정보 조회·발송처리 추가 (ruby `b762095` parity)
+
+- `order.purchases(String orderNumber)` / `order.purchases(String orderNumber, String idempotencyKey)` — `GET /v1/orders/{orderNumber}/purchases`. 발주(배송) 단위 운송장·택배사·배송추적 상태·이력을 조회한다.
+- `order.updatePurchases(OrderPurchasesUpdateParams params)` — `PUT /v1/orders/{orderNumber}/purchases`. 발주 단위 상태·운송장을 갱신한다(한 번에 최대 50건, `OrderPurchaseUpdateItem` 목록). 경로 주문에 딸리지 않은 `orderPurchaseNumber` 가 섞이면 요청 전체가 `ORDER_PURCHASE_NOT_FOUND` 로 거절된다.
+- 두 호출 모두 `BOOTPAY-ROLE` 은 항상 `user` 로 고정하고, `Idempotency-Key` 는 미지정시 자동 생성한다. `orderNumber`·`idempotencyKey` 는 body 에 실리지 않는다.
+
 #### Java 8 호환 수정
 
 `calculateTerminationFee` 의 `URLEncoder.encode(String, Charset)` — Java 10+ API — 를 Java 8 API(`URLEncoder.encode(String, "UTF-8")`)로 바꿨다. Java 8 런타임에서 `NoSuchMethodError` 가 날 수 있었다.
