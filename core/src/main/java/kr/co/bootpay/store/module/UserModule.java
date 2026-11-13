@@ -86,6 +86,43 @@ public class UserModule {
     }
 
     /**
+     * 가입 이메일 인증 대기 상태 조회.
+     * GET /v1/users/authenticate/{userStandbyId}
+     *
+     * @param userStandbyId 가입 대기 ID
+     * @return 인증 대기 상태
+     * @throws Exception 통신 실패 또는 인증 정보 누락
+     */
+    public BootpayResponse userAuthenticate(String userStandbyId) throws Exception {
+        return CommerceResponses.of(delegate.userAuthenticate(userStandbyId));
+    }
+
+    /**
+     * 가입 이메일 인증 대기 상태 조회.
+     *
+     * @param userStandbyId       가입 대기 ID
+     * @param verificationContext 선택 (null 이면 전송하지 않음)
+     * @return 인증 대기 상태
+     * @throws Exception 통신 실패 또는 인증 정보 누락
+     */
+    public BootpayResponse userAuthenticate(String userStandbyId, String verificationContext) throws Exception {
+        return CommerceResponses.of(delegate.userAuthenticate(userStandbyId, verificationContext));
+    }
+
+    /**
+     * 가입 이메일 인증 대기 상태 조회.
+     *
+     * @param userStandbyId       가입 대기 ID
+     * @param verificationContext 선택 (null 이면 전송하지 않음)
+     * @param idempotencyKey      미지정 시 자동 생성 (Idempotency-Key 헤더)
+     * @return 인증 대기 상태
+     * @throws Exception 통신 실패 또는 인증 정보 누락
+     */
+    public BootpayResponse userAuthenticate(String userStandbyId, String verificationContext, String idempotencyKey) throws Exception {
+        return CommerceResponses.of(delegate.userAuthenticate(userStandbyId, verificationContext, idempotencyKey));
+    }
+
+    /**
      * 로그인 (관리자).
      *
      * @param loginId 로그인 id

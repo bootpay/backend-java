@@ -86,6 +86,32 @@ public class User {
     }
 
     /**
+     * 가입 이메일 인증 대기 상태 조회
+     * GET /v1/users/authenticate/{userStandbyId}
+     * @param userStandbyId 가입 대기 ID
+     */
+    public BootpayStoreResponse userAuthenticate(String userStandbyId) throws Exception {
+        return SUserAuthenticateService.userAuthenticate(bootpay, userStandbyId, null, null);
+    }
+
+    /**
+     * 가입 이메일 인증 대기 상태 조회
+     * GET /v1/users/authenticate/{userStandbyId}?verification_context={verificationContext}
+     * @param verificationContext 선택 (null 이면 전송하지 않는다)
+     */
+    public BootpayStoreResponse userAuthenticate(String userStandbyId, String verificationContext) throws Exception {
+        return SUserAuthenticateService.userAuthenticate(bootpay, userStandbyId, verificationContext, null);
+    }
+
+    /**
+     * 가입 이메일 인증 대기 상태 조회
+     * @param idempotencyKey 미지정시 자동 생성
+     */
+    public BootpayStoreResponse userAuthenticate(String userStandbyId, String verificationContext, String idempotencyKey) throws Exception {
+        return SUserAuthenticateService.userAuthenticate(bootpay, userStandbyId, verificationContext, idempotencyKey);
+    }
+
+    /**
      * 로그인
      * @param loginId 로그인 ID
      * @param loginPw 비밀번호

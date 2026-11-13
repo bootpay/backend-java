@@ -336,6 +336,30 @@ class CommerceWireFormatTest {
     }
 
     @Test
+    @DisplayName("user.userAuthenticate - GET users/authenticate/{userStandbyId}, user role")
+    void testUserAuthenticate() throws Exception {
+        store.user.userAuthenticate("standby_1");
+
+        assertEquals("GET", lastMethod);
+        assertEquals("/v1/users/authenticate/standby_1", lastPath);
+        assertNull(lastQuery);
+        assertEquals("user", lastRole);
+        assertNotNull(lastIdempotencyKey);
+    }
+
+    @Test
+    @DisplayName("user.userAuthenticate - verification_context 쿼리, Idempotency-Key 지정")
+    void testUserAuthenticateWithVerificationContext() throws Exception {
+        store.user.userAuthenticate("standby_1", "join", "idem-auth-1");
+
+        assertEquals("GET", lastMethod);
+        assertEquals("/v1/users/authenticate/standby_1", lastPath);
+        assertEquals("verification_context=join", lastQuery);
+        assertEquals("user", lastRole);
+        assertEquals("idem-auth-1", lastIdempotencyKey);
+    }
+
+    @Test
     @DisplayName("user.userJoinCheck - GET users/join/{type}?pk={pk}")
     void testUserJoinCheck() throws Exception {
         store.user.userJoinCheck("email-exist", "a@b.com");
