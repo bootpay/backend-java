@@ -65,7 +65,7 @@ public class SInvoiceService {
         bootpay.requireCommerceCredentials();
 
         String url = "invoices";
-        if (params == null) return bootpay.httpGet(url);
+        if (params == null) return bootpay.httpGet(url, RequestContext.ofRole("user"));
 
         // 값이 설정되지 않은 필드는 전송하지 않는다 (ruby의 compact 동작)
         List<NameValuePair> nameValuePairList = new ArrayList<>();
@@ -83,7 +83,7 @@ public class SInvoiceService {
             if (invoiceParams.cseAt != null) nameValuePairList.add(new BasicNameValuePair("cse_at", invoiceParams.cseAt));
         }
 
-        return bootpay.httpGet(url, nameValuePairList);
+        return bootpay.httpGet(url, nameValuePairList, RequestContext.ofRole("user"));
     }
 
     /**

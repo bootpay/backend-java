@@ -53,7 +53,7 @@ public class SOrderCancelService {
                 .create();
 
 //        if(orderCancelParams.isSupervisor) role = "supervisor" + "/";
-        HttpPost post = bootpay.httpPost("order/cancel", new StringEntity(gson.toJson(orderCancelParams), "UTF-8"));
+        HttpPost post = bootpay.httpPost("order/cancel", new StringEntity(gson.toJson(orderCancelParams), "UTF-8"), RequestContext.ofRole(RequestContext.userOrSupervisorRole(bootpay.getRole())));
 
         HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);

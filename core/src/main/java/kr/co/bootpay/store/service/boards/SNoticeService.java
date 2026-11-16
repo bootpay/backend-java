@@ -63,7 +63,7 @@ public class SNoticeService {
         SBoardSupport.requireValue(params.noticeId, "noticeId");
 
         HttpGet get = bootpay.httpGet("notices/" + params.noticeId,
-                SBoardSupport.context(params.supervisor, null, params.idempotencyKey));
+                SBoardSupport.userOrSupervisorContext(bootpay, params.supervisor, null, params.idempotencyKey));
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }

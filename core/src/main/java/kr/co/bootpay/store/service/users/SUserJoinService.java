@@ -42,7 +42,7 @@ public class SUserJoinService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPost post = bootpay.httpPost("users/join", new StringEntity(gson.toJson(user), "UTF-8"));
+        HttpPost post = bootpay.httpPost("users/join", new StringEntity(gson.toJson(user), "UTF-8"), RequestContext.ofRole("user"));
 
         HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
@@ -87,7 +87,7 @@ public class SUserJoinService {
 
         // URL 구조: users/join/:path?pk=:pk
         String url = String.format("users/join/%s?pk=%s", path, encodedPk);
-        return bootpay.httpGet(url);
+        return bootpay.httpGet(url, RequestContext.ofRole("user"));
     }
 
     /**
@@ -163,6 +163,7 @@ public class SUserJoinService {
      */
     private static RequestContext mallContext(String idempotencyKey) {
         return RequestContext.builder()
+                .role("user")
                 .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
                 .build();
     }

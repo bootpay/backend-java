@@ -2,6 +2,16 @@ package kr.co.bootpay.commerce;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import kr.co.bootpay.Version;
+import kr.co.bootpay.store.model.request.order.cancel.OrderCancelParams;
+import kr.co.bootpay.store.model.request.coupon.CouponDownloadParams;
+import kr.co.bootpay.store.model.request.category.CategoryCreateParams;
+import kr.co.bootpay.store.model.request.category.CategoryUpdateParams;
+import kr.co.bootpay.store.model.request.productQna.ProductQnaDeleteParams;
+import kr.co.bootpay.store.model.request.orderSubscriptionBill.OrderSubscriptionBillListParams;
+import kr.co.bootpay.store.model.pojo.SOrderSubscriptionBill;
+import kr.co.bootpay.store.model.pojo.SUser;
+import kr.co.bootpay.store.model.pojo.SUserGroup;
 import kr.co.bootpay.store.BootpayStore;
 import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
@@ -50,6 +60,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -269,7 +284,7 @@ class CommerceWireFormatTest {
     // ══════════════════════════════════════════════════════════
 
     @Test
-    @DisplayName("webhook.sendTest - POST webhook/test, header_content_type 미지정시 빈 바디, user role")
+    @DisplayName("webhook.sendTest - POST webhook/test, header_content_type 미지정시 빈 바디, supervisor role")
     void testWebhookSendTestDefault() throws Exception {
         store.webhook.sendTest();
 
@@ -277,7 +292,8 @@ class CommerceWireFormatTest {
         assertEquals("/v1/webhook/test", lastPath);
         assertEquals("{}", lastBody);
         assertNotNull(lastIdempotencyKey);
-        assertEquals("user", lastRole, "webhook 은 기본(user) role 로 요청한다");
+        // @date: 26-11-16 서버 스코프가 supervisor:webhook_test 뿐이라 supervisor 로 고정한다(예전 user 기대값은 401 을 내던 동작).
+        assertEquals("supervisor", lastRole, "webhook/test 는 supervisor role 로 요청한다");
     }
 
     @Test
@@ -1194,12 +1210,16 @@ class CommerceWireFormatTest {
     @DisplayName("role - context 없는 요청은 인스턴스 기본 role 을 그대로 사용")
     void testDefaultRolePreservedWithoutContext() throws Exception {
         try {
-            store.user.detail("U1");
+            // @date: 26-11-16 user.detail 은 이제 엔드포인트 규칙대로 user 로 고정되므로, 규칙 표에 없는 projects/me 로 확인한다.
+            store.project.me();
             assertEquals("user", lastRole, "기본 role user");
 
             store.withRole("partner");
-            store.user.detail("U1");
+            store.project.me();
             assertEquals("partner", lastRole, "설정한 기본 role 이 덮어써지면 안 됩니다");
+
+            store.user.detail("U1");
+            assertEquals("user", lastRole, "규칙 표의 엔드포인트는 인스턴스 role 과 무관하게 고정 role 로 보낸다");
         } finally {
             store.clearRole();
         }
@@ -1722,6 +1742,193 @@ class CommerceWireFormatTest {
         assertFalse(BootpayStoreObject.blankPathSegment("orders"));
         assertFalse(BootpayStoreObject.blankPathSegment("/orders/ORD-1/purchases"));
         assertFalse(BootpayStoreObject.blankPathSegment("orders?redirect=a//b/"));
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // 엔드포인트별 고정 BOOTPAY-ROLE — manager·supervisor 인스턴스 모두 서버 규칙대로
+    // ══════════════════════════════════════════════════════════
+
+    private interface StoreCall {
+        void run(BootpayStore s) throws Exception;
+    }
+
+    private static final String USER = "user";
+    private static final String SUPERVISOR = "supervisor";
+    private static final String USER_OR_SUPERVISOR = "user_or_supervisor";
+
+    private static final class RoleCase {
+        final String name;
+        final String rule;
+        final StoreCall call;
+
+        RoleCase(String name, String rule, StoreCall call) {
+            this.name = name;
+            this.rule = rule;
+            this.call = call;
+        }
+    }
+
+    private static List<RoleCase> roleCases() {
+        List<RoleCase> c = new ArrayList<>();
+        // 이번에 고정한 메서드
+        c.add(new RoleCase("cart.orderPreview", USER, s -> s.cart.orderPreview()));
+        c.add(new RoleCase("point.balance", USER, s -> s.point.balance()));
+        c.add(new RoleCase("point.transactions", USER, s -> s.point.transactions()));
+        c.add(new RoleCase("order.list", USER, s -> s.order.list(new OrderListParams())));
+        c.add(new RoleCase("order.detail", USER, s -> s.order.detail("ORD_1")));
+        c.add(new RoleCase("order.month", USER, s -> s.order.month("UG_1", "2026-11")));
+        c.add(new RoleCase("coupon.list", USER_OR_SUPERVISOR, s -> s.coupon.list()));
+        c.add(new RoleCase("coupon.available", USER_OR_SUPERVISOR, s -> s.coupon.available()));
+        c.add(new RoleCase("coupon.download", USER, s -> {
+            CouponDownloadParams p = new CouponDownloadParams();
+            p.couponTemplateId = "CT_1";
+            s.coupon.download(p);
+        }));
+        c.add(new RoleCase("orderCancel.request", USER_OR_SUPERVISOR, s -> s.orderCancel.request(new OrderCancelParams())));
+        c.add(new RoleCase("category.list", USER, s -> s.category.list()));
+        c.add(new RoleCase("category.detail", USER, s -> s.category.detail("CAT_1")));
+        c.add(new RoleCase("category.create", SUPERVISOR, s -> s.category.create(new CategoryCreateParams())));
+        c.add(new RoleCase("category.update", SUPERVISOR, s -> {
+            CategoryUpdateParams p = new CategoryUpdateParams();
+            p.categoryId = "CAT_1";
+            s.category.update(p);
+        }));
+        c.add(new RoleCase("category.delete", SUPERVISOR, s -> s.category.delete("CAT_1")));
+        c.add(new RoleCase("orderSubscriptionBill.list", USER_OR_SUPERVISOR, s -> s.orderSubscriptionBill.list(new OrderSubscriptionBillListParams())));
+        c.add(new RoleCase("orderSubscriptionBill.detail", USER_OR_SUPERVISOR, s -> s.orderSubscriptionBill.detail("OSB_1")));
+        c.add(new RoleCase("orderSubscriptionBill.update", SUPERVISOR, s -> {
+            SOrderSubscriptionBill b = new SOrderSubscriptionBill();
+            b.orderSubscriptionBillId = "OSB_1";
+            s.orderSubscriptionBill.update(b);
+        }));
+        c.add(new RoleCase("orderSubscription.list", USER, s -> s.orderSubscription.list(new OrderSubscriptionListParams())));
+        c.add(new RoleCase("orderSubscription.detail", USER, s -> s.orderSubscription.detail("OS_1")));
+        c.add(new RoleCase("orderSubscription.update", SUPERVISOR, s -> {
+            OrderSubscriptionUpdateParams p = new OrderSubscriptionUpdateParams();
+            p.orderSubscriptionId = "OS_1";
+            s.orderSubscription.update(p);
+        }));
+        c.add(new RoleCase("orderSubscription.approve", SUPERVISOR, s -> s.orderSubscription.approve("OS_1", "ok")));
+        c.add(new RoleCase("orderSubscription.reject", SUPERVISOR, s -> s.orderSubscription.reject("OS_1", "no")));
+        c.add(new RoleCase("orderSubscription.terminate", SUPERVISOR, s -> s.orderSubscription.terminate("OS_1", "end")));
+        c.add(new RoleCase("orderSubscription.supervisorResume", SUPERVISOR, s -> s.orderSubscription.supervisorResume("OS_1")));
+        c.add(new RoleCase("orderSubscriptionRequest.list", USER_OR_SUPERVISOR, s -> s.orderSubscriptionRequest.list()));
+        c.add(new RoleCase("orderSubscriptionRequest.detail", USER_OR_SUPERVISOR, s -> s.orderSubscriptionRequest.detail("OSR_1")));
+        c.add(new RoleCase("notice.detail", USER_OR_SUPERVISOR, s -> s.notice.detail("N_1")));
+        c.add(new RoleCase("faq.detail", USER_OR_SUPERVISOR, s -> s.faq.detail("F_1")));
+        c.add(new RoleCase("productQna.delete", USER_OR_SUPERVISOR, s -> {
+            ProductQnaDeleteParams p = new ProductQnaDeleteParams();
+            p.productQnaId = "Q_1";
+            s.productQna.delete(p);
+        }));
+        c.add(new RoleCase("product.list", USER, s -> s.product.list(new ProductListParams())));
+        c.add(new RoleCase("product.products", USER, s -> s.product.products()));
+        c.add(new RoleCase("product.detail", USER, s -> s.product.detail("PRD_1")));
+        c.add(new RoleCase("store.info", USER, s -> s.store.info()));
+        c.add(new RoleCase("store.detail", USER, s -> s.store.detail()));
+        c.add(new RoleCase("userGroup.create", USER, s -> s.userGroup.create(new SUserGroup())));
+        c.add(new RoleCase("userGroup.list", USER, s -> s.userGroup.list(null)));
+        c.add(new RoleCase("userGroup.detail", USER, s -> s.userGroup.detail("UG_1")));
+        c.add(new RoleCase("userGroup.update", USER, s -> {
+            SUserGroup g = new SUserGroup();
+            g.userGroupId = "UG_1";
+            s.userGroup.update(g);
+        }));
+        c.add(new RoleCase("userGroup.userCreate", "manager", s -> s.userGroup.userCreate("UG_1", "U_1")));
+        c.add(new RoleCase("user.list", USER, s -> s.user.list(new UserListParams())));
+        c.add(new RoleCase("user.detail", USER, s -> s.user.detail("U_1")));
+        c.add(new RoleCase("user.update", USER, s -> {
+            SUser u = new SUser();
+            u.userId = "U_1";
+            s.user.update(u);
+        }));
+        c.add(new RoleCase("user.delete", USER, s -> s.user.delete("U_1")));
+        c.add(new RoleCase("user.join", USER, s -> s.user.join(new SUser())));
+        c.add(new RoleCase("user.checkExist", USER, s -> s.user.checkExist("email-exist", "a@b.c")));
+        c.add(new RoleCase("user.login", USER, s -> s.user.login("id", "pw")));
+        c.add(new RoleCase("user.userLogin", USER, s -> s.user.userLogin("id", "pw")));
+        c.add(new RoleCase("user.userSession", USER, s -> s.user.userSession("jwt")));
+        c.add(new RoleCase("user.userLogout", USER, s -> s.user.userLogout("jwt")));
+        c.add(new RoleCase("webhook.sendTest", SUPERVISOR, s -> s.webhook.sendTest()));
+        // 이미 맞던 메서드
+        c.add(new RoleCase("invoice.list", USER, s -> s.invoice.list(new InvoiceListParams())));
+        c.add(new RoleCase("order.purchases", USER, s -> s.order.purchases("ORD-1")));
+        c.add(new RoleCase("mallSetting.detail", SUPERVISOR, s -> s.mallSetting.detail()));
+        c.add(new RoleCase("deposit.accounts", SUPERVISOR, s -> s.deposit.accounts()));
+        c.add(new RoleCase("orderCancel.approve", SUPERVISOR, s -> {
+            OrderCancelActionParams p = new OrderCancelActionParams();
+            p.orderCancellationRequestId = "OCR_1";
+            s.orderCancel.approve(p);
+        }));
+        return c;
+    }
+
+    private static String expectedRole(String rule, String instanceRole) {
+        if (USER_OR_SUPERVISOR.equals(rule)) return SUPERVISOR.equals(instanceRole) ? SUPERVISOR : USER;
+        return rule;
+    }
+
+    private static BootpayStore storeWithRole(String role) {
+        BootpayStore s = new BootpayStore(new TokenPayload("test_ck", "test_sk"), "PRODUCTION");
+        s.baseUrl = store.baseUrl;
+        s.setRole(role);
+        return s;
+    }
+
+    @Test
+    @DisplayName("BOOTPAY-ROLE - 엔드포인트별 고정 role 표 (manager·supervisor 인스턴스)")
+    void testFixedRolePerEndpointTable() throws Exception {
+        for (String instanceRole : new String[]{"manager", "supervisor"}) {
+            BootpayStore s = storeWithRole(instanceRole);
+            for (RoleCase rc : roleCases()) {
+                lastRole = null;
+                rc.call.run(s);
+                assertEquals(expectedRole(rc.rule, instanceRole), lastRole,
+                        rc.name + " (" + rc.rule + ") @" + instanceRole + " 인스턴스");
+                assertEquals(instanceRole, s.getRole(), "인스턴스 role 은 바뀌지 않는다");
+            }
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // BOOTPAY-SDK-VERSION — Version.SDK_VERSION 과 배포 버전(publish.gradle)에 맞춘다
+    // ══════════════════════════════════════════════════════════
+
+    @Test
+    @DisplayName("BOOTPAY-SDK-VERSION - Version.SDK_VERSION 과 같다")
+    void testSdkVersionHeader() throws Exception {
+        final String[] header = new String[1];
+        BootpayStore capturing = new BootpayStore(new TokenPayload("test_ck", "test_sk"), "PRODUCTION") {
+            @Override
+            public org.apache.http.HttpResponse execute(org.apache.http.client.methods.HttpRequestBase request) throws Exception {
+                header[0] = request.getFirstHeader("BOOTPAY-SDK-VERSION").getValue();
+                return super.execute(request);
+            }
+        };
+        capturing.baseUrl = store.baseUrl;
+        capturing.point.balance();
+
+        assertEquals(Version.SDK_VERSION, header[0]);
+        assertEquals(Version.SDK_VERSION, Version.COMMERCE_SDK_VERSION);
+    }
+
+    @Test
+    @DisplayName("Version.SDK_VERSION - publish.gradle 의 PUBLISH_VERSION 과 같다 (파일이 없으면 건너뜀)")
+    void testSdkVersionMatchesPublishGradle() throws Exception {
+        Path found = null;
+        for (String candidate : new String[]{"publish.gradle", "../publish.gradle", "../../publish.gradle"}) {
+            Path path = Paths.get(candidate);
+            if (Files.isRegularFile(path)) {
+                found = path;
+                break;
+            }
+        }
+        if (found == null) return;
+
+        String text = new String(Files.readAllBytes(found), StandardCharsets.UTF_8);
+        Matcher m = Pattern.compile("PUBLISH_VERSION\\s*=\\s*'([^']+)'").matcher(text);
+        if (!m.find()) return;
+        assertEquals(m.group(1), Version.SDK_VERSION);
     }
 
 }

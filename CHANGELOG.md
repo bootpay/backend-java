@@ -1,5 +1,14 @@
 ### Unreleased
 
+#### 엔드포인트별 BOOTPAY-ROLE 고정
+
+인스턴스 role(`asManager()` 등)을 그대로 보내던 commerce 메서드가 manager 에서 `API_ROLE_NOT_SUPPORT`(-50) 로 막히던 문제를 고쳤다. 서버 규칙대로 role 을 고정한다.
+
+- `user` 고정: `cart.orderPreview`, `point.*`, `order.list/detail/month`, `coupon.download`, `category.list/detail`, `orderSubscription.list/detail`, `product.list`·`products`·`detail`, `store.info/detail`, `userGroup.create/list/detail/update`, `user.*`(조회·수정·삭제·가입·로그인·세션), `invoice.list`
+- `supervisor` 고정: `orderSubscription.update`, `orderSubscriptionBill.update`, `webhook.sendTest`
+- `user_or_supervisor`: 인스턴스 role 이 supervisor 면 `supervisor`, 그 외(manager 포함)는 `user` — `coupon.list/available`, `orderCancel.request`, `orderSubscriptionBill.list/detail`, `orderSubscriptionRequest.list/detail`, `notice.detail`, `faq.detail`, `productQna.delete`
+- `notice.detail(id)`·`faq.detail(id)` 는 더 이상 항상 user 가 아니라 인스턴스 role 을 따른다(supervisor 인스턴스는 supervisor).
+
 #### BOOTPAY-SDK-VERSION 을 SDK 버전과 일치
 
 `Version.COMMERCE_SDK_VERSION` 을 `Version.SDK_VERSION` 과 같은 값으로 두어 헤더가 배포 버전을 보낸다(필드 이름은 유지).

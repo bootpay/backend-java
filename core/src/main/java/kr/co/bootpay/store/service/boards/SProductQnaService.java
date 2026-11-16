@@ -161,7 +161,7 @@ public class SProductQnaService {
 
         HttpDeleteWithBody delete = bootpay.httpDeleteWithBody("product-qnas/" + params.productQnaId,
                 new StringEntity(gson.toJson(body), "UTF-8"),
-                SBoardSupport.context(params.supervisor, params.userJwt, params.idempotencyKey));
+                SBoardSupport.userOrSupervisorContext(bootpay, params.supervisor, params.userJwt, params.idempotencyKey));
         HttpResponse response = bootpay.execute(delete);
         return bootpay.responseToJsonObject(response);
     }

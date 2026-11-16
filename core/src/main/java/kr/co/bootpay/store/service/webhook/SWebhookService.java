@@ -35,6 +35,7 @@ public class SWebhookService {
         }
 
         RequestContext context = RequestContext.builder()
+                .role("supervisor")
                 .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
                 .build();
 

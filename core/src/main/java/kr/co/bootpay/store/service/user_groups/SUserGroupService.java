@@ -34,7 +34,7 @@ public class SUserGroupService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPost post = bootpay.httpPost("user-groups", new StringEntity(gson.toJson(userGroup), "UTF-8"));
+        HttpPost post = bootpay.httpPost("user-groups", new StringEntity(gson.toJson(userGroup), "UTF-8"), RequestContext.ofRole("user"));
 
         HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
@@ -51,11 +51,11 @@ public class SUserGroupService {
             if (params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
             if (params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
 
-            HttpGet get = bootpay.httpGet(url, nameValuePairList);
+            HttpGet get = bootpay.httpGet(url, nameValuePairList, RequestContext.ofRole("user"));
             HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         } else {
-            HttpGet get = bootpay.httpGet(url);
+            HttpGet get = bootpay.httpGet(url, RequestContext.ofRole("user"));
             HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         }
@@ -65,7 +65,7 @@ public class SUserGroupService {
         bootpay.requireCommerceCredentials();
 
 
-        HttpGet get = bootpay.httpGet("user-groups/" + userGroupId);
+        HttpGet get = bootpay.httpGet("user-groups/" + userGroupId, RequestContext.ofRole("user"));
 
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
@@ -78,7 +78,7 @@ public class SUserGroupService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPut put = bootpay.httpPut("user-groups/" + userGroup.userGroupId, new StringEntity(gson.toJson(userGroup), "UTF-8"));
+        HttpPut put = bootpay.httpPut("user-groups/" + userGroup.userGroupId, new StringEntity(gson.toJson(userGroup), "UTF-8"), RequestContext.ofRole("user"));
 
         HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);

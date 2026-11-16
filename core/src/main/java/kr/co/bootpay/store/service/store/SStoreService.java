@@ -57,6 +57,7 @@ public class SStoreService {
      */
     private static RequestContext storeContext(String idempotencyKey) {
         return RequestContext.builder()
+                .role("user")
                 .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
                 .build();
     }

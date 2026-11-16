@@ -40,7 +40,7 @@ public class SUserLoginService {
             params.put("membership_type", membershipType);
         }
 
-        HttpPost post = bootpay.httpPost("users/login/token", new StringEntity(gson.toJson(params), "UTF-8"), context);
+        HttpPost post = bootpay.httpPost("users/login/token", new StringEntity(gson.toJson(params), "UTF-8"), RequestContext.withFixedRole(context, "user"));
 
         HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
@@ -62,7 +62,7 @@ public class SUserLoginService {
         params.put("login_pw", loginPw);
 
 
-        HttpPost post = bootpay.httpPost("users/login", new StringEntity(gson.toJson(params), "UTF-8"), context);
+        HttpPost post = bootpay.httpPost("users/login", new StringEntity(gson.toJson(params), "UTF-8"), RequestContext.withFixedRole(context, "user"));
 
         HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
@@ -128,6 +128,7 @@ public class SUserLoginService {
      */
     static RequestContext mallContext(String userJwt, String idempotencyKey) {
         return RequestContext.builder()
+                .role("user")
                 .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
                 .userJwt(userJwt)
                 .build();

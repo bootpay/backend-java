@@ -1,5 +1,6 @@
 package kr.co.bootpay.store.service.coupons;
 
+import kr.co.bootpay.store.context.RequestContext;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -29,11 +30,11 @@ public class SCouponService {
             if (params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
             if (params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
 
-            HttpGet get = bootpay.httpGet(url, nameValuePairList);
+            HttpGet get = bootpay.httpGet(url, nameValuePairList, RequestContext.ofRole(RequestContext.userOrSupervisorRole(bootpay.getRole())));
             HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         } else {
-            HttpGet get = bootpay.httpGet(url);
+            HttpGet get = bootpay.httpGet(url, RequestContext.ofRole(RequestContext.userOrSupervisorRole(bootpay.getRole())));
             HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         }
@@ -42,7 +43,7 @@ public class SCouponService {
     static public BootpayStoreResponse available(BootpayStoreObject bootpay) throws Exception {
         bootpay.requireCommerceCredentials();
 
-        HttpGet get = bootpay.httpGet("coupon/available");
+        HttpGet get = bootpay.httpGet("coupon/available", RequestContext.ofRole(RequestContext.userOrSupervisorRole(bootpay.getRole())));
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
@@ -60,7 +61,7 @@ public class SCouponService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPost post = bootpay.httpPost("coupon/download", new StringEntity(gson.toJson(params), "UTF-8"));
+        HttpPost post = bootpay.httpPost("coupon/download", new StringEntity(gson.toJson(params), "UTF-8"), RequestContext.ofRole("user"));
         HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }

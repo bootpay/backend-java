@@ -126,11 +126,11 @@ public class SProductService {
             if (params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
             if (params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
 
-            HttpGet get = bootpay.httpGet(url, nameValuePairList);
+            HttpGet get = bootpay.httpGet(url, nameValuePairList, RequestContext.ofRole("user"));
             HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         } else {
-            HttpGet get = bootpay.httpGet(url);
+            HttpGet get = bootpay.httpGet(url, RequestContext.ofRole("user"));
             HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         }
@@ -258,6 +258,7 @@ public class SProductService {
      */
     private static RequestContext mallContext(String userJwt, String idempotencyKey) {
         return RequestContext.builder()
+                .role("user")
                 .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
                 .userJwt(userJwt)
                 .build();

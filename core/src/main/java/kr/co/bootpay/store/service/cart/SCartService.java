@@ -1,5 +1,6 @@
 package kr.co.bootpay.store.service.cart;
 
+import kr.co.bootpay.store.context.RequestContext;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,7 +22,7 @@ public class SCartService {
 
         // params 가 null 이면 빈 객체 전송 (member_mode default 'guest' 는 서버측 처리)
         Object body = params != null ? params : new OrderPreviewParams();
-        HttpPost post = bootpay.httpPost("cart/order-preview", new StringEntity(gson.toJson(body), "UTF-8"));
+        HttpPost post = bootpay.httpPost("cart/order-preview", new StringEntity(gson.toJson(body), "UTF-8"), RequestContext.ofRole("user"));
         HttpResponse response = bootpay.execute(post);
         return bootpay.responseToJsonObject(response);
     }

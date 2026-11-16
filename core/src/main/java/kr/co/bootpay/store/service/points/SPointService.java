@@ -1,5 +1,6 @@
 package kr.co.bootpay.store.service.points;
 
+import kr.co.bootpay.store.context.RequestContext;
 import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.model.request.point.PointTransactionsParams;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
@@ -16,7 +17,7 @@ public class SPointService {
     static public BootpayStoreResponse balance(BootpayStoreObject bootpay) throws Exception {
         bootpay.requireCommerceCredentials();
 
-        HttpGet get = bootpay.httpGet("point/balance");
+        HttpGet get = bootpay.httpGet("point/balance", RequestContext.ofRole("user"));
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
@@ -31,11 +32,11 @@ public class SPointService {
             if (params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
             if (params.transactionType != null) nameValuePairList.add(new BasicNameValuePair("transaction_type", params.transactionType.toString()));
 
-            HttpGet get = bootpay.httpGet(url, nameValuePairList);
+            HttpGet get = bootpay.httpGet(url, nameValuePairList, RequestContext.ofRole("user"));
             HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         } else {
-            HttpGet get = bootpay.httpGet(url);
+            HttpGet get = bootpay.httpGet(url, RequestContext.ofRole("user"));
             HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         }

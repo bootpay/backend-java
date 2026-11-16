@@ -20,7 +20,7 @@ public class SCategoryService {
     static public BootpayStoreResponse list(BootpayStoreObject bootpay) throws Exception {
         bootpay.requireCommerceCredentials();
 
-        HttpGet get = bootpay.httpGet("categories");
+        HttpGet get = bootpay.httpGet("categories", RequestContext.ofRole("user"));
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
@@ -31,7 +31,7 @@ public class SCategoryService {
             throw new Exception("categoryId 값이 비어있습니다.");
         }
 
-        HttpGet get = bootpay.httpGet("categories/" + categoryId);
+        HttpGet get = bootpay.httpGet("categories/" + categoryId, RequestContext.ofRole("user"));
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }

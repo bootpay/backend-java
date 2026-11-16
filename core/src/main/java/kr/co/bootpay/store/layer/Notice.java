@@ -31,9 +31,11 @@ public class Notice {
         return SNoticeService.list(bootpay, params);
     }
 
-    /** 공지사항 단건 — 고객 모드 */
+    /** 공지사항 단건 — 인스턴스 role 이 supervisor 면 운영자 모드, 그 외 고객 모드 */
     public BootpayStoreResponse detail(String noticeId) throws Exception {
-        return detail(noticeId, false);
+        NoticeDetailParams params = new NoticeDetailParams();
+        params.noticeId = noticeId;
+        return detail(params);
     }
 
     /**

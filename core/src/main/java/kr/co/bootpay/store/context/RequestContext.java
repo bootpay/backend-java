@@ -60,6 +60,29 @@ public class RequestContext {
     }
 
     /**
+     * role 만 고정한 컨텍스트 — Idempotency-Key 는 붙이지 않는다.
+     * (서버 규칙상 엔드포인트별로 role 이 정해져 있어 인스턴스 role 과 무관하게 보낼 때 쓴다)
+     */
+    public static RequestContext ofRole(String role) {
+        return builder().role(role).build();
+    }
+
+    /**
+     * 호출자가 넘긴 컨텍스트의 token·Idempotency-Key·JWT 는 그대로 두고 role 만 고정한 사본 (null 이면 role 만 있는 컨텍스트).
+     */
+    public static RequestContext withFixedRole(RequestContext base, String role) {
+        if (base == null) return ofRole(role);
+        return builder().role(role).token(base.token).idempotencyKey(base.idempotencyKey).userJwt(base.userJwt).build();
+    }
+
+    /**
+     * user_or_supervisor 엔드포인트의 role — 인스턴스 role 이 supervisor 면 supervisor, 그 외(manager 포함)는 user.
+     */
+    public static String userOrSupervisorRole(String instanceRole) {
+        return "supervisor".equals(instanceRole) ? "supervisor" : "user";
+    }
+
+    /**
      * Idempotency-Key 값을 결정한다 — 지정된 값이 있으면 그대로, 없으면 UUID 자동 생성.
      * (nodejs SDK 의 `idempotencyKey || randomUUID()` 와 동일 동작)
      */

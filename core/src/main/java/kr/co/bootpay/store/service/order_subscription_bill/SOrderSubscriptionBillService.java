@@ -54,7 +54,7 @@ public class SOrderSubscriptionBillService {
             }
         }
 
-        HttpGet get = bootpay.httpGet(url, nameValuePairList, userContext(idempotencyKey));
+        HttpGet get = bootpay.httpGet(url, nameValuePairList, userOrSupervisorContext(bootpay, idempotencyKey));
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
@@ -63,7 +63,7 @@ public class SOrderSubscriptionBillService {
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String orderSubscriptionBillId) throws Exception {
         bootpay.requireCommerceCredentials();
 
-        HttpGet get = bootpay.httpGet("order_subscription_bills/" + orderSubscriptionBillId);
+        HttpGet get = bootpay.httpGet("order_subscription_bills/" + orderSubscriptionBillId, RequestContext.ofRole(RequestContext.userOrSupervisorRole(bootpay.getRole())));
 
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
@@ -81,7 +81,7 @@ public class SOrderSubscriptionBillService {
 
         // 파일 업로드 요청 (여러 파일)
 //        HttpPost post = bootpay.httpPostMultipart("products", fileList, params);
-        HttpPut put = bootpay.httpPut("order_subscription_bills/" + orderSubscriptionBill.orderSubscriptionBillId, new StringEntity(gson.toJson(orderSubscriptionBill), "UTF-8"));
+        HttpPut put = bootpay.httpPut("order_subscription_bills/" + orderSubscriptionBill.orderSubscriptionBillId, new StringEntity(gson.toJson(orderSubscriptionBill), "UTF-8"), RequestContext.ofRole("supervisor"));
         HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
 
@@ -91,11 +91,11 @@ public class SOrderSubscriptionBillService {
     }
 
     /**
-     * 빌 조회 요청 컨텍스트 — user scope. Idempotency-Key 는 미지정시 매 호출마다 생성된다.
+     * 빌 조회 요청 컨텍스트 — user_or_supervisor scope(인스턴스 role 이 supervisor 면 supervisor, 그 외 user). Idempotency-Key 는 미지정시 매 호출마다 생성된다.
      */
-    private static RequestContext userContext(String idempotencyKey) {
+    private static RequestContext userOrSupervisorContext(BootpayStoreObject bootpay, String idempotencyKey) {
         return RequestContext.builder()
-                .role("user")
+                .role(RequestContext.userOrSupervisorRole(bootpay.getRole()))
                 .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
                 .build();
     }

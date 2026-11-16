@@ -31,9 +31,11 @@ public class Faq {
         return SFaqService.list(bootpay, params);
     }
 
-    /** FAQ 단건 — 고객 모드 */
+    /** FAQ 단건 — 인스턴스 role 이 supervisor 면 운영자 모드, 그 외 고객 모드 */
     public BootpayStoreResponse detail(String faqId) throws Exception {
-        return detail(faqId, false);
+        FaqDetailParams params = new FaqDetailParams();
+        params.faqId = faqId;
+        return detail(params);
     }
 
     /**

@@ -1,5 +1,6 @@
 package kr.co.bootpay.store.service.users;
 
+import kr.co.bootpay.store.context.RequestContext;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -53,11 +54,11 @@ public class SUserService {
             if(membershipType != null) nameValuePairList.add(new BasicNameValuePair("membership_type", membershipType.toString()));
             if(params.type != null) nameValuePairList.add(new BasicNameValuePair("type", params.type));
 
-            HttpGet get = bootpay.httpGet(url, nameValuePairList);
+            HttpGet get = bootpay.httpGet(url, nameValuePairList, RequestContext.ofRole("user"));
             HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         } else {
-            HttpGet get = bootpay.httpGet(url);
+            HttpGet get = bootpay.httpGet(url, RequestContext.ofRole("user"));
             HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         }
@@ -79,7 +80,7 @@ public class SUserService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPut put = bootpay.httpPut("users/" + user.userId, new StringEntity(gson.toJson(user), "UTF-8"));
+        HttpPut put = bootpay.httpPut("users/" + user.userId, new StringEntity(gson.toJson(user), "UTF-8"), RequestContext.ofRole("user"));
         HttpResponse response = bootpay.execute(put);
         return bootpay.responseToJsonObject(response);
     }
@@ -97,7 +98,7 @@ public class SUserService {
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String userId) throws Exception {
         bootpay.requireCommerceCredentials();
 
-        HttpGet get = bootpay.httpGet("users/" + userId);
+        HttpGet get = bootpay.httpGet("users/" + userId, RequestContext.ofRole("user"));
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
@@ -115,7 +116,7 @@ public class SUserService {
     static public BootpayStoreResponse destroy(BootpayStoreObject bootpay, String userId) throws Exception {
         bootpay.requireCommerceCredentials();
 
-        HttpDelete delete = bootpay.httpDelete("users/" + userId);
+        HttpDelete delete = bootpay.httpDelete("users/" + userId, RequestContext.ofRole("user"));
         HttpResponse response = bootpay.execute(delete);
         return bootpay.responseToJsonObject(response);
     }

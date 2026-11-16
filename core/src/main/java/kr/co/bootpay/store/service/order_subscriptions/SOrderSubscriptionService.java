@@ -43,7 +43,7 @@ public class SOrderSubscriptionService {
         bootpay.requireCommerceCredentials();
 
         String url = "order_subscriptions";
-        if(params == null) return bootpay.httpGet(url);
+        if(params == null) return bootpay.httpGet(url, RequestContext.ofRole("user"));
 
         List<NameValuePair> nameValuePairList = new ArrayList<>();
         if(params.sAt != null) nameValuePairList.add(new BasicNameValuePair("s_at", params.sAt));
@@ -72,14 +72,14 @@ public class SOrderSubscriptionService {
         if(params.page != null) nameValuePairList.add(new BasicNameValuePair("page", params.page.toString()));
         if(params.limit != null) nameValuePairList.add(new BasicNameValuePair("limit", params.limit.toString()));
 
-        return bootpay.httpGet(url, nameValuePairList);
+        return bootpay.httpGet(url, nameValuePairList, RequestContext.ofRole("user"));
     }
 
 
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String orderSubscriptionId) throws Exception {
         bootpay.requireCommerceCredentials();
 
-        HttpGet get = bootpay.httpGet("order_subscriptions/" + orderSubscriptionId);
+        HttpGet get = bootpay.httpGet("order_subscriptions/" + orderSubscriptionId, RequestContext.ofRole("user"));
 
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);

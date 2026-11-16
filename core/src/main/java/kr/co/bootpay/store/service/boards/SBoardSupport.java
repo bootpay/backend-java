@@ -3,6 +3,7 @@ package kr.co.bootpay.store.service.boards;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import kr.co.bootpay.store.BootpayStoreObject;
 import kr.co.bootpay.store.context.RequestContext;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -38,6 +39,16 @@ final class SBoardSupport {
                 .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
                 .userJwt(userJwt)
                 .build();
+    }
+
+    /**
+     * user_or_supervisor 엔드포인트(공지·FAQ 상세, 상품문의 삭제)의 요청 컨텍스트 —
+     * supervisor 플래그를 true 로 주면 supervisor, false 면 user, 미지정이면 인스턴스 role 이 supervisor 일 때만 supervisor
+     * (manager 등 그 외는 user) 로 보낸다.
+     */
+    static RequestContext userOrSupervisorContext(BootpayStoreObject bootpay, Boolean supervisor, String userJwt, String idempotencyKey) {
+        Boolean effective = supervisor != null ? supervisor : Boolean.valueOf("supervisor".equals(bootpay.getRole()));
+        return context(effective, userJwt, idempotencyKey);
     }
 
     /** supervisor 전용 엔드포인트(등록·수정·삭제·답변)의 요청 컨텍스트. */

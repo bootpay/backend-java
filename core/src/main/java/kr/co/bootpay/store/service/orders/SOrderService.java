@@ -60,11 +60,11 @@ public class SOrderService {
                 nameValuePairList.add(new BasicNameValuePair("order_subscription_ids", joined));
             }
 
-            HttpGet get = bootpay.httpGet(url, nameValuePairList);
+            HttpGet get = bootpay.httpGet(url, nameValuePairList, RequestContext.ofRole("user"));
             HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         } else {
-            HttpGet get = bootpay.httpGet(url);
+            HttpGet get = bootpay.httpGet(url, RequestContext.ofRole("user"));
             HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         }
@@ -73,7 +73,7 @@ public class SOrderService {
     static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String orderId) throws Exception {
         bootpay.requireCommerceCredentials();
 
-        HttpGet get = bootpay.httpGet("orders/" + orderId);
+        HttpGet get = bootpay.httpGet("orders/" + orderId, RequestContext.ofRole("user"));
 
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
@@ -100,7 +100,7 @@ public class SOrderService {
 //        HttpPost post = bootpay.httpPost("orders/month", new StringEntity(gson.toJson(params), "UTF-8"));
 
 
-        HttpGet get = bootpay.httpGet("orders/month", nameValuePairList);
+        HttpGet get = bootpay.httpGet("orders/month", nameValuePairList, RequestContext.ofRole("user"));
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
