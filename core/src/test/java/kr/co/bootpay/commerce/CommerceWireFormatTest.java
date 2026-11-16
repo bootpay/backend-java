@@ -3,6 +3,8 @@ package kr.co.bootpay.commerce;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import kr.co.bootpay.store.BootpayStore;
+import kr.co.bootpay.store.BootpayStoreObject;
+import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import kr.co.bootpay.store.model.pojo.SMallSetting;
 import kr.co.bootpay.store.model.pojo.SOrderSubscriptionAdjustment;
 import kr.co.bootpay.store.model.pojo.SProduct;
@@ -1671,6 +1673,55 @@ class CommerceWireFormatTest {
         store.orderSubscriptionAdjustment.create("OS_1", adjustment);
 
         assertTrue(lastBody.contains("\"type\":2"), lastBody);
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // 26-11-16 빈 경로 조각 — 빈 id 로 상세 메서드를 부르면 요청하지 않고 실패 응답
+    // ══════════════════════════════════════════════════════════
+
+    @Test
+    @DisplayName("order.detail(\"\") - orders/ 로 요청하지 않고 실패 응답(빈 id 메시지)을 돌려준다")
+    void testDetailWithBlankIdIsNotSent() throws Exception {
+        BootpayStoreResponse res = store.order.detail("");
+
+        assertNull(lastPath, "빈 id 요청은 서버로 가면 안 된다 (목록이 돌아온다)");
+        assertFalse(res.isSuccess());
+        assertNotNull(res.getData());
+        assertEquals("요청 경로에 빈 id 가 있습니다: orders/", res.getData().get("message"));
+        assertTrue(res.hasError());
+    }
+
+    @Test
+    @DisplayName("execute - orders//purchases 처럼 // 가 있는 경로는 요청하지 않는다")
+    void testDoubleSlashPathIsNotSent() throws Exception {
+        BootpayStoreResponse res = store.responseToJsonObject(store.execute(store.httpGet("orders//purchases")));
+
+        assertNull(lastPath);
+        assertFalse(res.isSuccess());
+        assertEquals("요청 경로에 빈 id 가 있습니다: orders//purchases", res.getData().get("message"));
+    }
+
+    @Test
+    @DisplayName("order.detail - id 가 있으면 그대로 요청한다")
+    void testDetailWithIdIsSent() throws Exception {
+        BootpayStoreResponse res = store.order.detail("ORD-1");
+
+        assertEquals("/v1/orders/ORD-1", lastPath);
+        assertTrue(res.isSuccess());
+    }
+
+    @Test
+    @DisplayName("blankPathSegment - 빈 경로·끝 /·// 만 막고 쿼리는 보지 않는다")
+    void testBlankPathSegment() {
+        assertTrue(BootpayStoreObject.blankPathSegment(""));
+        assertTrue(BootpayStoreObject.blankPathSegment((String) null));
+        assertTrue(BootpayStoreObject.blankPathSegment("orders/"));
+        assertTrue(BootpayStoreObject.blankPathSegment("/orders/"));
+        assertTrue(BootpayStoreObject.blankPathSegment("orders//purchases"));
+        assertTrue(BootpayStoreObject.blankPathSegment("orders/?page=1"));
+        assertFalse(BootpayStoreObject.blankPathSegment("orders"));
+        assertFalse(BootpayStoreObject.blankPathSegment("/orders/ORD-1/purchases"));
+        assertFalse(BootpayStoreObject.blankPathSegment("orders?redirect=a//b/"));
     }
 
 }

@@ -9,6 +9,8 @@ import kr.co.bootpay.store.model.request.TokenPayload;
 import kr.co.bootpay.store.model.response.BootpayStoreResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
+import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -176,8 +178,69 @@ public class BootpayStoreObject {
         }
     }
 
+    /**
+     * 경로 조각이 빈 요청인지 판단한다.
+     * @date: 26-11-16
+     * 빈 id 로 상세 메서드를 부르면 "orders/" 처럼 / 로 끝나거나 "orders//purchases" 처럼 // 가 생겨
+     * 서버가 목록이나 다른 엔드포인트로 라우팅한다(오류 없이 엉뚱한 응답). 이런 요청은 보내지 않는다.
+     */
+    public static boolean blankPathSegment(String uri) {
+        String path = uri == null ? "" : uri;
+        int query = path.indexOf('?');
+        if (query >= 0) path = path.substring(0, query);
+        if (path.startsWith("/")) path = path.substring(1);
+        return path.isEmpty() || path.endsWith("/") || path.contains("//");
+    }
+
+    /** 요청 URI 의 경로(쿼리 제외)에 빈 조각이 있는지 — 호스트·base 경로({@code /v1/})를 포함한 전체 경로로 판단한다. */
+    public static boolean blankPathSegment(HttpRequestBase request) {
+        if (request == null || request.getURI() == null) return true;
+        String rawPath = request.getURI().getRawPath();
+        return blankPathSegment(rawPath);
+    }
+
+    /**
+     * 빈 경로 조각 때문에 보내지 않은 요청의 응답 — 실제 HTTP 응답이 아니며
+     * {@link #responseToJsonObject(HttpResponse)} 가 success false + {@code { message }} 로 바꾼다.
+     */
+    public static class BlankPathResponse extends BasicHttpResponse {
+        private final String message;
+
+        public BlankPathResponse(String uri) {
+            super(HttpVersion.HTTP_1_1, 0, "Blank path segment");
+            this.message = "요청 경로에 빈 id 가 있습니다: " + uri;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public BootpayStoreResponse toStoreResponse() {
+            HashMap<String, Object> data = new HashMap<>();
+            data.put("message", message);
+            return new BootpayStoreResponse(0, false, data, message);
+        }
+    }
+
+    // 실패 메시지용 — base URL 을 떼어 서비스가 넘긴 경로(예: "orders/")만 남긴다.
+    private String relativeUri(HttpRequestBase request) {
+        if (request == null || request.getURI() == null) return "";
+        String full = request.getURI().toString();
+        if (messageBaseUrl != null && !messageBaseUrl.isEmpty() && full.startsWith(messageBaseUrl)) {
+            return full.substring(messageBaseUrl.length());
+        }
+        if (baseUrl != null && !baseUrl.isEmpty() && full.startsWith(baseUrl)) {
+            return full.substring(baseUrl.length());
+        }
+        return full;
+    }
+
     /** Executes a Commerce request after its Basic-only authorization header is attached. */
     public HttpResponse execute(HttpRequestBase request) throws Exception {
+        // @date: 26-11-16 경로 id 가 비면 요청하지 않는다(blankPathSegment 참고).
+        if (blankPathSegment(request)) {
+            return new BlankPathResponse(relativeUri(request));
+        }
         requireCommerceCredentials();
         HttpClient client = HttpClientBuilder.create().build();
         return client.execute(request);
@@ -597,6 +660,7 @@ public class BootpayStoreObject {
 //    }
 
     public BootpayStoreResponse responseToJsonObject(HttpResponse response) throws Exception {
+        if (response instanceof BlankPathResponse) return ((BlankPathResponse) response).toStoreResponse();
         HashMap<String, Object> result = responseToJson(response);
         
         int httpStatus = (Integer) result.get("http_status");
@@ -617,6 +681,7 @@ public class BootpayStoreObject {
      * <p>성공 시 {@code getData()} 는 {@code { body: "<원문 문자열>", content_type: "..." }} 다.</p>
      */
     public BootpayStoreResponse responseToRawObject(HttpResponse response) throws Exception {
+        if (response instanceof BlankPathResponse) return ((BlankPathResponse) response).toStoreResponse();
         int statusCode = response.getStatusLine().getStatusCode();
         boolean success = statusCode >= 200 && statusCode < 300;
 
@@ -649,6 +714,14 @@ public class BootpayStoreObject {
 
     public HashMap<String, Object> responseToJson(HttpResponse response)  throws Exception {
         HashMap<String, Object> result = new HashMap<>();
+        if (response instanceof BlankPathResponse) {
+            BootpayStoreResponse blocked = ((BlankPathResponse) response).toStoreResponse();
+            result.put("http_status", 0);
+            result.put("success", false);
+            result.put("data", blocked.getData());
+            result.put("error", blocked.getError());
+            return result;
+        }
 
         int statusCode = response.getStatusLine().getStatusCode();
         result.put("http_status", statusCode);

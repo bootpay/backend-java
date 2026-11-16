@@ -6,6 +6,14 @@
 - `order.updatePurchases(OrderPurchasesUpdateParams params)` — `PUT /v1/orders/{orderNumber}/purchases`. 발주 단위 상태·운송장을 갱신한다(한 번에 최대 50건, `OrderPurchaseUpdateItem` 목록). 경로 주문에 딸리지 않은 `orderPurchaseNumber` 가 섞이면 요청 전체가 `ORDER_PURCHASE_NOT_FOUND` 로 거절된다.
 - 두 호출 모두 `BOOTPAY-ROLE` 은 항상 `user` 로 고정하고, `Idempotency-Key` 는 미지정시 자동 생성한다. `orderNumber`·`idempotencyKey` 는 body 에 실리지 않는다.
 
+#### 빈 id 로 상세 메서드를 부르면 목록이 돌아오던 문제 수정 (ruby `79594ea` parity)
+
+`order.detail("")` 처럼 id 가 비면 경로가 `orders/` 나 `orders//purchases` 가 되어 서버가 목록·다른 엔드포인트로
+라우팅해 오류 없이 엉뚱한 응답이 왔다. 이제 `BootpayStoreObject.execute` 가 경로(쿼리 제외)가 비었거나 `/` 로 끝나거나
+`//` 를 포함하면 요청을 보내지 않고, `responseToJsonObject`/`responseToRawObject` 가 `success=false`,
+`data = { message: "요청 경로에 빈 id 가 있습니다: <경로>" }`, `error` = 같은 메시지인 응답을 돌려준다.
+판정은 `BootpayStoreObject.blankPathSegment(...)` 로도 쓸 수 있다.
+
 #### Java 8 호환 수정
 
 `calculateTerminationFee` 의 `URLEncoder.encode(String, Charset)` — Java 10+ API — 를 Java 8 API(`URLEncoder.encode(String, "UTF-8")`)로 바꿨다. Java 8 런타임에서 `NoSuchMethodError` 가 날 수 있었다.
