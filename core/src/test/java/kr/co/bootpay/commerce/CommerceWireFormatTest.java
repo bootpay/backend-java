@@ -1849,6 +1849,9 @@ class CommerceWireFormatTest {
         c.add(new RoleCase("user.userLogin", USER, s -> s.user.userLogin("id", "pw")));
         c.add(new RoleCase("user.userSession", USER, s -> s.user.userSession("jwt")));
         c.add(new RoleCase("user.userLogout", USER, s -> s.user.userLogout("jwt")));
+        c.add(new RoleCase("user.token", USER, s -> s.user.token("U_1")));
+        c.add(new RoleCase("user.userAuthenticate", USER, s -> s.user.userAuthenticate("standby_1")));
+        c.add(new RoleCase("user.userJoin", USER, s -> s.user.userJoin(new MallUserJoinParams())));
         c.add(new RoleCase("webhook.sendTest", SUPERVISOR, s -> s.webhook.sendTest()));
         // 이미 맞던 메서드
         c.add(new RoleCase("invoice.list", USER, s -> s.invoice.list(new InvoiceListParams())));
