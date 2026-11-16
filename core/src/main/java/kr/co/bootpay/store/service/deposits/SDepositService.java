@@ -19,9 +19,9 @@ import java.util.Map;
 public class SDepositService {
 
     /** 판매자 입금 계좌 목록 — 첫 계좌가 대표 계좌입니다. */
-    static public BootpayStoreResponse accounts(BootpayStoreObject bootpay) throws Exception {
+    static public BootpayStoreResponse accounts(BootpayStoreObject bootpay, String idempotencyKey) throws Exception {
         bootpay.requireCommerceCredentials();
-        HttpGet get = bootpay.httpGet("sdk/deposits/accounts", context(null));
+        HttpGet get = bootpay.httpGet("sdk/deposits/accounts", context(idempotencyKey));
         return bootpay.responseToJsonObject(bootpay.execute(get));
     }
 
@@ -60,9 +60,9 @@ public class SDepositService {
     }
 
     /** 입금대기 조회 — 기한이 지났으면 조회 시점에 expired 로 닫힙니다. */
-    static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String depositId) throws Exception {
+    static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String depositId, String idempotencyKey) throws Exception {
         bootpay.requireCommerceCredentials();
-        HttpGet get = bootpay.httpGet(path(depositId), context(null));
+        HttpGet get = bootpay.httpGet(path(depositId), context(idempotencyKey));
         return bootpay.responseToJsonObject(bootpay.execute(get));
     }
 

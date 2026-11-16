@@ -1,5 +1,9 @@
 ### Unreleased
 
+#### 뱅크알람 입금대기 조회 Idempotency-Key 지정
+
+`deposit.accounts(String idempotencyKey)`, `deposit.detail(String depositId, String idempotencyKey)` 추가. 기존 메서드는 미지정시 자동 생성.
+
 #### 주문 발송 정보 조회·발송처리 추가 (ruby `b762095` parity)
 
 - `order.purchases(String orderNumber)` / `order.purchases(String orderNumber, String idempotencyKey)` — `GET /v1/orders/{orderNumber}/purchases`. 발주(배송) 단위 운송장·택배사·배송추적 상태·이력을 조회한다.

@@ -177,6 +177,20 @@ class DepositWireFormatTest {
     }
 
     @Test
+    void accountsAndDetailRespectExplicitIdempotencyKey() throws Exception {
+        store.deposit.accounts("idem-accounts");
+        assertRequest("GET", "sdk/deposits/accounts");
+        assertEquals("idem-accounts", key);
+        store.deposit.detail("m-1", "idem-detail");
+        assertRequest("GET", "sdk/deposits/m-1");
+        assertEquals("idem-detail", key);
+        module.accounts("idem-module");
+        assertEquals("idem-module", key);
+        module.detail("m-1", "idem-module-detail");
+        assertEquals("idem-module-detail", key);
+    }
+
+    @Test
     void generatesNewUuidForEveryCall() throws Exception {
         Set<String> keys = new HashSet<>();
         store.deposit.accounts();

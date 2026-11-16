@@ -28,6 +28,17 @@ public class DepositModule {
     }
 
     /**
+     * 판매자 입금 계좌 목록 (Idempotency-Key 지정).
+     *
+     * @param idempotencyKey 미지정시 자동 생성 (Idempotency-Key 헤더)
+     * @return 입금 계좌 목록
+     * @throws Exception 통신 실패 또는 인증 정보 누락
+     */
+    public BootpayResponse accounts(String idempotencyKey) throws Exception {
+        return CommerceResponses.of(delegate.accounts(idempotencyKey));
+    }
+
+    /**
      * 웹훅 서명 비밀값 발급 — 원문은 이 응답에서만 받습니다.
      *
      * @return 웹훅 서명 비밀값
@@ -69,6 +80,18 @@ public class DepositModule {
      */
     public BootpayResponse detail(String depositId) throws Exception {
         return CommerceResponses.of(delegate.detail(depositId));
+    }
+
+    /**
+     * 입금대기 조회 (Idempotency-Key 지정).
+     *
+     * @param depositId 가맹점 주문번호 또는 부트페이 주문번호
+     * @param idempotencyKey 미지정시 자동 생성 (Idempotency-Key 헤더)
+     * @return 입금대기 주문
+     * @throws Exception 통신 실패 또는 인증 정보 누락
+     */
+    public BootpayResponse detail(String depositId, String idempotencyKey) throws Exception {
+        return CommerceResponses.of(delegate.detail(depositId, idempotencyKey));
     }
 
     /**

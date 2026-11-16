@@ -15,7 +15,12 @@ public class Deposit {
 
     /** 판매자 입금 계좌 목록. */
     public BootpayStoreResponse accounts() throws Exception {
-        return SDepositService.accounts(bootpay);
+        return accounts(null);
+    }
+
+    /** @param idempotencyKey 미지정시 자동 생성 */
+    public BootpayStoreResponse accounts(String idempotencyKey) throws Exception {
+        return SDepositService.accounts(bootpay, idempotencyKey);
     }
 
     /** 웹훅 서명 비밀값 발급 — 원문은 이 응답에서만 받습니다. */
@@ -35,7 +40,15 @@ public class Deposit {
 
     /** @param depositId 가맹점 주문번호 또는 부트페이 주문번호 */
     public BootpayStoreResponse detail(String depositId) throws Exception {
-        return SDepositService.detail(bootpay, depositId);
+        return detail(depositId, null);
+    }
+
+    /**
+     * @param depositId 가맹점 주문번호 또는 부트페이 주문번호
+     * @param idempotencyKey 미지정시 자동 생성
+     */
+    public BootpayStoreResponse detail(String depositId, String idempotencyKey) throws Exception {
+        return SDepositService.detail(bootpay, depositId, idempotencyKey);
     }
 
     /** 입금대기 취소 — 이미 닫힌 주문은 그대로 반환합니다. */
