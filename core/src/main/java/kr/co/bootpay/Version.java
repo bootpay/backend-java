@@ -9,6 +9,6 @@ public class Version {
 
     // Commerce API
     public static final String COMMERCE_API_VERSION = "1.0.0";
-    public static final String COMMERCE_SDK_VERSION = "1.0.0";
+    public static final String COMMERCE_SDK_VERSION = SDK_VERSION; // JAVA SDK 버전과 동일
 
 }

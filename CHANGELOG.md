@@ -1,5 +1,9 @@
 ### Unreleased
 
+#### BOOTPAY-SDK-VERSION 을 SDK 버전과 일치
+
+`Version.COMMERCE_SDK_VERSION` 을 `Version.SDK_VERSION` 과 같은 값으로 두어 헤더가 배포 버전을 보낸다(필드 이름은 유지).
+
 #### 뱅크알람 입금대기 조회 Idempotency-Key 지정
 
 `deposit.accounts(String idempotencyKey)`, `deposit.detail(String depositId, String idempotencyKey)` 추가. 기존 메서드는 미지정시 자동 생성.
