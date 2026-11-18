@@ -81,6 +81,7 @@ class CommerceWireFormatTest {
     // 마지막 요청 캡처
     private static volatile String lastMethod;
     private static volatile String lastPath;
+    private static volatile String lastRawPath;
     private static volatile String lastQuery;
     private static volatile String lastBody;
     private static volatile String lastRole;
@@ -112,6 +113,7 @@ class CommerceWireFormatTest {
     private static void capture(HttpExchange exchange) throws java.io.IOException {
         lastMethod = exchange.getRequestMethod();
         lastPath = exchange.getRequestURI().getPath();
+        lastRawPath = exchange.getRequestURI().getRawPath();
         lastQuery = exchange.getRequestURI().getQuery();
         lastRole = exchange.getRequestHeaders().getFirst("BOOTPAY-ROLE");
         lastIdempotencyKey = exchange.getRequestHeaders().getFirst("Idempotency-Key");
@@ -535,6 +537,13 @@ class CommerceWireFormatTest {
         assertEquals("/v1/orders/ORD-1/purchases", lastPath);
         assertEquals("user", lastRole);
         assertNotNull(lastIdempotencyKey);
+    }
+
+    @Test
+    @DisplayName("order.purchases - 주문번호의 공백은 + 가 아니라 %20 (다른 SDK 와 같은 경로 인코딩)")
+    void testOrderPurchasesEncodesSpaceAsPercent20() throws Exception {
+        store.order.purchases("ORD 1+2");
+        assertEquals("/v1/orders/ORD%201%2B2/purchases", lastRawPath);
     }
 
     @Test
@@ -1794,7 +1803,7 @@ class CommerceWireFormatTest {
             s.category.update(p);
         }));
         c.add(new RoleCase("category.delete", SUPERVISOR, s -> s.category.delete("CAT_1")));
-        c.add(new RoleCase("orderSubscriptionBill.list", USER_OR_SUPERVISOR, s -> s.orderSubscriptionBill.list(new OrderSubscriptionBillListParams())));
+        c.add(new RoleCase("orderSubscriptionBill.list", USER, s -> s.orderSubscriptionBill.list(new OrderSubscriptionBillListParams())));
         c.add(new RoleCase("orderSubscriptionBill.detail", USER_OR_SUPERVISOR, s -> s.orderSubscriptionBill.detail("OSB_1")));
         c.add(new RoleCase("orderSubscriptionBill.update", SUPERVISOR, s -> {
             SOrderSubscriptionBill b = new SOrderSubscriptionBill();
@@ -1812,11 +1821,11 @@ class CommerceWireFormatTest {
         c.add(new RoleCase("orderSubscription.reject", SUPERVISOR, s -> s.orderSubscription.reject("OS_1", "no")));
         c.add(new RoleCase("orderSubscription.terminate", SUPERVISOR, s -> s.orderSubscription.terminate("OS_1", "end")));
         c.add(new RoleCase("orderSubscription.supervisorResume", SUPERVISOR, s -> s.orderSubscription.supervisorResume("OS_1")));
-        c.add(new RoleCase("orderSubscriptionRequest.list", USER_OR_SUPERVISOR, s -> s.orderSubscriptionRequest.list()));
-        c.add(new RoleCase("orderSubscriptionRequest.detail", USER_OR_SUPERVISOR, s -> s.orderSubscriptionRequest.detail("OSR_1")));
-        c.add(new RoleCase("notice.detail", USER_OR_SUPERVISOR, s -> s.notice.detail("N_1")));
-        c.add(new RoleCase("faq.detail", USER_OR_SUPERVISOR, s -> s.faq.detail("F_1")));
-        c.add(new RoleCase("productQna.delete", USER_OR_SUPERVISOR, s -> {
+        c.add(new RoleCase("orderSubscriptionRequest.list", USER, s -> s.orderSubscriptionRequest.list()));
+        c.add(new RoleCase("orderSubscriptionRequest.detail", USER, s -> s.orderSubscriptionRequest.detail("OSR_1")));
+        c.add(new RoleCase("notice.detail", USER, s -> s.notice.detail("N_1")));
+        c.add(new RoleCase("faq.detail", USER, s -> s.faq.detail("F_1")));
+        c.add(new RoleCase("productQna.delete", USER, s -> {
             ProductQnaDeleteParams p = new ProductQnaDeleteParams();
             p.productQnaId = "Q_1";
             s.productQna.delete(p);

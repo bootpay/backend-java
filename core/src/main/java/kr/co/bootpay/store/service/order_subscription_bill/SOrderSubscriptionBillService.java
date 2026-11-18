@@ -54,7 +54,7 @@ public class SOrderSubscriptionBillService {
             }
         }
 
-        HttpGet get = bootpay.httpGet(url, nameValuePairList, userOrSupervisorContext(bootpay, idempotencyKey));
+        HttpGet get = bootpay.httpGet(url, nameValuePairList, userContext(idempotencyKey));
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
@@ -91,11 +91,11 @@ public class SOrderSubscriptionBillService {
     }
 
     /**
-     * 빌 조회 요청 컨텍스트 — user_or_supervisor scope(인스턴스 role 이 supervisor 면 supervisor, 그 외 user). Idempotency-Key 는 미지정시 매 호출마다 생성된다.
+     * 빌 조회 요청 컨텍스트 — user scope. Idempotency-Key 는 미지정시 매 호출마다 생성된다.
      */
-    private static RequestContext userOrSupervisorContext(BootpayStoreObject bootpay, String idempotencyKey) {
+    private static RequestContext userContext(String idempotencyKey) {
         return RequestContext.builder()
-                .role(RequestContext.userOrSupervisorRole(bootpay.getRole()))
+                .role("user")
                 .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
                 .build();
     }

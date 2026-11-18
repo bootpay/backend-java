@@ -115,7 +115,7 @@ public class SOrderService {
             throw new Exception("orderNumber 값이 비어있습니다.");
         }
 
-        HttpGet get = bootpay.httpGet("orders/" + URLEncoder.encode(orderNumber, "UTF-8") + "/purchases", purchasesContext(idempotencyKey));
+        HttpGet get = bootpay.httpGet("orders/" + URLEncoder.encode(orderNumber, "UTF-8").replace("+", "%20") + "/purchases", purchasesContext(idempotencyKey));
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
@@ -136,7 +136,7 @@ public class SOrderService {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
 
-        HttpPut put = bootpay.httpPut("orders/" + URLEncoder.encode(params.orderNumber, "UTF-8") + "/purchases",
+        HttpPut put = bootpay.httpPut("orders/" + URLEncoder.encode(params.orderNumber, "UTF-8").replace("+", "%20") + "/purchases",
                 new StringEntity(gson.toJson(params), "UTF-8"),
                 purchasesContext(params.idempotencyKey));
         HttpResponse response = bootpay.execute(put);

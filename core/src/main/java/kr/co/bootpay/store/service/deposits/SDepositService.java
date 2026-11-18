@@ -18,6 +18,11 @@ import java.util.Map;
 /** 뱅크알람 입금대기 — /v1/sdk/deposits 계열, 인스턴스 role 과 무관하게 supervisor 전용. */
 public class SDepositService {
 
+    /** 판매자 입금 계좌 목록 — 멱등 키는 자동 생성합니다 (기존 시그니처 유지). */
+    static public BootpayStoreResponse accounts(BootpayStoreObject bootpay) throws Exception {
+        return accounts(bootpay, null);
+    }
+
     /** 판매자 입금 계좌 목록 — 첫 계좌가 대표 계좌입니다. */
     static public BootpayStoreResponse accounts(BootpayStoreObject bootpay, String idempotencyKey) throws Exception {
         bootpay.requireCommerceCredentials();
@@ -57,6 +62,11 @@ public class SDepositService {
                 .create().toJson(body);
         HttpPost post = bootpay.httpPost("sdk/deposits", new StringEntity(json, "UTF-8"), context(params.idempotencyKey));
         return bootpay.responseToJsonObject(bootpay.execute(post));
+    }
+
+    /** 입금대기 조회 — 멱등 키는 자동 생성합니다 (기존 시그니처 유지). */
+    static public BootpayStoreResponse detail(BootpayStoreObject bootpay, String depositId) throws Exception {
+        return detail(bootpay, depositId, null);
     }
 
     /** 입금대기 조회 — 기한이 지났으면 조회 시점에 expired 로 닫힙니다. */

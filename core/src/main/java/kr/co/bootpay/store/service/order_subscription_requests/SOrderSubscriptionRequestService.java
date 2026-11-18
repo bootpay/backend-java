@@ -43,7 +43,7 @@ public class SOrderSubscriptionRequestService {
             if (params.userGroupId != null) nameValuePairList.add(new BasicNameValuePair("user_group_id", params.userGroupId));
         }
 
-        HttpGet get = bootpay.httpGet(url, nameValuePairList, requestContext(bootpay, projectId, idempotencyKey));
+        HttpGet get = bootpay.httpGet(url, nameValuePairList, requestContext(projectId, idempotencyKey));
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }
@@ -58,11 +58,11 @@ public class SOrderSubscriptionRequestService {
         if (projectId != null && !projectId.isEmpty()) {
             List<NameValuePair> nameValuePairList = new ArrayList<>();
             nameValuePairList.add(new BasicNameValuePair("project_id", projectId));
-            HttpGet get = bootpay.httpGet(url, nameValuePairList, requestContext(bootpay, projectId, null));
+            HttpGet get = bootpay.httpGet(url, nameValuePairList, requestContext(projectId, null));
             HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         } else {
-            HttpGet get = bootpay.httpGet(url, requestContext(bootpay, null, null));
+            HttpGet get = bootpay.httpGet(url, requestContext(null, null));
             HttpResponse response = bootpay.execute(get);
             return bootpay.responseToJsonObject(response);
         }
@@ -101,12 +101,12 @@ public class SOrderSubscriptionRequestService {
     }
 
     /**
-     * 조회 요청 컨텍스트 — project_id 가 있으면 supervisor, 없으면 user_or_supervisor(인스턴스 role 이 supervisor 면 supervisor, 그 외 user) scope 다.
+     * 조회 요청 컨텍스트 — project_id 가 있으면 supervisor, 없으면 user scope 다.
      * Idempotency-Key 는 미지정시 매 호출마다 생성된다.
      */
-    private static RequestContext requestContext(BootpayStoreObject bootpay, String projectId, String idempotencyKey) {
+    private static RequestContext requestContext(String projectId, String idempotencyKey) {
         return RequestContext.builder()
-                .role(projectId != null && !projectId.isEmpty() ? "supervisor" : RequestContext.userOrSupervisorRole(bootpay.getRole()))
+                .role(projectId != null && !projectId.isEmpty() ? "supervisor" : "user")
                 .idempotencyKey(RequestContext.idempotencyKeyOrGenerate(idempotencyKey))
                 .build();
     }

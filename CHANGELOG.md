@@ -1,4 +1,4 @@
-### Unreleased
+### 3.9.0
 
 #### 엔드포인트별 BOOTPAY-ROLE 고정
 
@@ -6,8 +6,9 @@
 
 - `user` 고정: `cart.orderPreview`, `point.*`, `order.list/detail/month`, `coupon.download`, `category.list/detail`, `orderSubscription.list/detail`, `product.list`·`products`·`detail`, `store.info/detail`, `userGroup.create/list/detail/update`, `user.*`(조회·수정·삭제·가입·로그인·세션), `invoice.list`
 - `supervisor` 고정: `orderSubscription.update`, `orderSubscriptionBill.update`, `webhook.sendTest`
-- `user_or_supervisor`: 인스턴스 role 이 supervisor 면 `supervisor`, 그 외(manager 포함)는 `user` — `coupon.list/available`, `orderCancel.request`, `orderSubscriptionBill.list/detail`, `orderSubscriptionRequest.list/detail`, `notice.detail`, `faq.detail`, `productQna.delete`
-- `notice.detail(id)`·`faq.detail(id)` 는 더 이상 항상 user 가 아니라 인스턴스 role 을 따른다(supervisor 인스턴스는 supervisor).
+- `user_or_supervisor`: 인스턴스 role 이 supervisor 면 `supervisor`, 그 외(manager 포함)는 `user` — `coupon.list/available`, `orderCancel.request`, `orderSubscriptionBill.detail`
+- 이미 role 을 명시하던 엔드포인트는 기존 동작을 그대로 둔다 — supervisor 인스턴스여도 바뀌지 않는다. `notice.detail`·`faq.detail`·`productQna.delete` 는 `supervisor` 를 true 로 줄 때만 supervisor(그 외 user), `orderSubscriptionBill.list` 는 user, `orderSubscriptionRequest.list/detail` 은 `projectId` 가 있을 때만 supervisor(그 외 user).
+- 기존 `SDepositService.accounts(bootpay)` · `detail(bootpay, depositId)` 시그니처를 복원했다 — 멱등 키 인자를 받는 오버로드로 위임한다(직접 호출하던 코드 호환).
 
 #### BOOTPAY-SDK-VERSION 을 SDK 버전과 일치
 

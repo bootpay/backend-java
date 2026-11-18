@@ -63,7 +63,7 @@ public class SFaqService {
         SBoardSupport.requireValue(params.faqId, "faqId");
 
         HttpGet get = bootpay.httpGet("faqs/" + params.faqId,
-                SBoardSupport.userOrSupervisorContext(bootpay, params.supervisor, null, params.idempotencyKey));
+                SBoardSupport.context(params.supervisor, null, params.idempotencyKey));
         HttpResponse response = bootpay.execute(get);
         return bootpay.responseToJsonObject(response);
     }

@@ -191,6 +191,17 @@ class DepositWireFormatTest {
     }
 
     @Test
+    @DisplayName("SDepositService 기존 시그니처(accounts(bootpay)·detail(bootpay,id))가 남아 있고 멱등 키를 자동 생성한다")
+    void legacyServiceSignaturesStillWork() throws Exception {
+        kr.co.bootpay.store.service.deposits.SDepositService.accounts(store);
+        assertRequest("GET", "sdk/deposits/accounts");
+        assertNotNull(UUID.fromString(key));
+        kr.co.bootpay.store.service.deposits.SDepositService.detail(store, "m-1");
+        assertRequest("GET", "sdk/deposits/m-1");
+        assertNotNull(UUID.fromString(key));
+    }
+
+    @Test
     void generatesNewUuidForEveryCall() throws Exception {
         Set<String> keys = new HashSet<>();
         store.deposit.accounts();
