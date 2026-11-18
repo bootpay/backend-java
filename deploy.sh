@@ -43,8 +43,16 @@ if [ "$(curl -s -o /dev/null -w '%{http_code}' "$POM_URL")" = "200" ]; then
   exit 1
 fi
 
-echo "📦 Step 1: 테스트"
-./gradlew :core:test --rerun-tasks
+echo "📦 Step 1: 테스트 (오프라인만)"
+# ⚠️ core 테스트 전체를 돌리지 않는다. PgPaymentTest · CommerceOrderTest 등은 TestConfig 의 BOOTPAY_ENV 기본값(production)으로
+#    실서버를 부르고 결제 취소 같은 쓰기 요청도 보낸다 (CLAUDE.md: production 키 라이브 테스트 금지). mock · 와이어 테스트만 돈다.
+#    새 테스트를 추가하면: TestConfig 를 쓰면 라이브(여기 넣지 않는다), 아니면 아래 목록에 걸리게 이름을 맞춘다.
+./gradlew :core:test --rerun-tasks \
+  --tests 'kr.co.bootpay.UnifiedSurfaceTest' \
+  --tests '*WireFormatTest' \
+  --tests '*ModuleParityTest' \
+  --tests 'kr.co.bootpay.pg.LegacyCompatibilityTest' \
+  --tests 'kr.co.bootpay.store.*'
 
 echo "📦 Step 2: 기존 빌드 정리"
 rm -rf core/build/repo
